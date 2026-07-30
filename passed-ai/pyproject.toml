@@ -1,0 +1,27 @@
+[project]
+name = "passed-ai"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "deepeval>=4.1.4",
+    "fastapi[standard]>=0.141.1",
+    "fastmcp>=3.4.5",
+    "httpx>=0.28.1",
+    "langchain-core>=1.5.2",
+    "langchain-openai>=1.4.1",
+    "langgraph>=1.2.10",
+    "numpy>=2.5.1",
+    "openai>=2.50.0",
+    "pgvector>=0.5.0",
+    "psycopg[binary]>=3.3.4",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.2",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "scikit-learn>=1.9.0",
+    "sqlalchemy>=2.0.51",
+    "tavily-python>=0.7.26",
+    "tenacity>=9.1.4",
+    "tiktoken>=0.13.0",
+    "uvicorn>=0.52.0",
+]

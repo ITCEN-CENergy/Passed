@@ -30,6 +30,19 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+	// Flyway
+	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+
+	// Spring Boot Actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+
+	// Spring Batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	testImplementation 'org.springframework.boot:spring-boot-starter-batch-test'
+
+	// Spring Security 추후에 추가할 것
 }
 
 tasks.named('test') {

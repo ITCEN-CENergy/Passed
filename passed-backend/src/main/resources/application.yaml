@@ -1,3 +1,13 @@
 spring:
   application:
     name: passed-backend
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoints:
+    health:
+      probes:
+        enabled: true

@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.roadmap.entity;
+package com.cenergy.passed_backend.domain.roadmap.entity;
 
 import org.junit.jupiter.api.Test;
 

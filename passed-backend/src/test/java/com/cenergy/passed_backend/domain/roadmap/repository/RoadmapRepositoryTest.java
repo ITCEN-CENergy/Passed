@@ -1,10 +1,10 @@
-package com.cenergy.passed_backend.roadmap.repository;
+package com.cenergy.passed_backend.domain.roadmap.repository;
 
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
-import com.cenergy.passed_backend.roadmap.entity.Milestone;
-import com.cenergy.passed_backend.roadmap.entity.Roadmap;
-import com.cenergy.passed_backend.roadmap.entity.RoadmapMilestone;
-import com.cenergy.passed_backend.roadmap.entity.RoadmapSkill;
+import com.cenergy.passed_backend.domain.roadmap.entity.Milestone;
+import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
+import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapMilestone;
+import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapSkill;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

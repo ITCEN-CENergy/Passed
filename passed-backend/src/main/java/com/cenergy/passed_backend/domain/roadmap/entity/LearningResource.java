@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.roadmap.domain;
+package com.cenergy.passed_backend.domain.roadmap.entity;
 
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;

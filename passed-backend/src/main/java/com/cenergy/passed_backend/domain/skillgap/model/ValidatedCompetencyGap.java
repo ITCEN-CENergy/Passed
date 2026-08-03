@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.skillgap.model;
 
-import com.cenergy.passed_backend.roadmap.entity.CompetencyCategory;
-import com.cenergy.passed_backend.roadmap.entity.RequirementType;
+import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
+import com.cenergy.passed_backend.domain.roadmap.entity.RequirementType;
 
 public record ValidatedCompetencyGap(
         Long standardCompetencyId,

@@ -6,8 +6,8 @@ import com.cenergy.passed_backend.domain.skillgap.model.ValidatedSkillGapResult;
 import com.cenergy.passed_backend.domain.skillgap.validation.SkillGapResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
-import com.cenergy.passed_backend.roadmap.entity.CompetencyCategory;
-import com.cenergy.passed_backend.roadmap.entity.RequirementType;
+import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
+import com.cenergy.passed_backend.domain.roadmap.entity.RequirementType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 

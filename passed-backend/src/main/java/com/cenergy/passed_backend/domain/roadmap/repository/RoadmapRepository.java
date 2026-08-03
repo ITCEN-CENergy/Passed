@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.roadmap.repository;
 
-import com.cenergy.passed_backend.roadmap.entity.Roadmap;
+import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

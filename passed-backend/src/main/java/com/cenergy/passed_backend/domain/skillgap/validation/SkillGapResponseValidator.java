@@ -6,7 +6,7 @@ import com.cenergy.passed_backend.domain.skillgap.model.ValidatedCompetencyGap;
 import com.cenergy.passed_backend.domain.skillgap.model.ValidatedSkillGapResult;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
-import com.cenergy.passed_backend.roadmap.entity.CompetencyCategory;
+import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

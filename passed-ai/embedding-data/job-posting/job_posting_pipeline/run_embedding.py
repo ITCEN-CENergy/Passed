@@ -27,6 +27,7 @@ else:
 logger = logging.getLogger(__name__)
 
 
+# CLI는 적재 서버와 독립적으로 임베딩 작업자를 실행한다.
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="미임베딩 청크 배치 임베딩 작업자")
     parser.add_argument(
@@ -34,23 +35,46 @@ def main(argv: list[str] | None = None) -> int:
         help="0이면 pending 이 없어질 때까지 반복(기본)",
     )
     parser.add_argument(
+        "--batch-size",
+        type=int,
+        help="한 API 요청의 청크 수(기본: EMBEDDING_BATCH_SIZE, 최대 2048)",
+    )
+    parser.add_argument(
         "--log-file",
         help="로그 파일 경로(기본: embedding-data/job-posting/logs/embedding.log)",
     )
     args = parser.parse_args(argv)
+    if args.batch_size is not None and not 1 <= args.batch_size <= 2048:
+        parser.error("--batch-size는 1~2048 범위여야 합니다.")
+
     configure_logging("embedding", args.log_file)
-    logger.info("임베딩 작업 시작: max_iterations=%d", args.max_iterations)
+    logger.info(
+        "임베딩 작업 시작: max_iterations=%d batch_size=%s",
+        args.max_iterations,
+        args.batch_size or "env",
+    )
 
     settings = get_settings()
+    # 키가 없으면 DB를 조회하기 전에 종료해 불완전한 실행을 방지한다.
     if not settings.openai_api_key:
         logger.error("OPENAI_API_KEY 가 설정되지 않았습니다.")
         return 1
 
     with connection() as conn:
-        stats = run_embedding_worker(conn, max_iterations=args.max_iterations)
+        stats = run_embedding_worker(
+            conn,
+            max_iterations=args.max_iterations,
+            batch_size=args.batch_size,
+        )
     logger.info(
-        "완료 processed=%d success=%d failed=%d skipped=%d",
-        stats.processed, stats.success, stats.failed, stats.skipped,
+        "완료 processed=%d success=%d failed=%d skipped=%d "
+        "prompt_tokens=%d remaining=%d",
+        stats.processed,
+        stats.success,
+        stats.failed,
+        stats.skipped,
+        stats.prompt_tokens,
+        stats.remaining,
     )
     return 0 if stats.failed == 0 else 1
 

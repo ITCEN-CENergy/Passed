@@ -38,6 +38,9 @@ else:
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# 공고별 LLM 추출·청크 생성·DB 동기화
+# ---------------------------------------------------------------------------
 def _process_postings(conn, job_posting_ids: list[int]) -> None:
     """각 공고별로 LLM 추출 -> 청크 생성 -> 동기화(공고 단위 트랜잭션)."""
     settings = get_settings()
@@ -60,12 +63,14 @@ def _process_postings(conn, job_posting_ids: list[int]) -> None:
                 conn.rollback()
                 failed += 1
                 continue
+            # 구조화 추출 결과와 원문을 합쳐 모든 source_type 청크를 만든다.
             outcome = extract(posting, conn=conn)
             chunks = build_chunks(
                 posting, outcome.tech_stacks, outcome.benefits,
                 settings.chunk_max_tokens, settings.chunk_overlap_tokens,
             )
             sync_posting(conn, jpid, chunks)
+            # 공고 하나가 완성된 경우에만 추출 캐시와 청크를 함께 확정한다.
             conn.commit()
             succeeded += 1
         except Exception as exc:  # noqa: BLE001 - 공고 단위 격리
@@ -80,6 +85,9 @@ def _process_postings(conn, job_posting_ids: list[int]) -> None:
     )
 
 
+# ---------------------------------------------------------------------------
+# CSV 파일 단위 전체 파이프라인
+# ---------------------------------------------------------------------------
 def run(csv_paths: list[str], init: bool = True) -> LoadResult:
     total = LoadResult()
     logger.info("CSV 적재 작업 시작: files=%d init_schema=%s", len(csv_paths), init)
@@ -101,7 +109,7 @@ def run(csv_paths: list[str], init: bool = True) -> LoadResult:
             total.failed += res.failed
             total.failures.extend(res.failures)
             total.job_posting_ids.extend(res.job_posting_ids)
-        # CSV 적재는 하나의 트랜잭션으로 커밋
+        # 원본 공고를 먼저 확정한 뒤 청크 작업을 공고별 트랜잭션으로 분리한다.
         conn.commit()
         logger.info(
             "CSV 전체 DB 적재 커밋 완료: loaded=%d failed=%d",
@@ -114,6 +122,9 @@ def run(csv_paths: list[str], init: bool = True) -> LoadResult:
     return total
 
 
+# ---------------------------------------------------------------------------
+# CLI 인자 처리
+# ---------------------------------------------------------------------------
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="CSV 적재 -> job_postings UPSERT -> 청크 생성/동기화"

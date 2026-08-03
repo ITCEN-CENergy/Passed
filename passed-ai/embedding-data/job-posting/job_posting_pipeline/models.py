@@ -20,6 +20,7 @@ class SourceType(str, Enum):
     ETC = "ETC"
 
 
+# 추천에 사용하면 안 되는 설명성·행정성 청크 유형이다.
 # 계획서 7절 매칭 규칙:
 #   PROCESS, DISQUALIFICATION, BENEFIT -> use_for_matching = false
 #   나머지 source_type                -> use_for_matching = true
@@ -30,6 +31,7 @@ NON_MATCHING_SOURCE_TYPES: frozenset[SourceType] = frozenset(
 
 def use_for_matching(source_type: SourceType) -> bool:
     """source_type 별 use_for_matching 값을 반환한다."""
+    # 한 곳에서 규칙을 계산해 DB 저장값과 검색 조건의 불일치를 막는다.
     return source_type not in NON_MATCHING_SOURCE_TYPES
 
 
@@ -44,6 +46,7 @@ class Chunk:
 
     @property
     def use_for_matching_flag(self) -> bool:
+        # 별도 boolean 입력 없이 source_type으로 매칭 여부를 결정한다.
         return use_for_matching(self.source_type)
 
 

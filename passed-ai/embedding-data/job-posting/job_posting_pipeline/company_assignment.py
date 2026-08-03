@@ -11,12 +11,16 @@ import hashlib
 from .config import get_settings
 
 
+# ---------------------------------------------------------------------------
+# 결정적 회사 배정
+# ---------------------------------------------------------------------------
 def assign_company_id(job_posting_id: int) -> int:
     """company_id 가 주어지지 않은 공고의 회사를 결정적으로 배정한다.
 
     같은 job_posting_id + 같은 시드면 항상 같은 결과를 보장한다.
     """
     settings = get_settings()
+    # 공고 ID와 고정 시드를 결합하면 반복 적재해도 같은 회사가 선택된다.
     payload = f"{job_posting_id}{settings.company_assignment_seed}".encode("utf-8")
     digest = hashlib.sha256(payload).digest()
     as_int = int.from_bytes(digest, byteorder="big")
@@ -24,6 +28,9 @@ def assign_company_id(job_posting_id: int) -> int:
     return settings.company_id_min + (as_int % span)
 
 
+# ---------------------------------------------------------------------------
+# 외래키 사전 검증
+# ---------------------------------------------------------------------------
 def check_company_id_range(
     conn, min_id: int | None = None, max_id: int | None = None
 ) -> list[int]:
@@ -34,7 +41,9 @@ def check_company_id_range(
     settings = get_settings()
     lo = min_id if min_id is not None else settings.company_id_min
     hi = max_id if max_id is not None else settings.company_id_max
+    # 개발용 기준정보 전체 범위를 점검할 때 사용하는 함수다.
     expected = set(range(lo, hi + 1))
+    # 실제 입력에서 사용한 ID만 조회해 불필요한 전체 범위 검사를 피한다.
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM companies WHERE id BETWEEN %s AND %s", (lo, hi))
         present = {r[0] for r in cur.fetchall()}

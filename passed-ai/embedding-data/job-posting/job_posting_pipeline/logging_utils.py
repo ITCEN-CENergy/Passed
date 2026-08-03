@@ -24,6 +24,7 @@ def configure_logging(
     path = path.expanduser().resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    # 콘솔과 파일에 동일한 형식을 사용해 실행 시점의 로그를 쉽게 대조한다.
     formatter = logging.Formatter(
         "%(asctime)s %(levelname)s %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -31,6 +32,7 @@ def configure_logging(
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
 
+    # 장시간 배치가 디스크를 무제한 사용하지 않도록 크기 기반으로 회전한다.
     file_handler = RotatingFileHandler(
         path,
         maxBytes=10 * 1024 * 1024,

@@ -48,8 +48,24 @@ class Settings(BaseSettings):
         default="openai/text-embedding-3-small", alias="EMBEDDING_MODEL"
     )
     embedding_dimension: int = Field(default=1536, alias="EMBEDDING_DIMENSION")
-    embedding_batch_size: int = Field(default=100, alias="EMBEDDING_BATCH_SIZE")
-    embedding_max_retries: int = Field(default=5, alias="EMBEDDING_MAX_RETRIES")
+    # 공식 API의 입력 배열 최대 개수는 2,048개이며 기본값은 보수적으로 100개다.
+    embedding_batch_size: int = Field(
+        default=100,
+        ge=1,
+        le=2048,
+        alias="EMBEDDING_BATCH_SIZE",
+    )
+    embedding_max_retries: int = Field(
+        default=5,
+        ge=1,
+        alias="EMBEDDING_MAX_RETRIES",
+    )
+    embedding_request_timeout_seconds: float = Field(
+        default=60.0,
+        gt=0,
+        alias="EMBEDDING_REQUEST_TIMEOUT_SECONDS",
+        description="OpenAI 임베딩 API 요청 timeout(초)",
+    )
     embedding_only_matching: bool = Field(
         default=True,
         alias="EMBEDDING_ONLY_MATCHING",

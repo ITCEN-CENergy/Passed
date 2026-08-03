@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 _DATE_RE = re.compile(r"^\d{8}$")
 
 
+# CSV 한 행의 형식 또는 참조 데이터가 적재 조건을 만족하지 못한 경우 사용한다.
 class CSVRowError(ValueError):
     """CSV 행 검증 실패."""
 
@@ -39,6 +40,9 @@ class LoadResult:
     job_posting_ids: list[int] = field(default_factory=list)
 
 
+# ---------------------------------------------------------------------------
+# 파일 읽기와 값 변환
+# ---------------------------------------------------------------------------
 def read_csv_rows(csv_path: str | Path) -> tuple[list[dict[str, str]], str]:
     """CSV를 UTF-8 우선으로 읽고, 실패하면 CP949로 다시 읽는다.
 
@@ -104,6 +108,7 @@ def parse_row(raw: dict[str, str]) -> dict:
     # BOM/동일 컬럼명 호환: 키 앞의 \ufeff 제거
     row = {k.lstrip("\ufeff").strip(): v for k, v in raw.items()}
 
+    # PK/FK와 날짜처럼 DB 무결성에 직접 영향을 주는 값부터 검증한다.
     job_posting_id = _require(row.get("job_posting_id"), "job_posting_id")
     job_posting_id = int(job_posting_id)
 
@@ -148,6 +153,9 @@ def parse_row(raw: dict[str, str]) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# job_postings 저장 SQL
+# ---------------------------------------------------------------------------
 _UPSERT_SQL = """
 INSERT INTO job_postings (
     id, title, company_id, job_role_id, start_ymd, end_ymd, headcount,
@@ -190,6 +198,7 @@ def _fix_sequence(conn: Connection) -> None:
 
     job_postings.id 가 IDENTITY(DEFAULT) 기반이라고 가정한다.
     """
+    # CSV가 identity 값을 명시하므로 다음 자동 INSERT가 충돌하지 않게 맞춘다.
     with conn.cursor() as cur:
         cur.execute(
             "SELECT setval("
@@ -211,6 +220,9 @@ def _check_job_roles_exist(conn: Connection, job_role_ids: Iterable[int]) -> lis
     return sorted(ids - present)
 
 
+# ---------------------------------------------------------------------------
+# CSV 전체 적재 오케스트레이션
+# ---------------------------------------------------------------------------
 def load_csv(conn: Connection, csv_path: str | Path) -> LoadResult:
     """하나의 CSV 파일을 읽어 job_postings 에 UPSERT 한다.
 
@@ -290,6 +302,7 @@ def load_csv(conn: Connection, csv_path: str | Path) -> LoadResult:
 
 def fetch_posting(conn: Connection, job_posting_id: int) -> dict | None:
     """job_postings 원문을 청크 생성 입력으로 가져온다."""
+    # 화면 표시용 원문을 그대로 가져오고 정규화는 chunker에서만 수행한다.
     with conn.cursor() as cur:
         cur.execute(
             "SELECT id, title, position_detail, main_duty, qualification, "
@@ -300,11 +313,6 @@ def fetch_posting(conn: Connection, job_posting_id: int) -> dict | None:
         row = cur.fetchone()
     if row is None:
         return None
-    cols = ["id", "title", "position_detail", "main_duty", "qualification",
-            "preference", "disqualify_reason", "process"]
-    return dict(zip(cols, row))
-    # normalize_text 는 청크 생성 단계에서 적용한다.
-    _ = normalize_text  # 정규화는 청커에서 수행
     cols = ["id", "title", "position_detail", "main_duty", "qualification",
             "preference", "disqualify_reason", "process"]
     return dict(zip(cols, row))

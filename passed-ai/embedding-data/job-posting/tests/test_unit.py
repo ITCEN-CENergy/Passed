@@ -5,6 +5,8 @@ DB/LLM 없이 실행 가능한 결정적 로직만 검증한다.
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import pytest
 
 from job_posting_pipeline.chunker import (
@@ -38,8 +40,82 @@ class _FakeEnc:
 
 import job_posting_pipeline.chunker as _chunker_mod  # noqa: E402
 import job_posting_pipeline.csv_loader as _csv_loader_mod  # noqa: E402
+import job_posting_pipeline.embedding_worker as _embedding_worker_mod  # noqa: E402
 
 _chunker_mod._enc = _FakeEnc()  # type: ignore[attr-defined]
+
+
+# --- 임베딩 API/작업자 ---
+
+def test_create_embeddings_restores_response_index_order(monkeypatch):
+    settings = SimpleNamespace(
+        embedding_model="openai/text-embedding-3-small",
+        embedding_dimension=3,
+        embedding_max_retries=2,
+    )
+    monkeypatch.setattr(_embedding_worker_mod, "get_settings", lambda: settings)
+
+    response = SimpleNamespace(
+        # API 응답 순서가 입력 순서와 다르더라도 index로 복원해야 한다.
+        data=[
+            SimpleNamespace(index=1, embedding=[0.4, 0.5, 0.6]),
+            SimpleNamespace(index=0, embedding=[0.1, 0.2, 0.3]),
+        ],
+        usage=SimpleNamespace(prompt_tokens=17),
+    )
+    client = SimpleNamespace(
+        embeddings=SimpleNamespace(create=lambda **kwargs: response)
+    )
+
+    result = _embedding_worker_mod._create_embeddings(
+        ["첫 번째", "두 번째"],
+        client=client,
+    )
+
+    assert result.vectors == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+    assert result.prompt_tokens == 17
+
+
+def test_create_embeddings_rejects_wrong_dimension(monkeypatch):
+    settings = SimpleNamespace(
+        embedding_model="openai/text-embedding-3-small",
+        embedding_dimension=3,
+        embedding_max_retries=1,
+    )
+    monkeypatch.setattr(_embedding_worker_mod, "get_settings", lambda: settings)
+    response = SimpleNamespace(
+        data=[SimpleNamespace(index=0, embedding=[0.1, 0.2])],
+        usage=SimpleNamespace(prompt_tokens=3),
+    )
+    client = SimpleNamespace(
+        embeddings=SimpleNamespace(create=lambda **kwargs: response)
+    )
+
+    with pytest.raises(
+        _embedding_worker_mod.InvalidEmbeddingResponseError,
+        match="차원 불일치",
+    ):
+        _embedding_worker_mod._create_embeddings(["문장"], client=client)
+
+
+def test_process_batch_failure_returns_false_without_db_update(monkeypatch):
+    stats = _embedding_worker_mod.EmbeddingRunStats()
+
+    monkeypatch.setattr(
+        _embedding_worker_mod,
+        "_create_embeddings",
+        lambda texts, client: (_ for _ in ()).throw(RuntimeError("API 실패")),
+    )
+
+    succeeded = _embedding_worker_mod._process_batch(
+        conn=object(),
+        rows=[(1, "청크 내용", "hash")],
+        stats=stats,
+        client=object(),
+    )
+
+    assert succeeded is False
+    assert stats.failed == 1
 
 
 # --- CSV 인코딩 ---

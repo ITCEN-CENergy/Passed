@@ -1,5 +1,5 @@
--- 계획서 7절에 명시된 job_posting_chunks 목표 구조.
--- job_postings 는 기존 DB에 이미 존재한다고 가정하고 여기서 만들지 않는다.
+-- 채용공고 원문에서 생성한 검색·추천용 파생 청크 테이블.
+-- 원본 job_postings가 삭제되면 해당 공고의 청크도 함께 삭제한다.
 CREATE TABLE IF NOT EXISTS job_posting_chunks (
     id                bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     job_posting_id    bigint        NOT NULL,
@@ -17,10 +17,11 @@ CREATE TABLE IF NOT EXISTS job_posting_chunks (
     CONSTRAINT chk_chunk_index_nonneg CHECK (chunk_index >= 0)
 );
 
--- (job_posting_id, source_type, chunk_index) 고유 제약
+-- 한 공고·소스 안에서 chunk_index를 동기화 키로 사용한다.
 CREATE UNIQUE INDEX IF NOT EXISTS uq_job_posting_chunks_key
     ON job_posting_chunks (job_posting_id, source_type, chunk_index);
 
+-- 공고별 조회, 소스별 집계, 해시 기반 임베딩 재사용을 위한 인덱스.
 CREATE INDEX IF NOT EXISTS ix_job_posting_chunks_posting
     ON job_posting_chunks (job_posting_id);
 CREATE INDEX IF NOT EXISTS ix_job_posting_chunks_source
@@ -28,12 +29,12 @@ CREATE INDEX IF NOT EXISTS ix_job_posting_chunks_source
 CREATE INDEX IF NOT EXISTS ix_job_posting_chunks_hash
     ON job_posting_chunks (content_hash);
 
--- 임베딩 대상 조회 인덱스: embedding IS NULL AND chunk_content <> '' AND use_for_matching
+-- 임베딩 작업자가 조회하는 조건만 대상으로 하는 부분 인덱스.
 CREATE INDEX IF NOT EXISTS ix_job_posting_chunks_embed_pending
     ON job_posting_chunks (job_posting_id)
     WHERE embedding IS NULL AND chunk_content <> '' AND use_for_matching = true;
 
--- updated_at 자동 갱신 트리거
+-- UPDATE 시 updated_at을 자동으로 현재 시각으로 바꾼다.
 CREATE OR REPLACE FUNCTION trg_set_updated_at()
 RETURNS trigger AS $$
 BEGIN
@@ -48,13 +49,18 @@ CREATE TRIGGER trg_job_posting_chunks_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION trg_set_updated_at();
 
--- use_for_matching 규칙(DB 제약):
---   PROCESS, DISQUALIFICATION, BENEFIT -> false
---   나머지 source_type                -> true
-ALTER TABLE job_posting_chunks DROP CONSTRAINT IF EXISTS chk_use_for_matching_rule;
+-- 절차·결격사유·복리후생은 직무 매칭 벡터 검색에서 제외한다.
+ALTER TABLE job_posting_chunks
+    DROP CONSTRAINT IF EXISTS chk_use_for_matching_rule;
 ALTER TABLE job_posting_chunks
     ADD CONSTRAINT chk_use_for_matching_rule CHECK (
-        ((source_type IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')) AND use_for_matching = false)
+        (
+            source_type IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
+            AND use_for_matching = false
+        )
         OR
-        ((source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')) AND use_for_matching = true)
+        (
+            source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
+            AND use_for_matching = true
+        )
     );

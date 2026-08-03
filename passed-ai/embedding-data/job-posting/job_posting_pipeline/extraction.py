@@ -20,6 +20,9 @@ from .models import ExtractedItem
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# LLM 구조화 출력 스키마
+# ---------------------------------------------------------------------------
 class TechStackItem(BaseModel):
     name: str
     evidence: str
@@ -46,6 +49,7 @@ class ExtractionOutcome:
     used_prompt_version: str
 
 
+# 프롬프트는 원문에 없는 사실을 추측하지 못하도록 역할과 제약을 고정한다.
 _SYSTEM_PROMPT = (
     "너는 채용공고 분석 보조다. 입력 공고 원문에서 기술 스택과 복리후생을 "
     "추출한다. 입력 원문에 명시된 정보만 반환하고, 일반적인 업계 관행이나 "
@@ -69,6 +73,9 @@ _USER_PROMPT_TEMPLATE = (
 )
 
 
+# ---------------------------------------------------------------------------
+# 프롬프트 입력과 변경 감지 해시
+# ---------------------------------------------------------------------------
 def _build_user_prompt(posting: dict) -> str:
     return _USER_PROMPT_TEMPLATE.format(
         title=posting.get("title") or "",
@@ -104,6 +111,7 @@ def _validate_evidence(items: list, source_text: str, label: str) -> list[Extrac
         name = (item.name or "").strip()
         if not name:
             continue
+        # LLM의 추측 저장을 막기 위해 evidence가 원문에 정확히 포함될 때만 인정한다.
         if ev and ev in source_text:
             kept.append(ExtractedItem(name=name, evidence=ev))
         else:
@@ -113,6 +121,9 @@ def _validate_evidence(items: list, source_text: str, label: str) -> list[Extrac
     return kept
 
 
+# ---------------------------------------------------------------------------
+# 입력 해시 기반 추출 캐시
+# ---------------------------------------------------------------------------
 def _load_from_cache(conn, job_posting_id: int, input_h: str, prompt_version: str) -> ExtractionOutcome | None:
     """입력 해시가 같으면 이전 추출 결과를 재사용(LLM 호출 생략)."""
     if conn is None:
@@ -129,6 +140,7 @@ def _load_from_cache(conn, job_posting_id: int, input_h: str, prompt_version: st
     if row is None:
         return None
     db_input_hash, db_prompt_version, db_model, tech_json, benefit_json = row
+    # 원문 또는 프롬프트 버전이 바뀌면 이전 결과를 사용하지 않는다.
     if db_input_hash != input_h or db_prompt_version != prompt_version:
         return None
     tech = [ExtractedItem(name=d["name"], evidence=d.get("evidence", "")) for d in tech_json]
@@ -176,6 +188,9 @@ def _save_cache(
         )
 
 
+# ---------------------------------------------------------------------------
+# 외부 LLM 호출
+# ---------------------------------------------------------------------------
 def _extract_with_llm(posting: dict) -> ExtractionResult:
     """langchain-openai 구조화 출력으로 추출."""
     from langchain_openai import ChatOpenAI
@@ -213,6 +228,7 @@ def extract(
     )
     input_h = _input_hash(posting)
 
+    # API 호출 전에 캐시를 조회해 동일 원문의 중복 비용을 피한다.
     cached = _load_from_cache(conn, posting["id"], input_h, settings.extraction_prompt_version)
     if cached is not None:
         logger.info("추출 캐시 재사용 job_posting_id=%s", posting["id"])
@@ -231,6 +247,7 @@ def extract(
         return empty
 
     last_err: Exception | None = None
+    # 공고 하나가 반복 실패해도 전체 배치를 멈추지 않고 빈 추출 결과로 계속한다.
     for attempt in range(1, settings.extraction_max_retries + 1):
         try:
             raw: ExtractionResult = _extract_with_llm(posting)

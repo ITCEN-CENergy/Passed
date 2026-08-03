@@ -21,6 +21,7 @@ from .models import Chunk
 logger = logging.getLogger(__name__)
 
 
+# 한 공고를 동기화한 결과를 실행 로그와 집계에 전달한다.
 @dataclass
 class SyncStats:
     inserted: int = 0
@@ -45,6 +46,9 @@ class _ExistingRow:
     embedding_text: str | None
 
 
+# ---------------------------------------------------------------------------
+# 기존 청크 조회와 임베딩 재사용 후보 구성
+# ---------------------------------------------------------------------------
 def _load_existing(conn: Connection, job_posting_id: int) -> list[_ExistingRow]:
     with conn.cursor() as cur:
         cur.execute(_SELECT_EXISTING, (job_posting_id,))
@@ -56,6 +60,7 @@ def _load_existing(conn: Connection, job_posting_id: int) -> list[_ExistingRow]:
 def _build_reuse_map(existing: list[_ExistingRow]) -> dict[str, dict[str, str]]:
     """source_type -> {content_hash: embedding_text} (embedding 이 있는 행만)."""
     reuse: dict[str, dict[str, str]] = {}
+    # 같은 source_type·content_hash의 기존 벡터만 재사용한다.
     for row in existing:
         if row.embedding_text:
             reuse.setdefault(row.source_type, {})[row.content_hash] = row.embedding_text
@@ -77,6 +82,9 @@ _UPDATE_SQL = (
 _DELETE_SQL = "DELETE FROM job_posting_chunks WHERE id = %s"
 
 
+# ---------------------------------------------------------------------------
+# 신규 청크와 DB 상태 비교·반영
+# ---------------------------------------------------------------------------
 def sync_posting(conn: Connection, job_posting_id: int, new_chunks: list[Chunk]) -> SyncStats:
     """공고 하나의 청크를 동기화. 호출자가 트랜잭션 commit/rollback 을 담당한다."""
     stats = SyncStats()
@@ -94,6 +102,7 @@ def sync_posting(conn: Connection, job_posting_id: int, new_chunks: list[Chunk])
     updates: list[tuple] = []
     deletes: list[int] = []
 
+    # 키와 해시를 비교해 INSERT/UPDATE/유지 중 하나로 분류한다.
     for c in new_chunks:
         key = (c.source_type.value, c.chunk_index)
         reuse_text = reuse_map.get(c.source_type.value, {}).get(c.content_hash)
@@ -121,6 +130,7 @@ def sync_posting(conn: Connection, job_posting_id: int, new_chunks: list[Chunk])
         if key not in new_keys:
             deletes.append(row.id)
 
+    # 분류가 끝난 뒤 DB 작업을 묶어서 실행해 왕복 횟수를 줄인다.
     with conn.cursor() as cur:
         if inserts:
             cur.executemany(_INSERT_SQL, inserts)

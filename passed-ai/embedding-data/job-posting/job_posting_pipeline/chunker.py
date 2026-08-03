@@ -18,6 +18,9 @@ from .normalize import normalize_tech_name, normalize_text
 _enc: tiktoken.Encoding | None = None
 
 
+# ---------------------------------------------------------------------------
+# 토큰 계산과 해시
+# ---------------------------------------------------------------------------
 def get_encoding() -> tiktoken.Encoding:
     """text-embedding-3-small 기준 토크나이저(cl100k_base)를 캐싱한다."""
     global _enc
@@ -40,6 +43,9 @@ def content_hash(text: str) -> str:
 EMPTY_CONTENT_HASH = content_hash("")
 
 
+# ---------------------------------------------------------------------------
+# 원문 유형별 분할
+# ---------------------------------------------------------------------------
 def split_list_items(text: str) -> list[str]:
     """목록형 텍스트를 줄 단위 항목으로 분리.
 
@@ -55,6 +61,7 @@ def _token_split(text: str, max_tokens: int, overlap: int) -> list[str]:
     tokens = enc.encode(text)
     if len(tokens) <= max_tokens:
         return [text]
+    # 다음 시작점을 overlap만큼 앞당겨 청크 경계의 문맥 손실을 줄인다.
     step = max(1, max_tokens - overlap)
     pieces: list[str] = []
     start = 0
@@ -78,6 +85,7 @@ def split_narrative(text: str, max_tokens: int, overlap: int) -> list[str]:
         return []
     chunks: list[str] = []
     buf = ""
+    # 짧은 문단은 가능한 한 하나의 청크로 묶고 긴 문단만 토큰 분할한다.
     for para in paragraphs:
         candidate = f"{buf}\n{para}" if buf else para
         if token_count(candidate) <= max_tokens:
@@ -110,6 +118,7 @@ def _emit(
     """
     if not raw_items or all(not item for item in raw_items):
         return [Chunk(source_type, 0, "", EMPTY_CONTENT_HASH)]
+    # 모든 source_type에서 chunk_index를 0부터 연속적으로 부여한다.
     chunks: list[Chunk] = []
     idx = 0
     for item in raw_items:
@@ -127,6 +136,9 @@ def _emit(
     return chunks
 
 
+# ---------------------------------------------------------------------------
+# LLM 구조화 결과를 청크로 변환
+# ---------------------------------------------------------------------------
 def _build_tech_chunks(tech_stacks: list[ExtractedItem]) -> list[Chunk]:
     """기술 스택: 기술 하나당 한 행. 정규화·중복 제거."""
     seen: set[str] = set()
@@ -168,6 +180,7 @@ def build_chunks(
     benefits = benefits or []
     chunks: list[Chunk] = []
 
+    # 공통 정규화와 빈 청크 규칙을 모든 원문 필드에 동일하게 적용한다.
     def add(source_type: SourceType, raw: str | None, splitter) -> None:
         normalized = normalize_text(raw)
         if not normalized:

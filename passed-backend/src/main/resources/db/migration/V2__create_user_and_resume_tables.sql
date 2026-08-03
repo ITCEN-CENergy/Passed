@@ -91,7 +91,14 @@ CREATE TABLE cover_letter_items (
     question_id BIGINT NOT NULL,
     answer TEXT,
     relevance_score NUMERIC(4, 3),
+
+    -- 임베딩 관리
     embedding VECTOR(1536),
+    embedding_model VARCHAR(100),
+    embedding_status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+    embedding_updated_at TIMESTAMPTZ,
+    content_hash VARCHAR(64),
+
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -112,6 +119,22 @@ CREATE TABLE cover_letter_items (
         CHECK (
             relevance_score IS NULL
             OR relevance_score BETWEEN 0 AND 1
+        ),
+
+    CONSTRAINT ck_cover_letter_item_embedding_status
+        CHECK (
+            embedding_status IN (
+                'PENDING',
+                'PROCESSING',
+                'COMPLETED',
+                'FAILED'
+            )
+        ),
+
+    CONSTRAINT ck_cover_letter_item_content_hash
+        CHECK (
+            content_hash IS NULL
+            OR content_hash ~ '^[0-9a-fA-F]{64}$'
         )
 );
 
@@ -149,7 +172,14 @@ CREATE TABLE resume_chunks (
     source_id BIGINT NOT NULL,
     chunk_index INT NOT NULL DEFAULT 0,
     chunk_content TEXT NOT NULL,
+
+    -- 임베딩 관리
     embedding VECTOR(1536),
+    embedding_model VARCHAR(100),
+    embedding_status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+    embedding_updated_at TIMESTAMPTZ,
+    content_hash VARCHAR(64),
+
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_resume_chunk_resume
@@ -175,14 +205,32 @@ CREATE TABLE resume_chunks (
                 'CERTIFICATION',
                 'AWARD',
                 'OVERSEAS_EXPERIENCE',
-                'LANGUAGE'            
-          )
+                'LANGUAGE'
+            )
         ),
 
     CONSTRAINT ck_resume_chunk_index
-        CHECK (chunk_index >= 0)
-);
+        CHECK (chunk_index >= 0),
 
+    CONSTRAINT ck_resume_chunk_content
+        CHECK (BTRIM(chunk_content) <> ''),
+
+    CONSTRAINT ck_resume_chunk_embedding_status
+        CHECK (
+            embedding_status IN (
+                'PENDING',
+                'PROCESSING',
+                'COMPLETED',
+                'FAILED'
+            )
+        ),
+
+    CONSTRAINT ck_resume_chunk_content_hash
+        CHECK (
+            content_hash IS NULL
+            OR content_hash ~ '^[0-9a-fA-F]{64}$'
+        )
+);
 
 -- =============================================
 -- 7. 개인정보
@@ -218,8 +266,8 @@ CREATE TABLE educations (
     resume_id BIGINT NOT NULL,
     school_type VARCHAR(50),
     school_name VARCHAR(100) NOT NULL,
-    admission_date VARCHAR(10),
-    graduation_date VARCHAR(10),
+    admission_date DATE,
+    graduation_date DATE,
     status VARCHAR(50),
     is_transfer BOOLEAN,
     major_name VARCHAR(100),
@@ -262,8 +310,8 @@ CREATE TABLE experiences (
     resume_id BIGINT NOT NULL,
     company_name VARCHAR(100) NOT NULL,
     department_name VARCHAR(100),
-    start_date VARCHAR(10),
-    end_date VARCHAR(10),
+    start_date DATE,
+    end_date DATE,
     is_working BOOLEAN,
     position VARCHAR(50),
     responsibilities TEXT,
@@ -286,8 +334,8 @@ CREATE TABLE activities (
     resume_id BIGINT NOT NULL,
     activity_type VARCHAR(50),
     organization VARCHAR(100),
-    start_date VARCHAR(10),
-    end_date VARCHAR(10),
+    start_date DATE,
+    end_date DATE,
     description TEXT,
 
     CONSTRAINT fk_activity_resume
@@ -306,8 +354,8 @@ CREATE TABLE trainings (
     resume_id BIGINT NOT NULL,
     name VARCHAR(150),
     institution VARCHAR(100),
-    start_date VARCHAR(10),
-    end_date VARCHAR(10),
+    start_date DATE,
+    end_date DATE,
     description TEXT,
 
     CONSTRAINT fk_training_resume
@@ -326,7 +374,7 @@ CREATE TABLE certifications (
     resume_id BIGINT NOT NULL,
     name VARCHAR(150),
     issuer VARCHAR(100),
-    acquisition_date VARCHAR(10),
+    acquisition_date DATE,
 
     CONSTRAINT fk_certification_resume
         FOREIGN KEY (resume_id)
@@ -344,7 +392,7 @@ CREATE TABLE awards (
     resume_id BIGINT NOT NULL,
     name VARCHAR(150),
     issuer VARCHAR(100),
-    award_date VARCHAR(10),
+    award_date DATE,
     description TEXT,
 
     CONSTRAINT fk_award_resume
@@ -362,8 +410,8 @@ CREATE TABLE overseas_experiences (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     resume_id BIGINT NOT NULL,
     country_name VARCHAR(100),
-    start_date VARCHAR(10),
-    end_date VARCHAR(10),
+    start_date DATE,
+    end_date DATE,
     description TEXT,
 
     CONSTRAINT fk_overseas_experience_resume

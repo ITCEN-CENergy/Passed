@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Array;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 
@@ -40,9 +37,4 @@ public class CoverLetterItem extends BaseTimeEntity {
 
     @Column(name = "relevance_score", precision = 4, scale = 2)
     private BigDecimal relevanceScore;
-
-    @JdbcTypeCode(SqlTypes.VECTOR)
-    @Array(length = 1536)
-    @Column(name = "embedding", columnDefinition = "vector(1536)")
-    private float[] embedding;
 }

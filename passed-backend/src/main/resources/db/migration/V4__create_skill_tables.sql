@@ -1,12 +1,3 @@
-BEGIN;
-
--- =============================================
--- pgvector 확장 활성화
--- 이미 활성화된 경우에는 아무 작업도 하지 않음
--- =============================================
-
-CREATE EXTENSION IF NOT EXISTS vector;
-
 -- =============================================
 -- 1. 공통 스킬 마스터
 --
@@ -306,18 +297,6 @@ CREATE INDEX idx_job_skill_evidences_mapping_method
 
 
 -- =============================================
--- 7. pgvector HNSW 인덱스
---
--- 추출된 스킬 후보와 공통 스킬 사전을
--- 코사인 유사도로 비교하기 위한 인덱스
--- =============================================
-
-CREATE INDEX idx_skills_embedding_hnsw
-    ON skills
-    USING hnsw (embedding vector_cosine_ops);
-
-
--- =============================================
 -- 8. updated_at 자동 갱신 함수
 --
 -- 이전 마이그레이션에서 같은 함수가 생성되어 있어도
@@ -355,6 +334,3 @@ CREATE TRIGGER trg_job_skill_evidences_updated_at
     BEFORE UPDATE ON job_posting_skill_evidences
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
-
-COMMIT;

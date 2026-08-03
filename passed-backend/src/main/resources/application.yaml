@@ -3,9 +3,9 @@ spring:
     name: passed-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/edu
-    username: edu
-    password: 1234
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/edu}
+    username: ${DB_USERNAME:edu}
+    password: ${DB_PASSWORD:1234}
     hikari:
       maximum-pool-size: 10
 

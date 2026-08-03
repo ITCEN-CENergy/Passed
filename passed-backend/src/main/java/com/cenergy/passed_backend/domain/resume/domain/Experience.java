@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @Table(name = "experiences")
@@ -25,11 +27,11 @@ public class Experience {
     @Column(name = "department_name", length = 100)
     private String departmentName;
 
-    @Column(name = "start_date", length = 10)
-    private String startDate;
+    @Column(name = "start_date")
+    private LocalDate startDate;
 
-    @Column(name = "end_date", length = 10)
-    private String endDate;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Column(name = "is_working")
     private Boolean working;

@@ -1,12 +1,3 @@
-BEGIN;
-
--- =============================================
--- pgvector 확장 활성화
--- 이미 활성화된 경우에는 아무 작업도 하지 않음
--- =============================================
-
-CREATE EXTENSION IF NOT EXISTS vector;
-
 -- =============================================
 -- 1. 산업
 -- =============================================
@@ -306,16 +297,3 @@ CREATE TRIGGER trg_job_posting_chunks_updated_at
     BEFORE UPDATE ON job_posting_chunks
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
-
--- =============================================
--- 9. pgvector HNSW 인덱스
--- 코사인 거리 기반 유사도 검색
--- =============================================
-
-CREATE INDEX idx_job_posting_chunks_embedding_hnsw
-    ON job_posting_chunks
-    USING hnsw (embedding vector_cosine_ops);
-
-
-COMMIT;

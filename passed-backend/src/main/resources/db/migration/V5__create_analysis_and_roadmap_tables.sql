@@ -1,12 +1,3 @@
-BEGIN;
-
--- =============================================
--- pgvector 확장 활성화
--- 이미 활성화된 경우에는 아무 작업도 하지 않음
--- =============================================
-
-CREATE EXTENSION IF NOT EXISTS vector;
-
 -- =============================================
 -- 1. 분석 결과 리포트
 -- 사용자와 채용공고 조합별 하나의 분석 결과 저장
@@ -471,6 +462,3 @@ CREATE TRIGGER trg_learning_resources_updated_at
     BEFORE UPDATE ON learning_resources
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
-
-COMMIT;

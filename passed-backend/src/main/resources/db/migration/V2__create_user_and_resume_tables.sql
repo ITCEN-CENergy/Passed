@@ -1,12 +1,3 @@
-BEGIN;
-
--- =============================================
--- pgvector 확장 활성화
--- 이미 활성화된 경우에는 아무 작업도 하지 않음
--- =============================================
-
-CREATE EXTENSION IF NOT EXISTS vector;
-
 -- =============================================
 -- 1. 사용자
 -- =============================================
@@ -99,14 +90,7 @@ CREATE TABLE cover_letter_items (
     cover_letter_id BIGINT NOT NULL,
     question_id BIGINT NOT NULL,
     answer TEXT,
-    relevance_score NUMERIC(4, 3),
-
-    -- 임베딩 관리
-    embedding VECTOR(1536),
-    embedding_model VARCHAR(100),
-    embedding_status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
-    embedding_updated_at TIMESTAMPTZ,
-    content_hash VARCHAR(64),
+    relevance_score NUMERIC(4, 2),
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -128,9 +112,44 @@ CREATE TABLE cover_letter_items (
         CHECK (
             relevance_score IS NULL
             OR relevance_score BETWEEN 0 AND 1
-        ),
+        )
+);
 
-    CONSTRAINT ck_cover_letter_item_embedding_status
+
+-- =============================================
+-- 5. 자기소개서 청크
+-- 자기소개서 항목의 답변을 검색 가능한 단위로 분할하여 저장
+-- =============================================
+
+CREATE TABLE cover_letter_chunks (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    cover_letter_item_id BIGINT NOT NULL,
+    chunk_index INT NOT NULL DEFAULT 0,
+    chunk_content TEXT NOT NULL,
+
+    -- 임베딩 관리
+    embedding VECTOR(1536),
+    content_hash VARCHAR(64),
+    embedding_model VARCHAR(100),
+    embedding_status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_cover_letter_chunk_item
+        FOREIGN KEY (cover_letter_item_id)
+        REFERENCES cover_letter_items(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_cover_letter_chunk_item_index
+        UNIQUE (cover_letter_item_id, chunk_index),
+
+    CONSTRAINT ck_cover_letter_chunk_index
+        CHECK (chunk_index >= 0),
+
+    CONSTRAINT ck_cover_letter_chunk_content
+        CHECK (BTRIM(chunk_content) <> ''),
+
+    CONSTRAINT ck_cover_letter_chunk_embedding_status
         CHECK (
             embedding_status IN (
                 'PENDING',
@@ -140,7 +159,7 @@ CREATE TABLE cover_letter_items (
             )
         ),
 
-    CONSTRAINT ck_cover_letter_item_content_hash
+    CONSTRAINT ck_cover_letter_chunk_content_hash
         CHECK (
             content_hash IS NULL
             OR content_hash ~ '^[0-9a-fA-F]{64}$'
@@ -149,7 +168,7 @@ CREATE TABLE cover_letter_items (
 
 
 -- =============================================
--- 5. 이력서
+-- 6. 이력서
 -- 사용자와 이력서 1:1
 -- =============================================
 
@@ -169,7 +188,7 @@ CREATE TABLE resumes (
 
 
 -- =============================================
--- 6. 이력서 청크
+-- 7. 이력서 청크
 -- source_id는 여러 하위 테이블을 가리키는 다형 참조이므로
 -- 일반적인 외래키 제약조건을 설정하지 않음
 -- =============================================
@@ -242,7 +261,7 @@ CREATE TABLE resume_chunks (
 );
 
 -- =============================================
--- 7. 개인정보
+-- 8. 개인정보
 -- 이력서와 개인정보 1:1
 -- =============================================
 
@@ -267,7 +286,7 @@ CREATE TABLE personal_infos (
 
 
 -- =============================================
--- 8. 학력
+-- 9. 학력
 -- =============================================
 
 CREATE TABLE educations (
@@ -311,7 +330,7 @@ CREATE TABLE educations (
 
 
 -- =============================================
--- 9. 경력
+-- 10. 경력
 -- =============================================
 
 CREATE TABLE experiences (
@@ -335,7 +354,7 @@ CREATE TABLE experiences (
 
 
 -- =============================================
--- 10. 인턴 및 대외활동
+-- 11. 인턴 및 대외활동
 -- =============================================
 
 CREATE TABLE activities (
@@ -355,7 +374,7 @@ CREATE TABLE activities (
 
 
 -- =============================================
--- 11. 교육 및 훈련
+-- 12. 교육 및 훈련
 -- =============================================
 
 CREATE TABLE trainings (
@@ -375,7 +394,7 @@ CREATE TABLE trainings (
 
 
 -- =============================================
--- 12. 자격증 및 어학시험
+-- 13. 자격증 및 어학시험
 -- =============================================
 
 CREATE TABLE certifications (
@@ -393,7 +412,7 @@ CREATE TABLE certifications (
 
 
 -- =============================================
--- 13. 수상경력
+-- 14. 수상경력
 -- =============================================
 
 CREATE TABLE awards (
@@ -412,7 +431,7 @@ CREATE TABLE awards (
 
 
 -- =============================================
--- 14. 해외경험
+-- 15. 해외경험
 -- =============================================
 
 CREATE TABLE overseas_experiences (
@@ -431,7 +450,7 @@ CREATE TABLE overseas_experiences (
 
 
 -- =============================================
--- 15. 외국어 회화 능력
+-- 16. 외국어 회화 능력
 -- =============================================
 
 CREATE TABLE language_proficiencies (
@@ -457,12 +476,15 @@ CREATE TABLE language_proficiencies (
 
 
 -- =============================================
--- 16. 일반 조회용 인덱스
+-- 17. 일반 조회용 인덱스
 -- PostgreSQL은 외래키 컬럼의 인덱스를 자동 생성하지 않으므로 별도 생성
 -- =============================================
 
 CREATE INDEX idx_cover_letter_items_question_id
     ON cover_letter_items(question_id);
+
+CREATE INDEX idx_cover_letter_chunks_item_id
+    ON cover_letter_chunks(cover_letter_item_id);
 
 CREATE INDEX idx_resume_chunks_resume_id
     ON resume_chunks(resume_id);
@@ -497,16 +519,8 @@ CREATE INDEX idx_overseas_experiences_resume_id
 CREATE INDEX idx_language_proficiencies_resume_id
     ON language_proficiencies(resume_id);
 
-CREATE INDEX idx_cover_letter_items_embedding_hnsw
-    ON cover_letter_items
-    USING hnsw (embedding vector_cosine_ops);
-
-CREATE INDEX idx_resume_chunks_embedding_hnsw
-    ON resume_chunks
-    USING hnsw (embedding vector_cosine_ops);
-
 -- =============================================
--- 17. updated_at 자동 갱신 함수 및 트리거
+-- 18. updated_at 자동 갱신 함수 및 트리거
 -- DEFAULT만 설정하면 UPDATE 시각은 자동 변경되지 않음
 -- =============================================
 
@@ -524,6 +538,3 @@ CREATE TRIGGER trg_cover_letter_items_updated_at
     BEFORE UPDATE ON cover_letter_items
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
-
-COMMIT;

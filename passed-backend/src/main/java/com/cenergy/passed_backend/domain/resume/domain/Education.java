@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -27,11 +28,11 @@ public class Education {
     @Column(name = "school_name", length = 100, nullable = false)
     private String schoolName;
 
-    @Column(name = "admission_date", length = 10)
-    private String admissionDate;
+    @Column(name = "admission_date")
+    private LocalDate admissionDate;
 
-    @Column(name = "graduation_date", length = 10)
-    private String graduationDate;
+    @Column(name = "graduation_date")
+    private LocalDate graduationDate;
 
     @Column(name = "status", length = 50)
     private String status;

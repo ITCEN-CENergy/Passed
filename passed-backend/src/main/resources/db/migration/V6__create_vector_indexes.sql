@@ -1,5 +1,5 @@
-CREATE INDEX idx_cover_letter_items_embedding_hnsw
-    ON cover_letter_items
+CREATE INDEX idx_cover_letter_chunks_embedding_hnsw
+    ON cover_letter_chunks
     USING hnsw (embedding vector_cosine_ops);
 
 CREATE INDEX idx_resume_chunks_embedding_hnsw

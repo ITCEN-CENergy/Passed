@@ -22,6 +22,8 @@ import org.hibernate.annotations.Array;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.OffsetDateTime;
+
 @Getter
 @Entity
 @Table(
@@ -62,6 +64,9 @@ public class CoverLetterChunk extends CreatedAtEntity {
 
     @Column(name = "embedding_model", length = 100)
     private String embeddingModel;
+
+    @Column(name = "embedding_updated_at")
+    private OffsetDateTime embeddingUpdatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "embedding_status", length = 30, nullable = false)

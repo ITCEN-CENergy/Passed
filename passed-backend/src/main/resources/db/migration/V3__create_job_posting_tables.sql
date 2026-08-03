@@ -126,13 +126,13 @@ CREATE TABLE job_postings (
 -- =============================================
 -- 5. 채용공고 청크
 --
--- POSITION_DETAIL : 포지션 상세
--- MAIN_TASK       : 주요 업무
--- REQUIREMENT     : 자격요건
--- PREFERENCE      : 우대사항
--- BENEFIT         : 복지 및 혜택
--- PROCESS         : 채용 절차
--- DISQUALIFICATION: 결격 사유
+-- POSITION_DETAIL  : 포지션 상세
+-- MAIN_TASK        : 주요 업무
+-- REQUIREMENT      : 자격요건
+-- PREFERENCE       : 우대사항
+-- BENEFIT          : 복지 및 혜택
+-- PROCESS          : 채용 절차
+-- DISQUALIFICATION : 결격 사유
 -- =============================================
 
 CREATE TABLE job_posting_chunks (
@@ -141,8 +141,14 @@ CREATE TABLE job_posting_chunks (
     source_type VARCHAR(50) NOT NULL,
     chunk_index INT NOT NULL DEFAULT 0,
     chunk_content TEXT NOT NULL,
+
+    -- 임베딩 관리 컬럼
     embedding VECTOR(1536),
+    embedding_model VARCHAR(100),
+    embedding_status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+    embedding_updated_at TIMESTAMPTZ,
     content_hash VARCHAR(64),
+
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -177,13 +183,22 @@ CREATE TABLE job_posting_chunks (
     CONSTRAINT ck_job_posting_chunk_content
         CHECK (BTRIM(chunk_content) <> ''),
 
+    CONSTRAINT ck_job_posting_chunk_embedding_status
+        CHECK (
+            embedding_status IN (
+                'PENDING',
+                'PROCESSING',
+                'COMPLETED',
+                'FAILED'
+            )
+        ),
+
     CONSTRAINT ck_job_posting_chunk_content_hash
         CHECK (
             content_hash IS NULL
             OR content_hash ~ '^[0-9a-fA-F]{64}$'
         )
 );
-
 
 -- =============================================
 -- 6. 일반 조회용 인덱스
@@ -194,7 +209,6 @@ CREATE INDEX idx_job_roles_industry_id
     ON job_roles(industry_id);
 
 -- 기업 규모별 조회
--- company_name은 UNIQUE 제약으로 인덱스가 자동 생성됨
 CREATE INDEX idx_companies_company_size
     ON companies(company_size);
 
@@ -210,19 +224,20 @@ CREATE INDEX idx_job_postings_job_role_id
 CREATE INDEX idx_job_postings_end_ymd
     ON job_postings(end_ymd);
 
--- 신입·경력 등 채용구분 조회
+-- 채용구분 조회
 CREATE INDEX idx_job_postings_career_type
     ON job_postings(career_type);
 
--- 추천 후보 조회 시 자주 사용할 복합 인덱스
+-- 직무와 마감일 기준 후보 조회
 CREATE INDEX idx_job_postings_role_end_ymd
     ON job_postings(job_role_id, end_ymd);
+
 
 -- 공고별 청크 조회
 CREATE INDEX idx_job_posting_chunks_job_posting_id
     ON job_posting_chunks(job_posting_id);
 
--- 특정 출처 유형 청크 조회
+-- 청크 출처 유형별 조회
 CREATE INDEX idx_job_posting_chunks_source_type
     ON job_posting_chunks(source_type);
 
@@ -230,20 +245,25 @@ CREATE INDEX idx_job_posting_chunks_source_type
 CREATE INDEX idx_job_posting_chunks_chunk_index
     ON job_posting_chunks(chunk_index);
 
--- 공고와 출처 유형을 함께 조회
+-- 공고와 청크 출처 유형 조회
 CREATE INDEX idx_job_posting_chunks_posting_source
     ON job_posting_chunks(job_posting_id, source_type);
 
--- 동일한 텍스트가 이미 임베딩되었는지 확인
+-- 임베딩 처리 상태별 조회
+CREATE INDEX idx_job_posting_chunks_embedding_status
+    ON job_posting_chunks(embedding_status);
+
+-- 임베딩 모델별 조회
+CREATE INDEX idx_job_posting_chunks_embedding_model
+    ON job_posting_chunks(embedding_model);
+
+-- 동일 텍스트 및 변경 여부 확인
 CREATE INDEX idx_job_posting_chunks_content_hash
     ON job_posting_chunks(content_hash);
 
 
 -- =============================================
 -- 7. updated_at 자동 갱신 함수
---
--- 이전 마이그레이션에서 이미 생성했더라도
--- CREATE OR REPLACE이므로 다시 실행 가능
 -- =============================================
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

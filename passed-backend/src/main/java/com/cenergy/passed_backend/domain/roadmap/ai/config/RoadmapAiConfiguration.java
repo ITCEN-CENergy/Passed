@@ -18,7 +18,6 @@ public class RoadmapAiConfiguration {
 
     @Bean
     RoadmapAiClient roadmapAiClient(
-            RestClient.Builder builder,
             RoadmapAiProperties properties,
             RoadmapAiResponseValidator validator
     ) {
@@ -28,7 +27,7 @@ public class RoadmapAiConfiguration {
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofMillis(properties.readTimeoutMillis()));
 
-        RestClient restClient = builder
+        RestClient restClient = RestClient.builder()
                 .baseUrl(properties.baseUrl().toString())
                 .requestFactory(requestFactory)
                 .build();

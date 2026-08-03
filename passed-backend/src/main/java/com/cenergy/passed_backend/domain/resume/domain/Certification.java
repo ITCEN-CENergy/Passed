@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @Table(name = "certifications")
@@ -25,6 +27,6 @@ public class Certification {
     @Column(name = "issuer", length = 100)
     private String issuer;
 
-    @Column(name = "acquisition_date", length = 10)
-    private String acquisitionDate;
+    @Column(name = "acquisition_date")
+    private LocalDate acquisitionDate;
 }

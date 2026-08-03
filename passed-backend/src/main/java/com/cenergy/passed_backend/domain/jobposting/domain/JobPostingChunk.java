@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.jobposting.entity;
 
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
+import com.cenergy.passed_backend.common.entity.EmbeddingStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Array;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.time.OffsetDateTime;
 
 @Getter
 @Entity
@@ -48,6 +51,16 @@ public class JobPostingChunk extends BaseTimeEntity {
     @Array(length = 1536)
     @Column(name = "embedding", columnDefinition = "vector(1536)")
     private float[] embedding;
+
+    @Column(name = "embedding_model", length = 100)
+    private String embeddingModel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "embedding_status", length = 30, nullable = false)
+    private EmbeddingStatus embeddingStatus = EmbeddingStatus.PENDING;
+
+    @Column(name = "embedding_updated_at")
+    private OffsetDateTime embeddingUpdatedAt;
 
     @Column(name = "content_hash", length = 64)
     private String contentHash;

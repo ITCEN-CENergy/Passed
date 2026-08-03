@@ -22,6 +22,7 @@ public class RoadmapAiConfiguration {
             RoadmapAiResponseValidator validator
     ) {
         HttpClient httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofMillis(properties.connectTimeoutMillis()))
                 .build();
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);

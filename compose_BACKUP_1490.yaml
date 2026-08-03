@@ -1,0 +1,44 @@
+services:
+<<<<<<< HEAD
+  edupgvector:
+    image: pgvector/pgvector:0.8.5-pg15
+    container_name: edupgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: passed_db
+      POSTGRES_USER: passed
+      POSTGRES_PASSWORD: test1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - edupgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d edudb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  edupgvector_data:
+=======
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17-trixie
+    container_name: passed-postgres
+    environment:
+      POSTGRES_DB: edu
+      POSTGRES_USER: 1234
+      POSTGRES_PASSWORD: edudb
+    ports:
+      - "5432:5432"
+    volumes:
+      - passed-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  passed-postgres-data:
+>>>>>>> f5fa442d02b1b156229f4751930deee99757fec0

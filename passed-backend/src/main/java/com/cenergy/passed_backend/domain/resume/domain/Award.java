@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @Table(name = "awards")
@@ -25,8 +27,8 @@ public class Award {
     @Column(name = "issuer", length = 100)
     private String issuer;
 
-    @Column(name = "award_date", length = 10)
-    private String awardDate;
+    @Column(name = "award_date")
+    private LocalDate awardDate;
 
     @Column(name = "description", columnDefinition = "text")
     private String description;

@@ -1,5 +1,8 @@
 # passed-backend
 
+Flyway와 JPA를 함께 사용하는 이유, 실행 순서, 스키마 변경 원칙은
+[Flyway + JPA 사용 보고서](docs/flyway-and-jpa.md)에서 확인할 수 있습니다.
+
 ## 개발 환경
 
 - Java 21
@@ -214,35 +217,44 @@ Flyway는 적용된 SQL 파일의 checksum을 저장합니다. 적용된 파일�
 
 스키마를 변경할 때는 항상 다음 순서로 작업합니다.
 
-1. 현재 가장 높은 Flyway 버전을 확인합니다.
-2. 다음 버전의 새로운 SQL 파일을 생성합니다.
+1. `createMigration` 태스크로 새로운 SQL 파일을 생성합니다.
+2. 생성된 파일에 변경 SQL을 작성합니다.
 3. SQL에서 테이블, 컬럼, 제약조건, 인덱스를 변경합니다.
 4. 변경된 스키마에 맞춰 JPA 엔티티를 수정하거나 생성합니다.
 5. 깨끗한 DB 또는 테스트 DB에서 마이그레이션과 JPA 검증을 실행합니다.
 6. SQL과 엔티티를 같은 PR에 포함합니다.
 
-마이그레이션 파일 이름은 다음 형식을 사용합니다.
+여러 팀이 동시에 작업할 때 순차 버전이 겹치지 않도록 UTC 밀리초 타임스탬프를 사용합니다.
 
 ```text
-V{버전}__{설명}.sql
+V{UTC_yyyyMMddHHmmssSSS}__{task_id}_{description}.sql
 ```
 
-현재 최신 버전이 `V7`이라면 다음 파일은 예를 들어 다음과 같이 생성합니다.
+파일명은 직접 작성하지 않고 다음 명령으로 생성합니다.
+
+```bash
+./gradlew createMigration \
+  -PmigrationName=passed_123_add_summary_to_cover_letters
+```
+
+생성 결과 예시는 다음과 같습니다.
 
 ```text
-V8__add_summary_to_cover_letters.sql
-V9__create_interview_tables.sql
+src/main/resources/db/migration/
+V20260803092516379__passed_123_add_summary_to_cover_letters.sql
 ```
 
-버전 번호는 중복될 수 없으므로 여러 사람이 동시에 DB 작업을 한다면 PR을 올리기 전에
-최신 브랜치를 기준으로 번호가 겹치지 않는지 확인합니다.
+- 타임스탬프는 파일을 생성한 순간의 UTC 시각입니다.
+- 입력한 이름은 소문자 `snake_case`로 자동 정규화됩니다.
+- 버전과 설명 사이는 Flyway 규칙에 따라 `__`가 사용됩니다.
+- 작업 ID가 없다면 `-PmigrationName=add_summary_to_cover_letters`처럼 사용할 수 있습니다.
 
 ### 기존 테이블에 필드 추가
 
 예를 들어 `cover_letters`에 `summary` 필드를 추가한다면 새 파일을 생성합니다.
 
 ```sql
--- V8__add_summary_to_cover_letters.sql
+-- V20260803092516379__passed_123_add_summary_to_cover_letters.sql
 ALTER TABLE cover_letters
     ADD COLUMN summary TEXT;
 ```
@@ -413,3 +425,4 @@ docker compose up -d --wait
 - `created_at`, `updated_at`은 공통 엔티티 매핑과 SQL 기본값·트리거를 함께 확인합니다.
 - 로컬에서 checksum 오류가 발생해도 공유된 마이그레이션 파일을 다시 수정하거나 무조건 `repair`하지 않습니다.
   먼저 팀의 최신 마이그레이션 파일과 자신의 DB 적용 이력을 비교합니다.
+

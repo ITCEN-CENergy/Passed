@@ -1,3 +1,22 @@
 spring:
   application:
     name: passed-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/edu
+    username: edu
+    password: 1234
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration

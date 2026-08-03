@@ -36,7 +36,7 @@ class RoadmapModel(BaseModel):
 
 class CompetencySource(RoadmapModel):
     jobPostingId: int = Field(gt=0)
-    currentEvidence: str = Field(min_length=1)
+    currentEvidence: str | None = Field(default=None, min_length=1)
 
 
 class Competency(RoadmapModel):

@@ -144,6 +144,15 @@ def test_same_request_returns_same_response() -> None:
     assert first.json() == second.json()
 
 
+def test_nullable_current_evidence_is_accepted() -> None:
+    item = competency()
+    item["sources"][0]["currentEvidence"] = None
+
+    response = client.post("/api/v1/roadmaps/generate", json=request_with(item))
+
+    assert response.status_code == 200
+
+
 @pytest.mark.parametrize(
     "payload",
     [

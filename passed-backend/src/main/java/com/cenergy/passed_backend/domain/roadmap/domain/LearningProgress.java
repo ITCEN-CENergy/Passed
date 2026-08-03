@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.domain;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
+import com.cenergy.passed_backend.roadmap.entity.Milestone;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

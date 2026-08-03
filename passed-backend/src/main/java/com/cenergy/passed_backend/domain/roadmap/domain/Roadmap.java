@@ -1,9 +1,6 @@
-package com.cenergy.passed_backend.domain.roadmap.domain;
+package com.cenergy.passed_backend.roadmap.entity;
 
-import com.cenergy.passed_backend.analysis.entity.AnalysisReport;
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
-import com.cenergy.passed_backend.jobposting.entity.JobPosting;
-import com.cenergy.passed_backend.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,45 +8,37 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
-@Getter
-@Entity
-@Table(name = "roadmaps")
+@Getter @Entity @Table(name = "roadmaps")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Roadmap extends BaseTimeEntity {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+    @Column(name = "user_id", nullable = false) private Long userId;
+    @Column(name = "title", length = 255) private String title;
+    @Enumerated(EnumType.STRING) @Column(name = "status", nullable = false, length = 50) private RoadmapStatus status = RoadmapStatus.CREATING;
+    @Column(name = "total_estimated_minutes", nullable = false) private Integer totalEstimatedMinutes = 0;
+    @Column(name = "progress_rate", nullable = false, precision = 5, scale = 2) private BigDecimal progressRate = BigDecimal.ZERO;
+    @Column(name = "estimated_end_date") private LocalDate estimatedEndDate;
+    @Column(name = "failure_reason", columnDefinition = "text") private String failureReason;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public static Roadmap create(Long userId) {
+        Roadmap roadmap = new Roadmap();
+        roadmap.userId = userId;
+        return roadmap;
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    public void activate(String title, int totalEstimatedMinutes) {
+        if (status != RoadmapStatus.CREATING) throw new IllegalStateException("CREATING roadmap만 활성화할 수 있습니다.");
+        if (title == null || title.isBlank()) throw new IllegalArgumentException("title은 비어 있을 수 없습니다.");
+        if (totalEstimatedMinutes < 0) throw new IllegalArgumentException("totalEstimatedMinutes는 0 이상이어야 합니다.");
+        this.title = title;
+        this.totalEstimatedMinutes = totalEstimatedMinutes;
+        this.status = RoadmapStatus.ACTIVE;
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "job_posting_id", nullable = false)
-    private JobPosting jobPosting;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "report_id", nullable = false)
-    private AnalysisReport report;
-
-    @Column(name = "title", length = 255, nullable = false)
-    private String title;
-
-    @Column(name = "status", length = 50)
-    private String status;
-
-    @Column(name = "total_estimated_minutes")
-    private Integer totalEstimatedMinutes;
-
-    @Column(name = "progress_rate", precision = 5, scale = 2)
-    private BigDecimal progressRate;
-
-    @Column(name = "estimated_end_date")
-    private LocalDate estimatedEndDate;
-
-    @Column(name = "last_replanned_at")
-    private OffsetDateTime lastReplannedAt;
+    public void fail(String safeFailureReason) {
+        if (safeFailureReason == null || safeFailureReason.isBlank()) throw new IllegalArgumentException("failureReason은 비어 있을 수 없습니다.");
+        this.failureReason = safeFailureReason;
+        this.status = RoadmapStatus.FAILED;
+    }
 }

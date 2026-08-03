@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.skillgap.model;
+package com.cenergy.passed_backend.domain.roadmap.skillgap.model;
 
 import java.util.List;
 

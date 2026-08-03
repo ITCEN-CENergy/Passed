@@ -2,8 +2,7 @@ package com.cenergy.passed_backend.domain.skillgap;
 
 import com.cenergy.passed_backend.domain.skillgap.application.MockSkillGapService;
 import com.cenergy.passed_backend.domain.skillgap.application.SkillGapService;
-import com.cenergy.passed_backend.domain.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.skillgap.validation.SkillGapResponseValidator;
+import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import org.junit.jupiter.api.Test;
@@ -12,12 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MockSkillGapServiceTest {
-    private final SkillGapService service =
-            new MockSkillGapService(new SkillGapResponseValidator());
+    private final SkillGapService service = new MockSkillGapService();
 
     @Test
     void printMockSkillGapResult() {
-        ValidatedSkillGapResult result =
+        SkillGapResponse result =
                 service.getCompetencyGaps(101L, 10L);
 
         System.out.println("userId = " + result.userId());
@@ -36,8 +34,8 @@ class MockSkillGapServiceTest {
 
     @Test
     void returnsDeterministicResultForSameInput() {
-        ValidatedSkillGapResult first = service.getCompetencyGaps(101L, 10L);
-        ValidatedSkillGapResult second = service.getCompetencyGaps(101L, 10L);
+        SkillGapResponse first = service.getCompetencyGaps(101L, 10L);
+        SkillGapResponse second = service.getCompetencyGaps(101L, 10L);
 
         assertThat(first).isEqualTo(second);
     }
@@ -61,6 +59,19 @@ class MockSkillGapServiceTest {
     @Test
     void returnsEmptyGapsForConfiguredPosting() {
         assertThat(service.getCompetencyGaps(104L, 10L).competencyGaps()).isEmpty();
+    }
+
+    @Test
+    void providesVariedDataForMergeAndFilteringTests() {
+        assertThat(service.getCompetencyGaps(105L, 10L).competencyGaps())
+                .extracting("standardCompetencyName")
+                .containsExactly("Docker", "AWS", "Java");
+        assertThat(service.getCompetencyGaps(106L, 10L).competencyGaps())
+                .anySatisfy(gap -> assertThat(gap.gapLevel()).isZero());
+        assertThat(service.getCompetencyGaps(107L, 10L).competencyGaps())
+                .anySatisfy(gap -> assertThat(gap.category().name()).isEqualTo("CERTIFICATION"));
+        assertThat(service.getCompetencyGaps(108L, 10L).competencyGaps())
+                .anySatisfy(gap -> assertThat(gap.category().name()).isEqualTo("EXPERIENCE"));
     }
 
     @Test

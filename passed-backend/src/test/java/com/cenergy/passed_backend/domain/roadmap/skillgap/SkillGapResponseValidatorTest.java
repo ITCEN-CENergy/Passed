@@ -1,9 +1,9 @@
-package com.cenergy.passed_backend.domain.skillgap;
+package com.cenergy.passed_backend.domain.roadmap.skillgap;
 
 import com.cenergy.passed_backend.domain.skillgap.dto.CompetencyGapResponse;
 import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
-import com.cenergy.passed_backend.domain.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.skillgap.validation.SkillGapResponseValidator;
+import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedSkillGapResult;
+import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.SkillGapResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;

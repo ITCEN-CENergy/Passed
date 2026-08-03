@@ -2,8 +2,6 @@ package com.cenergy.passed_backend.domain.skillgap.application;
 
 import com.cenergy.passed_backend.domain.skillgap.dto.CompetencyGapResponse;
 import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
-import com.cenergy.passed_backend.domain.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.skillgap.validation.SkillGapResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
@@ -27,23 +25,32 @@ public class MockSkillGapService implements SkillGapService {
             103L, List.of(
                     gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 3, "EC2 실습 경험"),
                     gap(4L, "협업", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.RELATED, 2, 3, null)),
-            104L, List.of()
+            104L, List.of(),
+            105L, List.of(
+                    gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 0, 4, "Docker Compose 학습 필요"),
+                    gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 2, 4, "S3 및 IAM 기초 경험"),
+                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 3, 5, "Spring Boot 프로젝트 경험")),
+            106L, List.of(
+                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 5, 5, "Java 실무 경험"),
+                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 0, 3, null),
+                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.PREFERRED, 2, 4, "장애 분석 경험")),
+            107L, List.of(
+                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 4, "배포 자동화 학습 필요"),
+                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.RELATED, 3, 4, "로그 기반 분석 경험"),
+                    gap(8L, "AWS SAA", CompetencyCategory.CERTIFICATION, RequirementType.PREFERRED, 0, 1, null)),
+            108L, List.of(
+                    gap(9L, "REST API 설계", CompetencyCategory.EXPERIENCE, RequirementType.REQUIRED, 4, 4, "API 설계 및 운영 경험"),
+                    gap(10L, "CI/CD", CompetencyCategory.EXPERIENCE, RequirementType.PREFERRED, 1, 3, "GitHub Actions 기초 경험"))
     );
 
-    private final SkillGapResponseValidator validator;
-
-    public MockSkillGapService(SkillGapResponseValidator validator) {
-        this.validator = validator;
-    }
-
     @Override
-    public ValidatedSkillGapResult getCompetencyGaps(Long jobPostingId, Long userId) {
+    public SkillGapResponse getCompetencyGaps(Long jobPostingId, Long userId) {
         List<CompetencyGapResponse> gaps = GAPS_BY_JOB_POSTING.get(jobPostingId);
         if (gaps == null) {
             throw new SkillGapException(ErrorCode.SKILL_GAP_NOT_FOUND,
                     "Skill gap mock data not found for jobPostingId=" + jobPostingId);
         }
-        return validator.validate(userId, jobPostingId, new SkillGapResponse(userId, jobPostingId, gaps));
+        return new SkillGapResponse(userId, jobPostingId, gaps);
     }
 
     private static CompetencyGapResponse gap(

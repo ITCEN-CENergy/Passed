@@ -30,8 +30,14 @@ class Settings(BaseSettings):
 
     # --- DB ---
     database_url: str = Field(
-        default="postgresql://postgres:postgres@localhost:5432/postgres",
+        default="postgresql://edu:1234@localhost:5433/edu",
         description="PostgreSQL 접속 문자열 (psycopg)",
+    )
+    database_connect_timeout_seconds: int = Field(
+        default=10,
+        ge=1,
+        alias="DATABASE_CONNECT_TIMEOUT_SECONDS",
+        description="DB 초기 연결 제한 시간(초)",
     )
 
     # --- 결정적 company_id 배정 ---
@@ -69,7 +75,7 @@ class Settings(BaseSettings):
     embedding_only_matching: bool = Field(
         default=True,
         alias="EMBEDDING_ONLY_MATCHING",
-        description="true면 use_for_matching=true 청크만 임베딩",
+        description="true면 비매칭 source_type 세 종류를 제외하고 임베딩",
     )
 
     # --- 청킹 ---

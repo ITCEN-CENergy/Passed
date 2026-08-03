@@ -18,7 +18,11 @@ from job_posting_pipeline.chunker import (
     token_count,
 )
 from job_posting_pipeline.company_assignment import assign_company_id
-from job_posting_pipeline.csv_loader import read_csv_rows
+from job_posting_pipeline.csv_loader import (
+    CSVRowError,
+    read_csv_rows,
+    restore_missing_job_posting_ids,
+)
 from job_posting_pipeline.models import ExtractedItem, SourceType, use_for_matching
 from job_posting_pipeline.normalize import (
     normalize_edu_level,
@@ -39,8 +43,10 @@ class _FakeEnc:
 
 
 import job_posting_pipeline.chunker as _chunker_mod  # noqa: E402
+import job_posting_pipeline.chunk_sync as _chunk_sync_mod  # noqa: E402
 import job_posting_pipeline.csv_loader as _csv_loader_mod  # noqa: E402
 import job_posting_pipeline.embedding_worker as _embedding_worker_mod  # noqa: E402
+import job_posting_pipeline.queries as _queries_mod  # noqa: E402
 
 _chunker_mod._enc = _FakeEnc()  # type: ignore[attr-defined]
 
@@ -142,6 +148,24 @@ def test_read_csv_rows_cp949_fallback(tmp_path):
     assert rows[0]["title"] == "백엔드 개발자"
 
 
+def test_restore_missing_job_posting_ids():
+    rows = [
+        {"job_role_id": str(role_id), "title": str(index)}
+        for role_id in (1, 2)
+        for index in range(10)
+    ]
+    restored = restore_missing_job_posting_ids(rows)
+    assert restored[0]["job_posting_id"] == "1"
+    assert restored[9]["job_posting_id"] == "10"
+    assert restored[10]["job_posting_id"] == "11"
+    assert restored[-1]["job_posting_id"] == "20"
+
+
+def test_restore_missing_job_posting_ids_rejects_unknown_shape():
+    with pytest.raises(CSVRowError, match="직무별 10건 fixture"):
+        restore_missing_job_posting_ids([{"job_role_id": "1"}])
+
+
 def test_load_csv_stops_before_insert_when_job_roles_are_missing(
     monkeypatch, tmp_path
 ):
@@ -149,7 +173,9 @@ def test_load_csv_stops_before_insert_when_job_roles_are_missing(
     insert_called = False
 
     monkeypatch.setattr(
-        _csv_loader_mod, "read_csv_rows", lambda path: ([{"row": "1"}], "utf-8-sig")
+        _csv_loader_mod,
+        "read_csv_rows",
+        lambda path: ([{"row": "1", "job_posting_id": "1841"}], "utf-8-sig"),
     )
     monkeypatch.setattr(_csv_loader_mod, "parse_row", lambda row: record)
     monkeypatch.setattr(_csv_loader_mod, "check_company_ids", lambda conn, ids: [])
@@ -197,7 +223,13 @@ def test_load_csv_savepoint_keeps_processing_after_one_row_failure(
     monkeypatch.setattr(
         _csv_loader_mod,
         "read_csv_rows",
-        lambda path: ([{"id": "1"}, {"id": "2"}], "utf-8-sig"),
+        lambda path: (
+            [
+                {"id": "1", "job_posting_id": "1"},
+                {"id": "2", "job_posting_id": "2"},
+            ],
+            "utf-8-sig",
+        ),
     )
     monkeypatch.setattr(
         _csv_loader_mod, "parse_row", lambda row: records[int(row["id"]) - 1]
@@ -390,3 +422,28 @@ def test_process_kept_as_single_chunk():
     assert len(proc) == 1
     assert ">" in proc[0].chunk_content
     assert proc[0].use_for_matching_flag is False
+
+
+def test_current_db_sql_does_not_reference_removed_matching_column():
+    sql = " ".join((
+        _chunk_sync_mod._INSERT_SQL,
+        _chunk_sync_mod._UPDATE_SQL,
+        _embedding_worker_mod._PENDING_SQL,
+        _embedding_worker_mod._UPDATE_EMBEDDING_SQL,
+        _queries_mod.MATCHING_CHUNK_WHERE,
+    ))
+    assert "use_for_matching" not in sql
+    assert "embedding_model" in sql
+    assert "embedding_status" in sql
+
+
+def test_flyway_v3_source_types_are_exact():
+    assert _chunk_sync_mod.DB_SOURCE_TYPES == {
+        "POSITION_DETAIL", "MAIN_TASK", "REQUIREMENT", "PREFERENCE",
+        "BENEFIT", "PROCESS", "DISQUALIFICATION",
+    }
+    assert "TECH_STACK" not in _chunk_sync_mod.DB_SOURCE_TYPES
+
+
+def test_job_posting_upsert_supports_generated_always_identity():
+    assert "OVERRIDING SYSTEM VALUE" in _csv_loader_mod._UPSERT_SQL

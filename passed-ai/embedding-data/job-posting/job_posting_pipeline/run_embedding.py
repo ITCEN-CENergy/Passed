@@ -13,14 +13,18 @@ from pathlib import Path
 
 if __package__:
     from .config import get_settings
-    from .db import connection
+    from .db import DatabaseContractError, connection, validate_database_contract
     from .embedding_worker import run_embedding_worker
     from .logging_utils import configure_logging
 else:
     # `python job_posting_pipeline/run_embedding.py` 직접 실행도 지원한다.
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from job_posting_pipeline.config import get_settings
-    from job_posting_pipeline.db import connection
+    from job_posting_pipeline.db import (
+        DatabaseContractError,
+        connection,
+        validate_database_contract,
+    )
     from job_posting_pipeline.embedding_worker import run_embedding_worker
     from job_posting_pipeline.logging_utils import configure_logging
 
@@ -60,12 +64,17 @@ def main(argv: list[str] | None = None) -> int:
         logger.error("OPENAI_API_KEY 가 설정되지 않았습니다.")
         return 1
 
-    with connection() as conn:
-        stats = run_embedding_worker(
-            conn,
-            max_iterations=args.max_iterations,
-            batch_size=args.batch_size,
-        )
+    try:
+        with connection() as conn:
+            validate_database_contract(conn)
+            stats = run_embedding_worker(
+                conn,
+                max_iterations=args.max_iterations,
+                batch_size=args.batch_size,
+            )
+    except DatabaseContractError as exc:
+        logger.error("임베딩 작업 중단: %s", exc)
+        return 1
     logger.info(
         "완료 processed=%d success=%d failed=%d skipped=%d "
         "prompt_tokens=%d remaining=%d",

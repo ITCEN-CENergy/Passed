@@ -19,8 +19,8 @@ CSV 행 읽기 -> 값 검증·정규화 -> company_id 결정적 배정 -> job_po
 |---|---|
 | `job_posting_pipeline/config.py` | 환경설정(`passed-ai/.env`), 계획서 13절 값 |
 | `job_posting_pipeline/db.py` | psycopg 연결·스키마 초기화 |
-| `schema/00_extensions.sql` | pgvector 확장 |
-| `schema/01_job_posting_chunks.sql` | `job_posting_chunks` 테이블·인덱스·`use_for_matching` 제약·트리거 |
+| `schema/00_extensions.sql` | 로컬 bootstrap 참고용 pgvector 확장 |
+| `schema/01_job_posting_chunks.sql` | 로컬 bootstrap 참고용 Flyway V3 호환 계약 |
 | `schema/02_extraction_meta.sql` | LLM 추출 입력 해시 캐시(권장) |
 | `job_posting_pipeline/models.py` | `SourceType`, 매칭 여부, `Chunk`/`ExtractedItem` |
 | `job_posting_pipeline/normalize.py` | 공통 정규화, 지역/경력/고용형태/학력/기술스택 별칭 통합 |
@@ -30,7 +30,7 @@ CSV 행 읽기 -> 값 검증·정규화 -> company_id 결정적 배정 -> job_po
 | `job_posting_pipeline/extraction.py` | LLM 구조화 추출(JSON 스키마), evidence 검증, 입력 해시 캐시 |
 | `job_posting_pipeline/chunk_sync.py` | 공고 단위 트랜잭션 동기화(해시 기반 재사용·물리 삭제) |
 | `job_posting_pipeline/embedding_worker.py` | 분리된 임베딩 배치 작업(차원 검증, 저장 전 해시 재검증, 백오프) |
-| `job_posting_pipeline/queries.py` | 추천 조회 준비(`use_for_matching=true AND embedding IS NOT NULL AND chunk_content <> ''`) |
+| `job_posting_pipeline/queries.py` | 비매칭 source_type 제외·완료 임베딩 조회 |
 | `job_posting_pipeline/run_loader.py` | CSV 적재 + 청크 동기화 진입점 |
 | `job_posting_pipeline/run_embedding.py` | 임베딩 작업자 진입점 |
 
@@ -71,8 +71,10 @@ uv run python -m job_posting_pipeline.run_loader \
 
 - 임베딩 모델 `openai/text-embedding-3-small`, 차원 1536.
 - `job_posting_chunks` 의 `embedding` 은 `vector(1536)`.
-- `PROCESS`, `DISQUALIFICATION`, `BENEFIT` → `use_for_matching=false`(DB 제약).
-- 빈 요소도 빈 청크 한 행(`chunk_content=''`, `content_hash=SHA-256('')`), 임베딩 대상 아님.
+- DB에는 `use_for_matching` 컬럼이 없다. `PROCESS`, `DISQUALIFICATION`,
+  `BENEFIT`은 조회 시 source_type 기준으로 제외한다.
+- Flyway V3가 빈 청크를 금지하므로 빈 요소는 DB에 저장하지 않는다.
+- `TECH_STACK`은 청크가 아니라 향후 `job_posting_skills` 매핑 대상이다.
 - 변경된 청크만 `embedding=NULL` 로 재임베딩, 사라진 청크는 물리 삭제.
 - 임베딩 생성은 적재 트랜잭션과 분리된 별도 작업자.
 

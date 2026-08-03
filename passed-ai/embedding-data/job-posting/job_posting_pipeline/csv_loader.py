@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import csv
+from collections import Counter, defaultdict
 import logging
 import re
 from dataclasses import dataclass, field
@@ -25,6 +26,7 @@ from .normalize import (
 logger = logging.getLogger(__name__)
 
 _DATE_RE = re.compile(r"^\d{8}$")
+_POSTINGS_PER_ROLE = 10
 
 
 # CSV 한 행의 형식 또는 참조 데이터가 적재 조건을 만족하지 못한 경우 사용한다.
@@ -61,6 +63,40 @@ def read_csv_rows(csv_path: str | Path) -> tuple[list[dict[str, str]], str]:
     # 현재 지원 인코딩 모두 실패한 경우 최초 원인을 보존해 명확하게 실패한다.
     assert last_error is not None
     raise last_error
+
+
+def restore_missing_job_posting_ids(
+    rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """직무별 10건 fixture에 한해 누락된 공고 ID를 결정적으로 복원한다."""
+    if not rows:
+        return rows
+    values = [_to_none(row.get("job_posting_id")) for row in rows]
+    if all(value is not None for value in values):
+        return rows
+    if any(value is not None for value in values):
+        raise CSVRowError("job_posting_id가 일부 행에만 존재합니다.")
+    try:
+        role_ids = [int(_require(row.get("job_role_id"), "job_role_id")) for row in rows]
+    except (CSVRowError, ValueError) as exc:
+        raise CSVRowError("job_posting_id 자동 복원 중 job_role_id 형식 오류") from exc
+    counts = Counter(role_ids)
+    invalid = sorted(k for k, v in counts.items() if k <= 0 or v != _POSTINGS_PER_ROLE)
+    if invalid:
+        raise CSVRowError(
+            "job_posting_id가 없고 직무별 10건 fixture 규칙도 맞지 않습니다: "
+            f"{invalid[:20]}{'...' if len(invalid) > 20 else ''}"
+        )
+    occurrences: defaultdict[int, int] = defaultdict(int)
+    restored: list[dict[str, str]] = []
+    for row, role_id in zip(rows, role_ids):
+        occurrences[role_id] += 1
+        copied = dict(row)
+        copied["job_posting_id"] = str(
+            (role_id - 1) * _POSTINGS_PER_ROLE + occurrences[role_id]
+        )
+        restored.append(copied)
+    return restored
 
 
 def _to_none(value: str | None) -> str | None:
@@ -162,7 +198,7 @@ INSERT INTO job_postings (
     career_type, hire_type, region, edu_level,
     position_detail, main_duty, qualification, preference,
     disqualify_reason, process
-) VALUES (
+) OVERRIDING SYSTEM VALUE VALUES (
     %(id)s, %(title)s, %(company_id)s, %(job_role_id)s, %(start_ymd)s, %(end_ymd)s,
     %(headcount)s, %(career_type)s, %(hire_type)s, %(region)s, %(edu_level)s,
     %(position_detail)s, %(main_duty)s, %(qualification)s, %(preference)s,
@@ -242,6 +278,16 @@ def load_csv(conn: Connection, csv_path: str | Path) -> LoadResult:
         encoding,
         len(rows),
     )
+    had_ids = bool(rows) and all(
+        _to_none(row.get("job_posting_id")) is not None for row in rows
+    )
+    rows = restore_missing_job_posting_ids(rows)
+    if rows and not had_ids:
+        logger.warning(
+            "job_posting_id 자동 복원: file=%s rows=%d first_id=%s last_id=%s",
+            csv_path.name, len(rows),
+            rows[0]["job_posting_id"], rows[-1]["job_posting_id"],
+        )
     for line_no, raw in enumerate(rows, start=2):  # 헤더 1행
         try:
             parsed.append(parse_row(raw))

@@ -16,7 +16,12 @@ if __package__:
     from .chunker import build_chunks
     from .config import get_settings
     from .csv_loader import CSVRowError, LoadResult, fetch_posting, load_csv
-    from .db import connection, init_schema
+    from .db import (
+        DatabaseContractError,
+        connection,
+        init_schema,
+        validate_database_contract,
+    )
     from .extraction import extract
     from .logging_utils import configure_logging
 else:
@@ -31,7 +36,12 @@ else:
         fetch_posting,
         load_csv,
     )
-    from job_posting_pipeline.db import connection, init_schema
+    from job_posting_pipeline.db import (
+        DatabaseContractError,
+        connection,
+        init_schema,
+        validate_database_contract,
+    )
     from job_posting_pipeline.extraction import extract
     from job_posting_pipeline.logging_utils import configure_logging
 
@@ -94,6 +104,8 @@ def run(csv_paths: list[str], init: bool = True) -> LoadResult:
     with connection() as conn:
         if init:
             init_schema(conn)
+        else:
+            validate_database_contract(conn)
         for index, path in enumerate(csv_paths, start=1):
             logger.info("CSV 처리 시작: %d/%d path=%s", index, len(csv_paths), path)
             res = load_csv(conn, path)
@@ -143,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
     logger.info("명령 인자: csv_count=%d no_init=%s", len(args.csv), args.no_init)
     try:
         result = run(args.csv, init=not args.no_init)
-    except (CSVRowError, FileNotFoundError) as exc:
+    except (CSVRowError, FileNotFoundError, DatabaseContractError) as exc:
         logger.error("CSV 적재 중단: %s", exc)
         return 1
     logger.info(

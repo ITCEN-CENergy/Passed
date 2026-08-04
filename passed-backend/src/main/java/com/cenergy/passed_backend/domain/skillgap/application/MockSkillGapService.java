@@ -18,7 +18,7 @@ public class MockSkillGapService implements SkillGapService {
     private static final Map<Long, List<CompetencyGapResponse>> GAPS_BY_JOB_POSTING = Map.of(
             101L, List.of(
                     gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 3, "Docker 기본 명령어 학습 및 실습 경험"),
-                    gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 0, 2, null)),
+                    gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 1, 2, null)),
             102L, List.of(
                     gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 2, 3, "컨테이너 배포 경험"),
                     gap(3L, "SQLD", CompetencyCategory.CERTIFICATION, RequirementType.PREFERRED, 0, 1, null)),
@@ -27,19 +27,19 @@ public class MockSkillGapService implements SkillGapService {
                     gap(4L, "협업", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.RELATED, 2, 3, null)),
             104L, List.of(),
             105L, List.of(
-                    gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 0, 4, "Docker Compose 학습 필요"),
-                    gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 2, 4, "S3 및 IAM 기초 경험"),
-                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 3, 5, "Spring Boot 프로젝트 경험")),
+                    gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 1, 3, "Docker Compose 학습 필요"),
+                    gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 2, 3, "S3 및 IAM 기초 경험"),
+                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 2, 3, "Spring Boot 프로젝트 경험")),
             106L, List.of(
-                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 5, 5, "Java 실무 경험"),
-                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 0, 3, null),
-                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.PREFERRED, 2, 4, "장애 분석 경험")),
+                    gap(5L, "Java", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 3, 3, "Java 실무 경험"),
+                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.RELATED, 1, 3, null),
+                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.PREFERRED, 2, 3, "장애 분석 경험")),
             107L, List.of(
-                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 4, "배포 자동화 학습 필요"),
-                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.RELATED, 3, 4, "로그 기반 분석 경험"),
+                    gap(6L, "Kubernetes", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 3, "배포 자동화 학습 필요"),
+                    gap(7L, "문제 해결", CompetencyCategory.BEHAVIORAL_TRAIT, RequirementType.RELATED, 2, 3, "로그 기반 분석 경험"),
                     gap(8L, "AWS SAA", CompetencyCategory.CERTIFICATION, RequirementType.PREFERRED, 0, 1, null)),
             108L, List.of(
-                    gap(9L, "REST API 설계", CompetencyCategory.EXPERIENCE, RequirementType.REQUIRED, 4, 4, "API 설계 및 운영 경험"),
+                    gap(9L, "REST API 설계", CompetencyCategory.EXPERIENCE, RequirementType.REQUIRED, 3, 3, "API 설계 및 운영 경험"),
                     gap(10L, "CI/CD", CompetencyCategory.EXPERIENCE, RequirementType.PREFERRED, 1, 3, "GitHub Actions 기초 경험"))
     );
 

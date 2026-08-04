@@ -36,10 +36,10 @@ class RoadmapAiResponseValidatorTest {
 
     @Test
     void validatesAllRequestedSkillsExactlyOnce() {
-        RoadmapAiRequest request = request(technical("docker", 1, 2), technical("aws", 0, 1));
+        RoadmapAiRequest request = request(technical("docker", 1, 2), technical("aws", 2, 3));
         RoadmapAiResponse response = response(
                 skill("docker", milestone(1, 1, 2)),
-                skill("aws", milestone(1, 0, 1))
+                skill("aws", milestone(1, 2, 3))
         );
 
         assertThat(validator.validate(request, response).skills()).hasSize(2);
@@ -49,7 +49,7 @@ class RoadmapAiResponseValidatorTest {
     @Test void rejectsBlankTitle() { assertInvalid(request(technical("docker", 1, 2)), new RoadmapAiResponse(" ", List.of(skill("docker", milestone(1, 1, 2))))); }
     @Test void rejectsNullSkills() { assertInvalid(request(technical("docker", 1, 2)), new RoadmapAiResponse("title", null)); }
     @Test void rejectsEmptySkills() { assertInvalid(request(technical("docker", 1, 2)), new RoadmapAiResponse("title", List.of())); }
-    @Test void rejectsMissingKey() { assertInvalid(request(technical("docker", 1, 2), technical("aws", 0, 1)), response(skill("docker", milestone(1, 1, 2)))); }
+    @Test void rejectsMissingKey() { assertInvalid(request(technical("docker", 1, 2), technical("aws", 2, 3)), response(skill("docker", milestone(1, 1, 2)))); }
     @Test void rejectsUnexpectedKey() { assertInvalid(request(technical("docker", 1, 2)), response(skill("aws", milestone(1, 1, 2)))); }
     @Test void rejectsDuplicateKey() { assertInvalid(request(technical("docker", 1, 2)), response(skill("docker", milestone(1, 1, 2)), skill("docker", milestone(1, 1, 2)))); }
     @Test void rejectsNullMilestones() { assertInvalid(request(technical("docker", 1, 2)), response(new RoadmapAiResponse.Skill("docker", null))); }
@@ -81,10 +81,18 @@ class RoadmapAiResponseValidatorTest {
     @Test void rejectsFirstLevelMismatch() { assertInvalidPath(milestone(1, 0, 2), milestone(2, 2, 3)); }
     @Test void rejectsLastLevelMismatch() { assertInvalidPath(milestone(1, 1, 2)); }
     @Test void rejectsDisconnectedMiddleLevel() { assertInvalidPath(milestone(1, 1, 2), milestone(2, 3, 4)); }
+    @Test void rejectsNonCertificationLevelZero() { assertInvalid(request(technical("docker", 0, 1)), response(skill("docker", milestone(1, 0, 1)))); }
+    @Test void rejectsLevelAboveThree() { assertInvalid(request(technical("docker", 2, 4)), response(skill("docker", milestone(1, 2, 4)))); }
+    @Test void rejectsCertificationMilestoneForGeneralSkill() {
+        RoadmapAiResponse.Milestone value = new RoadmapAiResponse.Milestone(
+                "Docker", "설명", "목표", "기준", 1, 2,
+                MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, 1);
+        assertInvalid(request(technical("docker", 1, 2)), response(skill("docker", value)));
+    }
 
     @Test
-    void certificationIgnoresRequestedCurrentLevelAndUsesFixedPath() {
-        RoadmapAiRequest request = request(certification("sqld", 1));
+    void validatesCertificationGapFromZeroToOne() {
+        RoadmapAiRequest request = request(certification("sqld", 0));
         RoadmapAiResponse.Milestone certification = new RoadmapAiResponse.Milestone(
                 "SQLD 자격 취득", "설명", "목표", "기준", 0, 1,
                 MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, 1);
@@ -94,8 +102,11 @@ class RoadmapAiResponseValidatorTest {
 
     @Test
     void rejectsInvalidCertification() {
-        RoadmapAiRequest request = request(certification("sqld", 0));
-        assertInvalid(request, response(skill("sqld", milestone(1, 0, 1))));
+        RoadmapAiRequest request = request(certification("sqld", 1));
+        RoadmapAiResponse.Milestone certification = new RoadmapAiResponse.Milestone(
+                "SQLD 자격 취득", "설명", "목표", "기준", 0, 1,
+                MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, 1);
+        assertInvalid(request, response(skill("sqld", certification)));
     }
 
     private void assertInvalidPath(RoadmapAiResponse.Milestone... milestones) {

@@ -52,6 +52,7 @@ public class RoadmapAiResponseValidator {
         for (RoadmapAiRequest.Competency competency : competencies) {
             invalidIf(competency == null, "request competency must not be null");
             requireText(competency.roadmapSkillKey(), "requested roadmapSkillKey");
+            validateRequestedLevels(competency);
             invalidIf(requested.putIfAbsent(competency.roadmapSkillKey(), competency) != null,
                     "duplicate requested roadmapSkillKey");
         }
@@ -72,6 +73,7 @@ public class RoadmapAiResponseValidator {
         for (int index = 0; index < sorted.size(); index++) {
             RoadmapAiResponse.Milestone milestone = sorted.get(index);
             validateMilestone(milestone, index + 1);
+            validateMilestoneType(competency, milestone);
             milestones.add(toValidated(milestone));
         }
 
@@ -96,8 +98,39 @@ public class RoadmapAiResponseValidator {
                 "learningOrder must start at 1 and be continuous");
         invalidIf(milestone.startLevel() == null || milestone.startLevel() < 0,
                 "startLevel must be non-negative");
+        invalidIf(milestone.targetLevel() == null || milestone.targetLevel() > 3,
+                "targetLevel must not exceed 3");
         invalidIf(milestone.targetLevel() == null || milestone.targetLevel() <= milestone.startLevel(),
                 "targetLevel must be greater than startLevel");
+    }
+
+    private void validateRequestedLevels(RoadmapAiRequest.Competency competency) {
+        invalidIf(competency.currentLevel() == null || competency.targetLevel() == null,
+                "requested levels must not be null");
+        if (competency.category() == CompetencyCategory.CERTIFICATION) {
+            invalidIf(competency.currentLevel() != 0 || competency.targetLevel() != 1,
+                    "requested CERTIFICATION gap must be 0 to 1");
+            return;
+        }
+        invalidIf(competency.currentLevel() < 1 || competency.currentLevel() > 3,
+                "requested currentLevel must be between 1 and 3");
+        invalidIf(competency.targetLevel() < 1 || competency.targetLevel() > 3,
+                "requested targetLevel must be between 1 and 3");
+        invalidIf(competency.currentLevel() >= competency.targetLevel(),
+                "requested currentLevel must be less than targetLevel");
+    }
+
+    private void validateMilestoneType(
+            RoadmapAiRequest.Competency competency,
+            RoadmapAiResponse.Milestone milestone
+    ) {
+        boolean certification = competency.category() == CompetencyCategory.CERTIFICATION;
+        invalidIf(certification != (milestone.milestoneType() == MilestoneType.CERTIFICATION),
+                "milestoneType does not match competency category");
+        if (!certification) {
+            invalidIf(milestone.startLevel() < 1,
+                    "non-certification startLevel must be at least 1");
+        }
     }
 
     private void validateLevelPath(

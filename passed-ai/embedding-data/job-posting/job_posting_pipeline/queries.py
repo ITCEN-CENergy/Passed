@@ -1,8 +1,4 @@
-"""추천 조회 준비(계획서 7·14 7단계).
-
-추천 벡터 조회 시 use_for_matching=true, embedding IS NOT NULL,
-chunk_content <> '' 조건을 적용한다.
-"""
+"""Flyway V3 계약에 맞춘 추천용 청크 조회."""
 
 from __future__ import annotations
 
@@ -10,7 +6,9 @@ from psycopg import Connection
 
 # 추천 검색에서 공통으로 적용할 안전 조건이다.
 MATCHING_CHUNK_WHERE = (
-    "use_for_matching = true AND embedding IS NOT NULL AND chunk_content <> ''"
+    "source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT') "
+    "AND embedding IS NOT NULL AND embedding_status = 'COMPLETED' "
+    "AND chunk_content <> ''"
 )
 
 

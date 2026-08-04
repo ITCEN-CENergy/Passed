@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 
+from api.features.roadmap.router import router as roadmap_router
+
 
 app = FastAPI(
     title="Passed AI API",
     version="0.1.0",
 )
+
+app.include_router(roadmap_router)
 
 
 @app.get("/")

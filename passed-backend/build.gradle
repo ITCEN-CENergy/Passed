@@ -22,7 +22,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.hibernate.orm:hibernate-vector'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
@@ -32,6 +33,7 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	// Flyway
 	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	runtimeOnly 'org.flywaydb:flyway-database-postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
 
 	// Spring Boot Actuator
@@ -47,4 +49,48 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('createMigration') {
+	group = 'flyway'
+	description = 'Creates a Flyway SQL migration with a UTC timestamp version.'
+
+	doLast {
+		def requestedName = project.providers.gradleProperty('migrationName').orNull
+
+		if (requestedName == null || requestedName.isBlank()) {
+			throw new GradleException(
+					'사용법: ./gradlew createMigration -PmigrationName=passed_123_create_skill_aliases'
+			)
+		}
+
+		def normalizedName = requestedName
+				.toLowerCase(java.util.Locale.ROOT)
+				.replaceAll('[^a-z0-9]+', '_')
+				.replaceAll('^_+|_+$', '')
+
+		if (normalizedName.isBlank()) {
+			throw new GradleException('migrationName에는 영문 또는 숫자가 포함되어야 합니다.')
+		}
+
+		def timestamp = java.time.format.DateTimeFormatter
+				.ofPattern('yyyyMMddHHmmssSSS')
+				.withZone(java.time.ZoneOffset.UTC)
+				.format(java.time.Instant.now())
+		def migrationDirectory = file('src/main/resources/db/migration')
+		def migrationFile = new File(
+				migrationDirectory,
+				"V${timestamp}__${normalizedName}.sql"
+		)
+
+		if (!migrationDirectory.isDirectory()) {
+			throw new GradleException("마이그레이션 디렉터리를 찾을 수 없습니다: ${migrationDirectory}")
+		}
+
+		if (!migrationFile.createNewFile()) {
+			throw new GradleException("마이그레이션 파일이 이미 존재합니다: ${migrationFile.name}")
+		}
+
+		println "Created migration: ${project.relativePath(migrationFile)}"
+	}
 }

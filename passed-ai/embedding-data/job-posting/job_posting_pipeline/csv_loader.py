@@ -15,7 +15,6 @@ from typing import Iterable
 
 from psycopg import Connection
 
-from .company_assignment import assign_company_id, check_company_ids
 from .normalize import (
     normalize_career,
     normalize_edu_level,
@@ -150,22 +149,33 @@ def parse_row(raw: dict[str, str]) -> dict:
 
     title = _require(row.get("title"), "title").strip()
 
-    company_id = _to_int_nullable(row.get("company_id"))
-    if company_id is None:
-        company_id = assign_company_id(job_posting_id)
+    company_id = int(_require(row.get("company_id"), "company_id"))
 
     job_role_id = _require(row.get("job_role_id"), "job_role_id")
     job_role_id = int(job_role_id)
 
     start_ymd = _validate_date(row.get("start_ymd"), "start_ymd")
     end_ymd = _validate_date(row.get("end_ymd"), "end_ymd")
+    if start_ymd and end_ymd and start_ymd > end_ymd:
+        raise CSVRowError(
+            f"공고 기간 오류: start_ymd={start_ymd} end_ymd={end_ymd}"
+        )
 
     headcount = _to_int_nullable(row.get("headcount"))
+    if headcount is not None and headcount <= 0:
+        raise CSVRowError(f"headcount는 1 이상이어야 합니다: {headcount}")
 
     career_type = normalize_career(_to_none(row.get("career_type")))
-    hire_type = normalize_hire_type(_to_none(row.get("hire_type_lst")))
-    region = normalize_region(_to_none(row.get("region_lst")))
-    edu_level = normalize_edu_level(_to_none(row.get("edu_level_lst")))
+    # 새 CSV는 DB 컬럼명과 동일하다. 이전 *_lst fixture도 읽기 호환한다.
+    hire_type = normalize_hire_type(
+        _to_none(row.get("hire_type") or row.get("hire_type_lst"))
+    )
+    region = normalize_region(
+        _to_none(row.get("region") or row.get("region_lst"))
+    )
+    edu_level = normalize_edu_level(
+        _to_none(row.get("edu_level") or row.get("edu_level_lst"))
+    )
 
     return {
         "id": job_posting_id,
@@ -232,7 +242,7 @@ def _upsert_posting(conn: Connection, record: dict) -> None:
 def _fix_sequence(conn: Connection) -> None:
     """명시적 ID 삽입 후 PK 시퀀스를 MAX(id) 이후로 보정.
 
-    job_postings.id 가 IDENTITY(DEFAULT) 기반이라고 가정한다.
+    job_postings.id 가 GENERATED ALWAYS AS IDENTITY 기반이라고 가정한다.
     """
     # CSV가 identity 값을 명시하므로 다음 자동 INSERT가 충돌하지 않게 맞춘다.
     with conn.cursor() as cur:
@@ -254,6 +264,19 @@ def _check_job_roles_exist(conn: Connection, job_role_ids: Iterable[int]) -> lis
         )
         present = {r[0] for r in cur.fetchall()}
     return sorted(ids - present)
+
+
+def check_company_ids(conn: Connection, company_ids: set[int]) -> list[int]:
+    """CSV가 참조하는 company ID가 모두 존재하는지 검증한다."""
+    if not company_ids:
+        return []
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT id FROM companies WHERE id = ANY(%s)",
+            (sorted(company_ids),),
+        )
+        present = {row[0] for row in cur.fetchall()}
+    return sorted(company_ids - present)
 
 
 # ---------------------------------------------------------------------------

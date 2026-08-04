@@ -7,17 +7,15 @@ from enum import Enum
 
 
 class SourceType(str, Enum):
-    """청크 소스 유형. 허용값은 계획서 6절 기준(TECH_STACK, ETC 포함)."""
+    """Flyway V3의 job_posting_chunks.source_type 허용값."""
 
     POSITION_DETAIL = "POSITION_DETAIL"
     MAIN_TASK = "MAIN_TASK"
     REQUIREMENT = "REQUIREMENT"
     PREFERENCE = "PREFERENCE"
-    TECH_STACK = "TECH_STACK"
     BENEFIT = "BENEFIT"
     PROCESS = "PROCESS"
     DISQUALIFICATION = "DISQUALIFICATION"
-    ETC = "ETC"
 
 
 # 추천에 사용하면 안 되는 설명성·행정성 청크 유형이다.
@@ -46,11 +44,3 @@ class Chunk:
     def use_for_matching_flag(self) -> bool:
         # 하위 호환용 계산 속성이며 현재 DB에는 저장하지 않는다.
         return use_for_matching(self.source_type)
-
-
-@dataclass(frozen=True)
-class ExtractedItem:
-    """LLM 구조화 추출 결과의 단위 항목(기술 스택/복리후생)."""
-
-    name: str
-    evidence: str

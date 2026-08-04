@@ -22,7 +22,6 @@ if __package__:
         init_schema,
         validate_database_contract,
     )
-    from .extraction import extract
     from .logging_utils import configure_logging
 else:
     # `python job_posting_pipeline/run_loader.py` 직접 실행도 지원한다.
@@ -42,17 +41,16 @@ else:
         init_schema,
         validate_database_contract,
     )
-    from job_posting_pipeline.extraction import extract
     from job_posting_pipeline.logging_utils import configure_logging
 
 logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# 공고별 LLM 추출·청크 생성·DB 동기화
+# 공고별 원문 청크 생성·DB 동기화
 # ---------------------------------------------------------------------------
 def _process_postings(conn, job_posting_ids: list[int]) -> None:
-    """각 공고별로 LLM 추출 -> 청크 생성 -> 동기화(공고 단위 트랜잭션)."""
+    """각 공고별로 원문 청크 생성 -> 동기화(공고 단위 트랜잭션)."""
     settings = get_settings()
     total = len(job_posting_ids)
     succeeded = 0
@@ -73,11 +71,10 @@ def _process_postings(conn, job_posting_ids: list[int]) -> None:
                 conn.rollback()
                 failed += 1
                 continue
-            # 구조화 추출 결과와 원문을 합쳐 모든 source_type 청크를 만든다.
-            outcome = extract(posting, conn=conn)
             chunks = build_chunks(
-                posting, outcome.tech_stacks, outcome.benefits,
-                settings.chunk_max_tokens, settings.chunk_overlap_tokens,
+                posting,
+                settings.chunk_max_tokens,
+                settings.chunk_overlap_tokens,
             )
             sync_posting(conn, jpid, chunks)
             # 공고 하나가 완성된 경우에만 추출 캐시와 청크를 함께 확정한다.
@@ -144,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("csv", nargs="+", help="CSV 파일 경로(하나 이상)")
     parser.add_argument(
         "--no-init", action="store_true",
-        help="스키마 초기화(job_posting_chunks 생성)를 건너뛴다",
+        help="기본 DB 계약 검증 경로를 사용한다(하위 호환 옵션)",
     )
     parser.add_argument(
         "--log-file",

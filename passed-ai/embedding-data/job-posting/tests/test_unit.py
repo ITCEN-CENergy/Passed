@@ -1,6 +1,6 @@
 """오프라인 단위 테스트(계획서 15절).
 
-DB/LLM 없이 실행 가능한 결정적 로직만 검증한다.
+DB/OpenAI API 없이 실행 가능한 결정적 로직만 검증한다.
 """
 
 from __future__ import annotations
@@ -10,20 +10,19 @@ from types import SimpleNamespace
 import pytest
 
 from job_posting_pipeline.chunker import (
-    EMPTY_CONTENT_HASH,
     build_chunks,
     content_hash,
     split_list_items,
     split_narrative,
     token_count,
 )
-from job_posting_pipeline.company_assignment import assign_company_id
 from job_posting_pipeline.csv_loader import (
     CSVRowError,
+    parse_row,
     read_csv_rows,
     restore_missing_job_posting_ids,
 )
-from job_posting_pipeline.models import ExtractedItem, SourceType, use_for_matching
+from job_posting_pipeline.models import SourceType, use_for_matching
 from job_posting_pipeline.normalize import (
     normalize_edu_level,
     normalize_hire_type,
@@ -166,6 +165,44 @@ def test_restore_missing_job_posting_ids_rejects_unknown_shape():
         restore_missing_job_posting_ids([{"job_role_id": "1"}])
 
 
+def test_parse_row_uses_new_db_aligned_csv_columns():
+    record = parse_row({
+        "job_posting_id": "1",
+        "title": "경영·비즈니스기획 담당자 모집",
+        "company_id": "39",
+        "job_role_id": "1",
+        "start_ymd": "20260204",
+        "end_ymd": "20260221",
+        "headcount": "6",
+        "career_type": "경력 2년 이상",
+        "hire_type": "계약직",
+        "region": "인천광역시",
+        "edu_level": "전문학사 이상",
+        "position_detail": "포지션 상세",
+        "main_duty": "- 주요 업무",
+        "qualification": "- 지원 자격",
+        "preference": "- 우대사항",
+        "disqualify_reason": "- 결격 사유",
+        "process": "서류전형 > 실무면접",
+    })
+
+    assert record["id"] == 1
+    assert record["hire_type"] == "계약직"
+    assert record["region"] == "인천광역시"
+    assert record["edu_level"] == "전문학사 이상"
+    assert record["process"] == "서류전형 > 실무면접"
+
+
+def test_parse_row_rejects_invalid_db_check_values():
+    base = {
+        "job_posting_id": "1", "title": "공고", "company_id": "1",
+        "job_role_id": "1", "start_ymd": "20260221",
+        "end_ymd": "20260204", "headcount": "0",
+    }
+    with pytest.raises(CSVRowError, match="공고 기간 오류"):
+        parse_row(base)
+
+
 def test_load_csv_stops_before_insert_when_job_roles_are_missing(
     monkeypatch, tmp_path
 ):
@@ -281,17 +318,6 @@ def test_normalize_text_handles_crlf():
     assert normalize_text("a\r\nb\r\n") == "a\nb"
 
 
-# --- company_id 배정 ---
-
-def test_company_id_deterministic_and_in_range():
-    a = assign_company_id(1)
-    b = assign_company_id(1)
-    assert a == b
-    assert 0 <= a <= 159
-    c = assign_company_id(2)
-    assert 0 <= c <= 159
-
-
 # --- 목록 분리 ---
 
 def test_split_list_items_per_line():
@@ -310,7 +336,7 @@ def test_bullet_list_chunked_per_item():
         "disqualify_reason": None,
         "process": None,
     }
-    chunks = build_chunks(posting, [], [], max_tokens=400, overlap=50)
+    chunks = build_chunks(posting, max_tokens=400, overlap=50)
     main = [c for c in chunks if c.source_type == SourceType.MAIN_TASK]
     assert len(main) == 2
     assert main[0].chunk_index == 0
@@ -339,7 +365,7 @@ def test_build_chunks_splits_non_empty_position_detail():
         "process": None,
     }
 
-    chunks = build_chunks(posting, [], [], max_tokens=50, overlap=10)
+    chunks = build_chunks(posting, max_tokens=50, overlap=10)
     position_chunks = [
         chunk
         for chunk in chunks
@@ -358,66 +384,37 @@ def test_same_normalized_text_same_hash():
     assert content_hash("a") != content_hash("b")
 
 
-def test_empty_element_produces_one_empty_chunk():
+def test_empty_element_produces_no_chunk():
     posting = {
         "id": 1, "title": "t", "position_detail": None, "main_duty": None,
         "qualification": None, "preference": None, "disqualify_reason": None,
         "process": None,
     }
-    chunks = build_chunks(posting, [], [], max_tokens=400, overlap=50)
-    assert any(
-        c.source_type == SourceType.MAIN_TASK and c.chunk_content == ""
-        and c.content_hash == EMPTY_CONTENT_HASH for c in chunks
-    )
+    chunks = build_chunks(posting, max_tokens=400, overlap=50)
+    assert chunks == []
 
 
-def test_empty_chunks_are_blank():
+def test_empty_chunks_are_not_created():
     chunks = build_chunks(
-        {"id": 1, "title": "t"}, [], [], 400, 50
+        {"id": 1, "title": "t"}, 400, 50
     )
-    assert any(c.chunk_content == "" for c in chunks)
+    assert chunks == []
 
 
 # --- use_for_matching ---
 
 def test_use_for_matching_rule():
     assert use_for_matching(SourceType.POSITION_DETAIL) is True
-    assert use_for_matching(SourceType.TECH_STACK) is True
     assert use_for_matching(SourceType.PROCESS) is False
     assert use_for_matching(SourceType.DISQUALIFICATION) is False
     assert use_for_matching(SourceType.BENEFIT) is False
-
-
-# --- 기술 스택 정규화/중복 ---
-
-def test_tech_stack_alias_and_dedup():
-    posting = {"id": 1, "title": "t", "position_detail": None,
-               "main_duty": None, "qualification": None, "preference": None,
-               "disqualify_reason": None, "process": None}
-    tech = [ExtractedItem("kotlin", "Kotlin 활용"), ExtractedItem("Kotlin", "Kotlin 활용")]
-    chunks = build_chunks(posting, tech, [], 400, 50)
-    tech_chunks = [c for c in chunks if c.source_type == SourceType.TECH_STACK]
-    assert len(tech_chunks) == 1
-    assert tech_chunks[0].chunk_content == "Kotlin"
-    assert tech_chunks[0].use_for_matching_flag is True
-
-
-def test_benefit_use_for_matching_false():
-    posting = {"id": 1, "title": "t", "position_detail": None,
-               "main_duty": None, "qualification": None, "preference": None,
-               "disqualify_reason": None, "process": None}
-    benefits = [ExtractedItem("자율복장", "자율복장")]
-    chunks = build_chunks(posting, [], benefits, 400, 50)
-    ben = [c for c in chunks if c.source_type == SourceType.BENEFIT]
-    assert len(ben) == 1
-    assert ben[0].use_for_matching_flag is False
 
 
 def test_process_kept_as_single_chunk():
     posting = {"id": 1, "title": "t", "position_detail": None, "main_duty": None,
                "qualification": None, "preference": None, "disqualify_reason": None,
                "process": "서류전형 > 직무과제 > 실무면접 > 최종합격"}
-    chunks = build_chunks(posting, [], [], 400, 50)
+    chunks = build_chunks(posting, 400, 50)
     proc = [c for c in chunks if c.source_type == SourceType.PROCESS]
     assert len(proc) == 1
     assert ">" in proc[0].chunk_content

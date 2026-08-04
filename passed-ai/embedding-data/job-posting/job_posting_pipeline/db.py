@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import logging
-from pathlib import Path
 from typing import Iterator
 
 import psycopg
@@ -13,9 +12,6 @@ from psycopg import Connection
 from .config import get_settings
 
 logger = logging.getLogger(__name__)
-
-# SQL은 Python 패키지 밖의 job-posting/schema 디렉터리에서 관리한다.
-SCHEMA_DIR = Path(__file__).resolve().parent.parent / "schema"
 
 REQUIRED_COLUMNS = {
     "job_postings": {
@@ -63,16 +59,9 @@ def connection() -> Iterator[Connection]:
 
 
 def init_schema(conn: Connection) -> None:
-    """Flyway 스키마를 검증하고 Python 전용 추출 캐시만 준비한다."""
-    # 백엔드 소유 테이블은 Python이 생성·변경하지 않는다.
+    """Flyway가 만든 채용공고 스키마의 호환성만 검증한다."""
     validate_database_contract(conn)
-    schema_files = [SCHEMA_DIR / "02_extraction_meta.sql"]
-    with conn.cursor() as cur:
-        for path in schema_files:
-            logger.info("DB 스키마 적용: %s", path.name)
-            cur.execute(path.read_text(encoding="utf-8"))
-    conn.commit()
-    logger.info("파이프라인 전용 DB 스키마 초기화 완료")
+    logger.info("DB 스키마 검증 완료")
 
 
 def validate_database_contract(conn: Connection) -> None:

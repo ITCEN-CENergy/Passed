@@ -1,8 +1,6 @@
 # DB 채용공고 적재·청크·임베딩 사용법
 
-## 1. 구성과 DB 기준
-
-이 작업자는 기존 FastAPI와 분리된 CLI 프로그램이다.
+## 1. 실행 구조
 
 ```text
 CSV
@@ -12,42 +10,14 @@ CSV
   -> 별도 임베딩 작업자
 ```
 
-현재 기준 DB는 Docker가 노출한 `localhost:5433/edu`이다. 컨테이너 내부
-PostgreSQL 포트는 5432이며, 호스트의 5433 포트가 이 포트로 전달된다.
+생성형 LLM을 이용한 `tech_stacks`, `benefits` 추출은 제거되었다. CSV 적재와
+청크 생성에는 OpenAI API를 호출하지 않는다.
 
-`industries`, `job_roles`, `companies`, `job_postings`,
-`job_posting_chunks`, `skills`, `job_posting_skills`는
-`passed-backend`의 Flyway V1~V7이 소유한다. Python 파이프라인은 이 스키마를
-변경하는 주체가 아니며, 실행 시 필수 컬럼과 `vector(1536)` 계약을 검증한다.
+현재 DB는 Docker가 노출한 `localhost:5433/edu`이며, 컨테이너 내부 포트는
+5432다. `job_postings`와 `job_posting_chunks`는 backend Flyway가 소유하며
+Python은 실행 전에 필수 컬럼과 `vector(1536)` 계약만 검증한다.
 
-파이프라인이 추가로 사용하는 테이블은 LLM 결과 캐시인
-`job_posting_extraction_meta`뿐이다.
-
-## 2. 현재 청크 DB 계약
-
-`job_posting_chunks.source_type` 허용값:
-
-```text
-POSITION_DETAIL
-MAIN_TASK
-REQUIREMENT
-PREFERENCE
-BENEFIT
-PROCESS
-DISQUALIFICATION
-```
-
-- 빈 `chunk_content`는 저장하지 않는다.
-- `TECH_STACK`과 `ETC`는 Flyway V3의 청크 허용값이 아니다.
-- 기술 추출 결과는 캐시에 남지만, `job_posting_skills`에 연결하려면 별도의
-  스킬 마스터 매핑 작업이 필요하다.
-- 매칭 임베딩은 `PROCESS`, `DISQUALIFICATION`, `BENEFIT`을 제외한다.
-- 임베딩 완료 행은 `embedding_status='COMPLETED'`와
-  `embedding_model`, `embedding_updated_at`을 함께 기록한다.
-
-## 3. 환경 준비
-
-PowerShell:
+## 2. 환경 설정
 
 ```powershell
 cd C:\Users\user\work\passed\Passed\passed-ai
@@ -55,92 +25,105 @@ Copy-Item .env.example .env
 uv sync
 ```
 
-`.env`에서 실제 값을 입력한다.
-
 ```dotenv
 DATABASE_URL=postgresql://edu:<비밀번호>@localhost:5433/edu
 DATABASE_CONNECT_TIMEOUT_SECONDS=10
+
+# 임베딩 실행 시에만 필요
 OPENAI_API_KEY=<OpenAI API 키>
+EMBEDDING_MODEL=openai/text-embedding-3-small
+EMBEDDING_DIMENSION=1536
 ```
 
-OpenAI 추출 없이 원문 청크만 만들려면 다음과 같이 설정한다.
+## 3. CSV 구조
 
-```dotenv
-EXTRACT_WITH_LLM=false
+헤더는 다음 순서를 권장한다.
+
+```text
+job_posting_id
+title
+company_id
+job_role_id
+start_ymd
+end_ymd
+headcount
+career_type
+hire_type
+region
+edu_level
+position_detail
+main_duty
+qualification
+preference
+disqualify_reason
+process
 ```
 
-이 설정은 외부 네트워크가 없는 환경에서 유용하다.
+멀티라인 텍스트는 CSV 따옴표로 감싸야 한다.
 
-## 4. 참조 데이터 확인
+```csv
+job_posting_id,title,company_id,job_role_id,start_ymd,end_ymd,headcount,career_type,hire_type,region,edu_level,position_detail,main_duty,qualification,preference,disqualify_reason,process
+1,경영·비즈니스기획 담당자 모집,39,1,20260204,20260221,6,경력 2년 이상,계약직,인천광역시,전문학사 이상,"포지션 상세","- 주요 업무","- 지원 자격","- 우대사항","- 결격 사유","서류전형 > 실무면접 > 최종면접"
+```
 
-CSV 적재 전에 `companies.id`와 `job_roles.id`가 존재해야 한다.
+검증 규칙:
+
+- `job_posting_id`, `title`, `company_id`, `job_role_id` 필수
+- 날짜는 `YYYYMMDD`
+- `start_ymd <= end_ymd`
+- `headcount`는 NULL 또는 1 이상
+- CSV의 회사·직무 ID가 참조 테이블에 존재해야 함
+
+## 4. 청크 생성 규칙
+
+```text
+position_detail   -> POSITION_DETAIL  -> 문단 우선, 최대 400토큰/50토큰 중첩
+main_duty         -> MAIN_TASK        -> 줄 단위
+qualification     -> REQUIREMENT      -> 줄 단위
+preference        -> PREFERENCE       -> 줄 단위
+disqualify_reason -> DISQUALIFICATION -> 줄 단위
+process           -> PROCESS          -> 원문 전체 한 청크
+```
+
+- 빈 필드는 청크를 생성하지 않는다.
+- CSV에 없는 `BENEFIT` 청크는 생성하지 않는다.
+- `TECH_STACK`은 현재 청크 스키마의 허용값이 아니며 생성하지 않는다.
+- 동일 키와 동일 `content_hash`는 기존 임베딩을 유지한다.
+- 텍스트가 바뀌면 임베딩을 NULL/PENDING으로 초기화한다.
+- 원문에서 사라진 청크는 삭제한다.
+
+## 5. 참조 데이터 확인
 
 ```sql
 SELECT COUNT(*), MIN(id), MAX(id) FROM companies;
-SELECT COUNT(*), MIN(id), MAX(id) FROM industries;
 SELECT COUNT(*), MIN(id), MAX(id) FROM job_roles;
 ```
 
-현재 제공 fixture 기준 예상값:
+필요한 참조 ID가 없다면 로더는 INSERT 전에 중단한다.
 
-```text
-companies: 160 / 0 / 159
-industries: 21 / 1 / 21
-job_roles: 239 / 1 / 239
-```
-
-개발 DB가 비어 있을 때만 다음 SQL을 검토 후 적용한다.
-
-```text
-schema/seed_industries_job_roles_from_excel.sql
-schema/dev_seed_companies_0_159.sql
-```
-
-두 SQL은 `GENERATED ALWAYS AS IDENTITY` 테이블에 명시 ID를 넣기 위해
-`OVERRIDING SYSTEM VALUE`를 사용한다.
-
-## 5. CSV 적재와 청크 생성
-
-작업 폴더로 이동한다.
+## 6. CSV 적재
 
 ```powershell
 cd C:\Users\user\work\passed\Passed\passed-ai\embedding-data\job-posting
+
+uv run python -m job_posting_pipeline.run_loader `
+  data\job_postings.csv
 ```
 
-단일 CSV:
+여러 파일도 한 번에 전달할 수 있다.
 
 ```powershell
 uv run python -m job_posting_pipeline.run_loader `
-  data/job_postings_role_id_1_61_610rows.csv
+  data\part1.csv `
+  data\part2.csv
 ```
 
-여러 CSV:
+동일 CSV를 다시 실행하면 `job_postings.id` 기준 UPSERT와 청크 해시 비교를
+수행한다.
 
-```powershell
-uv run python -m job_posting_pipeline.run_loader `
-  data/job_postings_role_id_1_61_610rows.csv `
-  data/job_postings_123_184_620rows_new_schema_add_job_posting_id.csv `
-  data/job_postings_185_239_excel_safe_add_job_posting_id.csv
-```
+## 7. 임베딩
 
-구버전 `job_postings_role_id_1_61_610rows.csv`처럼
-`job_posting_id`가 없더라도 모든 직무가 정확히 10건이면 다음 규칙으로
-ID를 복원한다.
-
-```text
-(job_role_id - 1) * 10 + 직무 내 순번
-```
-
-일부 행에만 ID가 있거나 직무별 10건이 아니면 임의 ID를 만들지 않고
-명확한 오류로 중단한다.
-
-`job_postings.id`는 `GENERATED ALWAYS AS IDENTITY`이므로 로더는
-`OVERRIDING SYSTEM VALUE`로 fixture ID를 보존한다. 같은 CSV를 다시 실행하면
-ID 기준 UPSERT와 해시 기반 청크 동기화가 수행된다.
-
-## 6. 임베딩 실행
-
-먼저 한 배치만 확인:
+한 배치만 시험:
 
 ```powershell
 uv run python -m job_posting_pipeline.run_embedding `
@@ -148,16 +131,17 @@ uv run python -m job_posting_pipeline.run_embedding `
   --batch-size 20
 ```
 
-남은 매칭 청크 전체 처리:
+전체 처리:
 
 ```powershell
 uv run python -m job_posting_pipeline.run_embedding
 ```
 
-모델명이 달라진 기존 벡터도 새 모델로 다시 임베딩한다. API 요청 후
-원문 해시가 바뀐 행은 저장하지 않아 오래된 벡터 덮어쓰기를 방지한다.
+매칭 임베딩에서는 `PROCESS`, `DISQUALIFICATION`, `BENEFIT`을 제외한다.
+성공한 행에는 벡터와 함께 `embedding_model`,
+`embedding_status='COMPLETED'`, `embedding_updated_at`이 기록된다.
 
-## 7. 결과 검증
+## 8. 검증 SQL
 
 ```sql
 SELECT COUNT(*) FROM job_postings;
@@ -172,43 +156,24 @@ FROM job_posting_chunks
 GROUP BY source_type, embedding_status
 ORDER BY source_type, embedding_status;
 
-SELECT
-    COUNT(*) FILTER (
-        WHERE source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
-          AND (embedding IS NULL OR embedding_status <> 'COMPLETED')
-    ) AS matching_pending,
-    COUNT(*) FILTER (
-        WHERE embedding IS NOT NULL
-          AND vector_dims(embedding) <> 1536
-    ) AS invalid_dimension
-FROM job_posting_chunks;
+SELECT COUNT(*) AS invalid_empty_chunks
+FROM job_posting_chunks
+WHERE btrim(chunk_content) = '';
+
+SELECT COUNT(*) AS invalid_dimension
+FROM job_posting_chunks
+WHERE embedding IS NOT NULL
+  AND vector_dims(embedding) <> 1536;
 ```
 
-## 8. 로그
+## 9. 로그와 오류
 
 ```text
 logs/loader.log
 logs/embedding.log
 ```
 
-진행률, 공고 ID, 청크 INSERT/UPDATE/DELETE 수, 임베딩 배치 범위와 실패 원인이
-기록된다.
-
-## 9. 자주 발생하는 오류
-
-### `companies.id 누락` / `job_roles.id 누락`
-
-CSV가 참조하는 기준정보가 DB에 없다. 4절의 조회 SQL로 확인하고 개발용
-seed를 먼저 적용한다.
-
-### `Connection error` during extraction
-
-OpenAI 네트워크 연결 또는 API 키 문제다. 네트워크가 없는 환경에서는
-`EXTRACT_WITH_LLM=false`로 원문 청크만 생성하고, 추출은 네트워크 환경에서
-다시 실행한다.
-
-### DB 계약 검증 실패
-
-Flyway가 적용되지 않았거나 DB가 다른 버전이다. `flyway_schema_history`와
-`passed-backend/src/main/resources/db/migration`을 먼저 확인하고 Python
-코드에서 임의로 백엔드 테이블을 변경하지 않는다.
+- `companies.id 누락`: CSV의 회사 기준정보가 없음
+- `job_roles.id 누락`: CSV의 직무 기준정보가 없음
+- `DB 계약 검증 실패`: 연결한 DB가 현재 Flyway 구조와 다름
+- 임베딩 `Connection error`: OpenAI 네트워크 또는 API 키 문제

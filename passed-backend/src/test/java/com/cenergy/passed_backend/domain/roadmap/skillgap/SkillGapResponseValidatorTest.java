@@ -129,23 +129,23 @@ class SkillGapResponseValidatorTest {
     @Test
     void recalculatesGapInsteadOfUsingExternalValue() {
         CompetencyGapResponse external = new CompetencyGapResponse(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL,
-                RequirementType.REQUIRED, 1, 4, 99, null);
+                RequirementType.REQUIRED, 1, 3, 99, null);
         assertThat(validator.validate(10L, 101L, response(external))
-                .competencyGaps().getFirst().gapLevel()).isEqualTo(3);
+                .competencyGaps().getFirst().gapLevel()).isEqualTo(2);
     }
 
     @Test
     void calculatesGapWhenExternalValueIsNull() {
         CompetencyGapResponse external = new CompetencyGapResponse(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL,
-                RequirementType.REQUIRED, 1, 4, null, null);
+                RequirementType.REQUIRED, 1, 3, null, null);
         assertThat(validator.validate(10L, 101L, response(external))
-                .competencyGaps().getFirst().gapLevel()).isEqualTo(3);
+                .competencyGaps().getFirst().gapLevel()).isEqualTo(2);
     }
 
     @Test
     void floorsCalculatedGapAtZero() {
         CompetencyGapResponse external = new CompetencyGapResponse(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL,
-                RequirementType.REQUIRED, 4, 1, 0, null);
+                RequirementType.REQUIRED, 3, 1, 0, null);
         assertThat(validator.validate(10L, 101L, response(external))
                 .competencyGaps().getFirst().gapLevel()).isZero();
     }

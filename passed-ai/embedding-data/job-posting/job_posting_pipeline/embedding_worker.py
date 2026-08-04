@@ -43,21 +43,27 @@ class EmbeddingRunStats:
 # 비어 있지 않고 아직 벡터가 없는 청크만 잠정 처리 대상으로 가져온다.
 _PENDING_SQL = (
     "SELECT id, chunk_content, content_hash FROM job_posting_chunks "
-    "WHERE embedding IS NULL AND chunk_content <> '' "
-    "AND (NOT %(only_matching)s OR use_for_matching = true) "
+    "WHERE (embedding IS NULL OR embedding_model IS DISTINCT FROM %(model)s) "
+    "AND chunk_content <> '' "
+    "AND (NOT %(only_matching)s OR source_type NOT IN "
+    "('PROCESS', 'DISQUALIFICATION', 'BENEFIT')) "
     "ORDER BY id LIMIT %(batch)s"
 )
 
 _COUNT_PENDING_SQL = (
     "SELECT COUNT(*) FROM job_posting_chunks "
-    "WHERE embedding IS NULL AND chunk_content <> '' "
-    "AND (NOT %(only_matching)s OR use_for_matching = true)"
+    "WHERE (embedding IS NULL OR embedding_model IS DISTINCT FROM %(model)s) "
+    "AND chunk_content <> '' "
+    "AND (NOT %(only_matching)s OR source_type NOT IN "
+    "('PROCESS', 'DISQUALIFICATION', 'BENEFIT'))"
 )
 
 _UPDATE_EMBEDDING_SQL = (
     "UPDATE job_posting_chunks "
-    "SET embedding = %s::vector "
-    "WHERE id = %s AND content_hash = %s AND embedding IS NULL"
+    "SET embedding = %s::vector, embedding_model = %s, "
+    "embedding_status = 'COMPLETED', embedding_updated_at = now() "
+    "WHERE id = %s AND content_hash = %s "
+    "AND (embedding IS NULL OR embedding_model IS DISTINCT FROM %s)"
 )
 
 
@@ -202,7 +208,8 @@ def _process_batch(
             vector_text = json.dumps(vector, separators=(",", ":"))
             cur.execute(
                 _UPDATE_EMBEDDING_SQL,
-                (vector_text, row_id, hash_at_query),
+                (vector_text, _embedding_model_name(), row_id, hash_at_query,
+                 _embedding_model_name()),
             )
             if cur.rowcount == 1:
                 stats.success += 1
@@ -218,7 +225,9 @@ def _process_batch(
 def _count_pending(conn: Connection, only_matching: bool) -> int:
     """현재 임베딩 대기 청크 수를 반환한다."""
     with conn.cursor() as cur:
-        cur.execute(_COUNT_PENDING_SQL, {"only_matching": only_matching})
+        cur.execute(_COUNT_PENDING_SQL, {
+            "only_matching": only_matching, "model": _embedding_model_name()
+        })
         return int(cur.fetchone()[0])
 
 
@@ -263,7 +272,8 @@ def run_embedding_worker(
             cur.execute(
                 _PENDING_SQL,
                 {"only_matching": settings.embedding_only_matching,
-                 "batch": effective_batch_size},
+                 "batch": effective_batch_size,
+                 "model": _embedding_model_name()},
             )
             rows = cur.fetchall()
         if not rows:

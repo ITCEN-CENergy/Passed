@@ -6,7 +6,7 @@
 ```sql
 embedding IS NULL
 AND chunk_content <> ''
-AND use_for_matching = true
+AND source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
 ```
 
 ## 설정
@@ -63,13 +63,14 @@ uv run python -m job_posting_pipeline.run_embedding --batch-size 50
 ```sql
 SELECT
     COUNT(*) FILTER (
-        WHERE use_for_matching = true
+        WHERE source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
           AND chunk_content <> ''
           AND embedding IS NULL
     ) AS pending,
     COUNT(*) FILTER (
-        WHERE use_for_matching = true
+        WHERE source_type NOT IN ('PROCESS', 'DISQUALIFICATION', 'BENEFIT')
           AND embedding IS NOT NULL
+          AND embedding_status = 'COMPLETED'
     ) AS completed
 FROM job_posting_chunks
 WHERE job_posting_id BETWEEN 1841 AND 2390;

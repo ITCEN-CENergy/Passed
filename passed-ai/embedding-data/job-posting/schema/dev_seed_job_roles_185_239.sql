@@ -15,6 +15,7 @@ INSERT INTO industries (
     id,
     industry_name
 )
+OVERRIDING SYSTEM VALUE
 VALUES (
     0,
     '임시 산업'
@@ -35,6 +36,7 @@ INSERT INTO job_roles (
     industry_id,
     job_role_name
 )
+OVERRIDING SYSTEM VALUE
 SELECT
     role_id,
     0,

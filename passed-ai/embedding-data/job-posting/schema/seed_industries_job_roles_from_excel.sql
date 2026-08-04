@@ -232,6 +232,7 @@ INSERT INTO job_roles (
     industry_id,
     job_role_name
 )
+OVERRIDING SYSTEM VALUE
 SELECT
     seed.id,
     industry.id,

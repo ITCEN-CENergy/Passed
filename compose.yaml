@@ -1,17 +1,18 @@
+name: passed-backend 
 services:
   postgres:
     image: pgvector/pgvector:pg17
     container_name: passed-postgres
     environment:
       POSTGRES_DB: edu
-      POSTGRES_USER: edu           # 수정: 1234 → edu
-      POSTGRES_PASSWORD: "1234"    # 수정: edudb → 1234
+      POSTGRES_USER: edu
+      POSTGRES_PASSWORD: "1234"
     ports:
       - "5433:5432"
     volumes:
       - passed-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U edu -d edu"]   # 수정: 변수 → 리터럴
+      test: ["CMD-SHELL", "pg_isready -U edu -d edu"]
       interval: 5s
       timeout: 5s
       retries: 10

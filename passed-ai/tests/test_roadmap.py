@@ -1,7 +1,10 @@
 from copy import deepcopy
+import os
 
 import pytest
 from fastapi.testclient import TestClient
+
+os.environ["ROADMAP_GENERATOR"] = "fake"
 
 from main import app
 
@@ -56,7 +59,7 @@ def test_generate_normal_request() -> None:
 def test_generate_multiple_competencies_in_request_order() -> None:
     payload = request_with(
         competency(key="docker", current_level=1, target_level=3),
-        competency(key="aws", name="AWS", current_level=0, target_level=1),
+        competency(key="aws", name="AWS", current_level=2, target_level=3),
     )
 
     response = client.post("/api/v1/roadmaps/generate", json=payload)
@@ -71,7 +74,8 @@ def test_generate_multiple_competencies_in_request_order() -> None:
 @pytest.mark.parametrize(
     ("current_level", "target_level", "expected_pairs"),
     [
-        (0, 3, [(0, 1), (1, 2), (2, 3)]),
+        (1, 2, [(1, 2)]),
+        (2, 3, [(2, 3)]),
         (1, 3, [(1, 2), (2, 3)]),
     ],
 )
@@ -93,23 +97,21 @@ def test_milestones_connect_each_level(
 
 
 def test_general_milestone_type_difficulty_and_time_are_deterministic() -> None:
-    payload = request_with(competency(current_level=0, target_level=3))
+    payload = request_with(competency(current_level=1, target_level=3))
 
     milestones = client.post(
         "/api/v1/roadmaps/generate", json=payload
     ).json()["skills"][0]["milestones"]
 
     assert [item["milestoneType"] for item in milestones] == [
-        "CONCEPT",
         "PRACTICE",
         "PROJECT",
     ]
     assert [item["difficulty"] for item in milestones] == [
-        "BEGINNER",
         "INTERMEDIATE",
         "ADVANCED",
     ]
-    assert [item["estimatedMinutes"] for item in milestones] == [60, 120, 180]
+    assert [item["estimatedMinutes"] for item in milestones] == [120, 180]
 
 
 def test_certification_always_has_one_fixed_milestone() -> None:
@@ -118,7 +120,7 @@ def test_certification_always_has_one_fixed_milestone() -> None:
             key="certification-1",
             name="SQLD",
             category="CERTIFICATION",
-            current_level=1,
+            current_level=0,
             target_level=1,
         )
     )
@@ -135,7 +137,7 @@ def test_certification_always_has_one_fixed_milestone() -> None:
 
 
 def test_same_request_returns_same_response() -> None:
-    payload = request_with(competency(current_level=0, target_level=3))
+    payload = request_with(competency(current_level=1, target_level=3))
 
     first = client.post("/api/v1/roadmaps/generate", json=deepcopy(payload))
     second = client.post("/api/v1/roadmaps/generate", json=deepcopy(payload))
@@ -159,7 +161,13 @@ def test_nullable_current_evidence_is_accepted() -> None:
         {"userId": 10, "competencies": []},
         request_with(competency(current_level=3, target_level=1)),
         request_with(competency(current_level=-1, target_level=1)),
+        request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
+        request_with(
+            competency(
+                category="CERTIFICATION", current_level=1, target_level=1
+            )
+        ),
         request_with(competency(name="   ")),
     ],
 )

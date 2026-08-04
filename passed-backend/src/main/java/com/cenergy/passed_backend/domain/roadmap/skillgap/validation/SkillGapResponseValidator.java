@@ -58,6 +58,7 @@ public class SkillGapResponseValidator {
                     userId, jobPostingId, gap.standardCompetencyId(), gap.gapLevel(), calculatedGapLevel);
         }
         validateCertification(gap, calculatedGapLevel);
+        validateGeneralCompetency(gap);
 
         return new ValidatedCompetencyGap(
                 gap.standardCompetencyId(), gap.standardCompetencyName(), gap.category(), gap.requirementType(),
@@ -72,6 +73,15 @@ public class SkillGapResponseValidator {
                         || gap.targetLevel() != 1
                         || (calculatedGapLevel != 0 && calculatedGapLevel != 1),
                 "invalid CERTIFICATION levels");
+    }
+
+    private void validateGeneralCompetency(CompetencyGapResponse gap) {
+        if (gap.category() == CompetencyCategory.CERTIFICATION) {
+            return;
+        }
+        invalidIf(gap.currentLevel() < 1 || gap.currentLevel() > 3
+                        || gap.targetLevel() < 1 || gap.targetLevel() > 3,
+                "non-certification levels must be between 1 and 3");
     }
 
     private void requirePositive(Long value, String field) {

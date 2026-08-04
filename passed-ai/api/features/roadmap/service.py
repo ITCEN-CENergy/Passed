@@ -1,87 +1,113 @@
+from typing import Protocol
+
+from api.features.roadmap.client import OpenAiRoadmapClient
+from api.features.roadmap.config import get_roadmap_settings
+from api.features.roadmap.planner import create_milestone_slots
 from api.features.roadmap.schema import (
     Competency,
     CompetencyCategory,
     Difficulty,
+    GeneratedMilestoneContent,
+    GeneratedRoadmapContent,
+    GeneratedSkillContent,
     Milestone,
+    MilestoneSlot,
     MilestoneType,
     RoadmapGenerateRequest,
     RoadmapGenerateResponse,
     RoadmapSkill,
 )
+from api.features.roadmap.validator import validate_generated_content
 
 
-def _difficulty(target_level: int) -> Difficulty:
-    if target_level == 1:
-        return Difficulty.BEGINNER
-    if target_level == 2:
-        return Difficulty.INTERMEDIATE
-    return Difficulty.ADVANCED
+class RoadmapContentGenerator(Protocol):
+    def generate(
+        self,
+        competencies: list[Competency],
+        slots_by_key: dict[str, list[MilestoneSlot]],
+    ) -> GeneratedRoadmapContent: ...
 
 
-def _milestone_type(target_level: int) -> MilestoneType:
-    if target_level == 1:
-        return MilestoneType.CONCEPT
-    if target_level == 2:
-        return MilestoneType.PRACTICE
-    return MilestoneType.PROJECT
+class FakeRoadmapContentGenerator:
+    def generate(
+        self,
+        competencies: list[Competency],
+        slots_by_key: dict[str, list[MilestoneSlot]],
+    ) -> GeneratedRoadmapContent:
+        skills = []
+        for competency in competencies:
+            contents = [
+                self._content(competency, slot)
+                for slot in slots_by_key[competency.roadmapSkillKey]
+            ]
+            skills.append(
+                GeneratedSkillContent(
+                    roadmapSkillKey=competency.roadmapSkillKey, milestones=contents
+                )
+            )
+        return GeneratedRoadmapContent(title="개인 맞춤 역량 강화 로드맵", skills=skills)
 
+    def _content(
+        self, competency: Competency, slot: MilestoneSlot
+    ) -> GeneratedMilestoneContent:
+        name = competency.standardCompetencyName
+        if competency.category == CompetencyCategory.CERTIFICATION:
+            return GeneratedMilestoneContent(
+                title=f"{name} 자격 취득",
+                description=f"{name} 시험 범위를 학습하고 자격 취득을 준비한다.",
+                learningObjective=f"{name} 시험에 필요한 지식과 기술을 적용할 수 있다.",
+                completionCriteria=f"{name} 시험에 합격해 자격을 취득한다.",
+                milestoneType=MilestoneType.CERTIFICATION,
+                difficulty=Difficulty.BEGINNER,
+                estimatedMinutes=60,
+            )
 
-def _general_milestones(competency: Competency) -> list[Milestone]:
-    name = competency.standardCompetencyName
-    return [
-        Milestone(
-            title=f"{name} 목표 수준 {target_level} 학습",
-            description=(
-                f"{name}의 수준 {target_level - 1}에서 수준 {target_level}로 "
-                "향상하기 위한 학습을 수행한다."
-            ),
-            learningObjective=f"{name} 수준 {target_level}에 해당하는 작업을 수행할 수 있다.",
-            completionCriteria=f"{name} 수준 {target_level}의 실습 결과물을 완성한다.",
-            startLevel=target_level - 1,
-            targetLevel=target_level,
-            milestoneType=_milestone_type(target_level),
-            difficulty=_difficulty(target_level),
-            estimatedMinutes=target_level * 60,
-            learningOrder=order,
+        target = slot.targetLevel
+        milestone_type = MilestoneType.PRACTICE if target == 2 else MilestoneType.PROJECT
+        difficulty = Difficulty.INTERMEDIATE if target == 2 else Difficulty.ADVANCED
+        return GeneratedMilestoneContent(
+            title=f"{name} 수준 {target} 달성",
+            description=f"{name}을 활용해 수준 {target}에 맞는 실무 과제를 수행한다.",
+            learningObjective=f"{name} 수준 {target}의 작업을 수행할 수 있다.",
+            completionCriteria=f"{name} 수준 {target}의 검증 가능한 결과물을 완성한다.",
+            milestoneType=milestone_type,
+            difficulty=difficulty,
+            estimatedMinutes=target * 60,
         )
-        for order, target_level in enumerate(
-            range(competency.currentLevel + 1, competency.targetLevel + 1), start=1
-        )
-    ]
 
 
-def _certification_milestone(competency: Competency) -> Milestone:
-    name = competency.standardCompetencyName
-    return Milestone(
-        title=f"{name} 자격 취득",
-        description=f"{name} 자격 취득을 위한 학습을 수행한다.",
-        learningObjective=f"{name} 자격 시험에 필요한 지식과 기술을 적용할 수 있다.",
-        completionCriteria=f"{name} 자격 취득 요건을 충족한다.",
-        startLevel=0,
-        targetLevel=1,
-        milestoneType=MilestoneType.CERTIFICATION,
-        difficulty=Difficulty.BEGINNER,
-        estimatedMinutes=60,
-        learningOrder=1,
-    )
+def _generator() -> RoadmapContentGenerator:
+    settings = get_roadmap_settings()
+    if settings.generator == "llm":
+        return OpenAiRoadmapClient(settings)
+    return FakeRoadmapContentGenerator()
 
 
-def generate_roadmap(request: RoadmapGenerateRequest) -> RoadmapGenerateResponse:
+def generate_roadmap(
+    request: RoadmapGenerateRequest,
+    generator: RoadmapContentGenerator | None = None,
+) -> RoadmapGenerateResponse:
+    slots_by_key = {
+        competency.roadmapSkillKey: create_milestone_slots(competency)
+        for competency in request.competencies
+    }
+    generated = (generator or _generator()).generate(request.competencies, slots_by_key)
+    validate_generated_content(request.competencies, slots_by_key, generated)
+
+    generated_by_key = {item.roadmapSkillKey: item for item in generated.skills}
     skills = []
     for competency in request.competencies:
-        milestones = (
-            [_certification_milestone(competency)]
-            if competency.category == CompetencyCategory.CERTIFICATION
-            else _general_milestones(competency)
-        )
-        skills.append(
-            RoadmapSkill(
-                roadmapSkillKey=competency.roadmapSkillKey,
-                milestones=milestones,
+        key = competency.roadmapSkillKey
+        content = generated_by_key[key]
+        milestones = [
+            Milestone(
+                **item.model_dump(),
+                startLevel=slot.startLevel,
+                targetLevel=slot.targetLevel,
+                learningOrder=slot.learningOrder,
             )
-        )
+            for item, slot in zip(content.milestones, slots_by_key[key], strict=True)
+        ]
+        skills.append(RoadmapSkill(roadmapSkillKey=key, milestones=milestones))
 
-    return RoadmapGenerateResponse(
-        title="개인 맞춤 역량 강화 로드맵",
-        skills=skills,
-    )
+    return RoadmapGenerateResponse(title=generated.title, skills=skills)

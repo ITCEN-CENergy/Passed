@@ -25,12 +25,16 @@ public class Company extends BaseTimeEntity {
     @Column(name = "company_name", length = 200, nullable = false, unique = true)
     private String companyName;
 
-    @Column(name = "company_size", length = 50)
-    private String companySize;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "company_size", nullable = false, length = 32)
+    private CompanySize companySize;
 
     @Column(name = "talent_profile", columnDefinition = "text")
     private String talentProfile;
 
     @Column(name = "benefits", columnDefinition = "text")
     private String benefits;
+
+    @Column(name = "region", length = 100, nullable = false)
+    private String region;
 }

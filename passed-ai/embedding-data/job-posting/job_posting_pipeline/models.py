@@ -7,30 +7,26 @@ from enum import Enum
 
 
 class SourceType(str, Enum):
-    """청크 소스 유형. 허용값은 계획서 6절 기준(TECH_STACK, ETC 포함)."""
+    """Flyway V3의 job_posting_chunks.source_type 허용값."""
 
     POSITION_DETAIL = "POSITION_DETAIL"
     MAIN_TASK = "MAIN_TASK"
     REQUIREMENT = "REQUIREMENT"
     PREFERENCE = "PREFERENCE"
-    TECH_STACK = "TECH_STACK"
     BENEFIT = "BENEFIT"
     PROCESS = "PROCESS"
     DISQUALIFICATION = "DISQUALIFICATION"
-    ETC = "ETC"
 
 
 # 추천에 사용하면 안 되는 설명성·행정성 청크 유형이다.
-# 계획서 7절 매칭 규칙:
-#   PROCESS, DISQUALIFICATION, BENEFIT -> use_for_matching = false
-#   나머지 source_type                -> use_for_matching = true
+# 현재 DB에는 boolean 컬럼이 없으며 SQL에서 이 source_type들을 제외한다.
 NON_MATCHING_SOURCE_TYPES: frozenset[SourceType] = frozenset(
     {SourceType.PROCESS, SourceType.DISQUALIFICATION, SourceType.BENEFIT}
 )
 
 
 def use_for_matching(source_type: SourceType) -> bool:
-    """source_type 별 use_for_matching 값을 반환한다."""
+    """source_type이 논리적인 추천 대상인지 반환한다."""
     # 한 곳에서 규칙을 계산해 DB 저장값과 검색 조건의 불일치를 막는다.
     return source_type not in NON_MATCHING_SOURCE_TYPES
 
@@ -46,13 +42,5 @@ class Chunk:
 
     @property
     def use_for_matching_flag(self) -> bool:
-        # 별도 boolean 입력 없이 source_type으로 매칭 여부를 결정한다.
+        # 하위 호환용 계산 속성이며 현재 DB에는 저장하지 않는다.
         return use_for_matching(self.source_type)
-
-
-@dataclass(frozen=True)
-class ExtractedItem:
-    """LLM 구조화 추출 결과의 단위 항목(기술 스택/복리후생)."""
-
-    name: str
-    evidence: str

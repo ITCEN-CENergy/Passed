@@ -17,6 +17,7 @@ INSERT INTO companies (
     talent_profile,
     benefits
 )
+OVERRIDING SYSTEM VALUE
 SELECT
     company_id,
     format('임시 회사 %s', lpad(company_id::text, 3, '0')),

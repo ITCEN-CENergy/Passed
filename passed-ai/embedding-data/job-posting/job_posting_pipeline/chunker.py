@@ -2,7 +2,7 @@
 
 목록형 텍스트는 항목 하나당 한 청크, 채용 절차는 원문 그대로,
 서술형 텍스트는 문단·토큰 기반 분할에 오버랩을 적용한다.
-빈 요소도 해당 source_type 의 빈 청크 한 행을 만든다.
+빈 요소는 DB의 빈 문자열 금지 제약에 맞춰 청크를 생성하지 않는다.
 """
 
 from __future__ import annotations
@@ -12,8 +12,8 @@ import re
 
 import tiktoken
 
-from .models import Chunk, ExtractedItem, SourceType
-from .normalize import normalize_tech_name, normalize_text
+from .models import Chunk, SourceType
+from .normalize import normalize_text
 
 _enc: tiktoken.Encoding | None = None
 
@@ -113,11 +113,11 @@ def _emit(
 ) -> list[Chunk]:
     """항목 리스트를 Chunk 리스트로 변환.
 
-    비어있으면 빈 청크 한 행을 만든다. split_long_items=True 면
+    비어있으면 빈 목록을 반환한다. split_long_items=True 면
     단일 항목이 최대 토큰 수를 넘을 때 토큰 분할한다(청크 인덱스는 유지).
     """
     if not raw_items or all(not item for item in raw_items):
-        return [Chunk(source_type, 0, "", EMPTY_CONTENT_HASH)]
+        return []
     # 모든 source_type에서 chunk_index를 0부터 연속적으로 부여한다.
     chunks: list[Chunk] = []
     idx = 0
@@ -132,59 +132,28 @@ def _emit(
             chunks.append(Chunk(source_type, idx, sp, content_hash(sp)))
             idx += 1
     if not chunks:
-        return [Chunk(source_type, 0, "", EMPTY_CONTENT_HASH)]
+        return []
     return chunks
 
 
 # ---------------------------------------------------------------------------
-# LLM 구조화 결과를 청크로 변환
+# 공고 원문을 DB 청크로 변환
 # ---------------------------------------------------------------------------
-def _build_tech_chunks(tech_stacks: list[ExtractedItem]) -> list[Chunk]:
-    """기술 스택: 기술 하나당 한 행. 정규화·중복 제거."""
-    seen: set[str] = set()
-    names: list[str] = []
-    for item in tech_stacks:
-        std = normalize_tech_name(item.name)
-        if std is None or std in seen:
-            continue
-        seen.add(std)
-        names.append(std)
-    return _emit(SourceType.TECH_STACK, names, 0, 0, split_long_items=False)
-
-
-def _build_benefit_chunks(benefits: list[ExtractedItem]) -> list[Chunk]:
-    """복리후생: 항목 하나당 한 행. 중복 제거."""
-    seen: set[str] = set()
-    items: list[str] = []
-    for item in benefits:
-        v = item.name.strip()
-        if not v or v in seen:
-            continue
-        seen.add(v)
-        items.append(v)
-    return _emit(SourceType.BENEFIT, items, 0, 0, split_long_items=False)
-
-
 def build_chunks(
     posting: dict,
-    tech_stacks: list[ExtractedItem] | None,
-    benefits: list[ExtractedItem] | None,
     max_tokens: int,
     overlap: int,
 ) -> list[Chunk]:
-    """공고 원문과 LLM 추출 결과로 전체 청크 리스트를 생성.
+    """CSV에서 저장한 공고 원문만으로 전체 청크 리스트를 생성.
 
     posting 은 fetch_posting 결과(원문 컬럼 포함).
     """
-    tech_stacks = tech_stacks or []
-    benefits = benefits or []
     chunks: list[Chunk] = []
 
-    # 공통 정규화와 빈 청크 규칙을 모든 원문 필드에 동일하게 적용한다.
+    # 공통 정규화 후 값이 있는 필드만 청크로 만든다.
     def add(source_type: SourceType, raw: str | None, splitter) -> None:
         normalized = normalize_text(raw)
         if not normalized:
-            chunks.append(Chunk(source_type, 0, "", EMPTY_CONTENT_HASH))
             return
         items = splitter(normalized)
         chunks.extend(_emit(source_type, items, max_tokens, overlap, True))
@@ -204,11 +173,5 @@ def build_chunks(
     process = normalize_text(posting.get("process"))
     if process:
         chunks.append(Chunk(SourceType.PROCESS, 0, process, content_hash(process)))
-    else:
-        chunks.append(Chunk(SourceType.PROCESS, 0, "", EMPTY_CONTENT_HASH))
-
-    # LLM 추출 결과
-    chunks.extend(_build_tech_chunks(tech_stacks))
-    chunks.extend(_build_benefit_chunks(benefits))
 
     return chunks

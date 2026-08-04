@@ -3,10 +3,7 @@
 계획서 13절에 명시된 값들을 코드에 고정하지 않고 환경변수/`.env`로 분리한다.
 `<결정 필요>`로 표시된 값들은 합리적인 기본값을 채우되 env로 덮을 수 있다.
 
-주의: 이 값들은 실제 운영 환경에서 검토 후 확정해야 한다.
-- COMPANY_ASSIGNMENT_SEED: 결정적 company_id 배정용 고정 시드.
-- EXTRACTION_MODEL: 구조화 추출용 LLM. structured output을 지원하는 모델 사용.
-- EMBEDDING_BATCH_SIZE / EMBEDDING_MAX_RETRIES: API 비용·제한에 맞춰 조정.
+주의: 임베딩 배치 크기와 재시도 횟수는 API 비용·제한에 맞춰 조정해야 한다.
 """
 
 from __future__ import annotations
@@ -30,17 +27,15 @@ class Settings(BaseSettings):
 
     # --- DB ---
     database_url: str = Field(
-        default="postgresql://postgres:postgres@localhost:5432/postgres",
+        default="postgresql://edu:1234@localhost:5433/edu",
+        alias="DATABASE_URL",
         description="PostgreSQL 접속 문자열 (psycopg)",
     )
-
-    # --- 결정적 company_id 배정 ---
-    company_id_min: int = Field(default=0, alias="COMPANY_ID_MIN")
-    company_id_max: int = Field(default=159, alias="COMPANY_ID_MAX")
-    company_assignment_seed: str = Field(
-        default="passed-job-posting-seed-v1",
-        alias="COMPANY_ASSIGNMENT_SEED",
-        description="company_id=NULL 일 때 SHA-256 해시에 섞는 고정 시드",
+    database_connect_timeout_seconds: int = Field(
+        default=10,
+        ge=1,
+        alias="DATABASE_CONNECT_TIMEOUT_SECONDS",
+        description="DB 초기 연결 제한 시간(초)",
     )
 
     # --- 임베딩 ---
@@ -69,32 +64,15 @@ class Settings(BaseSettings):
     embedding_only_matching: bool = Field(
         default=True,
         alias="EMBEDDING_ONLY_MATCHING",
-        description="true면 use_for_matching=true 청크만 임베딩",
+        description="true면 비매칭 source_type 세 종류를 제외하고 임베딩",
     )
 
     # --- 청킹 ---
     chunk_max_tokens: int = Field(default=400, alias="CHUNK_MAX_TOKENS")
     chunk_overlap_tokens: int = Field(default=50, alias="CHUNK_OVERLAP_TOKENS")
 
-    # --- LLM 구조화 추출 ---
+    # --- OpenAI 임베딩 인증 ---
     openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")
-    extraction_model: str = Field(default="gpt-4.1-mini", alias="EXTRACTION_MODEL")
-    extraction_prompt_version: str = Field(
-        default="v1", alias="EXTRACTION_PROMPT_VERSION"
-    )
-    extraction_max_retries: int = Field(default=2, alias="EXTRACTION_MAX_RETRIES")
-    extract_with_llm: bool = Field(
-        default=True,
-        alias="EXTRACT_WITH_LLM",
-        description="false면 LLM 추출을 건너뛰고 tech_stack/benefit 빈 청크만 생성",
-    )
-
-    # --- 입력 해시 기반 LLM 호출 생략(권장) ---
-    extraction_cache_table: str = Field(
-        default="job_posting_extraction_meta",
-        alias="EXTRACTION_CACHE_TABLE",
-        description="LLM 추출 입력 해시/프롬프트 버전을 저장할 메타데이터 테이블",
-    )
 
 
 @lru_cache

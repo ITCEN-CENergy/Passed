@@ -9,6 +9,8 @@ from typing import Iterator
 import psycopg
 from psycopg import Connection
 from psycopg.rows import dict_row
+from dotenv import load_dotenv
+load_dotenv()   # os.environ 읽기 전에 호출되어야 함
 
 
 def connect() -> Connection:

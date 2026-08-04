@@ -20,14 +20,10 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-<<<<<<< HEAD
+    out-of-order: false
 
 external:
   roadmap-ai:
     base-url: ${ROADMAP_AI_BASE_URL:http://localhost:8000}
     connect-timeout-millis: ${ROADMAP_AI_CONNECT_TIMEOUT_MILLIS:3000}
     read-timeout-millis: ${ROADMAP_AI_READ_TIMEOUT_MILLIS:30000}
-=======
-    out-of-order: false
-
->>>>>>> 0f94e9196914ab2cb792ae995527c63f40d01834

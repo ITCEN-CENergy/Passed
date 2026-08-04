@@ -34,3 +34,6 @@ dependencies = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+markers = [
+    "integration: TEST_DATABASE_URL이 가리키는 실제 PostgreSQL을 사용하는 통합 테스트",
+]

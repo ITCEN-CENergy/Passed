@@ -1,7 +1,8 @@
-name: passed-backend
+name: passed-backend 
 services:
   postgres:
-    image: pgvector/pgvector:0.8.6-pg17-trixie
+    image: pgvector/pgvector:pg17
+    container_name: passed-postgres
     environment:
       POSTGRES_DB: edu
       POSTGRES_USER: edu

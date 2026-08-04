@@ -18,6 +18,7 @@ dependencies = [
     "pydantic-settings>=2.14.2",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+    "python-dotenv>=1.2.2",
     "scikit-learn>=1.9.0",
     "sqlalchemy>=2.0.51",
     "tavily-python>=0.7.26",

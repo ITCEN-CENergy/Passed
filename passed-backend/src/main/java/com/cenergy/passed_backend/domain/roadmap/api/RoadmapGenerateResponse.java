@@ -5,13 +5,18 @@ import com.cenergy.passed_backend.domain.roadmap.entity.*;
 
 import java.util.List;
 
-public record RoadmapGenerateResponse(String title, List<Skill> skills) {
+public record RoadmapGenerateResponse(Long roadmapId, String title, List<Skill> skills) {
     public RoadmapGenerateResponse {
         skills = List.copyOf(skills);
     }
 
-    public static RoadmapGenerateResponse from(RoadmapGenerationResult result) {
-        return new RoadmapGenerateResponse(result.title(), result.skills().stream().map(Skill::from).toList());
+    public RoadmapGenerateResponse(String title, List<Skill> skills) {
+        this(null, title, skills);
+    }
+
+    public static RoadmapGenerateResponse from(Long roadmapId, RoadmapGenerationResult result) {
+        return new RoadmapGenerateResponse(roadmapId, result.title(),
+                result.skills().stream().map(Skill::from).toList());
     }
 
     public record Skill(

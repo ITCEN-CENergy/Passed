@@ -45,4 +45,24 @@ public class RoadmapSkill extends BaseTimeEntity {
     private Integer estimatedMinutes = 0;
     @Column(name = "progress_rate", nullable = false, precision = 5, scale = 2)
     private BigDecimal progressRate = BigDecimal.ZERO;
+
+    public static RoadmapSkill create(Roadmap roadmap, Long competencyId, String competencyName,
+                                      CompetencyCategory category, int currentLevel, int targetLevel,
+                                      RequirementType requirementType, int gapLevel, int frequency,
+                                      int priorityScore, int priority, int estimatedMinutes) {
+        RoadmapSkill value = new RoadmapSkill();
+        value.roadmap = roadmap;
+        value.standardCompetencyId = competencyId;
+        value.standardCompetencyName = competencyName;
+        value.category = category;
+        value.currentLevel = currentLevel;
+        value.targetLevel = targetLevel;
+        value.requirementType = requirementType;
+        value.gapLevel = gapLevel;
+        value.frequency = frequency;
+        value.priorityScore = BigDecimal.valueOf(priorityScore);
+        value.priority = priority;
+        value.estimatedMinutes = estimatedMinutes;
+        return value;
+    }
 }

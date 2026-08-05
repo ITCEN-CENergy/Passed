@@ -39,4 +39,24 @@ public class RoadmapSkillSource extends CreatedAtEntity {
     private Integer targetLevel;
     @Column(name = "gap_level", nullable = false)
     private Integer gapLevel;
+
+    public static RoadmapSkillSource create(RoadmapSkill roadmapSkill, Long jobPostingId, Long reportId,
+                                            Long competencyId, String competencyName,
+                                            CompetencyCategory category, int currentLevel,
+                                            String currentEvidence, RequirementType requirementType,
+                                            int targetLevel, int gapLevel) {
+        RoadmapSkillSource value = new RoadmapSkillSource();
+        value.roadmapSkill = roadmapSkill;
+        value.jobPostingId = jobPostingId;
+        value.reportId = reportId;
+        value.standardCompetencyId = competencyId;
+        value.standardCompetencyName = competencyName;
+        value.category = category;
+        value.currentLevel = currentLevel;
+        value.currentEvidence = currentEvidence;
+        value.requirementType = requirementType;
+        value.targetLevel = targetLevel;
+        value.gapLevel = gapLevel;
+        return value;
+    }
 }

@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.api;
 
 import com.cenergy.passed_backend.domain.roadmap.application.RoadmapCommandService;
+import com.cenergy.passed_backend.domain.roadmap.application.RoadmapQueryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -18,7 +19,7 @@ class RoadmapControllerTest {
         RoadmapGenerateResponse response = new RoadmapGenerateResponse("title", List.of());
         when(service.generate(request)).thenReturn(response);
 
-        var actual = new RoadmapController(service).generate(request);
+        var actual = new RoadmapController(service, mock(RoadmapQueryService.class)).generate(request);
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(response, actual.getBody());

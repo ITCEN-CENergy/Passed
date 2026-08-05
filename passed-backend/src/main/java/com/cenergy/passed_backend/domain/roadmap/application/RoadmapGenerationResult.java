@@ -44,16 +44,28 @@ public record RoadmapGenerationResult(String title, List<Skill> skills) {
     public record Skill(String roadmapSkillKey, Long standardCompetencyId, String standardCompetencyName,
                         CompetencyCategory category, int currentLevel, int targetLevel,
                         RequirementType requirementType, int gapLevel, int frequency,
-                        int priorityScore, int priority, List<Milestone> milestones) {
+                        int priorityScore, int priority, List<Source> sources, List<Milestone> milestones) {
         public Skill {
+            sources = List.copyOf(sources);
             milestones = List.copyOf(milestones);
         }
 
         private static Skill from(MergedCompetencyGap gap, ValidatedRoadmapSkill aiSkill) {
             return new Skill(gap.roadmapSkillKey(), gap.standardCompetencyId(), gap.standardCompetencyName(),
                     gap.category(), gap.currentLevel(), gap.targetLevel(), gap.requirementType(), gap.gapLevel(),
-                    gap.frequency(), gap.priorityScore(), gap.priority(),
+                    gap.frequency(), gap.priorityScore(), gap.priority(), gap.sources().stream().map(Source::from).toList(),
                     aiSkill.milestones().stream().map(Milestone::from).toList());
+        }
+    }
+
+    public record Source(Long jobPostingId, Long reportId, Long standardCompetencyId,
+                         String standardCompetencyName, CompetencyCategory category,
+                         int currentLevel, String currentEvidence, RequirementType requirementType,
+                         int targetLevel, int gapLevel) {
+        private static Source from(com.cenergy.passed_backend.domain.roadmap.skillgap.model.CompetencyGapSource value) {
+            return new Source(value.jobPostingId(), value.reportId(), value.standardCompetencyId(),
+                    value.standardCompetencyName(), value.category(), value.currentLevel(), value.currentEvidence(),
+                    value.requirementType(), value.targetLevel(), value.gapLevel());
         }
     }
 

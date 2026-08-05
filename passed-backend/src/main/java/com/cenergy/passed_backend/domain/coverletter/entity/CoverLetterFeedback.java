@@ -1,7 +1,7 @@
-package com.cenergy.passed_backend.coverletter.entity;
+package com.cenergy.passed_backend.domain.coverletter.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
-import com.cenergy.passed_backend.jobposting.entity.JobPosting;
+import com.cenergy.passed_backend.domain.jobposting.domain.JobPosting;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

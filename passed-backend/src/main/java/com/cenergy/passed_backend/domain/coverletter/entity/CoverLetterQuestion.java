@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.coverletter.entity;
+package com.cenergy.passed_backend.domain.coverletter.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -36,8 +36,8 @@ public class CoverLetterItemFeedback extends CreatedAtEntity {
     @JoinColumn(name = "cover_letter_item_id", nullable = false)
     private CoverLetterItem coverLetterItem;
 
-    @Column(name = "score", precision = 5, scale = 2)
-    private BigDecimal score;
+    @Column(name = "score")
+    private CoverLetterScoreType score;
 
     @Column(name = "strengths", columnDefinition = "text")
     private String strengths;

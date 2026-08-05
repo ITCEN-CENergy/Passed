@@ -34,8 +34,8 @@ public class CoverLetterFeedback extends CreatedAtEntity {
     @JoinColumn(name = "job_posting_id", nullable = false)
     private JobPosting jobPosting;
 
-    @Column(name = "overall_score", precision = 5, scale = 2)
-    private BigDecimal overallScore;
+    @Column(name = "overall_score")
+    private CoverLetterScoreType overallScore;
 
     @Column(name = "summary", columnDefinition = "text")
     private String summary;

@@ -50,12 +50,25 @@ public record RoadmapGenerateResponse(String title, List<Skill> skills) {
             MilestoneType milestoneType,
             Difficulty difficulty,
             int estimatedMinutes,
-            int learningOrder
+            int learningOrder,
+            List<LearningResource> learningResources
     ) {
         private static Milestone from(RoadmapGenerationResult.Milestone value) {
             return new Milestone(value.title(), value.description(), value.learningObjective(),
                     value.completionCriteria(), value.startLevel(), value.targetLevel(), value.milestoneType(),
-                    value.difficulty(), value.estimatedMinutes(), value.learningOrder());
+                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(),
+                    value.learningResources().stream().map(LearningResource::from).toList());
+        }
+    }
+
+    public record LearningResource(String resourceId, String resourceType, String title,
+                                   String description, String provider, String url,
+                                   String thumbnailUrl, List<String> authors,
+                                   boolean isOfficial, Boolean isFree) {
+        private static LearningResource from(RoadmapGenerationResult.LearningResource value) {
+            return new LearningResource(value.resourceId(), value.resourceType(), value.title(),
+                    value.description(), value.provider(), value.url(), value.thumbnailUrl(),
+                    value.authors(), value.isOfficial(), value.isFree());
         }
     }
 }

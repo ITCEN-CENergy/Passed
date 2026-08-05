@@ -4,9 +4,17 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 import os
 
+from core.config import get_settings
+
+settings = get_settings()
+
 # LLM 초기화 (환경에 맞게 모델 변경 가능, 예: gpt-4o 또는 gemini-pro)
 # 실제 환경에서는 의존성 주입(Dependency Injection) 등으로 관리하는 것이 좋습니다.
-llm = ChatOpenAI(model="gpt-4o", temperature=0.2)
+llm = ChatOpenAI(
+    api_key=settings.openai_api_key,
+    model="gpt-4o-mini",
+    temperature=0.2
+)
 
 # 1. 맞춤법 검사 (Spell & Grammar Check)
 spell_check_prompt = ChatPromptTemplate.from_messages([
@@ -57,7 +65,7 @@ def process_cover_letter_chain(question: str, content: str, job_description: str
     # Step 2: 질문-응답 일치도
     qa_result = qa_alignment_chain.invoke({
         "question": question,
-        "spell_checked_content": spell_checked_content
+        "spell_checked_content": spell_checked_content,
     })
     
     # Step 3: 직무(공고) 적합도 분석

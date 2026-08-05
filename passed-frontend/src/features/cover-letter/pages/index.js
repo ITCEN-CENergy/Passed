@@ -1,1 +1,1 @@
-export {}
+export { CoverLetterEditPage } from './CoverLetterEditPage';

@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.recommendation.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
+import com.cenergy.passed_backend.jobposting.entity.JobPostingSkillType;
 import com.cenergy.passed_backend.skill.entity.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -50,7 +51,7 @@ public class JobRecommendationSkillDetail extends CreatedAtEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "skill_type", length = 20, nullable = false)
-    private RecommendationSkillType skillType;
+    private JobPostingSkillType skillType;
 
     @Column(name = "required_level", nullable = false)
     private short requiredLevel;

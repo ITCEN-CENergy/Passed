@@ -5,8 +5,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 os.environ["ROADMAP_GENERATOR"] = "fake"
+os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
 from main import app
+from api.features.roadmap.schema import LearningResource
 
 
 client = TestClient(app)
@@ -53,7 +55,7 @@ def test_generate_normal_request() -> None:
     body = response.json()
     assert body["title"] == "개인 맞춤 역량 강화 로드맵"
     assert body["skills"][0]["roadmapSkillKey"] == "competency-1"
-    assert len(body["skills"][0]["milestones"]) == 2
+    assert len(body["skills"][0]["milestones"]) == 6
 
 
 def test_generate_multiple_competencies_in_request_order() -> None:
@@ -74,9 +76,9 @@ def test_generate_multiple_competencies_in_request_order() -> None:
 @pytest.mark.parametrize(
     ("current_level", "target_level", "expected_pairs"),
     [
-        (1, 2, [(1, 2)]),
-        (2, 3, [(2, 3)]),
-        (1, 3, [(1, 2), (2, 3)]),
+        (1, 2, [(1, 2), (1, 2), (1, 2)]),
+        (2, 3, [(2, 3), (2, 3), (2, 3)]),
+        (1, 3, [(1, 2), (1, 2), (1, 2), (2, 3), (2, 3), (2, 3)]),
     ],
 )
 def test_milestones_connect_each_level(
@@ -105,16 +107,26 @@ def test_general_milestone_type_difficulty_and_time_are_deterministic() -> None:
 
     assert [item["milestoneType"] for item in milestones] == [
         "PRACTICE",
+        "PRACTICE",
+        "PRACTICE",
+        "PROJECT",
+        "PROJECT",
         "PROJECT",
     ]
     assert [item["difficulty"] for item in milestones] == [
         "INTERMEDIATE",
+        "INTERMEDIATE",
+        "INTERMEDIATE",
+        "ADVANCED",
+        "ADVANCED",
         "ADVANCED",
     ]
-    assert [item["estimatedMinutes"] for item in milestones] == [120, 180]
+    assert [item["estimatedMinutes"] for item in milestones] == [
+        120, 120, 120, 180, 180, 180
+    ]
 
 
-def test_certification_always_has_one_fixed_milestone() -> None:
+def test_certification_can_have_multiple_milestones_in_fixed_level_stage() -> None:
     payload = request_with(
         competency(
             key="certification-1",
@@ -129,11 +141,11 @@ def test_certification_always_has_one_fixed_milestone() -> None:
 
     assert response.status_code == 200
     milestones = response.json()["skills"][0]["milestones"]
-    assert len(milestones) == 1
-    assert milestones[0]["startLevel"] == 0
-    assert milestones[0]["targetLevel"] == 1
-    assert milestones[0]["milestoneType"] == "CERTIFICATION"
-    assert milestones[0]["learningOrder"] == 1
+    assert len(milestones) == 3
+    assert all(item["startLevel"] == 0 for item in milestones)
+    assert all(item["targetLevel"] == 1 for item in milestones)
+    assert all(item["milestoneType"] == "CERTIFICATION" for item in milestones)
+    assert [item["learningOrder"] for item in milestones] == [1, 2, 3]
 
 
 def test_same_request_returns_same_response() -> None:
@@ -181,3 +193,33 @@ def test_router_is_registered() -> None:
     paths = app.openapi()["paths"]
 
     assert "/api/v1/roadmaps/generate" in paths
+
+
+def test_resource_description_is_milestone_recommendation_reason(monkeypatch) -> None:
+    resource = LearningResource(
+        resourceId="book-1",
+        resourceType="BOOK",
+        title="Docker 실전 가이드",
+        description="검색 API가 반환한 원문 소개",
+        provider="테스트 출판사",
+        url="https://example.com/docker",
+        authors=["홍길동"],
+        isOfficial=False,
+        isFree=None,
+    )
+    monkeypatch.setattr(
+        "api.features.roadmap.service.LearningResourceSearchService.search",
+        lambda self, value: [resource],
+    )
+
+    response = client.post(
+        "/api/v1/roadmaps/generate",
+        json=request_with(competency(current_level=1, target_level=2)),
+    )
+
+    descriptions = [
+        item["learningResources"][0]["description"]
+        for item in response.json()["skills"][0]["milestones"]
+    ]
+    assert all("완료 기준을 점검" in value for value in descriptions)
+    assert all(value != "검색 API가 반환한 원문 소개" for value in descriptions)

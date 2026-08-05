@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 /** Temporary development identity until authentication is connected. */
 @Component
 public class DevCurrentUserIdProvider implements CurrentUserIdProvider {
-    private static final Long DEV_USER_ID = 1L;
+    private static final Long DEV_USER_ID = 257L;
 
     @Override
     public Long getCurrentUserId() {

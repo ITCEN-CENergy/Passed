@@ -23,23 +23,51 @@ class RoadmapAiResponseValidatorTest {
 
     @Test
     void validatesAndSortsMilestonesByLearningOrder() {
-        RoadmapAiResponse response = response(skill("docker", milestone(2, 2, 3), milestone(1, 1, 2)));
+        RoadmapAiResponse response = response(skill("docker",
+                milestone(5, 2, 3), milestone(2, 1, 2), milestone(4, 2, 3),
+                milestone(1, 1, 2), milestone(6, 2, 3), milestone(3, 1, 2)));
 
         ValidatedRoadmapAiResult result = validator.validate(request(technical("docker", 1, 3)), response);
 
         assertThat(result.title()).isEqualTo("개인 맞춤 역량 강화 로드맵");
         assertThat(result.skills()).singleElement().satisfies(skill -> {
             assertThat(skill.roadmapSkillKey()).isEqualTo("docker");
-            assertThat(skill.milestones()).extracting("learningOrder").containsExactly(1, 2);
+            assertThat(skill.milestones()).extracting("learningOrder")
+                    .containsExactly(1, 2, 3, 4, 5, 6);
         });
+    }
+
+    @Test
+    void allowsMultipleMilestonesForTheSameLearningStage() {
+        RoadmapAiResponse response = response(skill("docker",
+                milestone(1, 1, 2), milestone(2, 1, 2), milestone(3, 1, 2),
+                milestone(4, 2, 3), milestone(5, 2, 3), milestone(6, 2, 3)));
+
+        ValidatedRoadmapAiResult result = validator.validate(request(technical("docker", 1, 3)), response);
+
+        assertThat(result.skills().getFirst().milestones())
+                .extracting("startLevel", "targetLevel")
+                .containsExactly(
+                        org.assertj.core.groups.Tuple.tuple(1, 2),
+                        org.assertj.core.groups.Tuple.tuple(1, 2),
+                        org.assertj.core.groups.Tuple.tuple(1, 2),
+                        org.assertj.core.groups.Tuple.tuple(2, 3),
+                        org.assertj.core.groups.Tuple.tuple(2, 3),
+                        org.assertj.core.groups.Tuple.tuple(2, 3));
+    }
+
+    @Test
+    void rejectsReturningToAnEarlierLearningStage() {
+        assertInvalid(request(technical("docker", 1, 3)), response(skill("docker",
+                milestone(1, 1, 2), milestone(2, 2, 3), milestone(3, 1, 2))));
     }
 
     @Test
     void validatesAllRequestedSkillsExactlyOnce() {
         RoadmapAiRequest request = request(technical("docker", 1, 2), technical("aws", 2, 3));
         RoadmapAiResponse response = response(
-                skill("docker", milestone(1, 1, 2)),
-                skill("aws", milestone(1, 2, 3))
+                skill("docker", milestone(1, 1, 2), milestone(2, 1, 2), milestone(3, 1, 2)),
+                skill("aws", milestone(1, 2, 3), milestone(2, 2, 3), milestone(3, 2, 3))
         );
 
         assertThat(validator.validate(request, response).skills()).hasSize(2);
@@ -93,11 +121,18 @@ class RoadmapAiResponseValidatorTest {
     @Test
     void validatesCertificationGapFromZeroToOne() {
         RoadmapAiRequest request = request(certification("sqld", 0));
-        RoadmapAiResponse.Milestone certification = new RoadmapAiResponse.Milestone(
-                "SQLD 자격 취득", "설명", "목표", "기준", 0, 1,
-                MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, 1);
 
-        assertThat(validator.validate(request, response(skill("sqld", certification))).skills()).hasSize(1);
+        assertThat(validator.validate(request, response(skill("sqld",
+                certificationMilestone(1), certificationMilestone(2), certificationMilestone(3))))
+                .skills()).hasSize(1);
+    }
+
+    @Test
+    void allowsMultipleCertificationMilestones() {
+        RoadmapAiRequest request = request(certification("sqld", 0));
+        assertThat(validator.validate(request, response(skill("sqld",
+                        certificationMilestone(1), certificationMilestone(2), certificationMilestone(3))))
+                .skills().getFirst().milestones()).hasSize(3);
     }
 
     @Test
@@ -163,6 +198,12 @@ class RoadmapAiResponseValidatorTest {
                 "Docker 목표 수준 " + target, "설명", "목표", "기준", start, target,
                 MilestoneType.CONCEPT, Difficulty.BEGINNER, 60, order
         );
+    }
+
+    private RoadmapAiResponse.Milestone certificationMilestone(int order) {
+        return new RoadmapAiResponse.Milestone(
+                "SQLD 자격 취득 " + order, "설명", "목표", "기준", 0, 1,
+                MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, order);
     }
 
     private RoadmapAiResponse.Milestone withTypeAndDifficulty(

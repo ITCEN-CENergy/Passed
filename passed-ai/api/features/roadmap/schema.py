@@ -30,6 +30,12 @@ class Difficulty(StrEnum):
     ADVANCED = "ADVANCED"
 
 
+class LearningResourceType(StrEnum):
+    KMOOC_COURSE = "KMOOC_COURSE"
+    BOOK = "BOOK"
+    WEB_RESOURCE = "WEB_RESOURCE"
+
+
 class RoadmapModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
@@ -90,6 +96,20 @@ class Milestone(RoadmapModel):
     difficulty: Difficulty
     estimatedMinutes: int = Field(gt=0)
     learningOrder: int = Field(gt=0)
+    learningResources: list["LearningResource"] = Field(default_factory=list)
+
+
+class LearningResource(RoadmapModel):
+    resourceId: str = Field(min_length=1)
+    resourceType: LearningResourceType
+    title: str = Field(min_length=1)
+    description: str = ""
+    provider: str = Field(min_length=1)
+    url: str = Field(min_length=1)
+    thumbnailUrl: str | None = None
+    authors: list[str] = Field(default_factory=list)
+    isOfficial: bool = False
+    isFree: bool | None = None
 
 
 class RoadmapSkill(RoadmapModel):
@@ -102,10 +122,14 @@ class RoadmapGenerateResponse(RoadmapModel):
     skills: list[RoadmapSkill]
 
 
-class MilestoneSlot(RoadmapModel):
+class LearningStage(RoadmapModel):
     startLevel: int
     targetLevel: int
-    learningOrder: int = Field(gt=0)
+
+
+class GeneratedResourceRecommendation(RoadmapModel):
+    resourceId: str = Field(min_length=1)
+    recommendationReason: str = Field(min_length=1, max_length=300)
 
 
 class GeneratedMilestoneContent(RoadmapModel):
@@ -116,11 +140,18 @@ class GeneratedMilestoneContent(RoadmapModel):
     milestoneType: MilestoneType
     difficulty: Difficulty
     estimatedMinutes: int = Field(ge=30, le=2400)
+    resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
+
+
+class GeneratedLearningStage(RoadmapModel):
+    startLevel: int
+    targetLevel: int
+    milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
 
 
 class GeneratedSkillContent(RoadmapModel):
     roadmapSkillKey: str = Field(min_length=1)
-    milestones: list[GeneratedMilestoneContent] = Field(min_length=1, max_length=2)
+    stages: list[GeneratedLearningStage] = Field(min_length=1, max_length=2)
 
 
 class GeneratedRoadmapContent(RoadmapModel):

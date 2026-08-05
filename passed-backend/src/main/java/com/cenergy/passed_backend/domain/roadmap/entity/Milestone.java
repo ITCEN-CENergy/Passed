@@ -56,6 +56,7 @@ public class Milestone extends BaseTimeEntity {
         value.userId = userId;
         value.standardCompetencyId = competencyId;
         value.title = title;
+        value.description = null;
         value.learningObjective = objective;
         value.completionCriteria = criteria;
         value.startLevel = startLevel;
@@ -63,6 +64,15 @@ public class Milestone extends BaseTimeEntity {
         value.milestoneType = type;
         value.difficulty = difficulty;
         value.estimatedMinutes = estimatedMinutes;
+        return value;
+    }
+
+    public static Milestone create(Long userId, Long competencyId, String title, String description,
+                                   String objective, String criteria, int startLevel, int targetLevel,
+                                   MilestoneType type, Difficulty difficulty, int estimatedMinutes) {
+        Milestone value = create(userId, competencyId, title, objective, criteria, startLevel,
+                targetLevel, type, difficulty, estimatedMinutes);
+        value.description = description;
         return value;
     }
 }

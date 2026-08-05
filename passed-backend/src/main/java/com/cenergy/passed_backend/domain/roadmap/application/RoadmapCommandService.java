@@ -12,11 +12,14 @@ import java.util.List;
 public class RoadmapCommandService {
     private final CurrentUserIdProvider currentUserIdProvider;
     private final RoadmapGenerationService generationService;
+    private final RoadmapPersistenceService persistenceService;
 
     public RoadmapCommandService(CurrentUserIdProvider currentUserIdProvider,
-                                 RoadmapGenerationService generationService) {
+                                 RoadmapGenerationService generationService,
+                                 RoadmapPersistenceService persistenceService) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.generationService = generationService;
+        this.persistenceService = persistenceService;
     }
 
     public RoadmapGenerateResponse generate(RoadmapGenerateRequest request) {
@@ -25,7 +28,9 @@ public class RoadmapCommandService {
         if (userId == null || userId <= 0) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid current user");
         }
-        return RoadmapGenerateResponse.from(generationService.generate(userId, jobPostingIds));
+        RoadmapGenerationResult result = generationService.generate(userId, jobPostingIds);
+        Long roadmapId = persistenceService.save(userId, jobPostingIds, result).getId();
+        return RoadmapGenerateResponse.from(roadmapId, result);
     }
 
     private List<Long> normalize(List<Long> values) {

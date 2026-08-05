@@ -21,4 +21,12 @@ public class RoadmapJobPosting extends CreatedAtEntity {
     private Long jobPostingId;
     @Column(name = "report_id")
     private Long reportId;
+
+    public static RoadmapJobPosting create(Roadmap roadmap, Long jobPostingId, Long reportId) {
+        RoadmapJobPosting value = new RoadmapJobPosting();
+        value.roadmap = roadmap;
+        value.jobPostingId = jobPostingId;
+        value.reportId = reportId;
+        return value;
+    }
 }

@@ -30,6 +30,14 @@ public class RoadmapMilestone extends CreatedAtEntity {
     @Column(name = "is_required", nullable = false)
     private boolean required = true;
 
+    public static RoadmapMilestone create(RoadmapSkill roadmapSkill, Milestone milestone, int learningOrder) {
+        RoadmapMilestone value = new RoadmapMilestone();
+        value.roadmapSkill = roadmapSkill;
+        value.milestone = milestone;
+        value.learningOrder = learningOrder;
+        return value;
+    }
+
     public static RoadmapMilestone create() {
         return new RoadmapMilestone();
     }

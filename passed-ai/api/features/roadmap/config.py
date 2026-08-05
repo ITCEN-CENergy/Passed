@@ -11,8 +11,24 @@ class RoadmapSettings(BaseSettings):
     generator: Literal["fake", "llm"] = Field(default="llm", alias="ROADMAP_GENERATOR")
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     model: str = Field(default="gpt-4o", alias="ROADMAP_LLM_MODEL")
-    timeout_seconds: float = Field(default=20, gt=0, alias="ROADMAP_LLM_TIMEOUT_SECONDS")
-    max_retries: int = Field(default=2, ge=0, le=5, alias="ROADMAP_LLM_MAX_RETRIES")
+    timeout_seconds: float = Field(default=180, gt=0, alias="ROADMAP_LLM_TIMEOUT_SECONDS")
+    max_retries: int = Field(default=1, ge=0, le=5, alias="ROADMAP_LLM_MAX_RETRIES")
+    resource_search_enabled: bool = Field(
+        default=True, alias="ROADMAP_RESOURCE_SEARCH_ENABLED"
+    )
+    resource_search_timeout_seconds: float = Field(
+        default=60, gt=0, alias="ROADMAP_RESOURCE_SEARCH_TIMEOUT_SECONDS"
+    )
+    generation_total_timeout_seconds: float = Field(
+        default=300, gt=0, alias="ROADMAP_GENERATION_TOTAL_TIMEOUT_SECONDS"
+    )
+    kmooc_service_key: str | None = Field(default=None, alias="KMOOC_SERVICE_KEY")
+    kmooc_course_list_url: str | None = Field(
+        default="https://apis.data.go.kr/B552881/kmooc_v2_0/courseList_v2_0",
+        alias="KMOOC_COURSE_LIST_URL",
+    )
+    kakao_rest_api_key: str | None = Field(default=None, alias="KAKAO_REST_API_KEY")
+    tavily_api_key: str | None = Field(default=None, alias="TAVILY_API_KEY")
 
 
 @lru_cache

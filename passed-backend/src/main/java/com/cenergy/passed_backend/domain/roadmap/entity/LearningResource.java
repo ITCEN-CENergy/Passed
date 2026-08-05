@@ -39,4 +39,18 @@ public class LearningResource extends BaseTimeEntity {
 
     @Column(name = "duration_minutes")
     private Integer durationMinutes;
+
+    public static LearningResource create(String provider, String externalId, String resourceType,
+                                          String title, String description, String url,
+                                          String thumbnailUrl) {
+        LearningResource value = new LearningResource();
+        value.provider = provider;
+        value.externalId = externalId;
+        value.resourceType = resourceType;
+        value.title = title;
+        value.description = description;
+        value.url = url;
+        value.thumbnailUrl = thumbnailUrl;
+        return value;
+    }
 }

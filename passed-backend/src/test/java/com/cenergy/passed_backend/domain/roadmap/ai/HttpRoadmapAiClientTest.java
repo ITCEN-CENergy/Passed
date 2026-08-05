@@ -48,7 +48,7 @@ class HttpRoadmapAiClientTest {
         ValidatedRoadmapAiResult result = client.generate(request());
 
         assertThat(result.skills()).singleElement().satisfies(skill ->
-                assertThat(skill.milestones()).hasSize(2));
+                assertThat(skill.milestones()).hasSize(6));
         server.verify();
     }
 
@@ -165,6 +165,30 @@ class HttpRoadmapAiClientTest {
                         "learningOrder": 1
                       },
                       {
+                        "title": "Docker 목표 수준 2 실습",
+                        "description": "설명",
+                        "learningObjective": "목표",
+                        "completionCriteria": "기준",
+                        "startLevel": 1,
+                        "targetLevel": 2,
+                        "milestoneType": "PRACTICE",
+                        "difficulty": "INTERMEDIATE",
+                        "estimatedMinutes": 120,
+                        "learningOrder": 2
+                      },
+                      {
+                        "title": "Docker 목표 수준 2 평가",
+                        "description": "설명",
+                        "learningObjective": "목표",
+                        "completionCriteria": "기준",
+                        "startLevel": 1,
+                        "targetLevel": 2,
+                        "milestoneType": "ASSESSMENT",
+                        "difficulty": "INTERMEDIATE",
+                        "estimatedMinutes": 120,
+                        "learningOrder": 3
+                      },
+                      {
                         "title": "Docker 목표 수준 3 학습",
                         "description": "설명",
                         "learningObjective": "목표",
@@ -174,7 +198,31 @@ class HttpRoadmapAiClientTest {
                         "milestoneType": "PROJECT",
                         "difficulty": "ADVANCED",
                         "estimatedMinutes": 180,
-                        "learningOrder": 2
+                        "learningOrder": 4
+                      },
+                      {
+                        "title": "Docker 목표 수준 3 실습",
+                        "description": "설명",
+                        "learningObjective": "목표",
+                        "completionCriteria": "기준",
+                        "startLevel": 2,
+                        "targetLevel": 3,
+                        "milestoneType": "PROJECT",
+                        "difficulty": "ADVANCED",
+                        "estimatedMinutes": 180,
+                        "learningOrder": 5
+                      },
+                      {
+                        "title": "Docker 목표 수준 3 평가",
+                        "description": "설명",
+                        "learningObjective": "목표",
+                        "completionCriteria": "기준",
+                        "startLevel": 2,
+                        "targetLevel": 3,
+                        "milestoneType": "ASSESSMENT",
+                        "difficulty": "ADVANCED",
+                        "estimatedMinutes": 180,
+                        "learningOrder": 6
                       }
                     ]
                   }]

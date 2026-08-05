@@ -9,7 +9,8 @@ from api.features.roadmap.prompt import SYSTEM_PROMPT, build_user_prompt
 from api.features.roadmap.schema import (
     Competency,
     GeneratedRoadmapContent,
-    MilestoneSlot,
+    LearningResource,
+    LearningStage,
 )
 
 
@@ -29,13 +30,16 @@ class OpenAiRoadmapClient:
     def generate(
         self,
         competencies: list[Competency],
-        slots_by_key: dict[str, list[MilestoneSlot]],
+        stages_by_key: dict[str, list[LearningStage]],
+        resources_by_key: dict[str, list[LearningResource]],
     ) -> GeneratedRoadmapContent:
         response = self._client.responses.parse(
             model=self._model,
             input=[
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": build_user_prompt(competencies, slots_by_key)},
+                {"role": "user", "content": build_user_prompt(
+                    competencies, stages_by_key, resources_by_key
+                )},
             ],
             text_format=GeneratedRoadmapContent,
         )

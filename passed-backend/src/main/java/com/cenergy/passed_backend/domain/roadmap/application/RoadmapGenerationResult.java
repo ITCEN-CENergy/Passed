@@ -2,6 +2,7 @@ package com.cenergy.passed_backend.domain.roadmap.application;
 
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapAiResult;
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapMilestone;
+import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedLearningResource;
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapSkill;
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.MergedCompetencyGap;
@@ -59,11 +60,32 @@ public record RoadmapGenerationResult(String title, List<Skill> skills) {
     public record Milestone(String title, String description, String learningObjective,
                             String completionCriteria, int startLevel, int targetLevel,
                             MilestoneType milestoneType, Difficulty difficulty,
-                            int estimatedMinutes, int learningOrder) {
+                            int estimatedMinutes, int learningOrder,
+                            List<LearningResource> learningResources) {
+        public Milestone {
+            learningResources = List.copyOf(learningResources);
+        }
+
         private static Milestone from(ValidatedRoadmapMilestone value) {
             return new Milestone(value.title(), value.description(), value.learningObjective(),
                     value.completionCriteria(), value.startLevel(), value.targetLevel(), value.milestoneType(),
-                    value.difficulty(), value.estimatedMinutes(), value.learningOrder());
+                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(),
+                    value.learningResources().stream().map(LearningResource::from).toList());
+        }
+    }
+
+    public record LearningResource(String resourceId, String resourceType, String title,
+                                   String description, String provider, String url,
+                                   String thumbnailUrl, List<String> authors,
+                                   boolean isOfficial, Boolean isFree) {
+        public LearningResource {
+            authors = List.copyOf(authors);
+        }
+
+        private static LearningResource from(ValidatedLearningResource value) {
+            return new LearningResource(value.resourceId(), value.resourceType(), value.title(),
+                    value.description(), value.provider(), value.url(), value.thumbnailUrl(),
+                    value.authors(), value.isOfficial(), value.isFree());
         }
     }
 }

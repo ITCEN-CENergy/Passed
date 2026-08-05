@@ -52,6 +52,15 @@ class SyncStats:
 
 
 @dataclass(frozen=True)
+class EmbeddingStats:
+    """청크 임베딩 작업 한 번의 누적 처리 결과."""
+
+    embedded: int = 0
+    failed: int = 0
+    skipped: int = 0
+
+
+@dataclass(frozen=True)
 class ChunkingResult:
     resume_chunks: SyncStats
     cover_letter_chunks: SyncStats

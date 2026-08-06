@@ -12,6 +12,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -72,4 +73,32 @@ public class RecommendationRun {
 
     @Column(name = "failure_message", columnDefinition = "text")
     private String failureMessage;
+
+    public static RecommendationRun startProcessing(
+            User user,
+            RecommendationScoringPolicy scoringPolicy,
+            String userSkillSnapshotHash,
+            Map<String, Object> userSkillSnapshot,
+            Map<String, Object> preferenceSnapshot
+    ) {
+        RecommendationRun run = new RecommendationRun();
+        run.user = Objects.requireNonNull(user, "user must not be null");
+        run.scoringPolicy = Objects.requireNonNull(scoringPolicy, "scoringPolicy must not be null");
+        run.userSkillSnapshotHash = requireSnapshotHash(userSkillSnapshotHash);
+        run.userSkillSnapshot = new LinkedHashMap<>(
+                Objects.requireNonNull(userSkillSnapshot, "userSkillSnapshot must not be null")
+        );
+        run.preferenceSnapshot = new LinkedHashMap<>(
+                Objects.requireNonNull(preferenceSnapshot, "preferenceSnapshot must not be null")
+        );
+        run.status = RecommendationRunStatus.PROCESSING;
+        return run;
+    }
+
+    private static String requireSnapshotHash(String value) {
+        if (value == null || !value.matches("^[0-9a-f]{64}$")) {
+            throw new IllegalArgumentException("userSkillSnapshotHash must be a lowercase SHA-256 hash");
+        }
+        return value;
+    }
 }

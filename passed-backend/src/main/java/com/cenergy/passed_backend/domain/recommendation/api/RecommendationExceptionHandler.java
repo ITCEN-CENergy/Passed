@@ -24,10 +24,10 @@ public class RecommendationExceptionHandler {
     @ExceptionHandler(RecommendationException.class)
     public ResponseEntity<ErrorResponse> recommendation(RecommendationException exception) {
         HttpStatus status = switch (exception.getErrorCode()) {
-            case RECOMMENDATION_INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
-            case RECOMMENDATION_USER_NOT_FOUND, RECOMMENDATION_USER_SKILLS_NOT_FOUND -> HttpStatus.NOT_FOUND;
-            case RECOMMENDATION_ALREADY_PROCESSING -> HttpStatus.CONFLICT;
-            case RECOMMENDATION_POLICY_NOT_FOUND -> HttpStatus.SERVICE_UNAVAILABLE;
+            case ErrorCode.RECOMMENDATION_INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
+            case ErrorCode.RECOMMENDATION_USER_NOT_FOUND, ErrorCode.RECOMMENDATION_USER_SKILLS_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case ErrorCode.RECOMMENDATION_ALREADY_PROCESSING -> HttpStatus.CONFLICT;
+            case ErrorCode.RECOMMENDATION_POLICY_NOT_FOUND -> HttpStatus.SERVICE_UNAVAILABLE;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
         return response(status, exception.getErrorCode(), exception.getMessage());

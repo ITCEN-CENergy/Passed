@@ -1,9 +1,9 @@
-package com.gooroomees.neulbomgil_backend.global.config;
+package com.cenergy.passed_backend.global.config;
 
-import com.gooroomees.neulbomgil_backend.domain.auth.entity.RefreshToken;
-import com.gooroomees.neulbomgil_backend.domain.auth.entity.UserAuth;
-import com.gooroomees.neulbomgil_backend.domain.auth.repository.RefreshTokenRepository;
-import com.gooroomees.neulbomgil_backend.domain.auth.repository.UserAuthRepository;
+import com.cenergy.passed_backend.domain.auth.entity.RefreshToken;
+import com.cenergy.passed_backend.domain.auth.entity.UserAuth;
+import com.cenergy.passed_backend.domain.auth.repository.RefreshTokenRepository;
+import com.cenergy.passed_backend.domain.auth.repository.UserAuthRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package com.gooroomees.neulbomgil_backend.domain.auth.dto.response;
+package com.cenergy.passed_backend.domain.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
-package com.gooroomees.neulbomgil_backend.domain.auth.repository;
+package com.cenergy.passed_backend.domain.auth.repository;
 
-import com.gooroomees.neulbomgil_backend.domain.auth.entity.RefreshToken;
+import com.cenergy.passed_backend.domain.auth.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

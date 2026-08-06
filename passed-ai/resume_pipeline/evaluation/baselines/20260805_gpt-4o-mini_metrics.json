@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-08-05T02:38:20.415974+00:00",
+  "model": "gpt-4o-mini",
+  "golden_file": "resume_pipeline\\evaluation\\golden_skill_extraction.json",
+  "golden_sha256": "b5cc66958a42403d23cdb65f43e7e076f67a603f5c5c049a8761ffe08e99834f",
+  "prompt_sha256": "e1dad2e684ff9003770e08596cf88cbfb29bdd9d93a3d9d9851ce3508a56a22c",
+  "metrics": {
+    "micro": {
+      "true_positive": 11,
+      "false_positive": 41,
+      "false_negative": 61,
+      "precision": 0.21153846153846154,
+      "recall": 0.1527777777777778,
+      "f1": 0.1774193548387097
+    },
+    "by_category": {
+      "TECHNICAL_SKILL": {
+        "true_positive": 7,
+        "false_positive": 7,
+        "false_negative": 9,
+        "precision": 0.5,
+        "recall": 0.4375,
+        "f1": 0.4666666666666667
+      },
+      "EXPERIENCE": {
+        "true_positive": 2,
+        "false_positive": 23,
+        "false_negative": 23,
+        "precision": 0.08,
+        "recall": 0.08,
+        "f1": 0.08
+      },
+      "BEHAVIORAL_TRAIT": {
+        "true_positive": 0,
+        "false_positive": 10,
+        "false_negative": 27,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "CERTIFICATION": {
+        "true_positive": 2,
+        "false_positive": 1,
+        "false_negative": 2,
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285715
+      }
+    },
+    "level": {
+      "evaluated_count": 11,
+      "exact_matches": 8,
+      "accuracy": 0.7272727272727273,
+      "mean_absolute_error": 0.2727272727272727
+    },
+    "negative_examples": {
+      "negative_example_count": 6,
+      "false_positive_example_count": 0,
+      "false_positive_candidate_count": 0,
+      "over_extraction_rate": 0.0
+    },
+    "missing_prediction_ids": [],
+    "unknown_prediction_ids": []
+  }
+}

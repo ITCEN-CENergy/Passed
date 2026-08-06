@@ -1,0 +1,426 @@
+[
+{
+  "example_id": "resume-experience-backend-001",
+  "predicted": [
+    {
+      "extracted_name": "REST API 설계",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "REST API 개발",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-001",
+  "predicted": [
+    {
+      "extracted_name": "정보처리기사",
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-toeic-001",
+  "predicted": [
+    {
+      "extracted_name": "TOEIC",
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-written-pass-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-certification-preparing-001",
+  "predicted": []
+},
+{
+  "example_id": "resume-certification-multiple-001",
+  "predicted": [
+    {
+      "extracted_name": "ADsP",
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-training-aws-services-001",
+  "predicted": [
+    {
+      "extracted_name": "AWS EC2",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "AWS S3",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "AWS RDS",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-listening-001",
+  "predicted": [
+    {
+      "extracted_name": "의견 경청",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-future-only-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-experience-db-optimization-001",
+  "predicted": [
+    {
+      "extracted_name": "PostgreSQL 실행 계획 분석",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "API 응답 시간 개선",
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "resume-experience-leadership-001",
+  "predicted": [
+    {
+      "extracted_name": "개발 일정 관리",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "주간 회고",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "프로젝트 완료",
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "resume-experience-data-analysis-001",
+  "predicted": [
+    {
+      "extracted_name": "SQL 분석",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "대시보드 시각화",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-activity-collaboration-001",
+  "predicted": [
+    {
+      "extracted_name": "요구사항 정리",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    },
+    {
+      "extracted_name": "개발 범위 합의",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-education-react-variant-001",
+  "predicted": [
+    {
+      "extracted_name": "React.js",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-conflict-001",
+  "predicted": [
+    {
+      "extracted_name": "의견 조율",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-ownership-001",
+  "predicted": [
+    {
+      "extracted_name": "장애 수정 책임",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-failure-recovery-001",
+  "predicted": [
+    {
+      "extracted_name": "롤백",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "로그 분석",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "재발 방지 테스트 추가",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-communication-001",
+  "predicted": [
+    {
+      "extracted_name": "장애 원인 설명",
+      "category": "EXPERIENCE",
+      "level": 1
+    },
+    {
+      "extracted_name": "대응 계획 설명",
+      "category": "EXPERIENCE",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-customer-001",
+  "predicted": [
+    {
+      "extracted_name": "고객 문의 분류",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "불편 사항 개선",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-performance-001",
+  "predicted": [
+    {
+      "extracted_name": "캐시 적용",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "병목 구간 제거",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "처리량 개선",
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-future-only-002",
+  "predicted": []
+},
+{
+  "example_id": "cover-personality-self-claim-only-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-experience-learning-001",
+  "predicted": [
+    {
+      "extracted_name": "모의 발표",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "예상 질문 목록 작성",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-activity-spring-korean-001",
+  "predicted": [
+    {
+      "extracted_name": "게시판 개발",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "스프링부트",
+      "category": "TECHNICAL_SKILL",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-award-innovation-001",
+  "predicted": [
+    {
+      "extracted_name": "접근성 개선 아이디어",
+      "category": "EXPERIENCE",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-overseas-adaptability-001",
+  "predicted": [
+    {
+      "extracted_name": "역할 협의",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    },
+    {
+      "extracted_name": "결과 발표",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-schedule-001",
+  "predicted": [
+    {
+      "extracted_name": "작업 재분배",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "진행 상황 공유",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "마감일 준수",
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-code-review-001",
+  "predicted": [
+    {
+      "extracted_name": "코드 리뷰 기준 문서화",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "구체적 개선 의견 남기기",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-incident-001",
+  "predicted": [
+    {
+      "extracted_name": "서비스 복구",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "역할 나눔",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-automation-001",
+  "predicted": [
+    {
+      "extracted_name": "배포 자동화",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "Python",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-empathy-001",
+  "predicted": [
+    {
+      "extracted_name": "작업 나누기",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    },
+    {
+      "extracted_name": "팀원 상황 청취",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-past-and-future-001",
+  "predicted": [
+    {
+      "extracted_name": "Docker",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-mentoring-001",
+  "predicted": [
+    {
+      "extracted_name": "온보딩 문서 작성",
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "페어 프로그래밍",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-unsupported-002",
+  "predicted": []
+}
+]

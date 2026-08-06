@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from time import perf_counter
 from typing import Protocol
@@ -242,12 +243,19 @@ async def _generate_roadmap(
     search_service = LearningResourceSearchService(
         create_resource_providers(http_client, settings),
         enabled=settings.resource_search_enabled,
+        max_concurrency=settings.resource_search_max_concurrency,
         generation_id=generation_id,
     )
-    for competency in request.competencies:
-        resources_by_key[competency.roadmapSkillKey] = await search_service.search(
-            competency
+    search_results = await asyncio.gather(*(
+        search_service.search(competency)
+        for competency in request.competencies
+    ))
+    resources_by_key = {
+        competency.roadmapSkillKey: resources
+        for competency, resources in zip(
+            request.competencies, search_results, strict=True
         )
+    }
     search_elapsed_ms = round((perf_counter() - search_started) * 1000)
     resource_count = sum(len(resources) for resources in resources_by_key.values())
     resource_description_char_count = sum(

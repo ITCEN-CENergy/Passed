@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import httpx
@@ -10,7 +11,31 @@ from api.features.roadmap.resource_search import (
     _official_provider,
     _summarize,
 )
-from api.features.roadmap.schema import Competency
+from api.features.roadmap.schema import Competency, LearningResource
+
+
+class TrackingProvider:
+    def __init__(self, name: str, delay: float, tracker: dict[str, int]) -> None:
+        self.name = name
+        self._delay = delay
+        self._tracker = tracker
+
+    async def search(self, competency: Competency) -> list[LearningResource]:
+        self._tracker["active"] += 1
+        self._tracker["maximum"] = max(
+            self._tracker["maximum"], self._tracker["active"]
+        )
+        try:
+            await asyncio.sleep(self._delay)
+            return [LearningResource(
+                resourceId=f"{self.name}-{competency.roadmapSkillKey}",
+                resourceType="WEB_RESOURCE",
+                title=self.name,
+                provider=self.name,
+                url=f"https://example.com/{self.name}/{competency.roadmapSkillKey}",
+            )]
+        finally:
+            self._tracker["active"] -= 1
 
 
 def _competency() -> Competency:
@@ -101,6 +126,50 @@ async def test_provider_failure_does_not_fail_search(caplog) -> None:
         record.provider for record in provider_records if record.status == "EMPTY"
     }
     assert empty_providers == {"kmooc", "tavily"}
+
+
+@pytest.mark.asyncio
+async def test_provider_calls_respect_configured_concurrency() -> None:
+    tracker = {"active": 0, "maximum": 0}
+    providers = tuple(
+        TrackingProvider(f"provider-{index}", 0.01, tracker)
+        for index in range(3)
+    )
+    service = LearningResourceSearchService(
+        providers,
+        enabled=True,
+        max_concurrency=2,
+    )
+
+    await asyncio.gather(
+        service.search(_competency()),
+        service.search(_competency().model_copy(update={"roadmapSkillKey": "aws"})),
+    )
+
+    assert tracker["maximum"] == 2
+
+
+@pytest.mark.asyncio
+async def test_parallel_provider_results_keep_provider_order() -> None:
+    tracker = {"active": 0, "maximum": 0}
+    providers = (
+        TrackingProvider("first", 0.03, tracker),
+        TrackingProvider("second", 0.01, tracker),
+        TrackingProvider("third", 0, tracker),
+    )
+    service = LearningResourceSearchService(
+        providers,
+        enabled=True,
+        max_concurrency=3,
+    )
+
+    resources = await service.search(_competency())
+
+    assert [resource.provider for resource in resources] == [
+        "first",
+        "second",
+        "third",
+    ]
 
 
 def test_web_description_removes_markup_and_is_bounded() -> None:

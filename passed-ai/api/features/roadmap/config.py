@@ -19,6 +19,11 @@ class RoadmapSettings(BaseSettings):
     resource_search_timeout_seconds: float = Field(
         default=60, gt=0, alias="ROADMAP_RESOURCE_SEARCH_TIMEOUT_SECONDS"
     )
+    resource_search_max_concurrency: int = Field(
+        default=6,
+        ge=1,
+        alias="ROADMAP_RESOURCE_SEARCH_MAX_CONCURRENCY",
+    )
     generation_total_timeout_seconds: float = Field(
         default=300, gt=0, alias="ROADMAP_GENERATION_TOTAL_TIMEOUT_SECONDS"
     )

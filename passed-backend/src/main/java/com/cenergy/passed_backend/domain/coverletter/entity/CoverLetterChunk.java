@@ -1,6 +1,7 @@
-package com.cenergy.passed_backend.coverletter.entity;
+package com.cenergy.passed_backend.domain.coverletter.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterItem;
 import com.cenergy.passed_backend.common.entity.EmbeddingStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

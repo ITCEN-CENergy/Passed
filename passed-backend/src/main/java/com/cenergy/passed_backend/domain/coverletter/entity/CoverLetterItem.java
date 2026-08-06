@@ -1,5 +1,6 @@
-package com.cenergy.passed_backend.coverletter.entity;
-
+package com.cenergy.passed_backend.domain.coverletter.entity;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetter;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterQuestion;
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

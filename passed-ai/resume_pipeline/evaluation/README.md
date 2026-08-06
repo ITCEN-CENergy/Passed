@@ -16,18 +16,18 @@ Q. 왜 처음부터 `공감`을 추출 정답으로 두지 않나요?
 
 A. 원문 후보 추출과 마스터 의미 연결을 한 점수에 섞으면 `팀원 상황 청취`를 잘 찾고도
 문자열이 다르다는 이유로 추출 실패가 됩니다. 두 단계를 나누면 프롬프트 문제인지,
-EXACT/KEYWORD/EMBEDDING 매핑 문제인지 구분할 수 있습니다.
+EXACT/NORMALIZED/ALIAS/EMBEDDING 매핑 문제인지 구분할 수 있습니다.
 
 매핑 골든셋은 환경마다 달라질 수 있는 숫자 ID 대신 마스터의 unique 이름과 카테고리를
-정답으로 사용합니다. `should_map=false`는 현재 마스터에 적절한 항목이 없으므로 자동으로
-가까운 상위 스킬에 붙이면 안 되는 사례입니다.
+정답으로 사용합니다. `expectation`은 연결해야 하는 `MAP`, 마스터 보강이 필요한
+`MASTER_GAP`, 연결하면 안 되는 `NO_MATCH`를 구분합니다.
 
 ```json
 {
   "case_id": "map-teammate-listening",
   "extracted_name": "팀원 상황 청취",
   "extracted_category": "BEHAVIORAL_TRAIT",
-  "should_map": true,
+  "expectation": "MAP",
   "expected_skill_name": "공감",
   "expected_skill_category": "BEHAVIORAL_TRAIT",
   "allowed_mapping_methods": ["EMBEDDING"],
@@ -35,14 +35,31 @@ EXACT/KEYWORD/EMBEDDING 매핑 문제인지 구분할 수 있습니다.
 }
 ```
 
-현재 매핑 골든셋은 47건이며 41건은 매핑 성공, 6건은 미매핑이 정답입니다. 실제
-`map_to_skill` 구현 후에는 top-1 정확도뿐 아니라 잘못 자동 매핑한 비율과 미매핑률을
-별도로 측정해야 합니다.
+현재 매핑 골든셋은 53건입니다. 신규 마스터 보강안을 반영한 47건은 `MAP`, 6건은
+`NO_MATCH`입니다. 기존 `MASTER_GAP` 6건 중 EC2·S3·RDS·TOEIC·캐싱은 신규 Flyway
+마이그레이션으로 추가하고, 페어 프로그래밍은 기존 `페어링`의 별칭으로 연결합니다.
+Flyway 적용 전 기준 결과와 이름-only 실험 결과는 `evaluation/baselines/`에 보존합니다.
+
+이름-only top-1 실험은 8/30(26.7%)으로 40% 미만이었습니다. 따라서 매핑 순서는
+`EXACT → NORMALIZED → ALIAS → EMBEDDING(보조)`로 확정했습니다. NORMALIZED는 NFKC,
+대소문자, 공백과 단순 구분자만 정리하며 동의어 판단은 하지 않습니다. 별칭이 같은
+카테고리의 두 마스터를 가리키면 자동 선택하지 않습니다. 실패는 운영에서 자동으로
+판별 가능한 `CATEGORY_MISMATCH`, `LOW_SIMILARITY`, `AMBIGUOUS_MATCH` 세 종류로 기록합니다.
+
+이름-only 비교 재현 명령:
+
+```powershell
+python -m resume_pipeline.run_skill_mapping_name_only `
+  --golden resume_pipeline/evaluation/golden_skill_mapping.json `
+  --output resume_pipeline/evaluation/baselines/name_only_result.json
+```
+
+이 명령은 `skills.embedding`을 수정하지 않고 메모리에서만 이름 벡터를 비교합니다.
 
 Q. 왜 skills 마스터 ID를 정답에 넣지 않나요?
 
 A. 이 평가는 문장에서 후보를 찾는 능력만 측정합니다. 마스터 ID까지 넣으면 후보 추출
-오류와 EXACT/KEYWORD/EMBEDDING 매핑 오류가 섞여 원인을 구분하기 어렵습니다.
+오류와 EXACT/NORMALIZED/ALIAS/EMBEDDING 매핑 오류가 섞여 원인을 구분하기 어렵습니다.
 
 예측 파일은 다음 형식입니다.
 

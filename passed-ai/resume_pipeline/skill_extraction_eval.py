@@ -17,6 +17,7 @@ from .skill_extraction_worker import extract_chunk_candidates
 class ExpectedSkill(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     extracted_name: str
+    accepted_names: list[str] = Field(default_factory=list)
     category: SkillCategory
     level: int = Field(ge=1, le=3)
 
@@ -73,6 +74,15 @@ def _key(skill: ExpectedSkill) -> tuple[str, str]:
     return normalized_name, skill.category.value
 
 
+def _accepted_keys(skill: ExpectedSkill) -> set[tuple[str, str]]:
+    """정답 대표 이름과 의미가 같은 허용 표현의 비교 키."""
+    names = [skill.extracted_name, *skill.accepted_names]
+    return {
+        (" ".join(name.casefold().split()), skill.category.value)
+        for name in names
+    }
+
+
 def _score(
     expected: set[tuple[str, ...]],
     predicted: set[tuple[str, ...]],
@@ -101,7 +111,7 @@ def evaluate_skill_predictions(
     golden: list[GoldenExample],
     predictions: list[PredictedExample],
 ) -> EvaluationReport:
-    """예제별 집합을 합산해 micro 및 카테고리별 점수를 계산한다."""
+    """accepted_names를 포함한 일대일 후보 매칭으로 추출 품질을 계산한다."""
     golden_by_id = {item.example_id: item for item in golden}
     predicted_by_id = {item.example_id: item for item in predictions}
     if len(golden_by_id) != len(golden):
@@ -109,27 +119,51 @@ def evaluate_skill_predictions(
     if len(predicted_by_id) != len(predictions):
         raise ValueError("예측 결과 example_id가 중복되었습니다.")
 
-    expected_all: set[tuple[str, str, str]] = set()
-    predicted_all: set[tuple[str, str, str]] = set()
+    expected_all: set[tuple[str, str]] = set()
+    predicted_all: set[tuple[str, str]] = set()
     expected_by_category: dict[str, set[tuple[str, str]]] = defaultdict(set)
     predicted_by_category: dict[str, set[tuple[str, str]]] = defaultdict(set)
-    expected_levels: dict[tuple[str, str, str], int] = {}
-    predicted_levels: dict[tuple[str, str, str], int] = {}
+    expected_levels: dict[tuple[str, str], int] = {}
+    predicted_levels: dict[tuple[str, str], int] = {}
 
     for example_id, example in golden_by_id.items():
-        for skill in example.expected:
-            name, category = _key(skill)
-            expected_all.add((example_id, name, category))
-            expected_by_category[category].add((example_id, name))
-            expected_levels[(example_id, name, category)] = skill.level
-
         prediction = predicted_by_id.get(example_id)
-        if prediction:
-            for skill in prediction.predicted:
-                name, category = _key(skill)
-                predicted_all.add((example_id, name, category))
-                predicted_by_category[category].add((example_id, name))
-                predicted_levels[(example_id, name, category)] = skill.level
+        predicted_skills = prediction.predicted if prediction else []
+        unused_prediction_indexes = set(range(len(predicted_skills)))
+
+        for expected_index, expected_skill in enumerate(example.expected):
+            category = expected_skill.category.value
+            token = (example_id, f"expected:{expected_index}")
+            expected_all.add(token)
+            expected_by_category[category].add(token)
+            expected_levels[token] = expected_skill.level
+
+            accepted = _accepted_keys(expected_skill)
+            matched_index = next(
+                (
+                    index
+                    for index in sorted(unused_prediction_indexes)
+                    if _key(predicted_skills[index]) in accepted
+                ),
+                None,
+            )
+            if matched_index is None:
+                continue
+
+            # Q. accepted name으로 맞은 예측도 같은 expected token으로 넣는 이유는 무엇인가요?
+            # A. "역할 분담"과 "역할 나눔"을 별도 후보 두 개로 세면 TP와 FP가 동시에
+            #    생깁니다. 정답 하나와 예측 하나를 일대일로 소비해야 표현 다양성만 허용됩니다.
+            unused_prediction_indexes.remove(matched_index)
+            predicted_all.add(token)
+            predicted_by_category[category].add(token)
+            predicted_levels[token] = predicted_skills[matched_index].level
+
+        for predicted_index in unused_prediction_indexes:
+            predicted_skill = predicted_skills[predicted_index]
+            category = predicted_skill.category.value
+            token = (example_id, f"unmatched:{predicted_index}")
+            predicted_all.add(token)
+            predicted_by_category[category].add(token)
 
     matched_keys = expected_all & predicted_all
     absolute_errors = [

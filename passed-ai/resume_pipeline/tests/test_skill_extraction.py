@@ -24,6 +24,7 @@ from resume_pipeline.skill_extraction_models import (
 )
 from resume_pipeline.skill_extraction_prompt import build_user_prompt
 from resume_pipeline.skill_mapping_models import (
+    MappingExpectation,
     SkillMappingGoldenCase,
     load_mapping_golden_set,
 )
@@ -358,6 +359,43 @@ def test_micro_precision_recall_f1_are_separate_from_mapping():
     assert report.level.mean_absolute_error == 1.0
 
 
+def test_accepted_name_counts_as_one_true_positive():
+    golden = [
+        GoldenExample(
+            example_id="behavior-alias",
+            source_kind="COVER_LETTER",
+            context_type="EXPERIENCE",
+            content="역할을 나눴습니다.",
+            expected=[
+                ExpectedSkill(
+                    extracted_name="역할 분담",
+                    accepted_names=["역할 나눔"],
+                    category=SkillCategory.BEHAVIORAL_TRAIT,
+                    level=2,
+                )
+            ],
+        )
+    ]
+    predictions = [
+        PredictedExample(
+            example_id="behavior-alias",
+            predicted=[
+                ExpectedSkill(
+                    extracted_name="역할 나눔",
+                    category=SkillCategory.BEHAVIORAL_TRAIT,
+                    level=2,
+                )
+            ],
+        )
+    ]
+
+    report = evaluate_skill_predictions(golden, predictions)
+
+    assert report.micro.true_positive == 1
+    assert report.micro.false_positive == 0
+    assert report.micro.false_negative == 0
+
+
 def test_negative_example_over_extraction_is_reported_separately():
     golden = [
         GoldenExample(
@@ -493,22 +531,28 @@ def test_mapping_golden_set_is_separate_and_has_unmapped_controls():
     )
     cases = load_mapping_golden_set(path)
 
-    assert len(cases) == 47
-    assert sum(case.should_map for case in cases) == 41
-    assert sum(not case.should_map for case in cases) == 6
+    assert len(cases) == 53
+    assert sum(case.should_map for case in cases) == 47
+    assert sum(
+        case.expectation is MappingExpectation.MASTER_GAP for case in cases
+    ) == 0
+    assert sum(
+        case.expectation is MappingExpectation.NO_MATCH for case in cases
+    ) == 6
     by_id = {case.case_id: case for case in cases}
     assert by_id["map-teammate-listening"].expected_skill_name == "공감"
     assert by_id["map-api-development-alias"].expected_skill_name == "백엔드 API 개발"
-    assert not by_id["unmapped-aws-ec2"].should_map
+    assert by_id["map-aws-ec2"].expected_skill_name == "AWS EC2"
+    assert by_id["map-pair-programming"].expected_skill_name == "페어링"
 
 
 def test_mapping_golden_contract_rejects_ambiguous_unmapped_case():
-    with pytest.raises(ValueError, match="should_map=false"):
+    with pytest.raises(ValueError, match="MASTER_GAP/NO_MATCH"):
         SkillMappingGoldenCase(
             case_id="bad-unmapped",
             extracted_name="없는 기술",
             extracted_category=SkillCategory.TECHNICAL_SKILL,
-            should_map=False,
+            expectation=MappingExpectation.NO_MATCH,
             expected_skill_name="Java",
             expected_skill_category=SkillCategory.TECHNICAL_SKILL,
             allowed_mapping_methods=[],
@@ -519,7 +563,7 @@ def test_mapping_golden_contract_rejects_ambiguous_unmapped_case():
 def test_mapping_golden_targets_exist_in_skill_master_seed():
     evaluation_dir = extraction_cli.Path(__file__).resolve().parents[1] / "evaluation"
     cases = load_mapping_golden_set(evaluation_dir / "golden_skill_mapping.json")
-    seed_path = (
+    migration_dir = (
         extraction_cli.Path(__file__).resolve().parents[3]
         / "passed-backend"
         / "src"
@@ -527,9 +571,11 @@ def test_mapping_golden_targets_exist_in_skill_master_seed():
         / "resources"
         / "db"
         / "migration"
-        / "V20260803111425482__seed_skills.sql"
     )
-    seed_sql = seed_path.read_text(encoding="utf-8")
+    migration_sql = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in migration_dir.glob("*.sql")
+    )
 
     # Q. 숫자 skill_id가 아니라 SQL 시드의 이름을 확인하는 이유는 무엇인가요?
     # A. IDENTITY 값은 DB마다 달라질 수 있지만 skills.name은 unique 계약입니다. 이름과
@@ -541,4 +587,4 @@ def test_mapping_golden_targets_exist_in_skill_master_seed():
             f"('{case.expected_skill_name}', "
             f"'{case.expected_skill_category.value}'"
         )
-        assert expected_row_prefix in seed_sql, case.case_id
+        assert expected_row_prefix in migration_sql, case.case_id

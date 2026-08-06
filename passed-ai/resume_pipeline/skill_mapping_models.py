@@ -11,8 +11,15 @@ from .skill_extraction_models import SkillCategory
 
 class MappingMethod(str, Enum):
     EXACT = "EXACT"
-    KEYWORD = "KEYWORD"
+    NORMALIZED = "NORMALIZED"
+    ALIAS = "ALIAS"
     EMBEDDING = "EMBEDDING"
+
+
+class MappingExpectation(str, Enum):
+    MAP = "MAP"
+    MASTER_GAP = "MASTER_GAP"
+    NO_MATCH = "NO_MATCH"
 
 
 class SkillMappingGoldenCase(BaseModel):
@@ -23,7 +30,7 @@ class SkillMappingGoldenCase(BaseModel):
     case_id: str = Field(min_length=1)
     extracted_name: str = Field(min_length=1, max_length=100)
     extracted_category: SkillCategory
-    should_map: bool
+    expectation: MappingExpectation
     expected_skill_name: str | None = None
     expected_skill_category: SkillCategory | None = None
     allowed_mapping_methods: list[MappingMethod] = Field(default_factory=list)
@@ -37,17 +44,25 @@ class SkillMappingGoldenCase(BaseModel):
         has_expected_target = bool(
             self.expected_skill_name and self.expected_skill_category
         )
-        if self.should_map and not has_expected_target:
-            raise ValueError("should_map=true에는 기대 마스터 이름과 카테고리가 필요합니다.")
-        if self.should_map and not self.allowed_mapping_methods:
-            raise ValueError("should_map=true에는 허용 매핑 방식이 하나 이상 필요합니다.")
-        if not self.should_map and (
+        should_map = self.expectation is MappingExpectation.MAP
+        if should_map and not has_expected_target:
+            raise ValueError("MAP에는 기대 마스터 이름과 카테고리가 필요합니다.")
+        if should_map and not self.allowed_mapping_methods:
+            raise ValueError("MAP에는 허용 매핑 방식이 하나 이상 필요합니다.")
+        if not should_map and (
             self.expected_skill_name is not None
             or self.expected_skill_category is not None
             or self.allowed_mapping_methods
         ):
-            raise ValueError("should_map=false에는 기대 마스터와 매핑 방식을 둘 수 없습니다.")
+            raise ValueError(
+                "MASTER_GAP/NO_MATCH에는 기대 마스터와 매핑 방식을 둘 수 없습니다."
+            )
         return self
+
+    @property
+    def should_map(self) -> bool:
+        """기존 평가 코드가 의미를 잃지 않고 MAP 여부를 읽게 하는 편의 속성."""
+        return self.expectation is MappingExpectation.MAP
 
 
 def load_mapping_golden_set(path: "Path") -> list[SkillMappingGoldenCase]:

@@ -90,7 +90,7 @@
     "content": "PostgreSQL 실행 계획을 분석해 불필요한 전체 테이블 조회를 제거하고 API 응답 시간을 40% 개선했습니다.",
     "expected": [
       {"extracted_name": "PostgreSQL", "category": "TECHNICAL_SKILL", "level": 3},
-      {"extracted_name": "실행 계획 분석", "category": "EXPERIENCE", "level": 3},
+      {"extracted_name": "실행 계획 분석", "accepted_names": ["PostgreSQL 실행 계획 분석"], "category": "EXPERIENCE", "level": 3},
       {"extracted_name": "전체 테이블 조회 제거", "category": "EXPERIENCE", "level": 3},
       {"extracted_name": "API 응답 시간 개선", "category": "EXPERIENCE", "level": 3}
     ]
@@ -113,8 +113,8 @@
     "content": "고객 이탈 데이터를 SQL로 분석하고 핵심 원인을 대시보드로 시각화했습니다.",
     "expected": [
       {"extracted_name": "SQL", "category": "TECHNICAL_SKILL", "level": 2},
-      {"extracted_name": "데이터 분석", "category": "TECHNICAL_SKILL", "level": 2},
-      {"extracted_name": "데이터 시각화", "category": "TECHNICAL_SKILL", "level": 2}
+      {"extracted_name": "데이터 분석", "accepted_names": ["SQL 분석"], "category": "TECHNICAL_SKILL", "level": 2},
+      {"extracted_name": "데이터 시각화", "accepted_names": ["대시보드 시각화"], "category": "TECHNICAL_SKILL", "level": 2}
     ]
   },
   {
@@ -145,7 +145,7 @@
     "content": "기술 선택을 두고 의견이 충돌했을 때 각 대안의 장단점을 표로 정리해 팀의 합의를 이끌었습니다.",
     "expected": [
       {"extracted_name": "대안 장단점 정리", "category": "EXPERIENCE", "level": 2},
-      {"extracted_name": "팀 합의 도출", "category": "BEHAVIORAL_TRAIT", "level": 2}
+      {"extracted_name": "팀 합의 도출", "accepted_names": ["의견 조율"], "category": "BEHAVIORAL_TRAIT", "level": 2}
     ]
   },
   {
@@ -156,7 +156,7 @@
     "expected": [
       {"extracted_name": "장애 원인 조사", "category": "EXPERIENCE", "level": 3},
       {"extracted_name": "수정 배포", "category": "EXPERIENCE", "level": 3},
-      {"extracted_name": "수정 배포 책임", "category": "BEHAVIORAL_TRAIT", "level": 3}
+      {"extracted_name": "수정 배포 책임", "accepted_names": ["장애 수정 책임"], "category": "BEHAVIORAL_TRAIT", "level": 3}
     ]
   },
   {
@@ -165,7 +165,7 @@
     "context_type": "EXPERIENCE",
     "content": "배포 직후 오류가 발생하자 즉시 이전 버전으로 롤백하고 로그를 분석해 재발 방지 테스트를 추가했습니다.",
     "expected": [
-      {"extracted_name": "배포 롤백", "category": "EXPERIENCE", "level": 2},
+      {"extracted_name": "배포 롤백", "accepted_names": ["롤백"], "category": "EXPERIENCE", "level": 2},
       {"extracted_name": "로그 분석", "category": "TECHNICAL_SKILL", "level": 2},
       {"extracted_name": "재발 방지 테스트 추가", "category": "EXPERIENCE", "level": 2}
     ]
@@ -242,7 +242,7 @@
     "context_type": "AWARD",
     "content": "교내 소프트웨어 경진대회에서 접근성 개선 아이디어로 최우수상을 수상했습니다.",
     "expected": [
-      {"extracted_name": "접근성 개선", "category": "EXPERIENCE", "level": 2}
+      {"extracted_name": "접근성 개선", "accepted_names": ["접근성 개선 아이디어"], "category": "EXPERIENCE", "level": 2}
     ]
   },
   {
@@ -251,7 +251,7 @@
     "context_type": "OVERSEAS_EXPERIENCE",
     "content": "독일 교환학생 팀 프로젝트에서 영어로 역할을 협의하고 최종 결과를 발표했습니다.",
     "expected": [
-      {"extracted_name": "영어 역할 협의", "category": "BEHAVIORAL_TRAIT", "level": 2},
+      {"extracted_name": "영어 역할 협의", "accepted_names": ["역할 협의"], "category": "BEHAVIORAL_TRAIT", "level": 2},
       {"extracted_name": "결과 발표", "category": "EXPERIENCE", "level": 2}
     ]
   },
@@ -284,7 +284,7 @@
     "expected": [
       {"extracted_name": "로그 확인", "category": "TECHNICAL_SKILL", "level": 3},
       {"extracted_name": "서비스 복구", "category": "EXPERIENCE", "level": 3},
-      {"extracted_name": "역할 분담", "category": "BEHAVIORAL_TRAIT", "level": 3}
+      {"extracted_name": "역할 분담", "accepted_names": ["역할 나눔"], "category": "BEHAVIORAL_TRAIT", "level": 3}
     ]
   },
   {
@@ -304,7 +304,7 @@
     "content": "일정 변경으로 어려움을 겪는 팀원의 상황을 먼저 듣고 제가 맡을 수 있는 작업을 나눠 수행했습니다.",
     "expected": [
       {"extracted_name": "팀원 상황 청취", "category": "BEHAVIORAL_TRAIT", "level": 2},
-      {"extracted_name": "작업 분담", "category": "BEHAVIORAL_TRAIT", "level": 2}
+      {"extracted_name": "작업 분담", "accepted_names": ["작업 나누기"], "category": "BEHAVIORAL_TRAIT", "level": 2}
     ]
   },
   {

@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.recommendation.application;
+package com.cenergy.passed_backend.domain.recommendation.exception;
 
 import com.cenergy.passed_backend.global.error.ErrorCode;
 

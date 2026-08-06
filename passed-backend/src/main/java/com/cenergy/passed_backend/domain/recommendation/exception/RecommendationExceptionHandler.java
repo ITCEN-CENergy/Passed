@@ -1,6 +1,7 @@
-package com.cenergy.passed_backend.domain.recommendation.api;
+package com.cenergy.passed_backend.domain.recommendation.exception;
 
-import com.cenergy.passed_backend.domain.recommendation.application.RecommendationException;
+import com.cenergy.passed_backend.domain.recommendation.exception.RecommendationException;
+import com.cenergy.passed_backend.domain.recommendation.api.RecommendationController;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

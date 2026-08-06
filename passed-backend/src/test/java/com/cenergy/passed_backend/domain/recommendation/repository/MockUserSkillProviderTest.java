@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.recommendation.repository;
 
 import org.junit.jupiter.api.Test;
-
+import com.cenergy.passed_backend.domain.user.repository.MockUserSkillProvider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MockUserSkillProviderTest {

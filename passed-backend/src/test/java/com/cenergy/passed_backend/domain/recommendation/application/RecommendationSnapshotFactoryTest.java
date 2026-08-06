@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
+import com.cenergy.passed_backend.domain.recommendation.application.RecommendationSnapshotFactory;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 

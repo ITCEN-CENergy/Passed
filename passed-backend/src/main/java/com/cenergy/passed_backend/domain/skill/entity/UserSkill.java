@@ -1,7 +1,8 @@
-package com.cenergy.passed_backend.skill.entity;
+package com.cenergy.passed_backend.domain.skill.entity;
 
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
-import com.cenergy.passed_backend.user.entity.User;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

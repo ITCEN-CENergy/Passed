@@ -1,4 +1,5 @@
-package com.cenergy.passed_backend.skill.entity;
+package com.cenergy.passed_backend.domain.skill.entity;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
 import jakarta.persistence.*;

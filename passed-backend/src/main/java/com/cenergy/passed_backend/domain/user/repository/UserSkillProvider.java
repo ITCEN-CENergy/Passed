@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.recommendation.repository;
+package com.cenergy.passed_backend.domain.user.repository;
 
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 

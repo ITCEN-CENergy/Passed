@@ -1,8 +1,10 @@
-package com.cenergy.passed_backend.skill.entity;
+package com.cenergy.passed_backend.domain.skill.entity;
 
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
-import com.cenergy.passed_backend.coverletter.entity.CoverLetterChunk;
-import com.cenergy.passed_backend.resume.entity.ResumeChunk;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterChunk;
+import com.cenergy.passed_backend.domain.resume.entity.ResumeChunk;
+import com.cenergy.passed_backend.domain.skill.entity.UserSkill;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

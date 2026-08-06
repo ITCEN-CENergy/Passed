@@ -1,7 +1,9 @@
-package com.cenergy.passed_backend.jobposting.entity;
+package com.cenergy.passed_backend.domain.jobposting.entity;
 
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkillType;
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
-import com.cenergy.passed_backend.skill.entity.Skill;
+import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

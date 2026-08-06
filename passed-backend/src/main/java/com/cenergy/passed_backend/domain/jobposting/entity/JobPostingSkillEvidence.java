@@ -1,7 +1,9 @@
-package com.cenergy.passed_backend.jobposting.entity;
+package com.cenergy.passed_backend.domain.jobposting.entity;
 
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkill;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingChunk;
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
-import com.cenergy.passed_backend.skill.entity.SkillMappingMethod;
+import com.cenergy.passed_backend.domain.skill.entity.SkillMappingMethod;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,7 +1,13 @@
+import asyncio
+import logging
+from time import perf_counter
 from typing import Protocol
+from uuid import uuid4
+
+import httpx
 
 from api.features.roadmap.client import OpenAiRoadmapClient
-from api.features.roadmap.config import get_roadmap_settings
+from api.features.roadmap.config import RoadmapSettings, get_roadmap_settings
 from api.features.roadmap.planner import create_learning_stages
 from api.features.roadmap.schema import (
     Competency,
@@ -21,11 +27,15 @@ from api.features.roadmap.schema import (
     RoadmapSkill,
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
+from api.features.roadmap.resource_provider import create_resource_providers
 from api.features.roadmap.validator import validate_generated_content
 
 
+logger = logging.getLogger(__name__)
+
+
 class RoadmapContentGenerator(Protocol):
-    def generate(
+    async def generate(
         self,
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
@@ -34,7 +44,7 @@ class RoadmapContentGenerator(Protocol):
 
 
 class FakeRoadmapContentGenerator:
-    def generate(
+    async def generate(
         self,
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
@@ -145,29 +155,151 @@ class FakeRoadmapContentGenerator:
         ]
 
 
-def _generator() -> RoadmapContentGenerator:
-    settings = get_roadmap_settings()
+def _generator(settings: RoadmapSettings) -> RoadmapContentGenerator:
     if settings.generator == "llm":
         return OpenAiRoadmapClient(settings)
     return FakeRoadmapContentGenerator()
 
 
-def generate_roadmap(
+async def generate_roadmap(
     request: RoadmapGenerateRequest,
     generator: RoadmapContentGenerator | None = None,
+    http_client: httpx.AsyncClient | None = None,
+) -> RoadmapGenerateResponse:
+    generation_id = uuid4().hex
+    started = perf_counter()
+    logger.info(
+        "roadmap_generation_started generationId=%s competencyCount=%d",
+        generation_id,
+        len(request.competencies),
+        extra={
+            "event": "roadmap_generation_started",
+            "generationId": generation_id,
+            "competencyCount": len(request.competencies),
+        },
+    )
+    try:
+        settings = get_roadmap_settings()
+        async with asyncio.timeout(settings.generation_total_timeout_seconds):
+            if http_client is None:
+                async with httpx.AsyncClient() as request_client:
+                    response = await _generate_roadmap(
+                        request, generator, generation_id, request_client, settings
+                    )
+            else:
+                response = await _generate_roadmap(
+                    request, generator, generation_id, http_client, settings
+                )
+    except Exception as exception:
+        elapsed_ms = round((perf_counter() - started) * 1000)
+        logger.error(
+            "roadmap_generation_completed generationId=%s status=FAILED "
+            "competencyCount=%d elapsedMs=%d errorType=%s",
+            generation_id,
+            len(request.competencies),
+            elapsed_ms,
+            type(exception).__name__,
+            extra={
+                "event": "roadmap_generation_completed",
+                "generationId": generation_id,
+                "status": "FAILED",
+                "competencyCount": len(request.competencies),
+                "elapsedMs": elapsed_ms,
+                "errorType": type(exception).__name__,
+            },
+        )
+        raise
+    elapsed_ms = round((perf_counter() - started) * 1000)
+    logger.info(
+        "roadmap_generation_completed generationId=%s status=SUCCESS "
+        "competencyCount=%d elapsedMs=%d",
+        generation_id,
+        len(request.competencies),
+        elapsed_ms,
+        extra={
+            "event": "roadmap_generation_completed",
+            "generationId": generation_id,
+            "status": "SUCCESS",
+            "competencyCount": len(request.competencies),
+            "elapsedMs": elapsed_ms,
+        },
+    )
+    return response
+
+
+async def _generate_roadmap(
+    request: RoadmapGenerateRequest,
+    generator: RoadmapContentGenerator | None,
+    generation_id: str,
+    http_client: httpx.AsyncClient,
+    settings: RoadmapSettings,
 ) -> RoadmapGenerateResponse:
     stages_by_key = {
         competency.roadmapSkillKey: create_learning_stages(competency)
         for competency in request.competencies
     }
-    settings = get_roadmap_settings()
-    search_service = LearningResourceSearchService(settings)
-    resources_by_key = {
-        competency.roadmapSkillKey: search_service.search(competency)
+    search_started = perf_counter()
+    resources_by_key: dict[str, list[LearningResource]] = {}
+    search_service = LearningResourceSearchService(
+        create_resource_providers(http_client, settings),
+        enabled=settings.resource_search_enabled,
+        max_concurrency=settings.resource_search_max_concurrency,
+        generation_id=generation_id,
+    )
+    search_results = await asyncio.gather(*(
+        search_service.search(competency)
         for competency in request.competencies
+    ))
+    resources_by_key = {
+        competency.roadmapSkillKey: resources
+        for competency, resources in zip(
+            request.competencies, search_results, strict=True
+        )
     }
-    generated = (generator or _generator()).generate(
-        request.competencies, stages_by_key, resources_by_key
+    search_elapsed_ms = round((perf_counter() - search_started) * 1000)
+    resource_count = sum(len(resources) for resources in resources_by_key.values())
+    resource_description_char_count = sum(
+        len(resource.description)
+        for resources in resources_by_key.values()
+        for resource in resources
+    )
+    logger.info(
+        "roadmap_resource_search_completed generationId=%s competencyCount=%d "
+        "resultCount=%d descriptionCharCount=%d elapsedMs=%d",
+        generation_id,
+        len(request.competencies),
+        resource_count,
+        resource_description_char_count,
+        search_elapsed_ms,
+        extra={
+            "event": "roadmap_resource_search_completed",
+            "generationId": generation_id,
+            "competencyCount": len(request.competencies),
+            "resultCount": resource_count,
+            "descriptionCharCount": resource_description_char_count,
+            "elapsedMs": search_elapsed_ms,
+        },
+    )
+    content_generator = generator or _generator(settings)
+    generator_started = perf_counter()
+    generated = await content_generator.generate(
+        request.competencies,
+        stages_by_key,
+        resources_by_key,
+    )
+    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
+    logger.info(
+        "roadmap_content_generation_completed generationId=%s generator=%s "
+        "elapsedMs=%d",
+        generation_id,
+        type(content_generator).__name__,
+        generator_elapsed_ms,
+        extra={
+            "event": "roadmap_content_generation_completed",
+            "generationId": generation_id,
+            "generator": type(content_generator).__name__,
+            "elapsedMs": generator_elapsed_ms,
+        },
     )
     validate_generated_content(
         request.competencies, stages_by_key, resources_by_key, generated

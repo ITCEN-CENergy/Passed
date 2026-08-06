@@ -1,0 +1,450 @@
+/* Codex 참고: 기존 전역 시안 CSS가 App의 header/logo/button 스타일을 덮어쓰지 않도록
+   이번 연동 화면의 스타일은 CSS Module 안에 격리했습니다. */
+
+.pageShell {
+  min-height: calc(100svh - 78px);
+  padding: 28px 32px 72px;
+  box-sizing: border-box;
+  color: #273142;
+  background:
+    radial-gradient(circle at top right, rgba(26, 86, 219, 0.08), transparent 30%),
+    #f6f8fc;
+}
+
+.demoNotice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border: 1px solid #bfd4ff;
+  border-radius: 10px;
+  color: #31517f;
+  background: #edf4ff;
+  font-size: 13px;
+}
+
+.demoNotice strong {
+  color: #1a56db;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.pageHeader h1 {
+  margin: 4px 0;
+  color: #111827;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+
+.backLink {
+  color: #667085;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: #1a56db;
+}
+
+.company {
+  margin-top: 18px;
+  color: #1a56db;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.itemMeta {
+  color: #7c8799;
+  font-size: 13px;
+}
+
+.content {
+  display: grid;
+  gap: 18px;
+}
+
+.card,
+.scoreCard,
+.limitCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(32, 46, 66, 0.05);
+}
+
+.card {
+  padding: 24px;
+}
+
+.card h2,
+.emptyFeedback h2 {
+  margin: 4px 0 0;
+  color: #172033;
+  font-size: 19px;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.cardHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.sectionEyebrow,
+.scoreCaption {
+  color: #7c8799;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.characterCount {
+  flex: none;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: #526078;
+  background: #f1f4f8;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.originalAnswer,
+.suggestedAnswer {
+  margin-top: 18px;
+  color: #38465d;
+  font-size: 15px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+.feedbackSummary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.scoreCard,
+.limitCard {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 22px;
+}
+
+.scoreCard strong,
+.limitCard strong {
+  color: #172033;
+  font-size: 25px;
+}
+
+.scoreCard > span:last-child,
+.limitCard > span:last-child {
+  font-size: 13px;
+}
+
+.scoreSUFFICIENT {
+  border-color: #a7e4c6;
+  background: linear-gradient(135deg, #effcf5, #fff);
+}
+
+.scoreINSUFFICIENT {
+  border-color: #f7d89a;
+  background: linear-gradient(135deg, #fff9eb, #fff);
+}
+
+.scoreDEFICIENT {
+  border-color: #f3b7b7;
+  background: linear-gradient(135deg, #fff1f1, #fff);
+}
+
+.limitGood {
+  color: #198754;
+}
+
+.limitWarning {
+  color: #c2410c;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardTitleRow h2 {
+  margin: 0;
+}
+
+.iconCircle {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.goodIcon {
+  color: #138a55;
+  background: #e8f8f0;
+}
+
+.improveIcon {
+  color: #c06b00;
+  background: #fff3d8;
+}
+
+.feedbackText {
+  margin-top: 14px;
+  color: #46546a;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.preserveLines {
+  white-space: pre-line;
+}
+
+.suggestionCard {
+  border-color: #b8cdf7;
+  background:
+    linear-gradient(135deg, rgba(231, 239, 255, 0.75), rgba(255, 255, 255, 0.96)),
+    #fff;
+}
+
+.updatedAt {
+  margin-top: 18px;
+  color: #8a95a6;
+  font-size: 12px;
+}
+
+.primaryButton,
+.secondaryButton,
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton {
+  min-width: 180px;
+  padding: 12px 18px;
+  color: #fff;
+  background: #1a56db;
+}
+
+.primaryButton:hover {
+  background: #1748b6;
+}
+
+.secondaryButton,
+.copyButton {
+  padding: 10px 14px;
+  color: #31517f;
+  background: #edf3ff;
+}
+
+.secondaryButton:hover,
+.copyButton:hover {
+  background: #dfeaff;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.emptyFeedback,
+.stateCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.emptyFeedback {
+  min-height: 260px;
+}
+
+.emptyFeedback p,
+.stateCard p {
+  max-width: 520px;
+  margin: 12px 0 22px;
+  color: #6f7b8d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.emptyIcon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #1a56db, #6d8ff0);
+  font-size: 15px;
+  font-weight: 800;
+  place-items: center;
+}
+
+.stateCard {
+  min-height: calc(100svh - 78px);
+  padding: 40px;
+  box-sizing: border-box;
+  background: #f6f8fc;
+}
+
+.stateCard h1 {
+  margin: 18px 0 0;
+  color: #172033;
+  font-size: 25px;
+}
+
+.spinner,
+.buttonSpinner {
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #dce6fb;
+  border-top-color: #1a56db;
+}
+
+.buttonSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: currentColor;
+}
+
+.errorState {
+  color: #a82d2d;
+}
+
+.stateBadge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: #b42318;
+  background: #fee4e2;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.errorCode {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px !important;
+}
+
+.secondaryLink {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  color: #46546a;
+  text-decoration: none;
+  background: #fff;
+}
+
+.inlineError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 15px;
+  border: 1px solid #f5b7b1;
+  border-radius: 10px;
+  color: #9f2d24;
+  background: #fff2f0;
+  font-size: 13px;
+}
+
+.inlineError span {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+}
+
+.generatingOverlay {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  color: #fff;
+  background: #172033;
+  box-shadow: 0 12px 32px rgba(23, 32, 51, 0.25);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 720px) {
+  .pageShell {
+    padding: 22px 18px 56px;
+  }
+
+  .demoNotice,
+  .pageHeader,
+  .cardHeading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pageHeader {
+    gap: 16px;
+  }
+
+  .feedbackSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .secondaryButton {
+    width: 100%;
+  }
+
+  .copyButton {
+    align-self: stretch;
+  }
+
+  .inlineError {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

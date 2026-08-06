@@ -1,5 +1,6 @@
-package com.cenergy.passed_backend.jobposting.entity;
+package com.cenergy.passed_backend.domain.jobposting.entity;
 
+import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

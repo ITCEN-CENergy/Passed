@@ -1,5 +1,7 @@
 package com.cenergy.passed_backend.domain.recommendation.api;
 
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationPreparationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

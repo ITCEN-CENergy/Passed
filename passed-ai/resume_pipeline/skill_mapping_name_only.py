@@ -146,9 +146,6 @@ def _rank(scores: np.ndarray, indexes: list[int], target_index: int) -> int:
 
 
 def _strategy(top1_rate: float) -> tuple[NameOnlyStrategy, str]:
-    # Q. 왜 유사도 평균이 아니라 top-1 비율로 전략을 고르나요?
-    # A. 자동 매핑은 결국 한 스킬을 선택해야 합니다. 정답 점수가 올라도 다른 스킬이
-    #    계속 1위라면 임계값으로 해결할 수 없으므로 검색 순위를 기준으로 판단합니다.
     if top1_rate >= 0.60:
         return (
             NameOnlyStrategy.NAME_ONLY,
@@ -198,9 +195,6 @@ def analyze_name_only_embeddings(
         else:
             embedding_cases.append(case)
 
-    # Q. 왜 기존 skills.embedding을 덮어쓰지 않나요?
-    # A. 지금은 이름-only 방식이 더 좋은지 검증하는 실험입니다. 검증 전 운영 데이터를
-    #    바꾸면 기존 공고 파이프라인 결과까지 영향을 주므로 메모리에서만 비교합니다.
     master_vectors = embed_in_batches(
         [master.name for master in masters], embedder, batch_size=batch_size
     )

@@ -100,9 +100,6 @@ def evaluate_mapping_report(
         if method_totals[method]
     }
 
-    # Q. 커버리지 분모를 전체 53건으로 두지 않는 이유는 무엇인가요?
-    # A. NO_MATCH는 연결하지 않는 것이 정답입니다. 실제로 연결해야 하는 MAP 47건 중
-    #    몇 건을 올바르게 자동 처리했는지가 자동 매핑 커버리지입니다.
     return MappingEvaluationReport(
         min_similarity=min_similarity,
         min_margin=min_margin,

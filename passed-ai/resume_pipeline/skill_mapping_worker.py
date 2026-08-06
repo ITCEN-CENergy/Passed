@@ -99,18 +99,12 @@ _CERTIFICATION_SCORE_SUFFIX = re.compile(r"\s+\d+(?:\.\d+)?\s*(?:점|급|등급)
 
 def normalize_skill_name(value: str) -> str:
     """의미를 바꾸지 않는 표기 차이만 제거한다."""
-    # Q. React.js를 React로 바꾸거나 스프링부트를 Spring Boot로 바꾸지 않나요?
-    # A. 그것은 문자열 정리가 아니라 동의어 판단입니다. 여기서는 NFKC·대소문자·공백·
-    #    단순 구분자만 정리하고, 의미가 필요한 변환은 EMBEDDING 단계에 남깁니다.
     normalized = unicodedata.normalize("NFKC", value).casefold().strip()
     return _IGNORABLE_SEPARATORS.sub("", normalized)
 
 
 def normalize_alias_candidate(value: str, category: SkillCategory) -> str:
     """카테고리상 확실한 구조 정보만 제거한 뒤 별칭 비교값을 만든다."""
-    # Q. TOEIC 850점을 별칭으로 매번 추가해야 하나요?
-    # A. 점수는 보유 수준이고 자격 이름은 TOEIC입니다. CERTIFICATION에서만 끝의
-    #    숫자+점/급/등급을 제거해 TOEIC 별칭 하나로 여러 점수를 처리합니다.
     candidate = value.strip()
     if category is SkillCategory.CERTIFICATION:
         candidate = _CERTIFICATION_SCORE_SUFFIX.sub("", candidate)
@@ -145,9 +139,6 @@ def apply_mapping_thresholds(
     margin = result.category_top1_margin
     global_top1 = global_hits[0] if global_hits else None
 
-    # Q. CATEGORY_MISMATCH는 언제 확정하나요?
-    # A. 다른 카테고리의 전역 1위는 충분히 가깝지만, 허용 카테고리 안의 1위는 기준에
-    #    못 미칠 때입니다. 단순히 전역 1위 카테고리가 다르다는 이유만으로 막지는 않습니다.
     if (
         top1.similarity < min_similarity
         and global_top1 is not None
@@ -211,10 +202,6 @@ def load_skill_masters(conn: Any) -> list[SkillMaster]:
 
 def load_skill_aliases(conn: Any) -> list[SkillAlias]:
     """활성 별칭과 연결된 마스터를 읽는다.
-
-    Q. aliases를 skills JSON 컬럼에서 바로 읽지 않나요?
-    A. 별칭마다 출처·활성 상태·임베딩을 독립적으로 관리해야 하므로 한 행에 하나씩
-       저장합니다. 그래야 어떤 별칭이 매핑을 만들었는지도 감사할 수 있습니다.
     """
     with conn.cursor() as cur:
         cur.execute(
@@ -260,9 +247,6 @@ def resolve_alias(
     if len(normalized) == 1:
         return normalized[0], normalized
 
-    # Q. 같은 별칭이 두 마스터에 연결되면 첫 번째를 고르면 안 되나요?
-    # A. 순서에 따라 사용자 스킬이 달라지는 조용한 오매핑이 됩니다. 0개 또는 2개
-    #    이상이면 자동 선택하지 않고 이후 임베딩·사람 검토 단계로 넘깁니다.
     return None, normalized or exact
 
 

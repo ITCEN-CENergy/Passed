@@ -196,6 +196,25 @@ def test_router_is_registered() -> None:
     assert "/api/v1/roadmaps/generate" in paths
 
 
+def test_application_reuses_and_closes_shared_http_client() -> None:
+    with TestClient(app) as lifespan_client:
+        shared_client = app.state.http_client
+
+        first = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+        second = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert app.state.http_client is shared_client
+        assert not shared_client.is_closed
+
+    assert shared_client.is_closed
+
+
 def test_http_client_loggers_do_not_expose_request_urls() -> None:
     assert logging.getLogger("httpx").getEffectiveLevel() >= logging.WARNING
     assert logging.getLogger("httpcore").getEffectiveLevel() >= logging.WARNING
@@ -250,9 +269,12 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         isOfficial=False,
         isFree=None,
     )
+    async def search_resources(self, competency):
+        return [resource]
+
     monkeypatch.setattr(
         "api.features.roadmap.service.LearningResourceSearchService.search",
-        lambda self, value: [resource],
+        search_resources,
     )
 
     response = client.post(

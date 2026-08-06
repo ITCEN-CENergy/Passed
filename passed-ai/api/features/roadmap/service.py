@@ -3,6 +3,9 @@ from time import perf_counter
 from typing import Protocol
 from uuid import uuid4
 
+import httpx
+from starlette.concurrency import run_in_threadpool
+
 from api.features.roadmap.client import OpenAiRoadmapClient
 from api.features.roadmap.config import get_roadmap_settings
 from api.features.roadmap.planner import create_learning_stages
@@ -24,6 +27,7 @@ from api.features.roadmap.schema import (
     RoadmapSkill,
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
+from api.features.roadmap.resource_provider import create_resource_providers
 from api.features.roadmap.validator import validate_generated_content
 
 
@@ -158,9 +162,10 @@ def _generator() -> RoadmapContentGenerator:
     return FakeRoadmapContentGenerator()
 
 
-def generate_roadmap(
+async def generate_roadmap(
     request: RoadmapGenerateRequest,
     generator: RoadmapContentGenerator | None = None,
+    http_client: httpx.AsyncClient | None = None,
 ) -> RoadmapGenerateResponse:
     generation_id = uuid4().hex
     started = perf_counter()
@@ -175,7 +180,15 @@ def generate_roadmap(
         },
     )
     try:
-        response = _generate_roadmap(request, generator, generation_id)
+        if http_client is None:
+            async with httpx.AsyncClient() as request_client:
+                response = await _generate_roadmap(
+                    request, generator, generation_id, request_client
+                )
+        else:
+            response = await _generate_roadmap(
+                request, generator, generation_id, http_client
+            )
     except Exception as exception:
         elapsed_ms = round((perf_counter() - started) * 1000)
         logger.error(
@@ -213,22 +226,28 @@ def generate_roadmap(
     return response
 
 
-def _generate_roadmap(
+async def _generate_roadmap(
     request: RoadmapGenerateRequest,
     generator: RoadmapContentGenerator | None,
     generation_id: str,
+    http_client: httpx.AsyncClient,
 ) -> RoadmapGenerateResponse:
     stages_by_key = {
         competency.roadmapSkillKey: create_learning_stages(competency)
         for competency in request.competencies
     }
     settings = get_roadmap_settings()
-    search_service = LearningResourceSearchService(settings, generation_id=generation_id)
     search_started = perf_counter()
-    resources_by_key = {
-        competency.roadmapSkillKey: search_service.search(competency)
-        for competency in request.competencies
-    }
+    resources_by_key: dict[str, list[LearningResource]] = {}
+    search_service = LearningResourceSearchService(
+        create_resource_providers(http_client, settings),
+        enabled=settings.resource_search_enabled,
+        generation_id=generation_id,
+    )
+    for competency in request.competencies:
+        resources_by_key[competency.roadmapSkillKey] = await search_service.search(
+            competency
+        )
     search_elapsed_ms = round((perf_counter() - search_started) * 1000)
     resource_count = sum(len(resources) for resources in resources_by_key.values())
     resource_description_char_count = sum(
@@ -255,8 +274,11 @@ def _generate_roadmap(
     )
     content_generator = generator or _generator()
     generator_started = perf_counter()
-    generated = content_generator.generate(
-        request.competencies, stages_by_key, resources_by_key
+    generated = await run_in_threadpool(
+        content_generator.generate,
+        request.competencies,
+        stages_by_key,
+        resources_by_key,
     )
     generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
     logger.info(

@@ -1,8 +1,10 @@
 import logging
 
 import httpx
+import pytest
 
 from api.features.roadmap.config import RoadmapSettings
+from api.features.roadmap.resource_provider import create_resource_providers
 from api.features.roadmap.resource_search import (
     LearningResourceSearchService,
     _official_provider,
@@ -27,10 +29,11 @@ def _competency() -> Competency:
     )
 
 
-def test_kakao_book_response_is_normalized(monkeypatch) -> None:
-    def fake_get(url, **kwargs):
-        assert url == "https://dapi.kakao.com/v3/search/book"
-        return httpx.Response(200, request=httpx.Request("GET", url), json={
+@pytest.mark.asyncio
+async def test_kakao_book_response_is_normalized() -> None:
+    def handle_request(request: httpx.Request) -> httpx.Response:
+        assert str(request.url).startswith("https://dapi.kakao.com/v3/search/book")
+        return httpx.Response(200, request=request, json={
             "documents": [{
                 "title": "<b>Docker</b> 실전 가이드",
                 "contents": "컨테이너 실습",
@@ -42,7 +45,6 @@ def test_kakao_book_response_is_normalized(monkeypatch) -> None:
             }]
         })
 
-    monkeypatch.setattr(httpx, "get", fake_get)
     settings = RoadmapSettings(
         ROADMAP_RESOURCE_SEARCH_ENABLED=True,
         KAKAO_REST_API_KEY="key",
@@ -50,7 +52,10 @@ def test_kakao_book_response_is_normalized(monkeypatch) -> None:
         TAVILY_API_KEY=None,
     )
 
-    resources = LearningResourceSearchService(settings).search(_competency())
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle_request)) as client:
+        resources = await LearningResourceSearchService(
+            create_resource_providers(client, settings), enabled=True
+        ).search(_competency())
 
     assert len(resources) == 1
     assert resources[0].resourceType == "BOOK"
@@ -58,11 +63,11 @@ def test_kakao_book_response_is_normalized(monkeypatch) -> None:
     assert resources[0].authors == ["홍길동"]
 
 
-def test_provider_failure_does_not_fail_search(monkeypatch, caplog) -> None:
-    def failed_get(*args, **kwargs):
+@pytest.mark.asyncio
+async def test_provider_failure_does_not_fail_search(caplog) -> None:
+    def failed_get(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("unavailable")
 
-    monkeypatch.setattr(httpx, "get", failed_get)
     settings = RoadmapSettings(
         ROADMAP_RESOURCE_SEARCH_ENABLED=True,
         KAKAO_REST_API_KEY="key",
@@ -71,9 +76,12 @@ def test_provider_failure_does_not_fail_search(monkeypatch, caplog) -> None:
     )
 
     with caplog.at_level(logging.INFO):
-        assert LearningResourceSearchService(
-            settings, generation_id="generation-1"
-        ).search(_competency()) == []
+        async with httpx.AsyncClient(transport=httpx.MockTransport(failed_get)) as client:
+            assert await LearningResourceSearchService(
+                create_resource_providers(client, settings),
+                enabled=True,
+                generation_id="generation-1",
+            ).search(_competency()) == []
 
     provider_records = [
         record for record in caplog.records
@@ -116,9 +124,10 @@ def test_official_provider_is_detected_from_domain() -> None:
     assert _official_provider("https://example.com/docker") is None
 
 
-def test_empty_book_description_gets_short_fallback(monkeypatch) -> None:
-    def fake_get(url, **kwargs):
-        return httpx.Response(200, request=httpx.Request("GET", url), json={
+@pytest.mark.asyncio
+async def test_empty_book_description_gets_short_fallback() -> None:
+    def handle_request(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, request=request, json={
             "documents": [{
                 "title": "Docker 입문",
                 "contents": "",
@@ -130,7 +139,6 @@ def test_empty_book_description_gets_short_fallback(monkeypatch) -> None:
             }]
         })
 
-    monkeypatch.setattr(httpx, "get", fake_get)
     settings = RoadmapSettings(
         ROADMAP_RESOURCE_SEARCH_ENABLED=True,
         KAKAO_REST_API_KEY="key",
@@ -138,6 +146,9 @@ def test_empty_book_description_gets_short_fallback(monkeypatch) -> None:
         TAVILY_API_KEY=None,
     )
 
-    resource = LearningResourceSearchService(settings).search(_competency())[0]
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle_request)) as client:
+        resource = (await LearningResourceSearchService(
+            create_resource_providers(client, settings), enabled=True
+        ).search(_competency()))[0]
 
     assert resource.description == "Docker 입문 도서로 Docker 학습에 활용할 수 있습니다."

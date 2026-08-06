@@ -1,6 +1,8 @@
+from contextlib import asynccontextmanager
 import logging
 import os
 
+import httpx
 from fastapi import FastAPI
 
 from api.features.roadmap.router import router as roadmap_router
@@ -18,9 +20,17 @@ for library_logger_name in ("httpx", "httpcore", "openai"):
     logging.getLogger(library_logger_name).setLevel(logging.WARNING)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with httpx.AsyncClient() as http_client:
+        app.state.http_client = http_client
+        yield
+
+
 app = FastAPI(
     title="Passed AI API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.include_router(roadmap_router)

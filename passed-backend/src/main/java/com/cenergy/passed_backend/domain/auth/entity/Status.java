@@ -1,4 +1,4 @@
-package com.gooroomees.neulbomgil_backend.domain.auth.entity;
+package com.cenergy.passed_backend.domain.auth.entity;
 
 public enum Status {
     ACTIVE,

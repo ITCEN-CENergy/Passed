@@ -1,6 +1,6 @@
-package com.cenergy.passed_backend.domain.recommendation.api;
+package com.cenergy.passed_backend.domain.recommendation.dto;
 
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 
 import java.util.List;
 

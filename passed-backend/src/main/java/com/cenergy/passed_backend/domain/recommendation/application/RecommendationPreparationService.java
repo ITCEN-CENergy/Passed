@@ -1,25 +1,27 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
-import com.cenergy.passed_backend.domain.recommendation.api.RecommendationPrepareRequest;
-import com.cenergy.passed_backend.domain.recommendation.api.RecommendationPrepareResponse;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationGradeRuleRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationJobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationScoringPolicyRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationSkillRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationUserRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.UserSkillProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
-import com.cenergy.passed_backend.jobposting.entity.JobRole;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationGrade;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationGradeRule;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationPolicyStatus;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRun;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRunStatus;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationScoringPolicy;
-import com.cenergy.passed_backend.skill.entity.Skill;
-import com.cenergy.passed_backend.user.entity.User;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationPolicyStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRun;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
+import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
+import com.cenergy.passed_backend.domain.skill.entity.Skill;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserSkillProvider;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
+import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
+import com.cenergy.passed_backend.domain.recommendation.application.RecommendationSnapshotFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,22 +37,22 @@ public class RecommendationPreparationService {
     private static final String POLICY_CODE = "SKILL_MATCH";
     private static final String POLICY_VERSION = "v1";
 
-    private final RecommendationUserRepository userRepository;
+    private final UserRepository userRepository;
     private final RecommendationRunRepository runRepository;
     private final RecommendationScoringPolicyRepository policyRepository;
     private final RecommendationGradeRuleRepository gradeRuleRepository;
-    private final RecommendationSkillRepository skillRepository;
-    private final RecommendationJobRoleRepository jobRoleRepository;
+    private final SkillRepository skillRepository;
+    private final JobRoleRepository jobRoleRepository;
     private final UserSkillProvider userSkillProvider;
     private final RecommendationSnapshotFactory snapshotFactory;
 
     public RecommendationPreparationService(
-            RecommendationUserRepository userRepository,
+            UserRepository userRepository,
             RecommendationRunRepository runRepository,
             RecommendationScoringPolicyRepository policyRepository,
             RecommendationGradeRuleRepository gradeRuleRepository,
-            RecommendationSkillRepository skillRepository,
-            RecommendationJobRoleRepository jobRoleRepository,
+            SkillRepository skillRepository,
+            JobRoleRepository jobRoleRepository,
             UserSkillProvider userSkillProvider,
             RecommendationSnapshotFactory snapshotFactory
     ) {

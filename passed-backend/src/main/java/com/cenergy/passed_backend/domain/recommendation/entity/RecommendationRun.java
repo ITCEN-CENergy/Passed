@@ -1,6 +1,8 @@
-package com.cenergy.passed_backend.recommendation.entity;
+package com.cenergy.passed_backend.domain.recommendation.entity;
 
-import com.cenergy.passed_backend.user.entity.User;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

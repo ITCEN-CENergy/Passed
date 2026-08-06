@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
+import com.cenergy.passed_backend.domain.recommendation.exception.RecommendationException;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;

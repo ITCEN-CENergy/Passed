@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.coverletter.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
-import com.cenergy.passed_backend.domain.user.domain.User;
+import com.cenergy.passed_backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

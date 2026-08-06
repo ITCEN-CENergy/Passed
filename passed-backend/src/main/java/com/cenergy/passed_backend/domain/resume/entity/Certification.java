@@ -1,4 +1,5 @@
-package com.cenergy.passed_backend.resume.entity;
+package com.cenergy.passed_backend.domain.resume.entity;
+import com.cenergy.passed_backend.domain.resume.entity.Resume;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,9 +10,9 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@Table(name = "overseas_experiences")
+@Table(name = "certifications")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OverseasExperience {
+public class Certification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +22,12 @@ public class OverseasExperience {
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
-    @Column(name = "country_name", length = 100)
-    private String countryName;
+    @Column(name = "name", length = 150)
+    private String name;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
+    @Column(name = "issuer", length = 100)
+    private String issuer;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
+    @Column(name = "acquisition_date")
+    private LocalDate acquisitionDate;
 }

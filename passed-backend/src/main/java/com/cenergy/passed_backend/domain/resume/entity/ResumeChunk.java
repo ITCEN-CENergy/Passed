@@ -1,4 +1,6 @@
-package com.cenergy.passed_backend.resume.entity;
+package com.cenergy.passed_backend.domain.resume.entity;
+import com.cenergy.passed_backend.domain.resume.entity.Resume;
+import com.cenergy.passed_backend.domain.resume.entity.ResumeSourceType;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
 import com.cenergy.passed_backend.common.entity.EmbeddingStatus;

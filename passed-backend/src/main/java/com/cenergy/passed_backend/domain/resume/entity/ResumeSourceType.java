@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.resume.entity;
+package com.cenergy.passed_backend.domain.resume.entity;
 
 public enum ResumeSourceType {
     EDUCATION,

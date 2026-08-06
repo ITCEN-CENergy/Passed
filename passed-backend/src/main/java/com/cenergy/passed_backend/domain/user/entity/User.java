@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.user.entity;
+package com.cenergy.passed_backend.domain.user.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
 import jakarta.persistence.*;

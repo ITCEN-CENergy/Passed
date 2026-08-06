@@ -1,4 +1,7 @@
-package com.cenergy.passed_backend.jobposting.entity;
+package com.cenergy.passed_backend.domain.jobposting.entity;
+
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingChunkSourceType;
 
 import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
 import com.cenergy.passed_backend.common.entity.EmbeddingStatus;

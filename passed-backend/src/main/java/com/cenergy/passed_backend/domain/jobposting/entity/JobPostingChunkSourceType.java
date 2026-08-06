@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.jobposting.entity;
+package com.cenergy.passed_backend.domain.jobposting.entity;
 
 public enum JobPostingChunkSourceType {
     POSITION_DETAIL,

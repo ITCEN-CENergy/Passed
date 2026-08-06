@@ -40,6 +40,10 @@ async def generate(
 ) -> RoadmapGenerateResponse:
     try:
         return await generate_roadmap(request, http_client=http_client)
+    except TimeoutError as exception:
+        raise HTTPException(
+            status_code=504, detail="roadmap generation timed out"
+        ) from exception
     except APITimeoutError as exception:
         raise HTTPException(status_code=504, detail="roadmap model timed out") from exception
     except (APIConnectionError, InternalServerError, RateLimitError) as exception:

@@ -1,36 +1,40 @@
 package com.cenergy.passed_backend.domain.coverletter.application;
 
-import com.cenergy.passed_backend.domain.jobposting.domain.JobPosting;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Verifies that the AI prompt builder preserves field order and omits empty job-posting fields.
+ */
 class JobPostingDescriptionBuilderTest {
 
+    /** The builder includes populated sections in its documented order and skips null sections. */
     @Test
     void buildsOrderedDescriptionAndOmitsBlankSections() {
         JobPosting posting = mock(JobPosting.class);
-        when(posting.getTitle()).thenReturn("백엔드 개발자");
-        when(posting.getPositionDetail()).thenReturn("플랫폼 개발");
-        when(posting.getMainDuty()).thenReturn("API 개발");
+        when(posting.getTitle()).thenReturn("Backend Developer");
+        when(posting.getPositionDetail()).thenReturn("Platform development");
+        when(posting.getMainDuty()).thenReturn("API development");
         when(posting.getQualification()).thenReturn(null);
-        when(posting.getPreference()).thenReturn("Spring 경험");
+        when(posting.getPreference()).thenReturn("Spring experience");
 
         String description = new JobPostingDescriptionBuilder().build(posting);
 
         assertThat(description).isEqualTo("""
-                [공고 제목]
-                백엔드 개발자
+                [\uACF5\uACE0 \uC81C\uBAA9]
+                Backend Developer
 
-                [직무 상세]
-                플랫폼 개발
+                [\uC9C1\uBB34 \uC0C1\uC138]
+                Platform development
 
-                [주요 업무]
-                API 개발
+                [\uC8FC\uC694 \uC5C5\uBB34]
+                API development
 
-                [우대 사항]
-                Spring 경험""");
+                [\uC6B0\uB300 \uC0AC\uD56D]
+                Spring experience""");
     }
 }

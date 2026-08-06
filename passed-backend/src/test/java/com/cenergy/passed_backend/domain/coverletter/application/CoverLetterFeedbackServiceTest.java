@@ -15,7 +15,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Verifies orchestration rules for the existing item-feedback API.
+ */
 class CoverLetterFeedbackServiceTest {
+    /** The dependencies are mocked so feedback orchestration is tested without external AI or a database. */
     private final CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
     private final CoverLetterFeedbackQueryService queryService = mock(CoverLetterFeedbackQueryService.class);
     private final CoverLetterFeedbackPersistenceService persistenceService =
@@ -29,21 +33,22 @@ class CoverLetterFeedbackServiceTest {
             new CoverLetterScorePolicy()
     );
 
+    /** A valid AI result is scored and persisted for the authenticated user's target item. */
     @Test
     void generatesAndPersistsItemFeedback() {
         CoverLetterFeedbackInput input = new CoverLetterFeedbackInput(
-                12L, "질문", "답변", 700, "공고"
+                12L, "question", "answer", 700, "job description"
         );
         ValidatedCoverLetterAiResult aiResult = new ValidatedCoverLetterAiResult(
-                "교정 답변", 84, "문항 피드백", "직무 피드백", "수정 답변"
+                "edited answer", 84, "item feedback", "job feedback", "final answer"
         );
         CoverLetterFeedbackResult saved = new CoverLetterFeedbackResult(
-                33L, 12L, CoverLetterScore.SUFFICIENT, null, "개선점",
-                "수정 답변", 700, 5, true, null, null
+                33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
+                "final answer", 700, 12, true, null, null
         );
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
         when(queryService.loadInput(257L, 12L)).thenReturn(input);
-        when(aiClient.edit(new CoverLetterAiRequest("질문", "답변", "공고"))).thenReturn(aiResult);
+        when(aiClient.edit(new CoverLetterAiRequest("question", "answer", "job description"))).thenReturn(aiResult);
         when(persistenceService.save(257L, input, CoverLetterScore.SUFFICIENT, aiResult)).thenReturn(saved);
 
         CoverLetterFeedbackResult result = service.generate(12L);
@@ -51,6 +56,7 @@ class CoverLetterFeedbackServiceTest {
         assertThat(result).isEqualTo(saved);
     }
 
+    /** Invalid item IDs are rejected before repository or external-AI work begins. */
     @Test
     void rejectsInvalidItemBeforeQueryAndAiCall() {
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
@@ -61,6 +67,7 @@ class CoverLetterFeedbackServiceTest {
         verify(aiClient, never()).edit(any());
     }
 
+    /** Missing current-user context is rejected before any cover-letter data is loaded. */
     @Test
     void rejectsInvalidCurrentUser() {
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(null);

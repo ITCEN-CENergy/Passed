@@ -1,3 +1,5 @@
+import logging
+
 import httpx
 
 from api.features.roadmap.config import RoadmapSettings
@@ -56,7 +58,7 @@ def test_kakao_book_response_is_normalized(monkeypatch) -> None:
     assert resources[0].authors == ["홍길동"]
 
 
-def test_provider_failure_does_not_fail_search(monkeypatch) -> None:
+def test_provider_failure_does_not_fail_search(monkeypatch, caplog) -> None:
     def failed_get(*args, **kwargs):
         raise httpx.ConnectError("unavailable")
 
@@ -68,7 +70,29 @@ def test_provider_failure_does_not_fail_search(monkeypatch) -> None:
         TAVILY_API_KEY=None,
     )
 
-    assert LearningResourceSearchService(settings).search(_competency()) == []
+    with caplog.at_level(logging.INFO):
+        assert LearningResourceSearchService(
+            settings, generation_id="generation-1"
+        ).search(_competency()) == []
+
+    provider_records = [
+        record for record in caplog.records
+        if getattr(record, "event", None) == "roadmap_provider_search_completed"
+    ]
+    failed_record = next(
+        record for record in provider_records if record.provider == "kakao_book"
+    )
+    assert failed_record.generationId == "generation-1"
+    assert failed_record.competencyKey == "docker"
+    assert failed_record.status == "FAILED"
+    assert failed_record.errorType == "ConnectError"
+    assert failed_record.resultCount == 0
+    assert failed_record.elapsedMs >= 0
+
+    empty_providers = {
+        record.provider for record in provider_records if record.status == "EMPTY"
+    }
+    assert empty_providers == {"kmooc", "tavily"}
 
 
 def test_web_description_removes_markup_and_is_bounded() -> None:

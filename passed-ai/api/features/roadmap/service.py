@@ -1,4 +1,7 @@
+import logging
+from time import perf_counter
 from typing import Protocol
+from uuid import uuid4
 
 from api.features.roadmap.client import OpenAiRoadmapClient
 from api.features.roadmap.config import get_roadmap_settings
@@ -22,6 +25,9 @@ from api.features.roadmap.schema import (
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
 from api.features.roadmap.validator import validate_generated_content
+
+
+logger = logging.getLogger(__name__)
 
 
 class RoadmapContentGenerator(Protocol):
@@ -156,18 +162,115 @@ def generate_roadmap(
     request: RoadmapGenerateRequest,
     generator: RoadmapContentGenerator | None = None,
 ) -> RoadmapGenerateResponse:
+    generation_id = uuid4().hex
+    started = perf_counter()
+    logger.info(
+        "roadmap_generation_started generationId=%s competencyCount=%d",
+        generation_id,
+        len(request.competencies),
+        extra={
+            "event": "roadmap_generation_started",
+            "generationId": generation_id,
+            "competencyCount": len(request.competencies),
+        },
+    )
+    try:
+        response = _generate_roadmap(request, generator, generation_id)
+    except Exception as exception:
+        elapsed_ms = round((perf_counter() - started) * 1000)
+        logger.error(
+            "roadmap_generation_completed generationId=%s status=FAILED "
+            "competencyCount=%d elapsedMs=%d errorType=%s",
+            generation_id,
+            len(request.competencies),
+            elapsed_ms,
+            type(exception).__name__,
+            extra={
+                "event": "roadmap_generation_completed",
+                "generationId": generation_id,
+                "status": "FAILED",
+                "competencyCount": len(request.competencies),
+                "elapsedMs": elapsed_ms,
+                "errorType": type(exception).__name__,
+            },
+        )
+        raise
+    elapsed_ms = round((perf_counter() - started) * 1000)
+    logger.info(
+        "roadmap_generation_completed generationId=%s status=SUCCESS "
+        "competencyCount=%d elapsedMs=%d",
+        generation_id,
+        len(request.competencies),
+        elapsed_ms,
+        extra={
+            "event": "roadmap_generation_completed",
+            "generationId": generation_id,
+            "status": "SUCCESS",
+            "competencyCount": len(request.competencies),
+            "elapsedMs": elapsed_ms,
+        },
+    )
+    return response
+
+
+def _generate_roadmap(
+    request: RoadmapGenerateRequest,
+    generator: RoadmapContentGenerator | None,
+    generation_id: str,
+) -> RoadmapGenerateResponse:
     stages_by_key = {
         competency.roadmapSkillKey: create_learning_stages(competency)
         for competency in request.competencies
     }
     settings = get_roadmap_settings()
-    search_service = LearningResourceSearchService(settings)
+    search_service = LearningResourceSearchService(settings, generation_id=generation_id)
+    search_started = perf_counter()
     resources_by_key = {
         competency.roadmapSkillKey: search_service.search(competency)
         for competency in request.competencies
     }
-    generated = (generator or _generator()).generate(
+    search_elapsed_ms = round((perf_counter() - search_started) * 1000)
+    resource_count = sum(len(resources) for resources in resources_by_key.values())
+    resource_description_char_count = sum(
+        len(resource.description)
+        for resources in resources_by_key.values()
+        for resource in resources
+    )
+    logger.info(
+        "roadmap_resource_search_completed generationId=%s competencyCount=%d "
+        "resultCount=%d descriptionCharCount=%d elapsedMs=%d",
+        generation_id,
+        len(request.competencies),
+        resource_count,
+        resource_description_char_count,
+        search_elapsed_ms,
+        extra={
+            "event": "roadmap_resource_search_completed",
+            "generationId": generation_id,
+            "competencyCount": len(request.competencies),
+            "resultCount": resource_count,
+            "descriptionCharCount": resource_description_char_count,
+            "elapsedMs": search_elapsed_ms,
+        },
+    )
+    content_generator = generator or _generator()
+    generator_started = perf_counter()
+    generated = content_generator.generate(
         request.competencies, stages_by_key, resources_by_key
+    )
+    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
+    logger.info(
+        "roadmap_content_generation_completed generationId=%s generator=%s "
+        "elapsedMs=%d",
+        generation_id,
+        type(content_generator).__name__,
+        generator_elapsed_ms,
+        extra={
+            "event": "roadmap_content_generation_completed",
+            "generationId": generation_id,
+            "generator": type(content_generator).__name__,
+            "elapsedMs": generator_elapsed_ms,
+        },
     )
     validate_generated_content(
         request.competencies, stages_by_key, resources_by_key, generated

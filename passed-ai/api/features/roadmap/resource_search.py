@@ -1,6 +1,8 @@
 import hashlib
 import html
+import logging
 import re
+from time import perf_counter
 from urllib.parse import unquote, urlparse
 from typing import Any
 
@@ -12,6 +14,9 @@ from api.features.roadmap.schema import (
     LearningResource,
     LearningResourceType,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def _resource_id(provider: str, external_id: str) -> str:
@@ -68,24 +73,105 @@ def _official_provider(url: str) -> str | None:
 class LearningResourceSearchService:
     """Best-effort aggregation. One broken provider never fails roadmap generation."""
 
-    def __init__(self, settings: RoadmapSettings) -> None:
+    def __init__(
+        self,
+        settings: RoadmapSettings,
+        generation_id: str | None = None,
+    ) -> None:
         self._settings = settings
+        self._generation_id = generation_id
 
     def search(self, competency: Competency) -> list[LearningResource]:
         if not self._settings.resource_search_enabled:
+            logger.info(
+                "roadmap_resource_search_skipped generationId=%s competencyKey=%s reason=disabled",
+                self._generation_id,
+                competency.roadmapSkillKey,
+                extra={
+                    "event": "roadmap_resource_search_skipped",
+                    "generationId": self._generation_id,
+                    "competencyKey": competency.roadmapSkillKey,
+                    "reason": "disabled",
+                },
+            )
             return []
+        search_started = perf_counter()
         resources: list[LearningResource] = []
-        for provider in (self._search_kmooc, self._search_kakao, self._search_web):
+        for provider_name, provider in (
+            ("kmooc", self._search_kmooc),
+            ("kakao_book", self._search_kakao),
+            ("tavily", self._search_web),
+        ):
+            provider_started = perf_counter()
             try:
-                resources.extend(provider(competency))
-            except Exception:
+                provider_resources = provider(competency)
+                resources.extend(provider_resources)
+                status = "SUCCESS" if provider_resources else "EMPTY"
+                elapsed_ms = round((perf_counter() - provider_started) * 1000)
+                logger.info(
+                    "roadmap_provider_search_completed generationId=%s competencyKey=%s "
+                    "provider=%s status=%s resultCount=%d elapsedMs=%d",
+                    self._generation_id,
+                    competency.roadmapSkillKey,
+                    provider_name,
+                    status,
+                    len(provider_resources),
+                    elapsed_ms,
+                    extra={
+                        "event": "roadmap_provider_search_completed",
+                        "generationId": self._generation_id,
+                        "competencyKey": competency.roadmapSkillKey,
+                        "provider": provider_name,
+                        "status": status,
+                        "resultCount": len(provider_resources),
+                        "elapsedMs": elapsed_ms,
+                    },
+                )
+            except Exception as exception:
                 # Search is supplemental. The LLM can still create a roadmap when a
                 # provider is unavailable or its response has changed.
+                elapsed_ms = round((perf_counter() - provider_started) * 1000)
+                logger.warning(
+                    "roadmap_provider_search_completed generationId=%s competencyKey=%s "
+                    "provider=%s status=FAILED resultCount=0 elapsedMs=%d errorType=%s",
+                    self._generation_id,
+                    competency.roadmapSkillKey,
+                    provider_name,
+                    elapsed_ms,
+                    type(exception).__name__,
+                    extra={
+                        "event": "roadmap_provider_search_completed",
+                        "generationId": self._generation_id,
+                        "competencyKey": competency.roadmapSkillKey,
+                        "provider": provider_name,
+                        "status": "FAILED",
+                        "resultCount": 0,
+                        "elapsedMs": elapsed_ms,
+                        "errorType": type(exception).__name__,
+                    },
+                )
                 continue
         deduplicated: dict[str, LearningResource] = {}
         for resource in resources:
             deduplicated.setdefault(resource.url, resource)
-        return list(deduplicated.values())[:15]
+        result = list(deduplicated.values())[:15]
+        elapsed_ms = round((perf_counter() - search_started) * 1000)
+        logger.info(
+            "roadmap_competency_search_completed generationId=%s competencyKey=%s "
+            "resultCount=%d elapsedMs=%d",
+            self._generation_id,
+            competency.roadmapSkillKey,
+            len(result),
+            elapsed_ms,
+            extra={
+                "event": "roadmap_competency_search_completed",
+                "generationId": self._generation_id,
+                "competencyKey": competency.roadmapSkillKey,
+                "resultCount": len(result),
+                "elapsedMs": elapsed_ms,
+            },
+        )
+        return result
 
     def _search_kmooc(self, competency: Competency) -> list[LearningResource]:
         settings = self._settings

@@ -1,7 +1,9 @@
 package com.cenergy.passed_backend.domain.recommendation.api;
 
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationPreparationService;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

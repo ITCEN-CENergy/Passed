@@ -21,7 +21,7 @@ import com.cenergy.passed_backend.domain.user.repository.UserSkillProvider;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationSnapshotFactory;
-
+import com.cenergy.passed_backend.domain.recommendation.exception.RecommendationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

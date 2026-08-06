@@ -1,24 +1,26 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
-import com.cenergy.passed_backend.domain.recommendation.api.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationGradeRuleRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationJobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationScoringPolicyRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationSkillRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationUserRepository;
-import com.cenergy.passed_backend.domain.recommendation.repository.UserSkillProvider;
+import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserSkillProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
-import com.cenergy.passed_backend.jobposting.entity.Industry;
-import com.cenergy.passed_backend.jobposting.entity.JobRole;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationGradeRule;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationPolicyStatus;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRun;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationRunStatus;
-import com.cenergy.passed_backend.recommendation.entity.RecommendationScoringPolicy;
-import com.cenergy.passed_backend.skill.entity.Skill;
-import com.cenergy.passed_backend.user.entity.User;
+import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
+import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
+import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationPolicyStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRun;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
+import com.cenergy.passed_backend.domain.skill.entity.Skill;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.recommendation.exception.RecommendationException;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,23 +40,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RecommendationPreparationServiceTest {
-    private RecommendationUserRepository userRepository;
     private RecommendationRunRepository runRepository;
     private RecommendationScoringPolicyRepository policyRepository;
     private RecommendationGradeRuleRepository gradeRuleRepository;
-    private RecommendationSkillRepository skillRepository;
-    private RecommendationJobRoleRepository jobRoleRepository;
+    private SkillRepository skillRepository;
+    private JobRoleRepository jobRoleRepository;
+    private UserRepository userRepository;
     private UserSkillProvider userSkillProvider;
     private RecommendationPreparationService service;
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(RecommendationUserRepository.class);
         runRepository = mock(RecommendationRunRepository.class);
         policyRepository = mock(RecommendationScoringPolicyRepository.class);
         gradeRuleRepository = mock(RecommendationGradeRuleRepository.class);
-        skillRepository = mock(RecommendationSkillRepository.class);
-        jobRoleRepository = mock(RecommendationJobRoleRepository.class);
+        skillRepository = mock(SkillRepository.class);
+        jobRoleRepository = mock(JobRoleRepository.class);
+        userRepository = mock(UserRepository.class);
         userSkillProvider = mock(UserSkillProvider.class);
         service = new RecommendationPreparationService(
                 userRepository,

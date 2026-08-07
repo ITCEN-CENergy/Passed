@@ -38,7 +38,8 @@ public record RoadmapDetailResponse(
                                 String learningObjective, String completionCriteria,
                                 int startLevel, int targetLevel, MilestoneType milestoneType,
                                 Difficulty difficulty, int estimatedMinutes, int learningOrder,
-                                MilestoneStatus status, BigDecimal progressRate,
+                                MilestoneStatus status, BigDecimal progressRate, ReuseType reuseType,
+                                String reuseReason, boolean required,
                                 List<Resource> learningResources) {
         public MilestoneItem {
             learningResources = List.copyOf(learningResources);

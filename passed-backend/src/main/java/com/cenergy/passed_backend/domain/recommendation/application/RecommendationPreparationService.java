@@ -6,6 +6,8 @@ import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationGradeRuleRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationScoringPolicyRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserSkillProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
@@ -16,8 +18,6 @@ import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationSco
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.user.entity.User;
-import com.cenergy.passed_backend.domain.user.repository.UserRepository;
-import com.cenergy.passed_backend.domain.user.repository.UserSkillProvider;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationSnapshotFactory;

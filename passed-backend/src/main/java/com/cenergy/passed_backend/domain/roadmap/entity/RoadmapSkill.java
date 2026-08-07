@@ -65,4 +65,8 @@ public class RoadmapSkill extends BaseTimeEntity {
         value.estimatedMinutes = estimatedMinutes;
         return value;
     }
+
+    public void updateProgressRate(BigDecimal progressRate) {
+        this.progressRate = progressRate;
+    }
 }

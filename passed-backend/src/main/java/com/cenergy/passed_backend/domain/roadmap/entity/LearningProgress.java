@@ -38,16 +38,4 @@ public class LearningProgress extends CreatedAtEntity {
     @Column(name = "recorded_at")
     private OffsetDateTime recordedAt;
 
-    public static LearningProgress record(Milestone milestone, BigDecimal previousProgress,
-                                          BigDecimal currentProgress, Integer studiedMinutes,
-                                          String note, OffsetDateTime recordedAt) {
-        LearningProgress value = new LearningProgress();
-        value.milestone = milestone;
-        value.previousProgress = previousProgress;
-        value.currentProgress = currentProgress;
-        value.studiedMinutes = studiedMinutes;
-        value.note = note;
-        value.recordedAt = recordedAt;
-        return value;
-    }
 }

@@ -75,4 +75,20 @@ public class Milestone extends BaseTimeEntity {
         value.description = description;
         return value;
     }
+
+    public BigDecimal changeCompletion(boolean completed, OffsetDateTime changedAt) {
+        BigDecimal previous = this.progressRate;
+        if (completed) {
+            this.status = MilestoneStatus.COMPLETED;
+            this.progressRate = BigDecimal.valueOf(100);
+            if (this.completedAt == null) {
+                this.completedAt = changedAt;
+            }
+        } else {
+            this.status = MilestoneStatus.NOT_STARTED;
+            this.progressRate = BigDecimal.ZERO;
+            this.completedAt = null;
+        }
+        return previous;
+    }
 }

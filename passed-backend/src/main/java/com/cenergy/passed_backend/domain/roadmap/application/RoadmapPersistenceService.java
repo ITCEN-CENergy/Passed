@@ -22,6 +22,7 @@ public class RoadmapPersistenceService {
     private final LearningResourceRepository resourceRepository;
     private final ResourceRecommendationRepository recommendationRepository;
     private final MilestoneReuseService milestoneReuseService;
+    private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapPersistenceService(RoadmapRepository roadmapRepository,
                                      RoadmapJobPostingRepository jobPostingRepository,
@@ -31,7 +32,8 @@ public class RoadmapPersistenceService {
                                      RoadmapMilestoneRepository roadmapMilestoneRepository,
                                      LearningResourceRepository resourceRepository,
                                      ResourceRecommendationRepository recommendationRepository,
-                                     MilestoneReuseService milestoneReuseService) {
+                                     MilestoneReuseService milestoneReuseService,
+                                     RoadmapEtaCalculator etaCalculator) {
         this.roadmapRepository = roadmapRepository;
         this.jobPostingRepository = jobPostingRepository;
         this.skillRepository = skillRepository;
@@ -41,6 +43,7 @@ public class RoadmapPersistenceService {
         this.resourceRepository = resourceRepository;
         this.recommendationRepository = recommendationRepository;
         this.milestoneReuseService = milestoneReuseService;
+        this.etaCalculator = etaCalculator;
     }
 
     @Transactional
@@ -56,6 +59,7 @@ public class RoadmapPersistenceService {
                 .map(id -> RoadmapJobPosting.create(roadmap, id, null)).toList());
 
         int totalMinutes = 0;
+        List<RoadmapMilestone> savedRoadmapMilestones = new java.util.ArrayList<>();
         for (RoadmapGenerationResult.Skill generatedSkill : result.skills()) {
             List<MilestoneReuseDecision> reuseDecisions = new java.util.ArrayList<>();
             Set<Long> assignedMilestoneIds = new java.util.HashSet<>();
@@ -99,8 +103,9 @@ public class RoadmapPersistenceService {
                             generatedMilestone.targetLevel(), generatedMilestone.milestoneType(),
                             generatedMilestone.difficulty(), generatedMilestone.estimatedMinutes()));
                 }
-                roadmapMilestoneRepository.save(RoadmapMilestone.create(
+                RoadmapMilestone roadmapMilestone = roadmapMilestoneRepository.save(RoadmapMilestone.create(
                         skill, milestone, generatedMilestone.learningOrder(), reuse.reuseType(), reuse.reason()));
+                savedRoadmapMilestones.add(roadmapMilestone);
 
                 if (reuse.reuseType() == ReuseType.NEW) {
                     int rank = 1;
@@ -118,6 +123,7 @@ public class RoadmapPersistenceService {
             totalMinutes += skillMinutes;
         }
         roadmap.activate(result.title(), totalMinutes);
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(savedRoadmapMilestones));
         return roadmap;
     }
 }

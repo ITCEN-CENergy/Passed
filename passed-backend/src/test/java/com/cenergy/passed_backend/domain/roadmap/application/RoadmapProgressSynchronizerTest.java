@@ -18,6 +18,7 @@ class RoadmapProgressSynchronizerTest {
         RoadmapMilestoneRepository linkRepository = mock(RoadmapMilestoneRepository.class);
         RoadmapSkillRepository skillRepository = mock(RoadmapSkillRepository.class);
         RoadmapRepository roadmapRepository = mock(RoadmapRepository.class);
+        RoadmapEtaCalculator etaCalculator = mock(RoadmapEtaCalculator.class);
         Roadmap roadmap = mock(Roadmap.class);
         RoadmapSkill skill = mock(RoadmapSkill.class);
         RoadmapMilestone completed = link(true, MilestoneStatus.COMPLETED);
@@ -32,12 +33,15 @@ class RoadmapProgressSynchronizerTest {
                 .thenReturn(List.of(completed, incomplete));
         when(roadmapRepository.findById(100L)).thenReturn(Optional.of(roadmap));
         when(skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(100L)).thenReturn(List.of(skill));
+        when(etaCalculator.calculate(List.of(completed, incomplete)))
+                .thenReturn(java.time.LocalDate.of(2026, 8, 8));
 
-        new RoadmapProgressSynchronizer(linkRepository, skillRepository, roadmapRepository)
+        new RoadmapProgressSynchronizer(linkRepository, skillRepository, roadmapRepository, etaCalculator)
                 .synchronizeByMilestone(1L);
 
         verify(skill).updateProgressRate(new BigDecimal("50.00"));
         verify(roadmap).updateProgressRate(new BigDecimal("50.00"));
+        verify(roadmap).updateEstimatedEndDate(java.time.LocalDate.of(2026, 8, 8));
     }
 
     private RoadmapMilestone link(boolean required, MilestoneStatus status) {

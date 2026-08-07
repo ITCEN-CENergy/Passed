@@ -63,4 +63,11 @@ public class Roadmap extends BaseTimeEntity {
             this.status = RoadmapStatus.ACTIVE;
         }
     }
+
+    public void updateEstimatedEndDate(LocalDate estimatedEndDate) {
+        if (estimatedEndDate == null) {
+            throw new IllegalArgumentException("estimatedEndDate는 null일 수 없습니다.");
+        }
+        this.estimatedEndDate = estimatedEndDate;
+    }
 }

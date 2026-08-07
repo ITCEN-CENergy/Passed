@@ -5,7 +5,7 @@ import JobRelevance from '../components/JobRelevance';
 import SentenceCorrection from '../components/SentenceCorrection';
 import AdditionalInfo from '../components/AdditionalInfo';
 import Footer from '../components/Footer';
-import styles from './CoverLetterResultPage.module.css';
+import styles from './styles/CoverLetterResultPage.module.css';
 
 const CoverLetterResultPage = () => {
   return (

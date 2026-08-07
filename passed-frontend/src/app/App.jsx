@@ -1,9 +1,13 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import './App.css'
 
 function App() {
+  const { pathname } = useLocation()
+  const isCoverLetterList = pathname === '/cover-letter-list'
+
   return (
     <div className="app">
+      {!isCoverLetterList && (
       <header className="header">
         <NavLink className="logo" to="/">
           Passed
@@ -25,6 +29,7 @@ function App() {
           </NavLink>
         </nav>
       </header>
+      )}
 
       <main>
         <Outlet />

@@ -28,7 +28,10 @@ from api.features.roadmap.schema import (
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
 from api.features.roadmap.resource_provider import create_resource_providers
-from api.features.roadmap.validator import validate_generated_content
+from api.features.roadmap.validator import (
+    remove_unknown_resource_recommendations,
+    validate_generated_content,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -194,11 +197,13 @@ async def generate_roadmap(
         elapsed_ms = round((perf_counter() - started) * 1000)
         logger.error(
             "roadmap_generation_completed generationId=%s status=FAILED "
-            "competencyCount=%d elapsedMs=%d errorType=%s",
+            "competencyCount=%d elapsedMs=%d errorType=%s errorMessage=%s",
             generation_id,
             len(request.competencies),
             elapsed_ms,
             type(exception).__name__,
+            str(exception),
+            exc_info=True,
             extra={
                 "event": "roadmap_generation_completed",
                 "generationId": generation_id,
@@ -206,6 +211,7 @@ async def generate_roadmap(
                 "competencyCount": len(request.competencies),
                 "elapsedMs": elapsed_ms,
                 "errorType": type(exception).__name__,
+                "errorMessage": str(exception),
             },
         )
         raise
@@ -301,6 +307,20 @@ async def _generate_roadmap(
             "elapsedMs": generator_elapsed_ms,
         },
     )
+    removed_recommendation_count = remove_unknown_resource_recommendations(
+        resources_by_key, generated
+    )
+    if removed_recommendation_count:
+        logger.warning(
+            "roadmap_unknown_resource_recommendations_removed generationId=%s count=%d",
+            generation_id,
+            removed_recommendation_count,
+            extra={
+                "event": "roadmap_unknown_resource_recommendations_removed",
+                "generationId": generation_id,
+                "count": removed_recommendation_count,
+            },
+        )
     validate_generated_content(
         request.competencies, stages_by_key, resources_by_key, generated
     )

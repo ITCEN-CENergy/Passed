@@ -2,9 +2,7 @@ package com.cenergy.passed_backend.domain.roadmap.application;
 
 import com.cenergy.passed_backend.domain.roadmap.api.MilestoneCompletionRequest;
 import com.cenergy.passed_backend.domain.roadmap.api.MilestoneCompletionResponse;
-import com.cenergy.passed_backend.domain.roadmap.entity.LearningProgress;
 import com.cenergy.passed_backend.domain.roadmap.entity.Milestone;
-import com.cenergy.passed_backend.domain.roadmap.repository.LearningProgressRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -17,16 +15,13 @@ import java.time.OffsetDateTime;
 public class LearningProgressService {
     private final CurrentUserIdProvider currentUserIdProvider;
     private final MilestoneRepository milestoneRepository;
-    private final LearningProgressRepository learningProgressRepository;
     private final RoadmapProgressSynchronizer progressSynchronizer;
 
     public LearningProgressService(CurrentUserIdProvider currentUserIdProvider,
                                    MilestoneRepository milestoneRepository,
-                                   LearningProgressRepository learningProgressRepository,
                                    RoadmapProgressSynchronizer progressSynchronizer) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.milestoneRepository = milestoneRepository;
-        this.learningProgressRepository = learningProgressRepository;
         this.progressSynchronizer = progressSynchronizer;
     }
 
@@ -48,8 +43,6 @@ public class LearningProgressService {
         BigDecimal previous = milestone.changeCompletion(request.completed(), recordedAt);
         BigDecimal current = milestone.getProgressRate();
 
-        learningProgressRepository.save(LearningProgress.record(
-                milestone, previous, current, request.studiedMinutes(), request.note(), recordedAt));
         progressSynchronizer.synchronizeByMilestone(milestoneId);
 
         return new MilestoneCompletionResponse(milestoneId, request.completed(), previous, current,

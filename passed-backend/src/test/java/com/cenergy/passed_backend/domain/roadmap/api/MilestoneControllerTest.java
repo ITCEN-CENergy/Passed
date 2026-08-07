@@ -14,7 +14,7 @@ class MilestoneControllerTest {
     @Test
     void changesMilestoneCompletion() {
         LearningProgressService service = mock(LearningProgressService.class);
-        MilestoneCompletionRequest request = new MilestoneCompletionRequest(true, null, null);
+        MilestoneCompletionRequest request = new MilestoneCompletionRequest(true);
         MilestoneCompletionResponse response = new MilestoneCompletionResponse(
                 10L, true, BigDecimal.ZERO, BigDecimal.valueOf(100),
                 MilestoneStatus.COMPLETED, null);

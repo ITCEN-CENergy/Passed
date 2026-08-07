@@ -3,7 +3,10 @@ import App from './App.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
-import { CoverLetterEditPage } from '../features/cover-letter/pages'
+import CoverLetterResultPage from '../features/cover-letter/pages/CoverLetterResultPage';
+// import CoverLetterReviewPage from '../features/cover-letter/pages/CoverLetterReviewPage';
+import CompanyCoverLetterWrite from '../features/cover-letter/pages/CompanyCoverLetterWrite';
+import CompanyCoverLetterList from '../features/cover-letter/pages/CompanyCoverLetterList';
 
 const router = createBrowserRouter([
   {
@@ -19,8 +22,20 @@ const router = createBrowserRouter([
         element: <AboutPage />,
       },
       {
-        path: 'cover-letter-edit',
-        element: <CoverLetterEditPage />,
+        path: 'cover-letter-result',
+        element: <CoverLetterResultPage />,
+      },
+      // {
+      //   path: 'cover-letter-review',
+      //   element: <CoverLetterReviewPage />,
+      // },
+      {
+        path: 'cover-letter-list',
+        element: <CompanyCoverLetterList />,
+      },
+      {
+        path: 'cover-letter-write',
+        element: <CompanyCoverLetterWrite />,
       },
       {
         path: '*',

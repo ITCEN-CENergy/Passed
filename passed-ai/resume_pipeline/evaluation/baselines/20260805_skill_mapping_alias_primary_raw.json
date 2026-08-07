@@ -1,0 +1,1107 @@
+{
+  "model": "text-embedding-3-small",
+  "top_k": 3,
+  "total_cases": 53,
+  "exact_resolved": 14,
+  "normalized_resolved": 0,
+  "alias_resolved": 32,
+  "embedding_analyzed": 7,
+  "category_mismatch_cases": 6,
+  "missing_master_embeddings": 5,
+  "results": [
+    {
+      "case_id": "map-java-exact",
+      "expectation": "MAP",
+      "extracted_name": "Java",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "Java",
+      "normalized_candidates": [
+        "Java"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-python-exact",
+      "expectation": "MAP",
+      "extracted_name": "Python",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "Python",
+      "normalized_candidates": [
+        "Python"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-postgresql-exact",
+      "expectation": "MAP",
+      "extracted_name": "PostgreSQL",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "PostgreSQL",
+      "normalized_candidates": [
+        "PostgreSQL"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-spring-boot-exact",
+      "expectation": "MAP",
+      "extracted_name": "Spring Boot",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "Spring Boot",
+      "normalized_candidates": [
+        "Spring Boot"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-rest-api-exact",
+      "expectation": "MAP",
+      "extracted_name": "REST API",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "REST API",
+      "normalized_candidates": [
+        "REST API"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-api-design-exact",
+      "expectation": "MAP",
+      "extracted_name": "API 설계",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "API 설계",
+      "normalized_candidates": [
+        "API 설계"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-api-development-alias",
+      "expectation": "MAP",
+      "extracted_name": "API 개발",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "백엔드 API 개발",
+      "normalized_candidates": [
+        "API 개발"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-spring-korean",
+      "expectation": "MAP",
+      "extracted_name": "스프링부트",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "Spring Boot",
+      "normalized_candidates": [
+        "스프링부트"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-react-js",
+      "expectation": "MAP",
+      "extracted_name": "React.js",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "React",
+      "normalized_candidates": [
+        "React.js"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-cert-information-exact",
+      "expectation": "MAP",
+      "extracted_name": "정보처리기사",
+      "extracted_category": "CERTIFICATION",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "정보처리기사",
+      "normalized_candidates": [
+        "정보처리기사"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-cert-sqld-exact",
+      "expectation": "MAP",
+      "extracted_name": "SQLD",
+      "extracted_category": "CERTIFICATION",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "SQLD",
+      "normalized_candidates": [
+        "SQLD"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-cert-adsp-exact",
+      "expectation": "MAP",
+      "extracted_name": "ADsP",
+      "extracted_category": "CERTIFICATION",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "ADsP",
+      "normalized_candidates": [
+        "ADsP"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-toeic-score",
+      "expectation": "MAP",
+      "extracted_name": "TOEIC 850점",
+      "extracted_category": "CERTIFICATION",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "TOEIC",
+      "normalized_candidates": [
+        "TOEIC"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-aws-ec2",
+      "expectation": "MAP",
+      "extracted_name": "AWS EC2",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "AWS EC2",
+      "normalized_candidates": [
+        "AWS EC2"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-aws-s3",
+      "expectation": "MAP",
+      "extracted_name": "AWS S3",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "AWS S3",
+      "normalized_candidates": [
+        "AWS S3"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-aws-rds",
+      "expectation": "MAP",
+      "extracted_name": "AWS RDS",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "AWS RDS",
+      "normalized_candidates": [
+        "AWS RDS"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-listening-communication",
+      "expectation": "MAP",
+      "extracted_name": "의견 경청",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "의사소통",
+      "normalized_candidates": [
+        "의견 경청"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-requirement-coordination",
+      "expectation": "MAP",
+      "extracted_name": "요구사항 조율",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "협업",
+      "normalized_candidates": [
+        "요구사항 조율"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-api-agreement",
+      "expectation": "MAP",
+      "extracted_name": "API 규격 합의",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "API 설계",
+      "normalized_candidates": [
+        "API 규격 합의"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-execution-plan",
+      "expectation": "MAP",
+      "extracted_name": "실행 계획 분석",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 443,
+          "name": "자금 계획",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.47753672715916196
+        },
+        {
+          "skill_id": 514,
+          "name": "투자 판단",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.471493503721262
+        },
+        {
+          "skill_id": 538,
+          "name": "현금흐름 분석",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4630726116747468
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 1107,
+          "name": "이행계획 수립",
+          "category": "EXPERIENCE",
+          "similarity": 0.44874616685051316
+        },
+        {
+          "skill_id": 1036,
+          "name": "예약 서비스 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.4323532235417936
+        },
+        {
+          "skill_id": 1055,
+          "name": "운영 분석 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.42315479561977287
+        }
+      ],
+      "expected_similarity": 0.34496764278158776,
+      "expected_global_rank": 88,
+      "expected_category_rank": 36
+    },
+    {
+      "case_id": "map-full-scan-removal",
+      "expectation": "MAP",
+      "extracted_name": "전체 테이블 조회 제거",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "SQL 튜닝",
+      "normalized_candidates": [
+        "전체 테이블 조회 제거"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-api-latency-improvement",
+      "expectation": "MAP",
+      "extracted_name": "API 응답 시간 개선",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "성능 최적화",
+      "normalized_candidates": [
+        "API 응답 시간 개선"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-development-schedule",
+      "expectation": "MAP",
+      "extracted_name": "개발 일정 관리",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "일정 관리",
+      "normalized_candidates": [
+        "개발 일정 관리"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-weekly-retrospective",
+      "expectation": "MAP",
+      "extracted_name": "주간 회고",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "개선 회고",
+      "normalized_candidates": [
+        "주간 회고"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-team-consensus",
+      "expectation": "MAP",
+      "extracted_name": "팀 합의 도출",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "협업",
+      "normalized_candidates": [
+        "팀 합의 도출"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-incident-investigation",
+      "expectation": "MAP",
+      "extracted_name": "장애 원인 조사",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "장애 원인 분석",
+      "normalized_candidates": [
+        "장애 원인 조사"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-deployment-responsibility",
+      "expectation": "MAP",
+      "extracted_name": "수정 배포 책임",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "책임감",
+      "normalized_candidates": [
+        "수정 배포 책임"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-rollback-incident",
+      "expectation": "MAP",
+      "extracted_name": "배포 롤백",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "배포",
+      "normalized_candidates": [
+        "배포 롤백"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-log-analysis-exact",
+      "expectation": "MAP",
+      "extracted_name": "로그 분석",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "로그 분석",
+      "normalized_candidates": [
+        "로그 분석"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-incident-explanation",
+      "expectation": "MAP",
+      "extracted_name": "장애 원인 설명",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "의사소통",
+      "normalized_candidates": [
+        "장애 원인 설명"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-customer-classification",
+      "expectation": "MAP",
+      "extracted_name": "고객 문의 분류",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "고객 상담",
+      "normalized_candidates": [
+        "고객 문의 분류"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-priority-setting",
+      "expectation": "MAP",
+      "extracted_name": "개선 우선순위 설정",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "우선순위 설정",
+      "normalized_candidates": [
+        "개선 우선순위 설정"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-bottleneck-performance",
+      "expectation": "MAP",
+      "extracted_name": "병목 구간 제거",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "성능 최적화",
+      "normalized_candidates": [
+        "병목 구간 제거"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-progress-communication",
+      "expectation": "MAP",
+      "extracted_name": "진행 상황 공유",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "의사소통",
+      "normalized_candidates": [
+        "진행 상황 공유"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-deadline-responsibility",
+      "expectation": "MAP",
+      "extracted_name": "마감일 준수",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "책임감",
+      "normalized_candidates": [
+        "마감일 준수"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-code-review-documentation",
+      "expectation": "MAP",
+      "extracted_name": "코드 리뷰 기준 문서화",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "코드 리뷰",
+      "normalized_candidates": [
+        "코드 리뷰 기준 문서화"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-feedback-communication",
+      "expectation": "MAP",
+      "extracted_name": "개선 의견 제시",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "의사소통",
+      "normalized_candidates": [
+        "개선 의견 제시"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-service-recovery",
+      "expectation": "MAP",
+      "extracted_name": "서비스 복구",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "장애 대응",
+      "normalized_candidates": [
+        "서비스 복구"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-role-sharing",
+      "expectation": "MAP",
+      "extracted_name": "역할 분담",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "협업",
+      "normalized_candidates": [
+        "역할 분담"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-teammate-listening",
+      "expectation": "MAP",
+      "extracted_name": "팀원 상황 청취",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "공감",
+      "normalized_candidates": [
+        "팀원 상황 청취"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-work-sharing",
+      "expectation": "MAP",
+      "extracted_name": "작업 분담",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "협업",
+      "normalized_candidates": [
+        "작업 분담"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-deployment-automation",
+      "expectation": "MAP",
+      "extracted_name": "배포 확인 자동화",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "업무 자동화",
+      "normalized_candidates": [
+        "배포 확인 자동화"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-onboarding-documentation",
+      "expectation": "MAP",
+      "extracted_name": "온보딩 문서 작성",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "문서화",
+      "normalized_candidates": [
+        "온보딩 문서 작성"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-docker-exact",
+      "expectation": "MAP",
+      "extracted_name": "Docker",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "EXACT",
+      "resolved_skill_name": "Docker",
+      "normalized_candidates": [
+        "Docker"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-english-role-agreement",
+      "expectation": "MAP",
+      "extracted_name": "영어 역할 협의",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "의사소통",
+      "normalized_candidates": [
+        "영어 역할 협의"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-cache-application",
+      "expectation": "MAP",
+      "extracted_name": "캐시 적용",
+      "extracted_category": "TECHNICAL_SKILL",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "캐싱",
+      "normalized_candidates": [
+        "캐시 적용"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "map-pair-programming",
+      "expectation": "MAP",
+      "extracted_name": "페어 프로그래밍",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": "ALIAS",
+      "resolved_skill_name": "페어링",
+      "normalized_candidates": [
+        "페어 프로그래밍"
+      ],
+      "global_top_k": [],
+      "category_top_k": [],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-hackathon",
+      "expectation": "NO_MATCH",
+      "extracted_name": "해커톤",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 776,
+          "name": "매매",
+          "category": "EXPERIENCE",
+          "similarity": 0.4212387903898197
+        },
+        {
+          "skill_id": 898,
+          "name": "상품 상하차",
+          "category": "EXPERIENCE",
+          "similarity": 0.3965665852450959
+        },
+        {
+          "skill_id": 365,
+          "name": "상품 노출 관리",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3875375293308996
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 776,
+          "name": "매매",
+          "category": "EXPERIENCE",
+          "similarity": 0.4212387903898197
+        },
+        {
+          "skill_id": 898,
+          "name": "상품 상하차",
+          "category": "EXPERIENCE",
+          "similarity": 0.3965665852450959
+        },
+        {
+          "skill_id": 901,
+          "name": "상품 진열",
+          "category": "EXPERIENCE",
+          "similarity": 0.3793857533253209
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-award-name",
+      "expectation": "NO_MATCH",
+      "extracted_name": "최우수상",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 1629,
+          "name": "패션스타일리스트 자격",
+          "category": "CERTIFICATION",
+          "similarity": 0.3061134730313281
+        },
+        {
+          "skill_id": 213,
+          "name": "가격 최적화",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.2966793484395359
+        },
+        {
+          "skill_id": 766,
+          "name": "렌더링 최적화",
+          "category": "EXPERIENCE",
+          "similarity": 0.2882950961983586
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 766,
+          "name": "렌더링 최적화",
+          "category": "EXPERIENCE",
+          "similarity": 0.2882950961983586
+        },
+        {
+          "skill_id": 1205,
+          "name": "추론 최적화",
+          "category": "EXPERIENCE",
+          "similarity": 0.28743571956002445
+        },
+        {
+          "skill_id": 1071,
+          "name": "웨이퍼 공정 최적화",
+          "category": "EXPERIENCE",
+          "similarity": 0.2802906880800793
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-future-growth",
+      "expectation": "NO_MATCH",
+      "extracted_name": "입사 후 성장",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 439,
+          "name": "인재 육성",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.33874418093452596
+        },
+        {
+          "skill_id": 1384,
+          "name": "ERP정보관리사 인사 1급",
+          "category": "CERTIFICATION",
+          "similarity": 0.31512852706822403
+        },
+        {
+          "skill_id": 1279,
+          "name": "프로토타입 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.31485175338676874
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 1279,
+          "name": "프로토타입 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.31485175338676874
+        },
+        {
+          "skill_id": 1209,
+          "name": "출입 관리",
+          "category": "EXPERIENCE",
+          "similarity": 0.305606341449811
+        },
+        {
+          "skill_id": 625,
+          "name": "검사 성적서 작성",
+          "category": "EXPERIENCE",
+          "similarity": 0.3041599408588591
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-generic-passion",
+      "expectation": "NO_MATCH",
+      "extracted_name": "열정적인 인재",
+      "extracted_category": "BEHAVIORAL_TRAIT",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 439,
+          "name": "인재 육성",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4114084051720367
+        },
+        {
+          "skill_id": 1630,
+          "name": "펀드투자권유자문인력",
+          "category": "CERTIFICATION",
+          "similarity": 0.3883914506935381
+        },
+        {
+          "skill_id": 1405,
+          "name": "ITT 통번역자격증",
+          "category": "CERTIFICATION",
+          "similarity": 0.3804922930173382
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 1340,
+          "name": "준법의식",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2725448428999824
+        },
+        {
+          "skill_id": 1337,
+          "name": "의사소통",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.26270873539951733
+        },
+        {
+          "skill_id": 1336,
+          "name": "윤리의식",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.23318900314432656
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-company-name",
+      "expectation": "NO_MATCH",
+      "extracted_name": "카카오",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 136,
+          "name": "Oracle",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.29474483776973126
+        },
+        {
+          "skill_id": 122,
+          "name": "MSSQL",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.27510487872613854
+        },
+        {
+          "skill_id": 50,
+          "name": "Cypress",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.26810007147893267
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 560,
+          "name": "DApp 연동",
+          "category": "EXPERIENCE",
+          "similarity": 0.22761885244112512
+        },
+        {
+          "skill_id": 562,
+          "name": "DB 연동",
+          "category": "EXPERIENCE",
+          "similarity": 0.22700844064168835
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    },
+    {
+      "case_id": "no-match-club-name",
+      "expectation": "NO_MATCH",
+      "extracted_name": "개발 동아리",
+      "extracted_category": "EXPERIENCE",
+      "resolved_method": null,
+      "resolved_skill_name": null,
+      "normalized_candidates": [],
+      "global_top_k": [
+        {
+          "skill_id": 242,
+          "name": "공공환경 디자인",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4594076799930715
+        },
+        {
+          "skill_id": 1263,
+          "name": "평가도구 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.4031358749623053
+        },
+        {
+          "skill_id": 789,
+          "name": "모델 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.3841548055805777
+        }
+      ],
+      "category_top_k": [
+        {
+          "skill_id": 1263,
+          "name": "평가도구 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.4031358749623053
+        },
+        {
+          "skill_id": 789,
+          "name": "모델 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.3841548055805777
+        },
+        {
+          "skill_id": 1262,
+          "name": "평가 로직 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.38311855442180176
+        }
+      ],
+      "expected_similarity": null,
+      "expected_global_rank": null,
+      "expected_category_rank": null
+    }
+  ]
+}

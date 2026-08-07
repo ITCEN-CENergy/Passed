@@ -1,5 +1,6 @@
 package com.cenergy.passed_backend.domain.coverletter.entity;
 
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterQuestionType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

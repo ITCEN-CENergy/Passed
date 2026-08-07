@@ -1,0 +1,132 @@
+.header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #e7e9ed;
+}
+
+.inner {
+  width: min(100% - 48px, 820px);
+  min-height: 64px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #101828;
+  text-decoration: none;
+}
+
+.logoFrame {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.logoImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logoPlaceholder {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 2px solid #1d5bc8;
+  border-radius: 5px 2px 5px 2px;
+  color: #1d5bc8;
+  font-size: 11px;
+  font-weight: 800;
+  transform: rotate(-42deg);
+}
+
+.brandText {
+  display: grid;
+  gap: 1px;
+  line-height: 1;
+}
+
+.brandText strong {
+  font-size: 19px;
+  letter-spacing: -0.7px;
+}
+
+.brandText small {
+  color: #68707d;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout {
+  padding: 6px 0;
+  color: #1f2937;
+  background: transparent;
+  border: 0;
+}
+
+.myPage {
+  padding: 8px 13px;
+  color: #fff;
+  background: #162033;
+  border: 1px solid #162033;
+  border-radius: 5px;
+}
+
+.logout:hover,
+.logout:focus-visible {
+  color: #1769e0;
+}
+
+.myPage:hover,
+.myPage:focus-visible {
+  background: #263247;
+}
+
+.actions button:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid #1d6fe9;
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .inner {
+    width: min(100% - 32px, 820px);
+  }
+
+  .brandText small {
+    display: none;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .myPage {
+    padding-inline: 10px;
+  }
+}

@@ -1,22 +1,26 @@
 package com.cenergy.passed_backend.global.config;
 
+import com.cenergy.passed_backend.domain.auth.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import com.cenergy.passed_backend.domain.auth.entity.UserAuth;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class JwtProvider {
+
+    private static final String ACCESS = "access";
+    private static final String REFRESH = "refresh";
+
     @Value("${application.security.jwt.secret}")
     private String secretKey;
 
@@ -26,113 +30,99 @@ public class JwtProvider {
     @Value("${application.security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
+    public String generateAccessToken(CustomUserDetails user) {
+        return buildToken(user, ACCESS, accessTokenExpiration, true);
+    }
+
+    public String generateRefreshToken(CustomUserDetails user) {
+        return buildToken(user, REFRESH, refreshTokenExpiration, false);
+    }
+
     public Long extractUserId(String token) {
-        return Long.parseLong(extractClaim(token, Claims::getSubject));
+        return Long.valueOf(extractClaims(token).getSubject());
     }
 
     public String extractUsername(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("email", String.class);
+        return extractClaims(token).get("email", String.class);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public boolean isAccessToken(String token) {
+        return ACCESS.equals(extractType(token));
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public boolean isRefreshToken(String token) {
+        return REFRESH.equals(extractType(token));
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, accessTokenExpiration);
+    public boolean isValidAccessToken(String token, CustomUserDetails user) {
+        return isValidFor(token, user, ACCESS);
     }
 
-    // Refresh 토큰 생성
-    public String generateRefreshToken(UserAuth user) {
-        return Jwts
-                .builder()
-                .subject(String.valueOf(user.getUserId()))
-                .claim("type", "refresh")
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
-                .signWith(getSignInKey())
-                .compact();
+    public boolean isValidRefreshToken(String token, CustomUserDetails user) {
+        return isValidFor(token, user, REFRESH);
     }
 
-    public String generateAccessToken(UserAuth user) {
-        return Jwts
-                .builder()
-                .subject(String.valueOf(user.getUserId()))
-                .claim("email", user.getUsername())
-                .claim("type", "access")
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(getSignInKey())
-                .compact();
-    }
-
-    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
-        return Jwts
-                .builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey())
-                .compact();
-    }
-
-    // Jwt 토큰 유효성 검증
     public boolean isTokenValid(String token) {
-        // 토큰 검증
         try {
-            Jwts.parser()
-                    .verifyWith(getSignInKey())
-                    .build()
-                    .parseSignedClaims(token);
-
+            extractClaims(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public Duration accessTokenDuration() {
+        return Duration.ofMillis(accessTokenExpiration);
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public Duration refreshTokenDuration() {
+        return Duration.ofMillis(refreshTokenExpiration);
     }
 
-    public boolean isRefreshToken(String token) {
-        String type = extractType(token);
-        return type.equals("refresh");
+    private String buildToken(
+            CustomUserDetails user,
+            String type,
+            long expirationMillis,
+            boolean includeEmail
+    ) {
+        long now = System.currentTimeMillis();
+        var builder = Jwts.builder()
+                .subject(String.valueOf(user.getUserId()))
+                .id(UUID.randomUUID().toString())
+                .claim("type", type)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + expirationMillis));
+        if (includeEmail) {
+            builder.claim("email", user.getEmail());
+        }
+        return builder.signWith(signingKey()).compact();
     }
 
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    private boolean isValidFor(String token, CustomUserDetails user, String expectedType) {
+        try {
+            Claims claims = extractClaims(token);
+            return expectedType.equals(claims.get("type", String.class))
+                    && Objects.equals(String.valueOf(user.getUserId()), claims.getSubject())
+                    && (REFRESH.equals(expectedType)
+                    || Objects.equals(user.getEmail(), claims.get("email", String.class)));
+        } catch (JwtException | IllegalArgumentException exception) {
+            return false;
+        }
     }
 
     private String extractType(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("type", String.class);
+        return extractClaims(token).get("type", String.class);
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts
-                .parser()
-                .verifyWith(getSignInKey())
+    private Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(signingKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    // 서명에 사용할 키 생성
-    private SecretKey getSignInKey() {
-        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private SecretKey signingKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 }

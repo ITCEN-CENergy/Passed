@@ -1,6 +1,5 @@
-package com.gooroomees.neulbomgil_backend.domain.auth.dto.response;
+package com.cenergy.passed_backend.domain.auth.dto.response;
 
-import com.gooroomees.neulbomgil_backend.domain.auth.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
-     private Long userId;
-     private String email;
-     private String name;
-     private String role;
+    private Long userId;
+    private String email;
+    private String name;
+    private String role;
 }

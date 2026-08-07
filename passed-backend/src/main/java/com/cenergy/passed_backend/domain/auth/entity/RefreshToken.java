@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "refresh_tokens")
 @Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,10 +14,10 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(name = "refresh_token", nullable = false, unique = true, length = 512)
     private String refreshToken;
 
     public RefreshToken(Long userId, String refreshToken) {

@@ -1,5 +1,7 @@
-package com.gooroomees.neulbomgil_backend.domain.auth.dto.request;
+package com.cenergy.passed_backend.domain.auth.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateUserRequest {
+    @NotBlank
+    @Size(max = 100)
     private String name;
 }

@@ -1,7 +1,7 @@
 .page {
-  min-height: 100svh;
+  min-height: 100%;
   color: #161b25;
-  background: #f5f6f8;
+  background: transparent;
   font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
 
@@ -117,15 +117,6 @@
   background: #fff;
   border: 1px solid #dfe3e9;
   border-radius: 7px;
-}
-
-.footer {
-  width: min(100% - 48px, 820px);
-  padding: 18px 0;
-  margin: 0 auto;
-  color: #737b88;
-  font-size: 11px;
-  border-top: 1px solid #dde1e6;
 }
 
 @media (max-width: 620px) {

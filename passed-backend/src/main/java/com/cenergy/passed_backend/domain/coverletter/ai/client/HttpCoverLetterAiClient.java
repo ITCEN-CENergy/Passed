@@ -17,6 +17,10 @@ import java.net.SocketTimeoutException;
 import java.net.http.HttpConnectTimeoutException;
 import java.net.http.HttpTimeoutException;
 
+/**
+ * Spring의 RestClient를 사용하여 외부 AI 서버와 HTTP 통신을 수행하는 구현체입니다.
+ * 자기소개서 내용에 대해 AI 첨삭(편집)을 요청하고, 응답을 받아 검증한 뒤 반환합니다.
+ */
 public final class HttpCoverLetterAiClient implements CoverLetterAiClient {
     private static final String EDIT_PATH = "/coverletter/edit";
 

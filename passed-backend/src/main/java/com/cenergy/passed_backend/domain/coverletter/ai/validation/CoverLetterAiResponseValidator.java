@@ -6,6 +6,10 @@ import com.cenergy.passed_backend.domain.coverletter.ai.model.ValidatedCoverLett
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Component;
 
+/**
+ * AI 서버로부터 받은 자기소개서 첨삭 응답(Response)의 유효성을 검증하는 클래스입니다.
+ * 필수 텍스트 필드의 누락 여부나 점수 범위 등을 체크하고, 검증된 모델로 변환하여 반환합니다.
+ */
 @Component
 public class CoverLetterAiResponseValidator {
 

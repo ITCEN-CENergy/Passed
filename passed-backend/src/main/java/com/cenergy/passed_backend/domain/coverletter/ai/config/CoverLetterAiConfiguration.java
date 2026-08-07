@@ -12,6 +12,10 @@ import org.springframework.web.client.RestClient;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
+/**
+ * AI 자기소개서 클라이언트를 위한 Spring Configuration 클래스입니다.
+ * HTTP 연결 설정(타임아웃 등)과 RestClient 인스턴스를 빈(Bean)으로 등록합니다.
+ */
 @Configuration
 @EnableConfigurationProperties(CoverLetterAiProperties.class)
 public class CoverLetterAiConfiguration {

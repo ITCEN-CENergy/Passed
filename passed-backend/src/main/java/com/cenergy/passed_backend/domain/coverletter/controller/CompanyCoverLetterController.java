@@ -9,6 +9,7 @@ import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverL
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterItemResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,19 +28,11 @@ import java.util.List;
  * 사용자 식별자는 URL이나 요청 본문에서 받지 않고 서비스의 CurrentUserIdProvider로만 결정한다.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/company-cover-letters")
 public class CompanyCoverLetterController {
     private final CompanyCoverLetterCommandService commandService;
     private final CompanyCoverLetterQueryService queryService;
-
-    /** 명령과 조회 서비스를 주입받아 HTTP 요청을 유스케이스에 연결한다. */
-    public CompanyCoverLetterController(
-            CompanyCoverLetterCommandService commandService,
-            CompanyCoverLetterQueryService queryService
-    ) {
-        this.commandService = commandService;
-        this.queryService = queryService;
-    }
 
     /** 현재 사용자의 새 공고별 자기소개서와 최초 문항을 생성한다. */
     @PostMapping

@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 공고별 자기소개서 문항에 대한 AI 피드백 생성 및 조회 API를 제공하는 컨트롤러다.
+ */
 @RestController
 @RequestMapping("/api/v1/company-cover-letter-items")
 public class CoverLetterController {

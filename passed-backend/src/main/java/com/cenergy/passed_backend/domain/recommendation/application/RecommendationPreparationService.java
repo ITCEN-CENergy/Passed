@@ -45,6 +45,7 @@ public class RecommendationPreparationService {
     private final JobRoleRepository jobRoleRepository;
     private final UserSkillProvider userSkillProvider;
     private final RecommendationSnapshotFactory snapshotFactory;
+    private final RecommendationCandidateSelectionService candidateSelectionService;
 
     public RecommendationPreparationService(
             UserRepository userRepository,
@@ -54,7 +55,8 @@ public class RecommendationPreparationService {
             SkillRepository skillRepository,
             JobRoleRepository jobRoleRepository,
             UserSkillProvider userSkillProvider,
-            RecommendationSnapshotFactory snapshotFactory
+            RecommendationSnapshotFactory snapshotFactory,
+            RecommendationCandidateSelectionService candidateSelectionService
     ) {
         this.userRepository = userRepository;
         this.runRepository = runRepository;
@@ -64,6 +66,7 @@ public class RecommendationPreparationService {
         this.jobRoleRepository = jobRoleRepository;
         this.userSkillProvider = userSkillProvider;
         this.snapshotFactory = snapshotFactory;
+        this.candidateSelectionService = candidateSelectionService;
     }
 
     @Transactional
@@ -90,6 +93,11 @@ public class RecommendationPreparationService {
                 snapshots.userSkillSnapshot(),
                 snapshots.preferenceSnapshot()
         ));
+        RecommendationCandidateSelectionResult candidateSelection = candidateSelectionService.select(
+                normalized.jobRoleIds(),
+                userSkills,
+                policy
+        );
 
         int importantSkillCount = (int) userSkillMap.values().stream()
                 .filter(PreparedUserSkill::important)
@@ -102,6 +110,8 @@ public class RecommendationPreparationService {
                 gradeRules.size(),
                 userSkillMap.size(),
                 importantSkillCount,
+                candidateSelection.candidatePostingCount(),
+                candidateSelection.requiredQualifiedPostingCount(),
                 snapshots.userSkillSnapshotHash(),
                 normalized.industryId(),
                 normalized.jobRoleIds()

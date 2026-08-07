@@ -1,2 +1,2 @@
-// 여러 기능에서 재사용하는 공통 UI 컴포넌트만 내보냅니다.
-export {}
+export { default as Header } from './Header.jsx'
+export { default as SiteFooter } from './SiteFooter.jsx'

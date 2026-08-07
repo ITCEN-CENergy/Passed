@@ -1,0 +1,186 @@
+.page {
+  min-height: 100%;
+  color: #161b25;
+  background: transparent;
+  font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+.content {
+  width: min(100% - 48px, 820px);
+  margin: 0 auto;
+  padding: 20px 0 36px;
+}
+
+.intro {
+  padding: 0 0 24px;
+}
+
+.intro h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.35;
+  letter-spacing: -1.1px;
+}
+
+.intro p {
+  color: #616976;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 25px 22px;
+  background: #fff;
+  border: 1px solid #dfe3e9;
+  border-radius: 7px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.cardInfo h2 {
+  margin: 0 0 7px;
+  color: #161b25;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.8px;
+}
+
+.cardInfo p {
+  color: #4f5867;
+  font-size: 13px;
+}
+
+.cardActions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.cardActions button {
+  min-width: 79px;
+  padding: 9px 13px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.checkButton {
+  color: #fff;
+  background: #1d6fe9;
+  border: 1px solid #1764d5;
+}
+
+.deleteButton {
+  color: #374151;
+  background: #f0f2f5;
+  border: 1px solid #e2e5e9;
+}
+
+.cardActions button:hover {
+  transform: translateY(-1px);
+}
+
+.checkButton:hover {
+  background: #145cca;
+}
+
+.deleteButton:hover {
+  background: #e4e7eb;
+}
+
+.cardActions button:focus-visible {
+  outline: 2px solid #1d6fe9;
+  outline-offset: 2px;
+}
+
+.empty {
+  padding: 48px 20px;
+  color: #68707d;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #dfe3e9;
+  border-radius: 7px;
+}
+
+.stateMessage {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 34px 20px;
+  color: #596273;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #dfe3e9;
+  border-radius: 7px;
+}
+
+.retryButton {
+  padding: 8px 12px;
+  color: #1764d5;
+  background: #fff;
+  border: 1px solid #b9d1f4;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: #edf5ff;
+}
+
+.actionError {
+  padding: 11px 14px;
+  margin: 0 0 10px;
+  color: #b42318;
+  background: #fff2f1;
+  border: 1px solid #fecdca;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.cardActions button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+  transform: none;
+}
+
+@media (max-width: 620px) {
+  .content {
+    width: min(100% - 32px, 820px);
+  }
+
+  .content {
+    padding-top: 18px;
+  }
+
+  .card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+    padding: 21px 18px;
+  }
+
+  .cardActions {
+    width: 100%;
+  }
+
+  .cardActions button {
+    flex: 1;
+  }
+}

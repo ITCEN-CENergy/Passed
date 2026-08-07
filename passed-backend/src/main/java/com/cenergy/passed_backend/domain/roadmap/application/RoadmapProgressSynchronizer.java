@@ -20,13 +20,16 @@ public class RoadmapProgressSynchronizer {
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
     private final RoadmapSkillRepository roadmapSkillRepository;
     private final RoadmapRepository roadmapRepository;
+    private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapProgressSynchronizer(RoadmapMilestoneRepository roadmapMilestoneRepository,
                                        RoadmapSkillRepository roadmapSkillRepository,
-                                       RoadmapRepository roadmapRepository) {
+                                       RoadmapRepository roadmapRepository,
+                                       RoadmapEtaCalculator etaCalculator) {
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
         this.roadmapSkillRepository = roadmapSkillRepository;
         this.roadmapRepository = roadmapRepository;
+        this.etaCalculator = etaCalculator;
     }
 
     public void synchronizeByMilestone(Long milestoneId) {
@@ -57,6 +60,7 @@ public class RoadmapProgressSynchronizer {
             List<RoadmapMilestone> roadmapLinks = roadmapSkillIds.isEmpty() ? List.of()
                     : roadmapMilestoneRepository.findAllByRoadmapSkillIds(roadmapSkillIds);
             roadmap.updateProgressRate(calculate(roadmapLinks));
+            roadmap.updateEstimatedEndDate(etaCalculator.calculate(roadmapLinks));
         }
     }
 

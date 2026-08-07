@@ -24,16 +24,22 @@ import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepar
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -47,6 +53,7 @@ class RecommendationPreparationServiceTest {
     private JobRoleRepository jobRoleRepository;
     private UserRepository userRepository;
     private UserSkillProvider userSkillProvider;
+    private RecommendationCandidateSelectionService candidateSelectionService;
     private RecommendationPreparationService service;
 
     @BeforeEach
@@ -58,6 +65,7 @@ class RecommendationPreparationServiceTest {
         jobRoleRepository = mock(JobRoleRepository.class);
         userRepository = mock(UserRepository.class);
         userSkillProvider = mock(UserSkillProvider.class);
+        candidateSelectionService = mock(RecommendationCandidateSelectionService.class);
         service = new RecommendationPreparationService(
                 userRepository,
                 runRepository,
@@ -66,7 +74,8 @@ class RecommendationPreparationServiceTest {
                 skillRepository,
                 jobRoleRepository,
                 userSkillProvider,
-                new RecommendationSnapshotFactory(new ObjectMapper())
+                new RecommendationSnapshotFactory(new ObjectMapper()),
+                candidateSelectionService
         );
     }
 
@@ -104,6 +113,8 @@ class RecommendationPreparationServiceTest {
         when(jobRoleRepository.findAllByIdIn(any())).thenReturn(jobRoles);
         when(runRepository.save(any(RecommendationRun.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        when(candidateSelectionService.select(any(), any(), same(policy)))
+                .thenReturn(selectionResult(3, 2));
 
         var response = service.prepare(new RecommendationPrepareRequest(
                 2L,
@@ -115,6 +126,8 @@ class RecommendationPreparationServiceTest {
         assertEquals(List.of(227L, 237L, 239L), response.jobRoleIds());
         assertEquals(3, response.userSkillCount());
         assertEquals(2, response.importantSkillCount());
+        assertEquals(3, response.candidatePostingCount());
+        assertEquals(2, response.requiredQualifiedPostingCount());
         assertTrue(response.userSkillSnapshotHash().matches("^[0-9a-f]{64}$"));
 
         ArgumentCaptor<RecommendationRun> runCaptor = ArgumentCaptor.forClass(RecommendationRun.class);
@@ -124,6 +137,14 @@ class RecommendationPreparationServiceTest {
         assertEquals(List.of(12L, 16L, 107L), snapshotSkillIds(savedRun));
         assertEquals(List.of(227L, 237L, 239L), savedRun.getPreferenceSnapshot().get("jobRoleIds"));
         verify(jobRoleRepository).findAllByIdIn(List.of(227L, 237L, 239L));
+        verify(candidateSelectionService).select(
+                eq(List.of(227L, 237L, 239L)),
+                any(),
+                same(policy)
+        );
+        InOrder executionOrder = inOrder(runRepository, candidateSelectionService);
+        executionOrder.verify(runRepository).save(any(RecommendationRun.class));
+        executionOrder.verify(candidateSelectionService).select(any(), any(), same(policy));
     }
 
     @Test
@@ -148,6 +169,21 @@ class RecommendationPreparationServiceTest {
         when(policy.getPolicyCode()).thenReturn("SKILL_MATCH");
         when(policy.getVersion()).thenReturn("v1");
         return policy;
+    }
+
+    private RecommendationCandidateSelectionResult selectionResult(
+            int candidateCount,
+            int qualifiedCount
+    ) {
+        Map<Long, PostingSkillBundle> candidates = new LinkedHashMap<>();
+        Map<Long, RequiredSkillEvaluation> qualified = new LinkedHashMap<>();
+        for (long id = 1; id <= candidateCount; id++) {
+            candidates.put(id, PostingSkillBundle.empty());
+            if (id <= qualifiedCount) {
+                qualified.put(id, mock(RequiredSkillEvaluation.class));
+            }
+        }
+        return new RecommendationCandidateSelectionResult(candidates, qualified);
     }
 
     private Skill skill(Long id) {

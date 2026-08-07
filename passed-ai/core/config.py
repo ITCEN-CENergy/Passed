@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 load_dotenv()
 
 class Settings(BaseSettings):
-    openai_api_key: str
+    openai_api_key: str | None = None
 
     model_config = SettingsConfigDict(
         # 실행 위치와 무관하게 passed-ai/.env를 읽는다.

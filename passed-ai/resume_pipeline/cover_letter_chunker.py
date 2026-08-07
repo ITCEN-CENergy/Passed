@@ -74,7 +74,19 @@ def _overlap_prefix(previous: str, overlap_chars: int) -> str:
         return ""
     sentences = _sentences(previous)
     last_sentence = sentences[-1] if sentences else previous
-    return last_sentence[-overlap_chars:].strip()
+    if len(last_sentence) <= overlap_chars:
+        return last_sentence
+
+    start = len(last_sentence) - overlap_chars
+    suffix = last_sentence[start:]
+    # Q. 마지막 50자를 그대로 붙이면 왜 문제가 되나요?
+    # A. "작성해"가 "성해"처럼 어절 중간에서 잘려 LLM이 깨진 표현을 실제 경험으로
+    #    추출할 수 있습니다. 제한 길이 안에서 첫 공백 다음부터 사용해 완전한 어절로
+    #    시작하게 합니다. 공백이 없는 긴 토큰은 문맥보다 길이 제한을 우선해 생략합니다.
+    if start == 0 or last_sentence[start - 1].isspace() or suffix[0].isspace():
+        return suffix.strip()
+    first_space = suffix.find(" ")
+    return suffix[first_space + 1 :].strip() if first_space >= 0 else ""
 
 
 def split_cover_letter(

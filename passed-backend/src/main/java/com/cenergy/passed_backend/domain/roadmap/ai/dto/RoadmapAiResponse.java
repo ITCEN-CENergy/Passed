@@ -25,7 +25,36 @@ public record RoadmapAiResponse(
             MilestoneType milestoneType,
             Difficulty difficulty,
             Integer estimatedMinutes,
-            Integer learningOrder
+            Integer learningOrder,
+            List<LearningResource> learningResources
     ) {
+        public Milestone {
+            learningResources = learningResources == null ? List.of() : List.copyOf(learningResources);
+        }
+
+        public Milestone(String title, String description, String learningObjective,
+                         String completionCriteria, Integer startLevel, Integer targetLevel,
+                         MilestoneType milestoneType, Difficulty difficulty,
+                         Integer estimatedMinutes, Integer learningOrder) {
+            this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
+                    milestoneType, difficulty, estimatedMinutes, learningOrder, List.of());
+        }
+    }
+
+    public record LearningResource(
+            String resourceId,
+            String resourceType,
+            String title,
+            String description,
+            String provider,
+            String url,
+            String thumbnailUrl,
+            List<String> authors,
+            Boolean isOfficial,
+            Boolean isFree
+    ) {
+        public LearningResource {
+            authors = authors == null ? List.of() : List.copyOf(authors);
+        }
     }
 }

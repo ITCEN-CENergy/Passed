@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.roadmap.ai.client.RoadmapAiException;
 import com.cenergy.passed_backend.domain.roadmap.ai.dto.RoadmapAiRequest;
 import com.cenergy.passed_backend.domain.roadmap.ai.dto.RoadmapAiResponse;
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapAiResult;
+import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedLearningResource;
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapMilestone;
 import com.cenergy.passed_backend.domain.roadmap.ai.model.ValidatedRoadmapSkill;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
@@ -18,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.net.URI;
 
 @Component
 public class RoadmapAiResponseValidator {
@@ -52,6 +54,7 @@ public class RoadmapAiResponseValidator {
         for (RoadmapAiRequest.Competency competency : competencies) {
             invalidIf(competency == null, "request competency must not be null");
             requireText(competency.roadmapSkillKey(), "requested roadmapSkillKey");
+            validateRequestedLevels(competency);
             invalidIf(requested.putIfAbsent(competency.roadmapSkillKey(), competency) != null,
                     "duplicate requested roadmapSkillKey");
         }
@@ -63,6 +66,8 @@ public class RoadmapAiResponseValidator {
             RoadmapAiResponse.Skill skill
     ) {
         invalidIf(skill.milestones() == null || skill.milestones().isEmpty(), "milestones must not be empty");
+        int maximumMilestones = competency.category() == CompetencyCategory.CERTIFICATION ? 4 : 8;
+        invalidIf(skill.milestones().size() > maximumMilestones, "too many milestones");
         List<RoadmapAiResponse.Milestone> sorted = new ArrayList<>(skill.milestones());
         invalidIf(sorted.stream().anyMatch(item -> item == null || item.learningOrder() == null),
                 "milestone and learningOrder must not be null");
@@ -72,6 +77,7 @@ public class RoadmapAiResponseValidator {
         for (int index = 0; index < sorted.size(); index++) {
             RoadmapAiResponse.Milestone milestone = sorted.get(index);
             validateMilestone(milestone, index + 1);
+            validateMilestoneType(competency, milestone);
             milestones.add(toValidated(milestone));
         }
 
@@ -96,8 +102,39 @@ public class RoadmapAiResponseValidator {
                 "learningOrder must start at 1 and be continuous");
         invalidIf(milestone.startLevel() == null || milestone.startLevel() < 0,
                 "startLevel must be non-negative");
+        invalidIf(milestone.targetLevel() == null || milestone.targetLevel() > 3,
+                "targetLevel must not exceed 3");
         invalidIf(milestone.targetLevel() == null || milestone.targetLevel() <= milestone.startLevel(),
                 "targetLevel must be greater than startLevel");
+    }
+
+    private void validateRequestedLevels(RoadmapAiRequest.Competency competency) {
+        invalidIf(competency.currentLevel() == null || competency.targetLevel() == null,
+                "requested levels must not be null");
+        if (competency.category() == CompetencyCategory.CERTIFICATION) {
+            invalidIf(competency.currentLevel() != 0 || competency.targetLevel() != 1,
+                    "requested CERTIFICATION gap must be 0 to 1");
+            return;
+        }
+        invalidIf(competency.currentLevel() < 1 || competency.currentLevel() > 3,
+                "requested currentLevel must be between 1 and 3");
+        invalidIf(competency.targetLevel() < 1 || competency.targetLevel() > 3,
+                "requested targetLevel must be between 1 and 3");
+        invalidIf(competency.currentLevel() >= competency.targetLevel(),
+                "requested currentLevel must be less than targetLevel");
+    }
+
+    private void validateMilestoneType(
+            RoadmapAiRequest.Competency competency,
+            RoadmapAiResponse.Milestone milestone
+    ) {
+        boolean certification = competency.category() == CompetencyCategory.CERTIFICATION;
+        invalidIf(certification != (milestone.milestoneType() == MilestoneType.CERTIFICATION),
+                "milestoneType does not match competency category");
+        if (!certification) {
+            invalidIf(milestone.startLevel() < 1,
+                    "non-certification startLevel must be at least 1");
+        }
     }
 
     private void validateLevelPath(
@@ -110,28 +147,86 @@ public class RoadmapAiResponseValidator {
                 "first startLevel does not match request");
         invalidIf(milestones.getLast().targetLevel() != competency.targetLevel(),
                 "last targetLevel does not match request");
-        for (int index = 1; index < milestones.size(); index++) {
-            invalidIf(milestones.get(index - 1).targetLevel() != milestones.get(index).startLevel(),
-                    "milestone level path is disconnected");
+        int currentStageStart = competency.currentLevel();
+        int currentStageCount = 0;
+        for (ValidatedRoadmapMilestone milestone : milestones) {
+            invalidIf(milestone.targetLevel() != milestone.startLevel() + 1,
+                    "milestone must advance exactly one level");
+            if (milestone.startLevel() == currentStageStart) {
+                currentStageCount++;
+                continue;
+            }
+            validateStageCount(currentStageCount);
+            invalidIf(milestone.startLevel() != currentStageStart + 1,
+                    "milestone stages must be ordered and continuous");
+            currentStageStart = milestone.startLevel();
+            currentStageCount = 1;
         }
+        validateStageCount(currentStageCount);
     }
 
     private void validateCertification(List<ValidatedRoadmapMilestone> milestones) {
-        invalidIf(milestones.size() != 1, "CERTIFICATION must have exactly one milestone");
-        ValidatedRoadmapMilestone milestone = milestones.getFirst();
-        invalidIf(milestone.startLevel() != 0 || milestone.targetLevel() != 1
-                        || milestone.milestoneType() != MilestoneType.CERTIFICATION
-                        || milestone.learningOrder() != 1,
-                "invalid CERTIFICATION milestone");
+        validateStageCount(milestones.size());
+        for (ValidatedRoadmapMilestone milestone : milestones) {
+            invalidIf(milestone.startLevel() != 0 || milestone.targetLevel() != 1
+                            || milestone.milestoneType() != MilestoneType.CERTIFICATION,
+                    "invalid CERTIFICATION milestone");
+        }
+    }
+
+    private void validateStageCount(int count) {
+        invalidIf(count < 3 || count > 4,
+                "each learning stage must contain 3 to 4 milestones");
     }
 
     private ValidatedRoadmapMilestone toValidated(RoadmapAiResponse.Milestone milestone) {
+        List<ValidatedLearningResource> resources = validateResources(milestone.learningResources());
         return new ValidatedRoadmapMilestone(
                 milestone.title(), milestone.description(), milestone.learningObjective(),
                 milestone.completionCriteria(), milestone.startLevel(), milestone.targetLevel(),
                 milestone.milestoneType(), milestone.difficulty(), milestone.estimatedMinutes(),
-                milestone.learningOrder()
+                milestone.learningOrder(), resources
         );
+    }
+
+    private List<ValidatedLearningResource> validateResources(
+            List<RoadmapAiResponse.LearningResource> resources
+    ) {
+        invalidIf(resources == null, "learningResources must not be null");
+        invalidIf(resources.size() > 3, "a milestone may contain at most 3 learningResources");
+        Set<String> resourceIds = new HashSet<>();
+        List<ValidatedLearningResource> validated = new ArrayList<>();
+        for (RoadmapAiResponse.LearningResource resource : resources) {
+            invalidIf(resource == null, "learningResource must not be null");
+            requireText(resource.resourceId(), "resourceId");
+            requireText(resource.resourceType(), "resourceType");
+            requireText(resource.title(), "resource title");
+            requireText(resource.provider(), "resource provider");
+            requireText(resource.url(), "resource url");
+            invalidIf(!resourceIds.add(resource.resourceId()), "duplicate learning resourceId");
+            invalidIf(!isHttpUrl(resource.url()), "learning resource url must be HTTP(S)");
+            if (resource.thumbnailUrl() != null && !resource.thumbnailUrl().isBlank()) {
+                invalidIf(!isHttpUrl(resource.thumbnailUrl()),
+                        "learning resource thumbnailUrl must be HTTP(S)");
+            }
+            validated.add(new ValidatedLearningResource(
+                    resource.resourceId(), resource.resourceType(), resource.title(),
+                    resource.description() == null ? "" : resource.description(), resource.provider(),
+                    resource.url(), resource.thumbnailUrl(), resource.authors(),
+                    Boolean.TRUE.equals(resource.isOfficial()), resource.isFree()
+            ));
+        }
+        return validated;
+    }
+
+    private boolean isHttpUrl(String value) {
+        try {
+            URI uri = URI.create(value);
+            return uri.isAbsolute() && ("http".equalsIgnoreCase(uri.getScheme())
+                    || "https".equalsIgnoreCase(uri.getScheme())) && uri.getHost() != null;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
     }
 
     private void requireText(String value, String field) {

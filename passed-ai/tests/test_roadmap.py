@@ -1,9 +1,15 @@
 from copy import deepcopy
+import logging
+import os
 
 import pytest
 from fastapi.testclient import TestClient
 
+os.environ["ROADMAP_GENERATOR"] = "fake"
+os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
+
 from main import app
+from api.features.roadmap.schema import LearningResource
 
 
 client = TestClient(app)
@@ -50,13 +56,13 @@ def test_generate_normal_request() -> None:
     body = response.json()
     assert body["title"] == "개인 맞춤 역량 강화 로드맵"
     assert body["skills"][0]["roadmapSkillKey"] == "competency-1"
-    assert len(body["skills"][0]["milestones"]) == 2
+    assert len(body["skills"][0]["milestones"]) == 6
 
 
 def test_generate_multiple_competencies_in_request_order() -> None:
     payload = request_with(
         competency(key="docker", current_level=1, target_level=3),
-        competency(key="aws", name="AWS", current_level=0, target_level=1),
+        competency(key="aws", name="AWS", current_level=2, target_level=3),
     )
 
     response = client.post("/api/v1/roadmaps/generate", json=payload)
@@ -71,8 +77,9 @@ def test_generate_multiple_competencies_in_request_order() -> None:
 @pytest.mark.parametrize(
     ("current_level", "target_level", "expected_pairs"),
     [
-        (0, 3, [(0, 1), (1, 2), (2, 3)]),
-        (1, 3, [(1, 2), (2, 3)]),
+        (1, 2, [(1, 2), (1, 2), (1, 2)]),
+        (2, 3, [(2, 3), (2, 3), (2, 3)]),
+        (1, 3, [(1, 2), (1, 2), (1, 2), (2, 3), (2, 3), (2, 3)]),
     ],
 )
 def test_milestones_connect_each_level(
@@ -93,32 +100,40 @@ def test_milestones_connect_each_level(
 
 
 def test_general_milestone_type_difficulty_and_time_are_deterministic() -> None:
-    payload = request_with(competency(current_level=0, target_level=3))
+    payload = request_with(competency(current_level=1, target_level=3))
 
     milestones = client.post(
         "/api/v1/roadmaps/generate", json=payload
     ).json()["skills"][0]["milestones"]
 
     assert [item["milestoneType"] for item in milestones] == [
-        "CONCEPT",
         "PRACTICE",
+        "PRACTICE",
+        "PRACTICE",
+        "PROJECT",
+        "PROJECT",
         "PROJECT",
     ]
     assert [item["difficulty"] for item in milestones] == [
-        "BEGINNER",
+        "INTERMEDIATE",
+        "INTERMEDIATE",
         "INTERMEDIATE",
         "ADVANCED",
+        "ADVANCED",
+        "ADVANCED",
     ]
-    assert [item["estimatedMinutes"] for item in milestones] == [60, 120, 180]
+    assert [item["estimatedMinutes"] for item in milestones] == [
+        120, 120, 120, 180, 180, 180
+    ]
 
 
-def test_certification_always_has_one_fixed_milestone() -> None:
+def test_certification_can_have_multiple_milestones_in_fixed_level_stage() -> None:
     payload = request_with(
         competency(
             key="certification-1",
             name="SQLD",
             category="CERTIFICATION",
-            current_level=1,
+            current_level=0,
             target_level=1,
         )
     )
@@ -127,15 +142,15 @@ def test_certification_always_has_one_fixed_milestone() -> None:
 
     assert response.status_code == 200
     milestones = response.json()["skills"][0]["milestones"]
-    assert len(milestones) == 1
-    assert milestones[0]["startLevel"] == 0
-    assert milestones[0]["targetLevel"] == 1
-    assert milestones[0]["milestoneType"] == "CERTIFICATION"
-    assert milestones[0]["learningOrder"] == 1
+    assert len(milestones) == 3
+    assert all(item["startLevel"] == 0 for item in milestones)
+    assert all(item["targetLevel"] == 1 for item in milestones)
+    assert all(item["milestoneType"] == "CERTIFICATION" for item in milestones)
+    assert [item["learningOrder"] for item in milestones] == [1, 2, 3]
 
 
 def test_same_request_returns_same_response() -> None:
-    payload = request_with(competency(current_level=0, target_level=3))
+    payload = request_with(competency(current_level=1, target_level=3))
 
     first = client.post("/api/v1/roadmaps/generate", json=deepcopy(payload))
     second = client.post("/api/v1/roadmaps/generate", json=deepcopy(payload))
@@ -159,7 +174,13 @@ def test_nullable_current_evidence_is_accepted() -> None:
         {"userId": 10, "competencies": []},
         request_with(competency(current_level=3, target_level=1)),
         request_with(competency(current_level=-1, target_level=1)),
+        request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
+        request_with(
+            competency(
+                category="CERTIFICATION", current_level=1, target_level=1
+            )
+        ),
         request_with(competency(name="   ")),
     ],
 )
@@ -173,3 +194,97 @@ def test_router_is_registered() -> None:
     paths = app.openapi()["paths"]
 
     assert "/api/v1/roadmaps/generate" in paths
+
+
+def test_application_reuses_and_closes_shared_http_client() -> None:
+    with TestClient(app) as lifespan_client:
+        shared_client = app.state.http_client
+
+        first = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+        second = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert app.state.http_client is shared_client
+        assert not shared_client.is_closed
+
+    assert shared_client.is_closed
+
+
+def test_http_client_loggers_do_not_expose_request_urls() -> None:
+    assert logging.getLogger("httpx").getEffectiveLevel() >= logging.WARNING
+    assert logging.getLogger("httpcore").getEffectiveLevel() >= logging.WARNING
+    assert logging.getLogger("openai").getEffectiveLevel() >= logging.WARNING
+
+
+def test_generation_records_baseline_metrics(caplog) -> None:
+    with caplog.at_level(logging.INFO):
+        response = client.post(
+            "/api/v1/roadmaps/generate",
+            json=request_with(competency(current_level=1, target_level=2)),
+        )
+
+    assert response.status_code == 200
+    records_by_event = {
+        record.event: record
+        for record in caplog.records
+        if hasattr(record, "event")
+    }
+    expected_events = {
+        "roadmap_generation_started",
+        "roadmap_resource_search_skipped",
+        "roadmap_resource_search_completed",
+        "roadmap_content_generation_completed",
+        "roadmap_generation_completed",
+    }
+    assert expected_events <= records_by_event.keys()
+
+    generation_ids = {
+        record.generationId
+        for record in records_by_event.values()
+        if hasattr(record, "generationId")
+    }
+    assert len(generation_ids) == 1
+    assert records_by_event["roadmap_generation_completed"].status == "SUCCESS"
+    assert records_by_event["roadmap_generation_completed"].elapsedMs >= 0
+    assert records_by_event["roadmap_resource_search_completed"].resultCount == 0
+    assert records_by_event["roadmap_content_generation_completed"].generator == (
+        "FakeRoadmapContentGenerator"
+    )
+
+
+def test_resource_description_is_milestone_recommendation_reason(monkeypatch) -> None:
+    resource = LearningResource(
+        resourceId="book-1",
+        resourceType="BOOK",
+        title="Docker 실전 가이드",
+        description="검색 API가 반환한 원문 소개",
+        provider="테스트 출판사",
+        url="https://example.com/docker",
+        authors=["홍길동"],
+        isOfficial=False,
+        isFree=None,
+    )
+    async def search_resources(self, competency):
+        return [resource]
+
+    monkeypatch.setattr(
+        "api.features.roadmap.service.LearningResourceSearchService.search",
+        search_resources,
+    )
+
+    response = client.post(
+        "/api/v1/roadmaps/generate",
+        json=request_with(competency(current_level=1, target_level=2)),
+    )
+
+    descriptions = [
+        item["learningResources"][0]["description"]
+        for item in response.json()["skills"][0]["milestones"]
+    ]
+    assert all("완료 기준을 점검" in value for value in descriptions)
+    assert all(value != "검색 API가 반환한 원문 소개" for value in descriptions)

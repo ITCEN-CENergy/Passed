@@ -37,4 +37,5 @@ public class LearningProgress extends CreatedAtEntity {
 
     @Column(name = "recorded_at")
     private OffsetDateTime recordedAt;
+
 }

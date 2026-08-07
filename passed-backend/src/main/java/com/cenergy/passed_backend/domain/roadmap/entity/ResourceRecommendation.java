@@ -29,4 +29,12 @@ public class ResourceRecommendation extends CreatedAtEntity {
 
     @Column(name = "recommendation_reason", columnDefinition = "text")
     private String recommendationReason;
+
+    public static ResourceRecommendation create(Milestone milestone, LearningResource resource, int rankOrder) {
+        ResourceRecommendation value = new ResourceRecommendation();
+        value.milestone = milestone;
+        value.resource = resource;
+        value.rankOrder = rankOrder;
+        return value;
+    }
 }

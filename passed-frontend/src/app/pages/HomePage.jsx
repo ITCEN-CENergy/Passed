@@ -4,11 +4,9 @@ function HomePage() {
   return (
     <section className="page">
       <p className="eyebrow">PASSED</p>
-      <h1>홈 페이지</h1>
-      <p>React Router 설정이 완료되었습니다.</p>
-      <Link className="button" to="/about">
-        서비스 소개 보기
-      </Link>
+      <h1>취업 준비를 더 자신 있게</h1>
+      <p>내 이력과 자기소개서를 한곳에서 관리하고, 지원 준비를 차근차근 이어가세요.</p>
+      <Link className="button" to="/cover-letter-list">자기소개서 확인하기</Link>
     </section>
   )
 }

@@ -18,7 +18,7 @@ async def root() -> dict[str, str]:
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "healthy"}
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

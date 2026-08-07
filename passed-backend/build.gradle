@@ -51,6 +51,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named('bootJar') {
+    archiveFileName = 'app.jar'
+}
+
+tasks.named('jar') {
+    enabled = false
+}
+
 tasks.register('createMigration') {
 	group = 'flyway'
 	description = 'Creates a Flyway SQL migration with a UTC timestamp version.'

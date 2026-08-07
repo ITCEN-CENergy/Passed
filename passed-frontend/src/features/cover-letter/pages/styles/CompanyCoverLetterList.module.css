@@ -119,9 +119,49 @@
   border-radius: 7px;
 }
 
+.stateMessage {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 34px 20px;
+  color: #596273;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #dfe3e9;
+  border-radius: 7px;
+}
+
+.retryButton {
+  padding: 8px 12px;
+  color: #1764d5;
+  background: #fff;
+  border: 1px solid #b9d1f4;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: #edf5ff;
+}
+
+.actionError {
+  padding: 11px 14px;
+  margin: 0 0 10px;
+  color: #b42318;
+  background: #fff2f1;
+  border: 1px solid #fecdca;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.cardActions button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+  transform: none;
+}
+
 @media (max-width: 620px) {
-  .content,
-  .footer {
+  .content {
     width: min(100% - 32px, 820px);
   }
 

@@ -1,22 +1,33 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useCompanyCoverLetters } from '../hooks'
 import styles from './styles/CompanyCoverLetterList.module.css'
 
-const initialCoverLetters = [
-  { id: 1, title: '2024 하반기 삼성전자 공채 자기소개서', date: '2024.07.15' },
-  { id: 2, title: '네이버 AI 리서치 연구원 수시 채용', date: '2024.07.28' },
-  { id: 3, title: '현대자동차 연구개발직 수시 채용', date: '2024.07.10' },
-]
+function formatDate(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '-'
+
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
+}
 
 const CompanyCoverLetterList = () => {
-  const [coverLetters, setCoverLetters] = useState(initialCoverLetters)
   const navigate = useNavigate()
+  const { coverLetters, error, isLoading, reload, remove } = useCompanyCoverLetters()
+  const [deletingId, setDeletingId] = useState(null)
+  const [actionError, setActionError] = useState(null)
 
-  const removeCoverLetter = (id) => {
-    const coverLetter = coverLetters.find((item) => item.id === id)
+  const removeCoverLetter = async (coverLetter) => {
+    if (!window.confirm(`'${coverLetter.jobPostingTitle}' 자기소개서를 삭제할까요?`)) return
 
-    if (coverLetter && window.confirm(`'${coverLetter.title}' 자기소개서를 삭제할까요?`)) {
-      setCoverLetters((items) => items.filter((item) => item.id !== id))
+    setActionError(null)
+    setDeletingId(coverLetter.id)
+
+    try {
+      await remove(coverLetter.id)
+    } catch (deleteError) {
+      setActionError(deleteError.message)
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -28,27 +39,51 @@ const CompanyCoverLetterList = () => {
           <p>작성한 자기소개서를 확인하고 관리하세요.</p>
         </div>
 
-        {coverLetters.length > 0 ? (
+        {isLoading && <p className={styles.stateMessage}>자기소개서를 불러오는 중입니다.</p>}
+
+        {!isLoading && error && (
+          <div className={styles.stateMessage} role="alert">
+            <p>{error.message}</p>
+            <button className={styles.retryButton} type="button" onClick={() => reload()}>
+              다시 시도
+            </button>
+          </div>
+        )}
+
+        {actionError && <p className={styles.actionError} role="alert">{actionError}</p>}
+
+        {!isLoading && !error && coverLetters.length === 0 && (
+          <p className={styles.empty}>작성한 자기소개서가 없습니다.</p>
+        )}
+
+        {!isLoading && !error && coverLetters.length > 0 && (
           <ul className={styles.list} aria-label="자기소개서 목록">
             {coverLetters.map((coverLetter) => (
               <li className={styles.card} key={coverLetter.id}>
                 <div className={styles.cardInfo}>
-                  <h2>{coverLetter.title}</h2>
-                  <p>작성일: {coverLetter.date}</p>
+                  <h2>{coverLetter.jobPostingTitle}</h2>
+                  <p>작성일: {formatDate(coverLetter.createdAt)}</p>
                 </div>
                 <div className={styles.cardActions}>
-                  <button className={styles.checkButton} type="button" onClick={() => navigate('/cover-letter-result')}>
+                  <button
+                    className={styles.checkButton}
+                    type="button"
+                    onClick={() => navigate(`/cover-letter-result?coverLetterId=${coverLetter.id}`)}
+                  >
                     확인하기
                   </button>
-                  <button className={styles.deleteButton} type="button" onClick={() => removeCoverLetter(coverLetter.id)}>
-                    삭제하기
+                  <button
+                    className={styles.deleteButton}
+                    disabled={deletingId === coverLetter.id}
+                    type="button"
+                    onClick={() => removeCoverLetter(coverLetter)}
+                  >
+                    {deletingId === coverLetter.id ? '삭제 중' : '삭제하기'}
                   </button>
                 </div>
               </li>
             ))}
           </ul>
-        ) : (
-          <p className={styles.empty}>작성한 자기소개서가 없습니다.</p>
         )}
       </section>
     </div>

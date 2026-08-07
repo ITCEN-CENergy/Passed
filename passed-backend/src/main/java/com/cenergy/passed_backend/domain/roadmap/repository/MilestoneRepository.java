@@ -12,6 +12,9 @@ import java.util.List;
 public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     List<Milestone> findAllByIdInOrderByIdAsc(Collection<Long> milestoneIds);
 
+    List<Milestone> findAllByUserIdAndStandardCompetencyIdInOrderByIdAsc(
+            Long userId, Collection<Long> standardCompetencyIds);
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             delete from Milestone m

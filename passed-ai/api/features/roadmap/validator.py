@@ -8,6 +8,30 @@ from api.features.roadmap.schema import (
 )
 
 
+def remove_unknown_resource_recommendations(
+    resources_by_key: dict[str, list[LearningResource]],
+    generated: GeneratedRoadmapContent,
+) -> int:
+    """Drop hallucinated resource references while preserving valid recommendations."""
+    removed_count = 0
+    for skill in generated.skills:
+        allowed_resource_ids = {
+            resource.resourceId
+            for resource in resources_by_key.get(skill.roadmapSkillKey, [])
+        }
+        for stage in skill.stages:
+            for milestone in stage.milestones:
+                recommendations = milestone.resourceRecommendations
+                valid_recommendations = [
+                    item
+                    for item in recommendations
+                    if item.resourceId in allowed_resource_ids
+                ]
+                removed_count += len(recommendations) - len(valid_recommendations)
+                milestone.resourceRecommendations = valid_recommendations
+    return removed_count
+
+
 def validate_generated_content(
     competencies: list[Competency],
     stages_by_key: dict[str, list[LearningStage]],

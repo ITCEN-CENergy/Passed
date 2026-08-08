@@ -5,9 +5,9 @@ import java.util.List;
 public record ValidatedSkillGapResult(
         long userId,
         long jobPostingId,
-        List<ValidatedCompetencyGap> competencyGaps
+        List<ValidatedCompetencyGap> competencies
 ) {
     public ValidatedSkillGapResult {
-        competencyGaps = List.copyOf(competencyGaps);
+        competencies = List.copyOf(competencies);
     }
 }

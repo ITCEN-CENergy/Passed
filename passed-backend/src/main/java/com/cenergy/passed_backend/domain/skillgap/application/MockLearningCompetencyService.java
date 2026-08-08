@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.skillgap.application;
 
-import com.cenergy.passed_backend.domain.skillgap.dto.CompetencyGapResponse;
-import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
+import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyItem;
+import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@ConditionalOnMissingBean(value = SkillGapService.class, ignored = MockSkillGapService.class)
-public class MockSkillGapService implements SkillGapService {
-    private static final Map<Long, List<CompetencyGapResponse>> GAPS_BY_JOB_POSTING = Map.of(
+@ConditionalOnMissingBean(value = LearningCompetencyService.class, ignored = MockLearningCompetencyService.class)
+public class MockLearningCompetencyService implements LearningCompetencyService {
+    private static final Map<Long, List<LearningCompetencyItem>> COMPETENCIES_BY_JOB_POSTING = Map.of(
             101L, List.of(
                     gap(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, 1, 3, "Docker 기본 명령어 학습 및 실습 경험"),
                     gap(2L, "AWS", CompetencyCategory.TECHNICAL_SKILL, RequirementType.PREFERRED, 1, 2, null)),
@@ -44,20 +44,20 @@ public class MockSkillGapService implements SkillGapService {
     );
 
     @Override
-    public SkillGapResponse getCompetencyGaps(Long jobPostingId, Long userId) {
-        List<CompetencyGapResponse> gaps = GAPS_BY_JOB_POSTING.get(jobPostingId);
-        if (gaps == null) {
+    public LearningCompetencyResponse getLearningCompetencies(Long jobPostingId, Long userId) {
+        List<LearningCompetencyItem> competencies = COMPETENCIES_BY_JOB_POSTING.get(jobPostingId);
+        if (competencies == null) {
             throw new SkillGapException(ErrorCode.SKILL_GAP_NOT_FOUND,
                     "Skill gap mock data not found for jobPostingId=" + jobPostingId);
         }
-        return new SkillGapResponse(userId, jobPostingId, gaps);
+        return new LearningCompetencyResponse(userId, jobPostingId, competencies);
     }
 
-    private static CompetencyGapResponse gap(
+    private static LearningCompetencyItem gap(
             Long id, String name, CompetencyCategory category, RequirementType requirementType,
-            int currentLevel, int targetLevel, String evidence
+            int currentLevel, int targetLevel, String currentLevelEvidence
     ) {
-        return new CompetencyGapResponse(id, name, category, requirementType,
-                currentLevel, targetLevel, Math.max(targetLevel - currentLevel, 0), evidence);
+        return new LearningCompetencyItem(id, name, category, requirementType,
+                currentLevel, targetLevel, currentLevelEvidence);
     }
 }

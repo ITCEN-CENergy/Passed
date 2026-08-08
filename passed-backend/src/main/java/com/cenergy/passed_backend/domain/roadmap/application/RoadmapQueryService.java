@@ -105,7 +105,8 @@ public class RoadmapQueryService {
         return new RoadmapDetailResponse.MilestoneItem(value.getId(), value.getTitle(), value.getDescription(),
                 value.getLearningObjective(), value.getCompletionCriteria(), value.getStartLevel(), value.getTargetLevel(),
                 value.getMilestoneType(), value.getDifficulty(), value.getEstimatedMinutes(), link.getLearningOrder(),
-                value.getStatus(), value.getProgressRate(), recommendations.stream().map(recommendation -> {
+                value.getStatus(), value.getProgressRate(), link.getReuseType(), link.getReuseReason(), link.isRequired(),
+                recommendations.stream().map(recommendation -> {
                     LearningResource resource = recommendation.getResource();
                     return new RoadmapDetailResponse.Resource(resource.getId(), resource.getExternalId(),
                             resource.getResourceType(), resource.getTitle(), resource.getDescription(),

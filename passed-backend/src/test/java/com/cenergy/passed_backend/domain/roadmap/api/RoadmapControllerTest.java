@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RoadmapControllerTest {
@@ -23,5 +24,15 @@ class RoadmapControllerTest {
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(response, actual.getBody());
+    }
+
+    @Test
+    void returnsNoContentAfterDeletingRoadmap() {
+        RoadmapCommandService service = mock(RoadmapCommandService.class);
+
+        var actual = new RoadmapController(service, mock(RoadmapQueryService.class)).delete(10L);
+
+        assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
+        verify(service).delete(10L);
     }
 }

@@ -2,7 +2,7 @@
 
 현재 이 패키지는 사용자의 이력서와 자기소개서 원본을 읽어 `resume_chunks`와
 `cover_letter_chunks`에 동기화하고, 별도 명령으로 PENDING 청크를 임베딩합니다.
-스킬 추출은 아직 이 패키지의 범위가 아닙니다.
+임베딩이 끝나면 별도 명령으로 마스터 매핑 전 스킬 후보를 JSON으로 추출합니다.
 
 ## 임베딩 실행
 
@@ -54,6 +54,66 @@ Q. FAILED 청크는 일반 재실행으로 다시 처리되나요?
 A. 이번 버전은 PENDING만 처리합니다. 개발 중 실패 원인을 해결한 뒤 필요한 사용자
 범위의 FAILED를 명시적으로 PENDING으로 되돌려야 합니다. 전체 사용자를 무조건
 초기화하지 않도록 반드시 사용자 조건을 함께 사용하세요.
+
+## 스킬 후보 추출
+
+Q. 후보 추출 결과가 바로 `user_skills`에 저장되나요?
+
+A. 아닙니다. 지금 단계는 프롬프트 품질을 검증하기 위한 매핑 전 후보만 생성합니다.
+결과에는 청크 ID, `content_hash`, 카테고리, 원문 근거가 포함되며 DB는 변경하지
+않습니다.
+
+먼저 대상 청크를 확인합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_extraction `
+  --email test@passed.dev `
+  --dry-run
+```
+
+실제 후보를 JSON 파일로 만들려면 다음 설정과 명령을 사용합니다.
+
+```dotenv
+OPENAI_API_KEY=...
+SKILL_EXTRACTION_MODEL=gpt-4o-mini
+SKILL_EXTRACTION_MAX_RETRIES=3
+SKILL_EXTRACTION_TIMEOUT_SECONDS=60
+```
+
+```powershell
+python -m resume_pipeline.run_skill_extraction `
+  --email test@passed.dev `
+  --output skill_candidates_test_user.json
+```
+
+이력서는 `source_type`, 자기소개서는 `question_type`을 프롬프트에 함께 전달합니다.
+상세 규칙은 `SKILL_EXTRACTION_PROMPT_SPEC.md`에 있습니다.
+
+## 골든셋 F1 평가
+
+초기 골든셋은 `resume_pipeline/evaluation/golden_skill_extraction.json`에 있습니다.
+이는 팀 검토 전 초안이며 실제 문서 사례로 계속 확장해야 합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_eval `
+  --golden resume_pipeline/evaluation/golden_skill_extraction.json `
+  --predictions predictions.json
+```
+
+실제 모델로 골든셋 예측 생성과 평가를 함께 실행할 수도 있습니다.
+
+```powershell
+python -m resume_pipeline.run_skill_eval `
+  --golden resume_pipeline/evaluation/golden_skill_extraction.json `
+  --generate `
+  --save-predictions predictions.json
+```
+
+`--generate`는 골든셋 예제마다 OpenAI API를 호출하므로 비용이 발생합니다.
+
+평가는 이름과 카테고리의 정확 일치 기준으로 micro Precision/Recall/F1과
+카테고리별 점수를 출력합니다. 스킬 마스터 동의어·유사도 매핑 평가는 다음 단계에서
+별도로 수행합니다.
 
 ## 단위 테스트 데이터와 실제 DB 데이터의 차이
 

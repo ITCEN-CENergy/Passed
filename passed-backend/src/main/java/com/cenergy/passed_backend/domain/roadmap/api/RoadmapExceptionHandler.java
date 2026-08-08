@@ -11,7 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = RoadmapController.class)
+@RestControllerAdvice(assignableTypes = {RoadmapController.class, MilestoneController.class})
 public class RoadmapExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
@@ -23,7 +23,7 @@ public class RoadmapExceptionHandler {
     public ResponseEntity<ErrorResponse> roadmap(RoadmapException exception) {
         HttpStatus status = switch (exception.getErrorCode()) {
             case ROADMAP_INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
-            case ROADMAP_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case ROADMAP_NOT_FOUND, MILESTONE_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case ROADMAP_NO_COMPETENCY_TO_LEARN -> HttpStatus.UNPROCESSABLE_CONTENT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };

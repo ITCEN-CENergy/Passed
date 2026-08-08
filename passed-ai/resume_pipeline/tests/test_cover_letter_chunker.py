@@ -46,7 +46,22 @@ def test_next_chunk_contains_previous_sentence_overlap():
         overlap_chars=12,
     )
     assert len(chunks) == 2
-    assert chunks[1].startswith(chunks[0][-12:])
+    assert "API를 개발했습니다." in chunks[1]
+
+
+def test_overlap_never_starts_in_the_middle_of_a_word():
+    chunks = split_cover_letter(
+        "장애가 발생했을 때는 로그와 재현 테스트를 먼저 작성해 원인을 좁혔고, "
+        "트랜잭션 범위를 조정하여 동일 문제가 다시 발생하지 않도록 했습니다.\n\n"
+        "다음 문단입니다.",
+        max_chars=200,
+        min_chars=1,
+        overlap_chars=50,
+    )
+
+    assert len(chunks) == 2
+    assert not chunks[1].startswith("성해")
+    assert chunks[1].startswith("원인을")
 
 
 def test_empty_answer_removes_all_chunks_and_hash_is_deterministic():

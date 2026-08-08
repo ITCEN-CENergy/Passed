@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 from api.features.roadmap.config import RoadmapSettings
 from api.features.roadmap.exceptions import (
@@ -21,19 +21,19 @@ class OpenAiRoadmapClient:
                 "OPENAI_API_KEY is required when ROADMAP_GENERATOR=llm"
             )
         self._model = settings.model
-        self._client = OpenAI(
+        self._client = AsyncOpenAI(
             api_key=settings.openai_api_key,
             timeout=settings.timeout_seconds,
             max_retries=settings.max_retries,
         )
 
-    def generate(
+    async def generate(
         self,
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
     ) -> GeneratedRoadmapContent:
-        response = self._client.responses.parse(
+        response = await self._client.responses.parse(
             model=self._model,
             input=[
                 {"role": "system", "content": SYSTEM_PROMPT},

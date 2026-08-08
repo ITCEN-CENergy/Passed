@@ -158,6 +158,31 @@ class RoadmapRepositoryTest {
     }
 
     @Test
+    void deletesOnlyMilestonesNoLongerReferencedAfterRoadmapDeletion() {
+        long userId = insertUser();
+        long deletedRoadmapId = insertRoadmap(userId, "2026-01-01T00:00:00Z");
+        long retainedRoadmapId = insertRoadmap(userId, "2026-01-02T00:00:00Z");
+        long deletedSkillId = insertRoadmapSkill(deletedRoadmapId, 101, 1);
+        long retainedSkillId = insertRoadmapSkill(retainedRoadmapId, 101, 1);
+        long exclusiveMilestoneId = insertMilestone(userId, 101);
+        long reusedMilestoneId = insertMilestone(userId, 101);
+        insertRoadmapMilestone(deletedSkillId, exclusiveMilestoneId, 1);
+        insertRoadmapMilestone(deletedSkillId, reusedMilestoneId, 2);
+        insertRoadmapMilestone(retainedSkillId, reusedMilestoneId, 1);
+
+        List<Long> candidates = roadmapMilestoneRepository.findMilestoneIdsByRoadmapId(deletedRoadmapId);
+        roadmapRepository.deleteById(deletedRoadmapId);
+        roadmapRepository.flush();
+        int deletedCount = milestoneRepository.deleteUnreferencedByIdsAndUserId(candidates, userId);
+
+        assertThat(deletedCount).isEqualTo(1);
+        assertThat(milestoneRepository.findById(exclusiveMilestoneId)).isEmpty();
+        assertThat(milestoneRepository.findById(reusedMilestoneId)).isPresent();
+        assertThat(roadmapMilestoneRepository.findMilestoneIdsByRoadmapId(retainedRoadmapId))
+                .containsExactly(reusedMilestoneId);
+    }
+
+    @Test
     void rejectsDuplicateRoadmapJobPosting() {
         long roadmapId = insertRoadmap(insertUser(), "2026-01-01T00:00:00Z");
         long postingId = insertJobPosting();

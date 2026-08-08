@@ -11,7 +11,7 @@ from pgvector.psycopg import register_vector
 from psycopg import Connection
 from psycopg.rows import dict_row
 from dotenv import load_dotenv
-load_dotenv()   # os.environ 읽기 전에 호출되어야 함
+load_dotenv()
 
 
 EMBEDDING_TABLES = ("resume_chunks", "cover_letter_chunks")
@@ -36,9 +36,6 @@ def connect() -> Connection:
         raise RuntimeError("DATABASE_URL 환경변수가 필요합니다.")
     conn = psycopg.connect(database_url, row_factory=dict_row)
 
-    # Q. psycopg가 list[float]를 알아서 vector 컬럼에 넣지 못하나요?
-    # A. PostgreSQL 기본 타입에는 vector가 없습니다. pgvector 어댑터를 연결마다
-    #    등록해야 Python 벡터를 안전하게 직렬화하고 vector(1536)로 저장할 수 있습니다.
     register_vector(conn)
     return conn
 

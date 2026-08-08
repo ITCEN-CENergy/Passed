@@ -54,4 +54,20 @@ public class Roadmap extends BaseTimeEntity {
         this.failureReason = safeFailureReason;
         this.status = RoadmapStatus.FAILED;
     }
+
+    public void updateProgressRate(BigDecimal progressRate) {
+        this.progressRate = progressRate;
+        if (progressRate.compareTo(BigDecimal.valueOf(100)) == 0) {
+            this.status = RoadmapStatus.COMPLETED;
+        } else if (this.status == RoadmapStatus.COMPLETED) {
+            this.status = RoadmapStatus.ACTIVE;
+        }
+    }
+
+    public void updateEstimatedEndDate(LocalDate estimatedEndDate) {
+        if (estimatedEndDate == null) {
+            throw new IllegalArgumentException("estimatedEndDate는 null일 수 없습니다.");
+        }
+        this.estimatedEndDate = estimatedEndDate;
+    }
 }

@@ -1,4 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from collections.abc import AsyncIterator
+from typing import Annotated
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request
 from openai import (
     APIConnectionError,
     APITimeoutError,
@@ -18,10 +22,28 @@ from api.features.roadmap.service import generate_roadmap
 router = APIRouter(prefix="/api/v1/roadmaps", tags=["roadmaps"])
 
 
+async def get_http_client(request: Request) -> AsyncIterator[httpx.AsyncClient]:
+    shared_client = getattr(request.app.state, "http_client", None)
+    if shared_client is not None:
+        yield shared_client
+        return
+    # TestClient can be used without a lifespan context. Keep that usage safe by
+    # creating a request-scoped fallback client.
+    async with httpx.AsyncClient() as client:
+        yield client
+
+
 @router.post("/generate", response_model=RoadmapGenerateResponse)
-def generate(request: RoadmapGenerateRequest) -> RoadmapGenerateResponse:
+async def generate(
+    request: RoadmapGenerateRequest,
+    http_client: Annotated[httpx.AsyncClient, Depends(get_http_client)],
+) -> RoadmapGenerateResponse:
     try:
-        return generate_roadmap(request)
+        return await generate_roadmap(request, http_client=http_client)
+    except TimeoutError as exception:
+        raise HTTPException(
+            status_code=504, detail="roadmap generation timed out"
+        ) from exception
     except APITimeoutError as exception:
         raise HTTPException(status_code=504, detail="roadmap model timed out") from exception
     except (APIConnectionError, InternalServerError, RateLimitError) as exception:

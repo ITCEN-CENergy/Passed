@@ -40,7 +40,7 @@ class Settings(BaseSettings):
         default=60.0, gt=0, alias="SKILL_EMBEDDING_TIMEOUT_SECONDS"
     )
     expected_skill_count: int = Field(
-        default=1649, ge=1, alias="SKILL_EXPECTED_COUNT"
+        default=1655, ge=1, alias="SKILL_EXPECTED_COUNT"
     )
 
 

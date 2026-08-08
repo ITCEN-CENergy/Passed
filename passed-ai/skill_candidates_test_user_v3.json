@@ -1,0 +1,149 @@
+{
+  "user_id": 19,
+  "model": "gpt-4o-mini",
+  "chunks": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 5,
+      "context_type": "EXPERIENCE",
+      "content_hash": "6f467e21a3a109d6bd32eed3367ac7bc8319bcca4622a8487d05ef646ec406a7",
+      "skills": [
+        {
+          "extracted_name": "REST API 설계",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "REST API 설계 및 개발"
+        },
+        {
+          "extracted_name": "REST API 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "REST API 설계 및 개발"
+        },
+        {
+          "extracted_name": "Java",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Java와 Spring Boot로 결제 시스템의 결제 API를 설계하고 개발함."
+        },
+        {
+          "extracted_name": "Spring Boot",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Java와 Spring Boot로 결제 시스템의 결제 API를 설계하고 개발함."
+        },
+        {
+          "extracted_name": "일정 조율",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "팀장을 맡아 4명의 일정을 조율함."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 6,
+      "context_type": "TRAINING",
+      "content_hash": "53ea91d10da2600c464e55773d8fb9cb3cc8bf52cde28431e6c298ad322e5e5e",
+      "skills": [
+        {
+          "extracted_name": "Python",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "Python과 머신러닝 기초를 학습하고"
+        },
+        {
+          "extracted_name": "머신러닝",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "Python과 머신러닝 기초를 학습하고"
+        },
+        {
+          "extracted_name": "추천 시스템",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "팀 프로젝트로 추천 시스템을 구현함."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 7,
+      "context_type": "CERTIFICATION",
+      "content_hash": "bda6371d4de1e06a0e6bb9ef3fde63db63f2b04aa2563c608675fd9de0639afb",
+      "skills": [
+        {
+          "extracted_name": "정보처리기사",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "자격증: 정보처리기사"
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 7,
+      "context_type": "EXPERIENCE",
+      "content_hash": "1234f5d5d509e451341980359c7082720c6a714c2ef9912086bc5a57b5acafbe",
+      "skills": [
+        {
+          "extracted_name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 1,
+          "evidence": "대학 시절 학생회 활동을 하며 협업의 중요성을 배웠습니다."
+        },
+        {
+          "extracted_name": "경청",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 1,
+          "evidence": "서로 다른 의견을 조율하는 과정에서 경청하는 태도가 결과를 바꾼다는 것을 알게 되었습니다."
+        },
+        {
+          "extracted_name": "Java",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "부트캠프에서는 Java와 Spring Boot로 헬스장 매칭 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "Spring Boot",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "부트캠프에서는 Java와 Spring Boot로 헬스장 매칭 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "API 응답 시간 개선",
+          "category": "EXPERIENCE",
+          "level": 3,
+          "evidence": "API 응답 시간을 40% 개선했습니다."
+        },
+        {
+          "extracted_name": "PostgreSQL",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "PostgreSQL 실행 계획을 분석해 불필요한 전체 테이블 조회를 줄이고 자주 사용하는 검색 조건에 인덱스를 적용했습니다."
+        },
+        {
+          "extracted_name": "트랜잭션 범위 조정",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "트랜잭션 범위를 조정하여 동일 문제가 다시 발생하지 않도록 했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 8,
+      "context_type": "EXPERIENCE",
+      "content_hash": "45f2bc2de693c29211e82942856ee8fe56e9229d863938769aae53d6016ba6c8",
+      "skills": [
+        {
+          "extracted_name": "원인 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "원인을 좁혔고, 트랜잭션 범위를 조정하여 동일 문제가 다시 발생하지 않도록 했습니다."
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

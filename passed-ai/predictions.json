@@ -1,0 +1,71 @@
+[
+{
+  "example_id": "resume-experience-001",
+  "predicted": [
+    {
+      "extracted_name": "Java",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "Spring Boot",
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-001",
+  "predicted": [
+    {
+      "extracted_name": "정보처리기사",
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-training-001",
+  "predicted": [
+    {
+      "extracted_name": "Python",
+      "category": "TECHNICAL_SKILL",
+      "level": 1
+    },
+    {
+      "extracted_name": "머신러닝",
+      "category": "TECHNICAL_SKILL",
+      "level": 1
+    },
+    {
+      "extracted_name": "추천 시스템",
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-001",
+  "predicted": [
+    {
+      "extracted_name": "의견을 경청하고 서로 다른 요구사항을 조율해 공통 API 규격을 합의",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-experience-001",
+  "predicted": [
+    {
+      "extracted_name": "PostgreSQL 실행 계획을 분석해 불필요한 전체 테이블 조회를 제거하고 API 응답 시간을 40% 개선했습니다.",
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+}
+]

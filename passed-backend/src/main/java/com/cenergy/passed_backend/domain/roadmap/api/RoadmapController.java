@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.roadmap.application.RoadmapCommandServi
 import com.cenergy.passed_backend.domain.roadmap.application.RoadmapQueryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,5 +36,11 @@ public class RoadmapController {
     @GetMapping("/{roadmapId}")
     public ResponseEntity<RoadmapDetailResponse> findById(@PathVariable Long roadmapId) {
         return ResponseEntity.ok(queryService.findById(roadmapId));
+    }
+
+    @DeleteMapping("/{roadmapId}")
+    public ResponseEntity<Void> delete(@PathVariable Long roadmapId) {
+        commandService.delete(roadmapId);
+        return ResponseEntity.noContent().build();
     }
 }

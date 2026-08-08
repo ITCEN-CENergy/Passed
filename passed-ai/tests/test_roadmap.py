@@ -1,4 +1,5 @@
 from copy import deepcopy
+import logging
 import os
 
 import pytest
@@ -79,6 +80,7 @@ def test_generate_multiple_competencies_in_request_order() -> None:
         (1, 2, [(1, 2), (1, 2), (1, 2)]),
         (2, 3, [(2, 3), (2, 3), (2, 3)]),
         (1, 3, [(1, 2), (1, 2), (1, 2), (2, 3), (2, 3), (2, 3)]),
+        (3, 3, [(3, 3), (3, 3), (3, 3)]),
     ],
 )
 def test_milestones_connect_each_level(
@@ -148,6 +150,26 @@ def test_certification_can_have_multiple_milestones_in_fixed_level_stage() -> No
     assert [item["learningOrder"] for item in milestones] == [1, 2, 3]
 
 
+def test_achieved_certification_gets_reinforcement_milestones() -> None:
+    payload = request_with(
+        competency(
+            key="certification-1",
+            name="SQLD",
+            category="CERTIFICATION",
+            current_level=1,
+            target_level=1,
+        )
+    )
+
+    response = client.post("/api/v1/roadmaps/generate", json=payload)
+
+    assert response.status_code == 200
+    milestones = response.json()["skills"][0]["milestones"]
+    assert len(milestones) == 3
+    assert all(item["startLevel"] == item["targetLevel"] == 1 for item in milestones)
+    assert all(item["milestoneType"] == "CERTIFICATION" for item in milestones)
+
+
 def test_same_request_returns_same_response() -> None:
     payload = request_with(competency(current_level=1, target_level=3))
 
@@ -175,11 +197,6 @@ def test_nullable_current_evidence_is_accepted() -> None:
         request_with(competency(current_level=-1, target_level=1)),
         request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
-        request_with(
-            competency(
-                category="CERTIFICATION", current_level=1, target_level=1
-            )
-        ),
         request_with(competency(name="   ")),
     ],
 )
@@ -195,6 +212,67 @@ def test_router_is_registered() -> None:
     assert "/api/v1/roadmaps/generate" in paths
 
 
+def test_application_reuses_and_closes_shared_http_client() -> None:
+    with TestClient(app) as lifespan_client:
+        shared_client = app.state.http_client
+
+        first = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+        second = lifespan_client.post(
+            "/api/v1/roadmaps/generate", json=request_with(competency())
+        )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert app.state.http_client is shared_client
+        assert not shared_client.is_closed
+
+    assert shared_client.is_closed
+
+
+def test_http_client_loggers_do_not_expose_request_urls() -> None:
+    assert logging.getLogger("httpx").getEffectiveLevel() >= logging.WARNING
+    assert logging.getLogger("httpcore").getEffectiveLevel() >= logging.WARNING
+    assert logging.getLogger("openai").getEffectiveLevel() >= logging.WARNING
+
+
+def test_generation_records_baseline_metrics(caplog) -> None:
+    with caplog.at_level(logging.INFO):
+        response = client.post(
+            "/api/v1/roadmaps/generate",
+            json=request_with(competency(current_level=1, target_level=2)),
+        )
+
+    assert response.status_code == 200
+    records_by_event = {
+        record.event: record
+        for record in caplog.records
+        if hasattr(record, "event")
+    }
+    expected_events = {
+        "roadmap_generation_started",
+        "roadmap_resource_search_skipped",
+        "roadmap_resource_search_completed",
+        "roadmap_content_generation_completed",
+        "roadmap_generation_completed",
+    }
+    assert expected_events <= records_by_event.keys()
+
+    generation_ids = {
+        record.generationId
+        for record in records_by_event.values()
+        if hasattr(record, "generationId")
+    }
+    assert len(generation_ids) == 1
+    assert records_by_event["roadmap_generation_completed"].status == "SUCCESS"
+    assert records_by_event["roadmap_generation_completed"].elapsedMs >= 0
+    assert records_by_event["roadmap_resource_search_completed"].resultCount == 0
+    assert records_by_event["roadmap_content_generation_completed"].generator == (
+        "FakeRoadmapContentGenerator"
+    )
+
+
 def test_resource_description_is_milestone_recommendation_reason(monkeypatch) -> None:
     resource = LearningResource(
         resourceId="book-1",
@@ -207,9 +285,12 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         isOfficial=False,
         isFree=None,
     )
+    async def search_resources(self, competency):
+        return [resource]
+
     monkeypatch.setattr(
         "api.features.roadmap.service.LearningResourceSearchService.search",
-        lambda self, value: [resource],
+        search_resources,
     )
 
     response = client.post(

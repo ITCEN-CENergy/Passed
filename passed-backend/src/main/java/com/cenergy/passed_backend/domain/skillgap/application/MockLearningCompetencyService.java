@@ -6,14 +6,14 @@ import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
 import com.cenergy.passed_backend.domain.roadmap.entity.RequirementType;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @Service
-@Primary
+@ConditionalOnMissingBean(value = LearningCompetencyService.class, ignored = MockLearningCompetencyService.class)
 public class MockLearningCompetencyService implements LearningCompetencyService {
     private static final Map<Long, List<LearningCompetencyItem>> COMPETENCIES_BY_JOB_POSTING = Map.of(
             101L, List.of(

@@ -18,6 +18,8 @@ from api.features.roadmap.schema import (
     GeneratedRoadmapContent,
     GeneratedResourceRecommendation,
     GeneratedSkillContent,
+    ModelGeneratedRoadmapContent,
+    ModelGeneratedSkillContent,
     LearningResource,
     Milestone,
     LearningStage,
@@ -35,6 +37,7 @@ from api.features.roadmap.validator import (
 
 
 logger = logging.getLogger(__name__)
+CONTENT_GENERATION_BATCH_SIZE = 1
 
 
 class RoadmapContentGenerator(Protocol):
@@ -43,7 +46,7 @@ class RoadmapContentGenerator(Protocol):
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent: ...
+    ) -> ModelGeneratedRoadmapContent: ...
 
 
 class FakeRoadmapContentGenerator:
@@ -52,7 +55,7 @@ class FakeRoadmapContentGenerator:
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent:
+    ) -> ModelGeneratedRoadmapContent:
         skills = []
         for competency in competencies:
             stages = [
@@ -66,11 +69,11 @@ class FakeRoadmapContentGenerator:
                 for stage in stages_by_key[competency.roadmapSkillKey]
             ]
             skills.append(
-                GeneratedSkillContent(
-                    roadmapSkillKey=competency.roadmapSkillKey, stages=stages
-                )
+                ModelGeneratedSkillContent(stages=stages)
             )
-        return GeneratedRoadmapContent(title="개인 맞춤 역량 강화 로드맵", skills=skills)
+        return ModelGeneratedRoadmapContent(
+            title="개인 맞춤 역량 강화 로드맵", skills=skills
+        )
 
     def _contents(
         self, competency: Competency, stage: LearningStage,
@@ -162,6 +165,42 @@ def _generator(settings: RoadmapSettings) -> RoadmapContentGenerator:
     if settings.generator == "llm":
         return OpenAiRoadmapClient(settings)
     return FakeRoadmapContentGenerator()
+
+
+async def _generate_content_in_batches(
+    generator: RoadmapContentGenerator,
+    competencies: list[Competency],
+    stages_by_key: dict[str, list[LearningStage]],
+    resources_by_key: dict[str, list[LearningResource]],
+) -> GeneratedRoadmapContent:
+    """Keep structured model output small enough that no competency key is omitted."""
+    generated_batches: list[GeneratedRoadmapContent] = []
+    for start in range(0, len(competencies), CONTENT_GENERATION_BATCH_SIZE):
+        batch = competencies[start:start + CONTENT_GENERATION_BATCH_SIZE]
+        batch_keys = {item.roadmapSkillKey for item in batch}
+        generated_batch = await generator.generate(
+            batch,
+            {key: stages_by_key[key] for key in batch_keys},
+            {key: resources_by_key.get(key, []) for key in batch_keys},
+        )
+        if len(generated_batch.skills) != 1:
+            raise ValueError("single competency generation must return exactly one skill")
+        generated_batches.append(GeneratedRoadmapContent(
+            title=generated_batch.title,
+            skills=[GeneratedSkillContent(
+                roadmapSkillKey=batch[0].roadmapSkillKey,
+                stages=generated_batch.skills[0].stages,
+            )],
+        ))
+
+    return GeneratedRoadmapContent(
+        title=generated_batches[0].title,
+        skills=[
+            skill
+            for generated_batch in generated_batches
+            for skill in generated_batch.skills
+        ],
+    )
 
 
 async def generate_roadmap(
@@ -288,7 +327,8 @@ async def _generate_roadmap(
     )
     content_generator = generator or _generator(settings)
     generator_started = perf_counter()
-    generated = await content_generator.generate(
+    generated = await _generate_content_in_batches(
+        content_generator,
         request.competencies,
         stages_by_key,
         resources_by_key,

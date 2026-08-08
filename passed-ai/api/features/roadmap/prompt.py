@@ -6,7 +6,6 @@ from api.features.roadmap.schema import Competency, LearningResource, LearningSt
 SYSTEM_PROMPT = """You design practical learning roadmaps for Korean job seekers.
 
 Success criteria:
-- Return every requested roadmapSkillKey exactly once and add no new skills.
 - Write all user-facing text in Korean.
 - Make learning objectives and completion criteria concrete and measurable.
 - Write each milestone description as one or two concise sentences that name the concrete topic, hands-on activity, and expected artifact or outcome. Avoid generic phrases such as simply "learn and practice".
@@ -38,6 +37,7 @@ def build_user_prompt(
     payload = []
     for competency in competencies:
         item = competency.model_dump(mode="json")
+        item.pop("roadmapSkillKey", None)
         item["requiredLearningStages"] = [
             stage.model_dump(mode="json")
             for stage in stages_by_key[competency.roadmapSkillKey]

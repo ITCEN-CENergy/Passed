@@ -8,7 +8,7 @@ from api.features.roadmap.config import RoadmapSettings
 from api.features.roadmap.router import generate as generate_route
 from api.features.roadmap.schema import (
     Competency,
-    GeneratedRoadmapContent,
+    ModelGeneratedRoadmapContent,
     LearningResource,
     LearningStage,
     RoadmapGenerateRequest,
@@ -68,7 +68,7 @@ class NeverEndingGenerator:
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent:
+    ) -> ModelGeneratedRoadmapContent:
         try:
             await asyncio.Event().wait()
         except asyncio.CancelledError:

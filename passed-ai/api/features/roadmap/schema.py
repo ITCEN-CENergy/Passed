@@ -149,6 +149,16 @@ class GeneratedLearningStage(RoadmapModel):
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
 
 
+class ModelGeneratedSkillContent(RoadmapModel):
+    """Content authored by the model; application correlation keys are excluded."""
+    stages: list[GeneratedLearningStage] = Field(min_length=1, max_length=2)
+
+
+class ModelGeneratedRoadmapContent(RoadmapModel):
+    title: str = Field(min_length=1, max_length=100)
+    skills: list[ModelGeneratedSkillContent] = Field(min_length=1, max_length=1)
+
+
 class GeneratedSkillContent(RoadmapModel):
     roadmapSkillKey: str = Field(min_length=1)
     stages: list[GeneratedLearningStage] = Field(min_length=1, max_length=2)

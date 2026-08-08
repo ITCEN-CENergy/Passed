@@ -8,7 +8,7 @@ from api.features.roadmap.exceptions import (
 from api.features.roadmap.prompt import SYSTEM_PROMPT, build_user_prompt
 from api.features.roadmap.schema import (
     Competency,
-    GeneratedRoadmapContent,
+    ModelGeneratedRoadmapContent,
     LearningResource,
     LearningStage,
 )
@@ -32,7 +32,7 @@ class OpenAiRoadmapClient:
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent:
+    ) -> ModelGeneratedRoadmapContent:
         response = await self._client.responses.parse(
             model=self._model,
             input=[
@@ -41,7 +41,7 @@ class OpenAiRoadmapClient:
                     competencies, stages_by_key, resources_by_key
                 )},
             ],
-            text_format=GeneratedRoadmapContent,
+            text_format=ModelGeneratedRoadmapContent,
         )
         if response.output_parsed is None:
             raise RoadmapGenerationError("roadmap model returned no parsed output")

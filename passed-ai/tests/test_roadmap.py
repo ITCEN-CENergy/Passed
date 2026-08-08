@@ -10,6 +10,12 @@ os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
 from main import app
 from api.features.roadmap.schema import LearningResource
+from api.features.roadmap.schema import ModelGeneratedSkillContent, RoadmapGenerateRequest
+from api.features.roadmap.service import (
+    CONTENT_GENERATION_BATCH_SIZE,
+    FakeRoadmapContentGenerator,
+    generate_roadmap,
+)
 
 
 client = TestClient(app)
@@ -72,6 +78,44 @@ def test_generate_multiple_competencies_in_request_order() -> None:
         "docker",
         "aws",
     ]
+
+
+@pytest.mark.asyncio
+async def test_content_generation_is_batched_without_losing_competency_keys() -> None:
+    class RecordingGenerator(FakeRoadmapContentGenerator):
+        def __init__(self) -> None:
+            self.batch_sizes: list[int] = []
+
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            self.batch_sizes.append(len(competencies))
+            return await super().generate(competencies, stages_by_key, resources_by_key)
+
+    generator = RecordingGenerator()
+    items = [
+        competency(key=f"competency-{index}", name=f"Skill {index}")
+        for index in range(1, 11)
+    ]
+    request = RoadmapGenerateRequest.model_validate(request_with(*items))
+
+    response = await generate_roadmap(request, generator=generator)
+
+    assert generator.batch_sizes == [CONTENT_GENERATION_BATCH_SIZE] * 10
+    assert [skill.roadmapSkillKey for skill in response.skills] == [
+        f"competency-{index}" for index in range(1, 11)
+    ]
+
+
+@pytest.mark.asyncio
+async def test_model_schema_excludes_key_and_business_logic_binds_it() -> None:
+    generator = FakeRoadmapContentGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(key="expected-key"))
+    )
+
+    response = await generate_roadmap(request, generator=generator)
+
+    assert "roadmapSkillKey" not in ModelGeneratedSkillContent.model_fields
+    assert response.skills[0].roadmapSkillKey == "expected-key"
 
 
 @pytest.mark.parametrize(

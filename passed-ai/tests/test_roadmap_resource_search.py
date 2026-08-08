@@ -8,7 +8,6 @@ from api.features.roadmap.config import RoadmapSettings
 from api.features.roadmap.resource_provider import create_resource_providers
 from api.features.roadmap.resource_search import (
     LearningResourceSearchService,
-    _official_provider,
     _summarize,
 )
 from api.features.roadmap.schema import Competency, LearningResource
@@ -20,7 +19,9 @@ class TrackingProvider:
         self._delay = delay
         self._tracker = tracker
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         self._tracker["active"] += 1
         self._tracker["maximum"] = max(
             self._tracker["maximum"], self._tracker["active"]
@@ -185,12 +186,6 @@ docker run example
     assert "```" not in description
     assert "docker run" not in description
     assert len(description) <= 300
-
-
-def test_official_provider_is_detected_from_domain() -> None:
-    assert _official_provider("https://aws.amazon.com/ko/blogs/korea/example") == "AWS"
-    assert _official_provider("https://docs.docker.com/build/") == "Docker"
-    assert _official_provider("https://example.com/docker") is None
 
 
 @pytest.mark.asyncio

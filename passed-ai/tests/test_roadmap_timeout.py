@@ -51,7 +51,9 @@ class NeverEndingProvider:
     def __init__(self) -> None:
         self.cancelled = False
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         try:
             await asyncio.Event().wait()
         except asyncio.CancelledError:

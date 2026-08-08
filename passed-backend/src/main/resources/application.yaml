@@ -43,3 +43,8 @@ external:
     base-url: ${USER_SKILL_AI_BASE_URL:http://localhost:8000}
     connect-timeout-millis: ${USER_SKILL_AI_CONNECT_TIMEOUT_MILLIS:3000}
     read-timeout-millis: ${USER_SKILL_AI_READ_TIMEOUT_MILLIS:600000}
+
+  learning-competency-ai:
+    base-url: ${LEARNING_COMPETENCY_AI_BASE_URL:http://localhost:8000}
+    connect-timeout-millis: ${LEARNING_COMPETENCY_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${LEARNING_COMPETENCY_AI_READ_TIMEOUT_MILLIS:600000}

@@ -80,6 +80,7 @@ def test_generate_multiple_competencies_in_request_order() -> None:
         (1, 2, [(1, 2), (1, 2), (1, 2)]),
         (2, 3, [(2, 3), (2, 3), (2, 3)]),
         (1, 3, [(1, 2), (1, 2), (1, 2), (2, 3), (2, 3), (2, 3)]),
+        (3, 3, [(3, 3), (3, 3), (3, 3)]),
     ],
 )
 def test_milestones_connect_each_level(
@@ -149,6 +150,26 @@ def test_certification_can_have_multiple_milestones_in_fixed_level_stage() -> No
     assert [item["learningOrder"] for item in milestones] == [1, 2, 3]
 
 
+def test_achieved_certification_gets_reinforcement_milestones() -> None:
+    payload = request_with(
+        competency(
+            key="certification-1",
+            name="SQLD",
+            category="CERTIFICATION",
+            current_level=1,
+            target_level=1,
+        )
+    )
+
+    response = client.post("/api/v1/roadmaps/generate", json=payload)
+
+    assert response.status_code == 200
+    milestones = response.json()["skills"][0]["milestones"]
+    assert len(milestones) == 3
+    assert all(item["startLevel"] == item["targetLevel"] == 1 for item in milestones)
+    assert all(item["milestoneType"] == "CERTIFICATION" for item in milestones)
+
+
 def test_same_request_returns_same_response() -> None:
     payload = request_with(competency(current_level=1, target_level=3))
 
@@ -176,11 +197,6 @@ def test_nullable_current_evidence_is_accepted() -> None:
         request_with(competency(current_level=-1, target_level=1)),
         request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
-        request_with(
-            competency(
-                category="CERTIFICATION", current_level=1, target_level=1
-            )
-        ),
         request_with(competency(name="   ")),
     ],
 )

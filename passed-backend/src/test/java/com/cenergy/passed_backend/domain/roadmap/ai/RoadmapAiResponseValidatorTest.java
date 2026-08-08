@@ -103,7 +103,7 @@ class RoadmapAiResponseValidatorTest {
     @Test void rejectsDuplicateLearningOrder() { assertInvalidPath(milestone(1, 1, 2), milestone(1, 2, 3)); }
     @Test void rejectsMissingLearningOrder() { assertInvalidPath(milestone(1, 1, 2), milestone(3, 2, 3)); }
     @Test void rejectsNegativeStartLevel() { assertInvalidPath(milestone(1, -1, 2)); }
-    @Test void rejectsTargetNotGreaterThanStart() { assertInvalidPath(milestone(1, 1, 1)); }
+    @Test void rejectsTargetBelowStart() { assertInvalidPath(milestone(1, 2, 1)); }
     @Test void rejectsMissingMilestoneType() { assertInvalidPath(withTypeAndDifficulty(null, Difficulty.BEGINNER)); }
     @Test void rejectsMissingDifficulty() { assertInvalidPath(withTypeAndDifficulty(MilestoneType.CONCEPT, null)); }
     @Test void rejectsFirstLevelMismatch() { assertInvalidPath(milestone(1, 0, 2), milestone(2, 2, 3)); }
@@ -128,6 +128,25 @@ class RoadmapAiResponseValidatorTest {
     }
 
     @Test
+    void validatesReinforcementAtTheSameLevel() {
+        RoadmapAiRequest request = request(technical("docker", 3, 3));
+
+        assertThat(validator.validate(request, response(skill("docker",
+                milestone(1, 3, 3), milestone(2, 3, 3), milestone(3, 3, 3))))
+                .skills()).hasSize(1);
+    }
+
+    @Test
+    void validatesAchievedCertificationReinforcement() {
+        RoadmapAiRequest request = request(certification("sqld", 1));
+
+        assertThat(validator.validate(request, response(skill("sqld",
+                certificationMilestone(1, 1), certificationMilestone(2, 1),
+                certificationMilestone(3, 1))))
+                .skills()).hasSize(1);
+    }
+
+    @Test
     void allowsMultipleCertificationMilestones() {
         RoadmapAiRequest request = request(certification("sqld", 0));
         assertThat(validator.validate(request, response(skill("sqld",
@@ -136,10 +155,10 @@ class RoadmapAiResponseValidatorTest {
     }
 
     @Test
-    void rejectsInvalidCertification() {
-        RoadmapAiRequest request = request(certification("sqld", 1));
+    void rejectsCertificationMilestoneWithWrongStartLevel() {
+        RoadmapAiRequest request = request(certification("sqld", 0));
         RoadmapAiResponse.Milestone certification = new RoadmapAiResponse.Milestone(
-                "SQLD 자격 취득", "설명", "목표", "기준", 0, 1,
+                "SQLD 자격 취득", "설명", "목표", "기준", 1, 1,
                 MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, 1);
         assertInvalid(request, response(skill("sqld", certification)));
     }
@@ -201,8 +220,12 @@ class RoadmapAiResponseValidatorTest {
     }
 
     private RoadmapAiResponse.Milestone certificationMilestone(int order) {
+        return certificationMilestone(order, 0);
+    }
+
+    private RoadmapAiResponse.Milestone certificationMilestone(int order, int startLevel) {
         return new RoadmapAiResponse.Milestone(
-                "SQLD 자격 취득 " + order, "설명", "목표", "기준", 0, 1,
+                "SQLD 자격 취득 " + order, "설명", "목표", "기준", startLevel, 1,
                 MilestoneType.CERTIFICATION, Difficulty.BEGINNER, 60, order);
     }
 

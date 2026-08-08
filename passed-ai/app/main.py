@@ -1,16 +1,42 @@
+from contextlib import asynccontextmanager
+import logging
+import os
+
+import httpx
 from fastapi import FastAPI
 
 from api.features.roadmap.router import router as roadmap_router
 from api.features.coverletter.router import router as coverletter_router
+from api.features.user_skill.router import router as user_skill_router
+
+
+log_level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+log_level = getattr(logging, log_level_name, logging.INFO)
+logging.basicConfig(
+    level=log_level,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logging.getLogger("api.features.roadmap").setLevel(log_level)
+for library_logger_name in ("httpx", "httpcore", "openai"):
+    logging.getLogger(library_logger_name).setLevel(logging.WARNING)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with httpx.AsyncClient() as http_client:
+        app.state.http_client = http_client
+        yield
 
 
 app = FastAPI(
     title="Passed AI API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.include_router(roadmap_router)
 app.include_router(coverletter_router)
+app.include_router(user_skill_router)
 
 
 @app.get("/")

@@ -25,6 +25,9 @@ spring:
     locations: classpath:db/migration
     out-of-order: true
 
+app:
+  dev-current-user-id: ${DEV_CURRENT_USER_ID:257}
+
 external:
   roadmap-ai:
     base-url: ${ROADMAP_AI_BASE_URL:http://localhost:8000}
@@ -35,3 +38,8 @@ external:
     base-url: ${ROADMAP_AI_BASE_URL:http://localhost:8000}
     connect-timeout-millis: ${ROADMAP_AI_CONNECT_TIMEOUT_MILLIS:3000}
     read-timeout-millis: ${ROADMAP_AI_READ_TIMEOUT_MILLIS:420000}
+
+  user-skill-ai:
+    base-url: ${USER_SKILL_AI_BASE_URL:http://localhost:8000}
+    connect-timeout-millis: ${USER_SKILL_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${USER_SKILL_AI_READ_TIMEOUT_MILLIS:600000}

@@ -8,10 +8,10 @@ import com.cenergy.passed_backend.domain.roadmap.skillgap.model.CompetencyGapMer
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.MergedCompetencyGap;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedCompetencyGap;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.SkillGapResponseValidator;
-import com.cenergy.passed_backend.domain.skillgap.application.MockSkillGapService;
-import com.cenergy.passed_backend.domain.skillgap.application.SkillGapService;
-import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
+import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.LearningCompetencyResponseValidator;
+import com.cenergy.passed_backend.domain.skillgap.application.MockLearningCompetencyService;
+import com.cenergy.passed_backend.domain.skillgap.application.LearningCompetencyService;
+import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import org.junit.jupiter.api.Test;
@@ -98,12 +98,14 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void filtersNoLearningTargetsAndReturnsEmptyImmutableList() {
+    void keepsCompetenciesWithNoGapAndReturnsImmutableList() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 3, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(2L, "AWS", 4, 2, RequirementType.PREFERRED))));
 
-        assertThat(result).isEmpty();
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting("gapLevel").containsOnly(0);
+        assertThat(result).extracting("standardCompetencyName").containsExactly("Docker", "AWS");
         assertThatThrownBy(() -> result.add(null)).isInstanceOf(UnsupportedOperationException.class);
         assertThat(service.merge(List.of())).isEmpty();
     }
@@ -170,23 +172,23 @@ class CompetencyGapMergeServiceTest {
         CompetencyGapMergeInput input = new CompetencyGapMergeInput(101L, null, mutable);
         mutable.clear();
 
-        assertThat(input.competencyGaps()).hasSize(1);
-        assertThatThrownBy(() -> input.competencyGaps().clear())
+        assertThat(input.competencies()).hasSize(1);
+        assertThatThrownBy(() -> input.competencies().clear())
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
     void validatesExternalServiceResponsesBeforeMergingInRoadmapBoundary() {
-        SkillGapService externalService = new MockSkillGapService();
-        SkillGapResponse firstResponse = externalService.getCompetencyGaps(101L, 10L);
-        SkillGapResponse secondResponse = externalService.getCompetencyGaps(102L, 10L);
-        SkillGapResponseValidator validator = new SkillGapResponseValidator();
+        LearningCompetencyService externalService = new MockLearningCompetencyService();
+        LearningCompetencyResponse firstResponse = externalService.getLearningCompetencies(101L, 10L);
+        LearningCompetencyResponse secondResponse = externalService.getLearningCompetencies(102L, 10L);
+        LearningCompetencyResponseValidator validator = new LearningCompetencyResponseValidator();
         ValidatedSkillGapResult first = validator.validate(10L, 101L, firstResponse);
         ValidatedSkillGapResult second = validator.validate(10L, 102L, secondResponse);
 
         List<MergedCompetencyGap> result = service.merge(List.of(
-                new CompetencyGapMergeInput(first.jobPostingId(), 1001L, first.competencyGaps()),
-                new CompetencyGapMergeInput(second.jobPostingId(), 1002L, second.competencyGaps())));
+                new CompetencyGapMergeInput(first.jobPostingId(), 1001L, first.competencies()),
+                new CompetencyGapMergeInput(second.jobPostingId(), 1002L, second.competencies())));
 
         MergedCompetencyGap docker = byId(result, 1L);
         assertThat(docker.frequency()).isEqualTo(2);

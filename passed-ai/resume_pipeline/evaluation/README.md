@@ -56,6 +56,50 @@ python -m resume_pipeline.run_skill_mapping_name_only `
 
 이 명령은 `skills.embedding`을 수정하지 않고 메모리에서만 이름 벡터를 비교합니다.
 
+## 실제 사용자 매핑과 저장
+
+기본 실행은 결과만 출력하며 DB를 변경하지 않습니다.
+
+```powershell
+python -m resume_pipeline.run_skill_mapping `
+  --email test@passed.dev `
+  --output skill_mapping_preview.json
+```
+
+이미 생성한 추출 JSON을 재사용하면 LLM 추출 호출을 생략할 수 있습니다.
+
+```powershell
+python -m resume_pipeline.run_skill_mapping `
+  --email test@passed.dev `
+  --extraction-input skill_candidates.json `
+  --output skill_mapping_preview.json
+```
+
+preview를 검토한 뒤에만 `--persist`를 붙입니다. 한 사용자에 대한 evidence 교체,
+`user_skills` UPSERT, 근거가 0개가 된 스킬 삭제가 하나의 트랜잭션으로 실행됩니다.
+유지되는 `user_skills.is_important`는 갱신하지 않습니다.
+
+```powershell
+python -m resume_pipeline.run_skill_mapping `
+  --email test@passed.dev `
+  --extraction-input skill_candidates.json `
+  --output skill_mapping_result.json `
+  --persist
+```
+
+추출 실패 청크가 하나라도 있거나 처리된 청크가 0건이면 기존 근거를 삭제하지 않습니다.
+정상 처리된 청크가 있지만 최종 근거가 0건이면 사용자 합의 정책에 따라 기존
+`user_skill_evidences`와 근거가 없어진 `user_skills`를 삭제합니다.
+
+최종 level 규칙은 다음과 같습니다.
+
+- `CERTIFICATION`: 보유 후보는 1
+- `TECHNICAL_SKILL`, `EXPERIENCE`: 독립 근거의 level 중 MAX
+- `BEHAVIORAL_TRAIT`: 독립 근거 1개/2개/3개 이상을 level 1/2/3으로 계산
+
+overlap 청크의 동일 원문과 같은 청크에서 같은 스킬로 합쳐진 후보는 독립 근거로
+중복 계산하지 않습니다.
+
 Q. 왜 skills 마스터 ID를 정답에 넣지 않나요?
 
 A. 이 평가는 문장에서 후보를 찾는 능력만 측정합니다. 마스터 ID까지 넣으면 후보 추출

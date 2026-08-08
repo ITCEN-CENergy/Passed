@@ -2,9 +2,9 @@ package com.cenergy.passed_backend.domain.skillgap.dto;
 
 import java.util.List;
 
-public record SkillGapResponse(
+public record LearningCompetencyResponse(
         Long userId,
         Long jobPostingId,
-        List<CompetencyGapResponse> competencyGaps
+        List<LearningCompetencyItem> competencies
 ) {
 }

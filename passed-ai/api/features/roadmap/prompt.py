@@ -15,6 +15,7 @@ Success criteria:
 - Only certifications use levels 0 and 1.
 - Return every supplied learning stage exactly once and in the supplied order.
 - Decide how many milestones each stage needs based on skill complexity, level gap, evidence, and requirement priority.
+- When a learning stage has the same start and target level, create reinforcement and applied-practice milestones at that level instead of introductory repetition.
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
 - Select zero to three resourceRecommendations for each milestone only from that skill's supplied learningResources.
 - For every selected resource, write recommendationReason in Korean as one concise, specific sentence explaining how that resource supports this milestone's topic, activity, level, or completion criteria.

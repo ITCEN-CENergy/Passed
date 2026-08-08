@@ -10,9 +10,9 @@ import com.cenergy.passed_backend.domain.roadmap.skillgap.merge.CompetencyGapMer
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.CompetencyGapSource;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.MergedCompetencyGap;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.SkillGapResponseValidator;
-import com.cenergy.passed_backend.domain.skillgap.application.SkillGapService;
-import com.cenergy.passed_backend.domain.skillgap.dto.SkillGapResponse;
+import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.LearningCompetencyResponseValidator;
+import com.cenergy.passed_backend.domain.skillgap.application.LearningCompetencyService;
+import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,25 +24,25 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class RoadmapGenerationServiceTest {
-    private SkillGapService skillGap;
-    private SkillGapResponseValidator validator;
+    private LearningCompetencyService learningCompetencyService;
+    private LearningCompetencyResponseValidator validator;
     private CompetencyGapMergeService merge;
     private RoadmapAiClient ai;
     private RoadmapGenerationService service;
 
     @BeforeEach
     void setUp() {
-        skillGap = mock(SkillGapService.class);
-        validator = mock(SkillGapResponseValidator.class);
+        learningCompetencyService = mock(LearningCompetencyService.class);
+        validator = mock(LearningCompetencyResponseValidator.class);
         merge = mock(CompetencyGapMergeService.class);
         ai = mock(RoadmapAiClient.class);
-        service = new RoadmapGenerationService(skillGap, validator, merge, ai);
+        service = new RoadmapGenerationService(learningCompetencyService, validator, merge, ai);
     }
 
     @Test
     void returnsGeneratedRoadmapWithoutPersistence() {
-        when(skillGap.getCompetencyGaps(anyLong(), eq(1L)))
-                .thenReturn(new SkillGapResponse(1L, 101L, List.of()));
+        when(learningCompetencyService.getLearningCompetencies(anyLong(), eq(1L)))
+                .thenReturn(new LearningCompetencyResponse(1L, 101L, List.of()));
         when(validator.validate(eq(1L), anyLong(), any())).thenAnswer(invocation ->
                 new ValidatedSkillGapResult(1L, invocation.getArgument(1), List.of()));
         when(merge.merge(anyList())).thenReturn(List.of(gap()));
@@ -53,13 +53,13 @@ class RoadmapGenerationServiceTest {
         assertEquals("개인 맞춤 역량 강화 로드맵", result.title());
         assertEquals("Docker", result.skills().getFirst().standardCompetencyName());
         assertEquals("Docker 실습", result.skills().getFirst().milestones().getFirst().title());
-        verify(skillGap, times(2)).getCompetencyGaps(anyLong(), eq(1L));
+        verify(learningCompetencyService, times(2)).getLearningCompetencies(anyLong(), eq(1L));
     }
 
     @Test
     void doesNotCallAiWhenThereIsNoCompetencyToLearn() {
-        when(skillGap.getCompetencyGaps(104L, 1L))
-                .thenReturn(new SkillGapResponse(1L, 104L, List.of()));
+        when(learningCompetencyService.getLearningCompetencies(104L, 1L))
+                .thenReturn(new LearningCompetencyResponse(1L, 104L, List.of()));
         when(validator.validate(anyLong(), anyLong(), any()))
                 .thenReturn(new ValidatedSkillGapResult(1L, 104L, List.of()));
         when(merge.merge(anyList())).thenReturn(List.of());

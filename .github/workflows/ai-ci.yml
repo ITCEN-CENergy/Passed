@@ -7,6 +7,7 @@ on:
 
     paths:
       - "passed-ai/**"
+      - ".github/workflows/ai-ci.yml"
 
   pull_request:
     branches:
@@ -15,9 +16,10 @@ on:
 
     paths:
       - "passed-ai/**"
+      - ".github/workflows/ai-ci.yml"
 
 jobs:
-  ai-test:
+  test:
     runs-on: ubuntu-latest
 
     defaults:
@@ -28,14 +30,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.14"
+          enable-cache: true
+          cache-dependency-glob: "passed-ai/uv.lock"
+
+      - name: Setup Python
+        run: uv python install
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: uv sync --locked --all-extras --dev
 
-      - name: Test
-        run: pytest
+      - name: Run tests
+        run: uv run pytest

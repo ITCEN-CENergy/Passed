@@ -14,27 +14,51 @@ permissions:
   contents: read
   packages: write
 
+
 jobs:
 
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: passed-ai
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-          cache: gradle
 
-      - name: Build
-        working-directory: passed-ai
-        run: |
-          chmod +x gradlew
-          ./gradlew test bootJar
+      # -------------------------
+      # Python / uv
+      # -------------------------
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "passed-ai/uv.lock"
+
+
+      - name: Setup Python
+        run: uv python install
+
+
+      - name: Install dependencies
+        run: uv sync --locked --all-extras --dev
+
+
+      # -------------------------
+      # Test
+      # -------------------------
+
+      - name: Run tests
+        run: uv run pytest
+
+
+      # -------------------------
+      # GHCR
+      # -------------------------
 
       - name: Login GHCR
         uses: docker/login-action@v3
@@ -43,18 +67,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+
+      # defaults.working-directory 때문에
+      # 현재 디렉터리는 passed-ai
       - name: Build image
         run: |
           docker build \
             -t ghcr.io/${{ github.repository_owner }}/passed-ai:${{ github.sha }} \
             -t ghcr.io/${{ github.repository_owner }}/passed-ai:latest \
-            backend
+            .
+
 
       - name: Push image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/passed-ai:${{ github.sha }}
           docker push ghcr.io/${{ github.repository_owner }}/passed-ai:latest
+
+
   deploy:
+
     needs: build
 
     runs-on:
@@ -62,35 +93,76 @@ jobs:
       - windows
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
+
+      # -------------------------
+      # GHCR Login
+      # -------------------------
+
       - name: Login GHCR
         shell: powershell
+
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" |
+          "${{ secrets.GITHUB_TOKEN }}" |
           docker login ghcr.io `
             -u "${{ github.actor }}" `
             --password-stdin
 
-      - name: Pull
+
+      # -------------------------
+      # Deploy
+      # -------------------------
+
+      - name: Pull AI image
         working-directory: infra/local
         run: docker compose pull ai
 
-      - name: Deploy
+
+      - name: Deploy AI
         working-directory: infra/local
-        run: docker compose up -d ai
+        run: docker compose up -d --no-deps ai
+
+
+      # -------------------------
+      # Health Check
+      # -------------------------
 
       - name: Health check
         shell: powershell
+
         run: |
-          Start-Sleep -Seconds 10
+          $maxAttempts = 12
 
-          $response = Invoke-WebRequest `
-            -Uri http://localhost:8000/health `
-            -UseBasicParsing
+          for ($i = 1; $i -le $maxAttempts; $i++) {
 
-          if ($response.StatusCode -ne 200) {
-            exit 1
+            try {
+
+              $response = Invoke-WebRequest `
+                -Uri http://localhost:8000/health `
+                -UseBasicParsing `
+                -TimeoutSec 5
+
+              if ($response.StatusCode -eq 200) {
+
+                Write-Host "AI service is healthy."
+                exit 0
+
+              }
+
+            }
+            catch {
+
+              Write-Host "Health check attempt $i failed."
+
+            }
+
+            Start-Sleep -Seconds 5
           }
-          
+
+          Write-Error "AI health check failed."
+          docker logs passed-ai --tail 100
+
+          exit 1

@@ -30,6 +30,8 @@ class RecommendationControllerTest {
                 4,
                 15,
                 5,
+                120,
+                48,
                 "a".repeat(64),
                 8L,
                 List.of(227L, 237L, 239L)

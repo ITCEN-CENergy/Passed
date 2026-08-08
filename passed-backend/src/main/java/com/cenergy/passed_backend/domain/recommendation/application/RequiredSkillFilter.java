@@ -1,7 +1,11 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
+import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
+import com.cenergy.passed_backend.domain.recommendation.application.model.RequiredSkillEvaluation;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
+import com.cenergy.passed_backend.domain.recommendation.entity.SkillEvaluationType;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,14 +32,18 @@ public class RequiredSkillFilter {
             RecommendationScoringPolicy policy
     ) {
         Objects.requireNonNull(candidates, "candidates must not be null");
+        // 사용자 스킬을 skillId -> skillLevel 형태의 Map으로 변환하여 빠른 조회가 가능하도록 인덱싱
         Map<Long, Short> userLevels = indexUserLevels(userSkills);
+        // 추천정책의 자격요건 보유율 기준 조회
         BigDecimal coverageThreshold = requireRate(
                 policy,
                 policy == null ? null : policy.getRequiredCoverageThreshold(),
                 "requiredCoverageThreshold"
         );
-        BigDecimal requiredMaxScore = requireScore(policy.getRequiredMaxScore());
+        // 추천정책의 자격요건 최대 점수 기준 조회
+        BigDecimal requiredMaxScore = requireScore(policy == null ? null : policy.getRequiredMaxScore());
 
+        // 필수 자격요건 기준을 통과한 공고 ID와 평가 결과 저장
         Map<Long, RequiredSkillEvaluation> qualified = new LinkedHashMap<>();
         for (Map.Entry<Long, PostingSkillBundle> entry : candidates.entrySet()) {
             Long jobPostingId = requireJobPostingId(entry.getKey());
@@ -43,11 +51,13 @@ public class RequiredSkillFilter {
                     entry.getValue(),
                     "posting skill bundle must not be null"
             );
+            // 공고의 자격요건 스킬별로 사용자 스킬 및 숙련도와 비교하며 필수 스킬 매칭 정보, 점수 계산
             RequiredSkillEvaluation evaluation = evaluate(
                     bundle.requiredSkills(),
                     userLevels,
                     requiredMaxScore
             );
+            // 자격요건 보유율이 추천 정책 기준(50% 이상)에 충족하면 통과
             if (evaluation.requiredCoverageRate().compareTo(coverageThreshold) >= 0) {
                 qualified.put(jobPostingId, evaluation);
             }
@@ -98,10 +108,13 @@ public class RequiredSkillFilter {
         for (PostingSkillBundle.PostingSkill requiredSkill : requiredSkills) {
             Short userLevel = userLevels.get(requiredSkill.skillId());
             boolean owned = userLevel != null;
-            boolean requirementSatisfied = owned && userLevel >= requiredSkill.requiredLevel();
-            BigDecimal matchRate = owned
-                    ? levelMatchRate(userLevel, requiredSkill.requiredLevel())
-                    : ZERO_RATE;
+            SkillEvaluationType evaluationType = evaluationType(requiredSkill.skillCategory());
+            BigDecimal matchRate = matchRate(
+                    evaluationType,
+                    userLevel,
+                    requiredSkill.requiredLevel()
+            );
+            boolean requirementSatisfied = owned && matchRate.compareTo(BigDecimal.ONE) >= 0;
             if (owned) {
                 requiredOwnedCount++;
             }
@@ -110,6 +123,7 @@ public class RequiredSkillFilter {
                     requiredSkill.skillId(),
                     requiredSkill.requiredLevel(),
                     userLevel,
+                    evaluationType,
                     owned,
                     requirementSatisfied,
                     matchRate.setScale(RATE_SCALE, RoundingMode.HALF_UP)
@@ -134,6 +148,26 @@ public class RequiredSkillFilter {
                 requiredScore,
                 skillMatches
         );
+    }
+
+    private SkillEvaluationType evaluationType(SkillCategory category) {
+        return category == SkillCategory.CERTIFICATION
+                ? SkillEvaluationType.OWNERSHIP
+                : SkillEvaluationType.LEVEL;
+    }
+
+    private BigDecimal matchRate(
+            SkillEvaluationType evaluationType,
+            Short userLevel,
+            short requiredLevel
+    ) {
+        if (userLevel == null) {
+            return ZERO_RATE;
+        }
+        if (evaluationType == SkillEvaluationType.OWNERSHIP) {
+            return FULL_RATE;
+        }
+        return levelMatchRate(userLevel, requiredLevel);
     }
 
     private BigDecimal levelMatchRate(short userLevel, short requiredLevel) {

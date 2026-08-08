@@ -1,7 +1,10 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
+import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
+import com.cenergy.passed_backend.domain.recommendation.application.model.RequiredSkillEvaluation;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -106,6 +109,28 @@ class RequiredSkillFilterTest {
         assertTrue(evaluation.skillMatches().getLast().requirementSatisfied());
     }
 
+    @Test
+    void evaluatesCertificationByOwnershipRegardlessOfRequiredLevel() {
+        Map<Long, PostingSkillBundle> candidates = Map.of(
+                100L,
+                bundle(
+                        List.of(certification(12L, 3)),
+                        List.of(),
+                        List.of()
+                )
+        );
+
+        RequiredSkillEvaluation evaluation = filter.filter(
+                candidates,
+                List.of(new UserSkillData(12L, (short) 1, false)),
+                policy
+        ).get(100L);
+
+        assertEquals(new BigDecimal("1.0000"), evaluation.requiredCoverageRate());
+        assertEquals(new BigDecimal("1.0000"), evaluation.requiredLevelMatchRate());
+        assertTrue(evaluation.skillMatches().getFirst().requirementSatisfied());
+    }
+
     private PostingSkillBundle bundle(
             List<PostingSkillBundle.PostingSkill> required,
             List<PostingSkillBundle.PostingSkill> preferred,
@@ -115,6 +140,20 @@ class RequiredSkillFilterTest {
     }
 
     private PostingSkillBundle.PostingSkill skill(Long skillId, int requiredLevel) {
-        return new PostingSkillBundle.PostingSkill(skillId, (short) requiredLevel);
+        return new PostingSkillBundle.PostingSkill(
+                skillId,
+                "skill-" + skillId,
+                SkillCategory.TECHNICAL_SKILL,
+                (short) requiredLevel
+        );
+    }
+
+    private PostingSkillBundle.PostingSkill certification(Long skillId, int requiredLevel) {
+        return new PostingSkillBundle.PostingSkill(
+                skillId,
+                "certification-" + skillId,
+                SkillCategory.CERTIFICATION,
+                (short) requiredLevel
+        );
     }
 }

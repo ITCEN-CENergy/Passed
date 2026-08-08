@@ -1,5 +1,8 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
+import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
+import com.cenergy.passed_backend.domain.recommendation.application.model.RecommendationCandidateSelectionResult;
+import com.cenergy.passed_backend.domain.recommendation.application.model.RequiredSkillEvaluation;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
 import org.junit.jupiter.api.BeforeEach;

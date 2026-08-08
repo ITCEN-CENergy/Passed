@@ -5,7 +5,9 @@ import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkill;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkillType;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingSkillRepository;
+import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -113,6 +115,8 @@ class RecommendationCandidateLoaderTest {
 
         Skill skill = mock(Skill.class);
         when(skill.getId()).thenReturn(skillId);
+        when(skill.getName()).thenReturn("skill-" + skillId);
+        when(skill.getCategory()).thenReturn(SkillCategory.TECHNICAL_SKILL);
 
         JobPostingSkill postingSkill = mock(JobPostingSkill.class);
         when(postingSkill.getJobPosting()).thenReturn(jobPosting);

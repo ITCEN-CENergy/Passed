@@ -1,81 +1,76 @@
 .app {
-  width: min(960px, 100%);
-  min-height: 100svh;
-  margin: 0 auto;
-  border-inline: 1px solid var(--border);
-}
-
-.header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 32px;
-  border-bottom: 1px solid var(--border);
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--color-page);
 }
 
-.logo {
-  color: var(--text-h);
-  font-size: 20px;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-nav {
-  display: flex;
-  gap: 8px;
-}
-
-nav a {
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--text);
-  text-decoration: none;
-}
-
-nav a:hover,
-nav a.active {
-  color: var(--accent);
-  background: var(--accent-bg);
+.appMain {
+  width: 100%;
+  flex: 1;
 }
 
 .page {
   display: grid;
-  min-height: calc(100svh - 78px);
-  padding: 64px 32px;
-  box-sizing: border-box;
+  width: min(100% - 48px, 820px);
+  min-height: 430px;
   place-content: center;
   justify-items: center;
-  gap: 20px;
+  gap: 16px;
+  padding: 48px 24px;
+  margin: 0 auto;
   text-align: center;
 }
 
 .page h1 {
-  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -1.6px;
+}
+
+.page > p:not(.eyebrow) {
+  max-width: 420px;
+  color: var(--color-muted);
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .eyebrow {
-  color: var(--accent);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
 }
 
 .button {
   display: inline-flex;
-  margin-top: 12px;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
   padding: 10px 16px;
-  border-radius: 8px;
-  color: white;
-  background: var(--accent);
+  margin-top: 8px;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
   text-decoration: none;
 }
 
-@media (max-width: 640px) {
-  .header {
-    padding: 16px 20px;
-  }
+.button:hover,
+.button:focus-visible {
+  background: var(--color-primary-hover);
+}
 
+.button:focus-visible {
+  outline: 2px solid #0e4fab;
+  outline-offset: 3px;
+}
+
+@media (max-width: 620px) {
   .page {
-    padding: 48px 20px;
+    width: min(100% - 32px, 820px);
+    min-height: 360px;
+    padding: 40px 16px;
   }
 }

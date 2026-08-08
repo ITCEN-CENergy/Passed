@@ -1,34 +1,16 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
+import Header from '../shared/components/Header.jsx'
+import SiteFooter from '../shared/components/SiteFooter.jsx'
 import './App.css'
 
 function App() {
   return (
     <div className="app">
-      <header className="header">
-        <NavLink className="logo" to="/">
-          Passed
-        </NavLink>
-
-        <nav aria-label="주요 메뉴">
-          <NavLink
-            className={({ isActive }) => (isActive ? 'active' : undefined)}
-            end
-            to="/"
-          >
-            홈
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? 'active' : undefined)}
-            to="/about"
-          >
-            소개
-          </NavLink>
-        </nav>
-      </header>
-
-      <main>
+      <Header />
+      <main className="appMain">
         <Outlet />
       </main>
+      <SiteFooter />
     </div>
   )
 }

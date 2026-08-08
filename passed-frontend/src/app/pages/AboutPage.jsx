@@ -1,9 +1,9 @@
 function AboutPage() {
   return (
     <section className="page">
-      <p className="eyebrow">ABOUT</p>
-      <h1>소개 페이지</h1>
-      <p>이곳에 Passed 서비스 소개를 작성할 수 있습니다.</p>
+      <p className="eyebrow">ABOUT PASSED</p>
+      <h1>나에게 맞는 취업 준비 파트너</h1>
+      <p>Passed는 지원 과정의 중요한 정보를 정리하고, 더 나은 다음 단계를 준비하도록 돕습니다.</p>
     </section>
   )
 }

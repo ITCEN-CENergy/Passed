@@ -3,7 +3,16 @@ from api.features.roadmap.schema import Competency, CompetencyCategory, Learning
 
 def create_learning_stages(competency: Competency) -> list[LearningStage]:
     if competency.category == CompetencyCategory.CERTIFICATION:
-        return [LearningStage(startLevel=0, targetLevel=1)]
+        return [LearningStage(
+            startLevel=competency.currentLevel,
+            targetLevel=competency.targetLevel,
+        )]
+
+    if competency.currentLevel == competency.targetLevel:
+        return [LearningStage(
+            startLevel=competency.currentLevel,
+            targetLevel=competency.targetLevel,
+        )]
 
     return [
         LearningStage(

@@ -7,11 +7,11 @@ import java.util.Collections;
 public record CompetencyGapMergeInput(
         Long jobPostingId,
         Long reportId,
-        List<ValidatedCompetencyGap> competencyGaps
+        List<ValidatedCompetencyGap> competencies
 ) {
     public CompetencyGapMergeInput {
-        if (competencyGaps != null) {
-            competencyGaps = Collections.unmodifiableList(new ArrayList<>(competencyGaps));
+        if (competencies != null) {
+            competencies = Collections.unmodifiableList(new ArrayList<>(competencies));
         }
     }
 }

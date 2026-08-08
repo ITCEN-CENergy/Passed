@@ -45,9 +45,6 @@ public class UserSkill extends BaseTimeEntity {
     @Column(name = "is_important", nullable = false)
     private boolean important;
 
-    // Q. AI가 isImportant도 함께 갱신하나요?
-    // A. 아닙니다. AI는 아래 신뢰도와 skillLevel만 만들고, important는 사용자의 화면
-    //    선택이므로 백엔드 API만 변경합니다.
     @Column(name = "mapping_confidence", precision = 4, scale = 3)
     private BigDecimal mappingConfidence;
 

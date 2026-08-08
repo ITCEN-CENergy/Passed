@@ -205,9 +205,6 @@ def map_extracted_candidates(
 
 
 def _deduplicate_evidences(evidences: list[MappedEvidence]) -> list[MappedEvidence]:
-    # Q. overlap 청크의 같은 문장을 근거 두 개로 세면 안 되나요?
-    # A. 같은 행동을 두 번 센 것이므로 특히 BEHAVIORAL level이 부풀어 오릅니다.
-    #    원문이 같은 근거와 동일 청크의 중복 매핑은 가장 신뢰도 높은 하나만 남깁니다.
     ordered = sorted(
         evidences,
         key=lambda item: (
@@ -242,9 +239,6 @@ def _level_and_confidence(
         level = min(3, count)
         return level, min(1.0, round(0.60 + 0.15 * count, 3))
 
-    # Q. 기술을 여러 번 언급하면 level을 올리지 않나요?
-    # A. 같은 기초 사용 경험이 반복됐다고 능숙해지는 것은 아닙니다. TECHNICAL과
-    #    EXPERIENCE는 가장 깊은 근거의 level을 사용하고, 반복 근거는 신뢰도만 높입니다.
     level = max(evidence.extracted_level for evidence in evidences)
     source_bonus = 0.10 if len({item.source_kind for item in evidences}) > 1 else 0.0
     confidence = min(1.0, 0.65 + min(count, 3) * 0.08 + source_bonus)
@@ -372,8 +366,6 @@ def persist_user_skill_mapping(
     _validate_processed_chunks(conn, report)
 
     with conn.cursor() as cur:
-        # Q. 같은 사용자를 동시에 처리하면 어떻게 하나요?
-        # A. 트랜잭션 범위 advisory lock으로 두 배치가 근거를 서로 지우는 것을 막습니다.
         cur.execute(
             "SELECT pg_advisory_xact_lock(hashtext('resume_skill_mapping'), %s)",
             (report.user_id,),
@@ -440,9 +432,6 @@ def persist_user_skill_mapping(
                 )
                 evidence_inserted += 1
 
-        # Q. 이전 실행에는 있었지만 현재 근거가 0개인 스킬은 어떻게 하나요?
-        # A. 사용자가 합의한 파생 데이터 정책에 따라 삭제합니다. 유지되는 행의
-        #    is_important는 UPSERT에서 건드리지 않으므로 사용자 선택이 보존됩니다.
         cur.execute(
             "DELETE FROM user_skills us WHERE us.user_id = %s "
             "AND NOT EXISTS ("

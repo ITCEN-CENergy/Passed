@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -100,4 +101,73 @@ public class JobRecommendation extends BaseTimeEntity {
 
     @Column(name = "weaknesses", columnDefinition = "text")
     private String weaknesses;
+
+    public static JobRecommendation create(
+            RecommendationRun recommendationRun,
+            JobPosting jobPosting,
+            BigDecimal totalScore,
+            BigDecimal requiredScore,
+            BigDecimal preferredScore,
+            BigDecimal relatedScore,
+            BigDecimal importantSkillBonus,
+            int requiredSkillCount,
+            int requiredOwnedCount,
+            BigDecimal requiredCoverageRate,
+            BigDecimal requiredLevelMatchRate,
+            int importantSkillCount,
+            int importantMatchCount,
+            RecommendationCandidateTier candidateTier,
+            RecommendationGrade recommendationGrade,
+            int rankOrder,
+            String reason,
+            String strengths,
+            String weaknesses
+    ) {
+        JobRecommendation value = new JobRecommendation();
+        value.recommendationRun = Objects.requireNonNull(
+                recommendationRun,
+                "recommendationRun must not be null"
+        );
+        value.jobPosting = Objects.requireNonNull(jobPosting, "jobPosting must not be null");
+        value.totalScore = Objects.requireNonNull(totalScore, "totalScore must not be null");
+        value.requiredScore = Objects.requireNonNull(requiredScore, "requiredScore must not be null");
+        value.preferredScore = Objects.requireNonNull(preferredScore, "preferredScore must not be null");
+        value.relatedScore = Objects.requireNonNull(relatedScore, "relatedScore must not be null");
+        value.importantSkillBonus = Objects.requireNonNull(
+                importantSkillBonus,
+                "importantSkillBonus must not be null"
+        );
+        value.requiredSkillCount = requiredSkillCount;
+        value.requiredOwnedCount = requiredOwnedCount;
+        value.requiredCoverageRate = Objects.requireNonNull(
+                requiredCoverageRate,
+                "requiredCoverageRate must not be null"
+        );
+        value.requiredLevelMatchRate = Objects.requireNonNull(
+                requiredLevelMatchRate,
+                "requiredLevelMatchRate must not be null"
+        );
+        value.importantSkillCount = importantSkillCount;
+        value.importantMatchCount = importantMatchCount;
+        value.candidateTier = Objects.requireNonNull(candidateTier, "candidateTier must not be null");
+        value.recommendationGrade = Objects.requireNonNull(
+                recommendationGrade,
+                "recommendationGrade must not be null"
+        );
+        if (rankOrder <= 0) {
+            throw new IllegalArgumentException("rankOrder must be positive");
+        }
+        value.rankOrder = rankOrder;
+        value.reason = requireText(reason, "reason");
+        value.strengths = strengths;
+        value.weaknesses = weaknesses;
+        return value;
+    }
+
+    private static String requireText(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " must not be blank");
+        }
+        return value;
+    }
 }

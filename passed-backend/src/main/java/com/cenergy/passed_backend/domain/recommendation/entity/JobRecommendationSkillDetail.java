@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -90,4 +91,48 @@ public class JobRecommendationSkillDetail extends CreatedAtEntity {
             nullable = false
     )
     private BigDecimal importantBonusContributionScore = BigDecimal.ZERO;
+
+    public static JobRecommendationSkillDetail create(
+            JobRecommendation jobRecommendation,
+            Skill skill,
+            JobPostingSkillType skillType,
+            short requiredLevel,
+            Short userLevel,
+            SkillEvaluationType evaluationType,
+            boolean owned,
+            boolean requirementSatisfied,
+            boolean userImportant,
+            BigDecimal matchRate,
+            BigDecimal baseMaxScore,
+            BigDecimal baseContributionScore,
+            BigDecimal importantBonusContributionScore
+    ) {
+        JobRecommendationSkillDetail value = new JobRecommendationSkillDetail();
+        value.jobRecommendation = Objects.requireNonNull(
+                jobRecommendation,
+                "jobRecommendation must not be null"
+        );
+        value.skill = Objects.requireNonNull(skill, "skill must not be null");
+        value.skillType = Objects.requireNonNull(skillType, "skillType must not be null");
+        value.requiredLevel = requiredLevel;
+        value.userLevel = userLevel;
+        value.evaluationType = Objects.requireNonNull(
+                evaluationType,
+                "evaluationType must not be null"
+        );
+        value.owned = owned;
+        value.requirementSatisfied = requirementSatisfied;
+        value.userImportant = userImportant;
+        value.matchRate = Objects.requireNonNull(matchRate, "matchRate must not be null");
+        value.baseMaxScore = Objects.requireNonNull(baseMaxScore, "baseMaxScore must not be null");
+        value.baseContributionScore = Objects.requireNonNull(
+                baseContributionScore,
+                "baseContributionScore must not be null"
+        );
+        value.importantBonusContributionScore = Objects.requireNonNull(
+                importantBonusContributionScore,
+                "importantBonusContributionScore must not be null"
+        );
+        return value;
+    }
 }

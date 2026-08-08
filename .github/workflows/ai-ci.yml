@@ -1,0 +1,41 @@
+name: AI CI
+
+on:
+  push:
+    branches:
+      - dev
+
+    paths:
+      - "passed-ai/**"
+
+  pull_request:
+    branches:
+      - dev
+      - main
+
+    paths:
+      - "passed-ai/**"
+
+jobs:
+  ai-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: passed-ai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Test
+        run: pytest

@@ -1,5 +1,78 @@
 services:
 
+  schema-init:
+    image: flyway/flyway:12.4.0
+
+    command: migrate
+
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      FLYWAY_USER: ${POSTGRES_USER}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      FLYWAY_TARGET: "20260804151714560"
+      FLYWAY_OUT_OF_ORDER: "true"
+
+    volumes:
+      - ../../passed-backend/src/main/resources/db/migration:/flyway/sql:ro
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: "no"
+
+
+  job-posting-reference-data:
+    image: pgvector/pgvector:pg17
+
+    command:
+      [
+        "psql",
+        "--host=postgres",
+        "--username=${POSTGRES_USER}",
+        "--dbname=${POSTGRES_DB}",
+        "--set=ON_ERROR_STOP=1",
+        "--file=/seed/seed_industries_job_roles_from_excel.sql"
+      ]
+
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - ../../passed-ai/embedding-data/job-posting/schema:/seed:ro
+
+    depends_on:
+      schema-init:
+        condition: service_completed_successfully
+
+    restart: "no"
+
+
+  job-posting-loader:
+    build:
+      context: ../../passed-ai
+
+    working_dir: /app/embedding-data/job-posting
+
+    command:
+      [
+        "python",
+        "-m",
+        "job_posting_pipeline.run_loader",
+        "data/job_postings.csv"
+      ]
+
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+    depends_on:
+      job-posting-reference-data:
+        condition: service_completed_successfully
+
+    restart: "no"
+
+
   backend:
     build:
       context: ../../passed-backend
@@ -21,6 +94,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      job-posting-loader:
+        condition: service_completed_successfully
 
 
   ai:
@@ -36,9 +111,12 @@ services:
 
 
   postgres:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
 
     container_name: passed-db
+
+    ports:
+      - "127.0.0.1:5432:5432"
 
     restart: unless-stopped
 

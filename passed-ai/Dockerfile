@@ -48,8 +48,8 @@ COPY --from=builder \
     /app/.venv \
     /app/.venv
 
-# 애플리케이션 소스만 복사합니다.
-COPY --chown=app:app app ./app
+# 애플리케이션 소스를 모두 복사합니다.
+COPY --chown=app:app . .
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1

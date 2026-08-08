@@ -4,6 +4,8 @@ import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkill;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkillType;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingSkillRepository;
+import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +35,13 @@ public class RecommendationCandidateLoader {
     }
 
     public Map<Long, PostingSkillBundle> loadByJobRoleIds(Collection<Long> jobRoleIds) {
+        // 직무 id 검증
         List<Long> normalizedJobRoleIds = normalizeJobRoleIds(jobRoleIds);
         if (normalizedJobRoleIds.isEmpty()) {
             return Map.of();
         }
 
+        // 직무 id로 후보 공고 id 조회
         List<Long> candidateIds = normalizeCandidateIds(
                 jobPostingRepository.findCandidateIdsByJobRoleIds(normalizedJobRoleIds)
         );
@@ -45,20 +49,24 @@ public class RecommendationCandidateLoader {
             return Map.of();
         }
 
+        // 후보 공고 id로 공고와 공고의 전체 스킬을 묶음
         Map<Long, Map<Long, NormalizedPostingSkill>> skillsByPosting = new LinkedHashMap<>();
         for (Long candidateId : candidateIds) {
             skillsByPosting.put(candidateId, new LinkedHashMap<>());
         }
 
+        // 공고의 스킬별로 NormalizedPostingSkill로 가공해서 Map<Long, NormalizedPostingSkill> 생성
         for (int start = 0; start < candidateIds.size(); start += SKILL_LOAD_BATCH_SIZE) {
             int end = Math.min(start + SKILL_LOAD_BATCH_SIZE, candidateIds.size());
             List<JobPostingSkill> batch = jobPostingSkillRepository
                     .findAllByJobPosting_IdInOrderByJobPosting_IdAscSkill_IdAsc(
                             candidateIds.subList(start, end)
                     );
+            // JobPostingSkill별로 NormalizedPostingSkill로 처리함
             mergeBatch(skillsByPosting, batch);
         }
 
+        // 후보 공고별 스킬 타입 구분한 번들 생성
         Map<Long, PostingSkillBundle> result = new LinkedHashMap<>();
         for (Long candidateId : candidateIds) {
             result.put(candidateId, toBundle(skillsByPosting.get(candidateId).values()));
@@ -83,6 +91,7 @@ public class RecommendationCandidateLoader {
         if (candidateIds.stream().anyMatch(id -> id == null || id <= 0)) {
             throw new IllegalStateException("candidate query returned an invalid jobPostingId");
         }
+        // 직무 ID 검증 후 중복 제거 및 오름차순 정렬
         return List.copyOf(new TreeSet<>(candidateIds));
     }
 
@@ -103,6 +112,8 @@ public class RecommendationCandidateLoader {
 
             NormalizedPostingSkill candidate = new NormalizedPostingSkill(
                     skillId,
+                    value.getSkill().getName(),
+                    value.getSkill().getCategory(),
                     value.getSkillLevel(),
                     value.getSkillType()
             );
@@ -110,6 +121,9 @@ public class RecommendationCandidateLoader {
         }
     }
 
+//    스킬 우선순위 결정
+//    1순위: REQUIRED > PREFERRED > RELATED
+//    2순위: 같은 타입이면 requiredLevel이 높은 것
     private NormalizedPostingSkill higherPriority(
             NormalizedPostingSkill current,
             NormalizedPostingSkill candidate
@@ -145,6 +159,8 @@ public class RecommendationCandidateLoader {
                 .forEach(value -> {
                     PostingSkillBundle.PostingSkill skill = new PostingSkillBundle.PostingSkill(
                             value.skillId(),
+                            value.skillName(),
+                            value.skillCategory(),
                             value.requiredLevel()
                     );
                     switch (value.skillType()) {
@@ -158,6 +174,8 @@ public class RecommendationCandidateLoader {
 
     private record NormalizedPostingSkill(
             Long skillId,
+            String skillName,
+            SkillCategory skillCategory,
             short requiredLevel,
             JobPostingSkillType skillType
     ) {

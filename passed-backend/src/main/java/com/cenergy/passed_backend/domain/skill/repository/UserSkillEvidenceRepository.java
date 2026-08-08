@@ -21,6 +21,9 @@ public interface UserSkillEvidenceRepository extends JpaRepository<UserSkillEvid
     List<UserSkillEvidence> findAllByUserIdAndSkillIds(
             @Param("userId") Long userId,
             @Param("skillIds") Collection<Long> skillIds
+    );
+
+    @Query("""
             SELECT evidence
             FROM UserSkillEvidence evidence
             WHERE evidence.userSkill.id = :userSkillId

@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.recommendation.application;
+package com.cenergy.passed_backend.domain.recommendation.application.model;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

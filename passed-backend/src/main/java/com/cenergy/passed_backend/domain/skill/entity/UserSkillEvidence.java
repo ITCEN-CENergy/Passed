@@ -63,4 +63,13 @@ public class UserSkillEvidence extends BaseTimeEntity {
 
     @Column(name = "mapping_similarity", precision = 4, scale = 3)
     private BigDecimal mappingSimilarity;
+
+    @Column(name = "evidence_text", length = 500, nullable = false)
+    private String evidenceText;
+
+    @Column(name = "extracted_level", nullable = false)
+    private short extractedLevel;
+
+    @Column(name = "mapping_confidence", precision = 4, scale = 3, nullable = false)
+    private BigDecimal mappingConfidence;
 }

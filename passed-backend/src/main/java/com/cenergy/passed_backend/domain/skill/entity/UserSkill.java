@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @Entity
 @Table(
@@ -42,4 +44,10 @@ public class UserSkill extends BaseTimeEntity {
 
     @Column(name = "is_important", nullable = false)
     private boolean important;
+
+    @Column(name = "mapping_confidence", precision = 4, scale = 3)
+    private BigDecimal mappingConfidence;
+
+    @Column(name = "level_confidence", precision = 4, scale = 3)
+    private BigDecimal levelConfidence;
 }

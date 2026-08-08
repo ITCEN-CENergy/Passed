@@ -22,9 +22,23 @@ jobs:
   backend-test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: passed-backend
+    services:
+      postgres:
+        image: postgres:17
+
+        env:
+          POSTGRES_DB: passed
+          POSTGRES_USER: passed
+          POSTGRES_PASSWORD: passed
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U passed -d passed"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout

@@ -1,4 +1,6 @@
-package com.cenergy.passed_backend.domain.recommendation.application;
+package com.cenergy.passed_backend.domain.recommendation.application.model;
+
+import com.cenergy.passed_backend.domain.recommendation.entity.SkillEvaluationType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,11 +31,16 @@ public record RequiredSkillEvaluation(
             Long skillId,
             short requiredLevel,
             Short userLevel,
+            SkillEvaluationType evaluationType,
             boolean owned,
             boolean requirementSatisfied,
             BigDecimal matchRate
     ) {
         public RequiredSkillMatch {
+            evaluationType = Objects.requireNonNull(
+                    evaluationType,
+                    "evaluationType must not be null"
+            );
             matchRate = Objects.requireNonNull(matchRate, "matchRate must not be null");
         }
     }

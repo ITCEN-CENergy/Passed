@@ -11,7 +11,6 @@ public record ValidatedLearningResource(
         String url,
         String thumbnailUrl,
         List<String> authors,
-        boolean isOfficial,
         Boolean isFree
 ) {
     public ValidatedLearningResource {

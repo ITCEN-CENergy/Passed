@@ -2,7 +2,7 @@ import hashlib
 import html
 import re
 from typing import Any, Protocol
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote
 
 import httpx
 from tavily import AsyncTavilyClient
@@ -18,7 +18,9 @@ from api.features.roadmap.schema import (
 class LearningResourceProvider(Protocol):
     name: str
 
-    async def search(self, competency: Competency) -> list[LearningResource]: ...
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]: ...
 
 
 def _resource_id(provider: str, external_id: str) -> str:
@@ -51,27 +53,6 @@ def _summarize(value: Any, maximum_length: int = 300) -> str:
     return text[: maximum_length - 1].rstrip(" ,.;:") + "…"
 
 
-_OFFICIAL_DOMAINS = {
-    "aws.amazon.com": "AWS",
-    "docs.aws.amazon.com": "AWS",
-    "docs.docker.com": "Docker",
-    "docker.com": "Docker",
-    "kubernetes.io": "Kubernetes",
-    "learn.microsoft.com": "Microsoft Learn",
-    "docs.oracle.com": "Oracle",
-    "docs.spring.io": "Spring",
-    "python.org": "Python",
-}
-
-
-def _official_provider(url: str) -> str | None:
-    hostname = (urlparse(url).hostname or "").lower()
-    for domain, provider in _OFFICIAL_DOMAINS.items():
-        if hostname == domain or hostname.endswith(f".{domain}"):
-            return provider
-    return None
-
-
 def _find_items(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, list) and all(isinstance(item, dict) for item in value):
         return value
@@ -95,7 +76,9 @@ class KmoocProvider:
         self._client = client
         self._settings = settings
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         settings = self._settings
         if not settings.kmooc_service_key or not settings.kmooc_course_list_url:
             return []
@@ -146,7 +129,6 @@ class KmoocProvider:
                 authors=[value for value in [
                     _clean(item.get("professor") or item.get("instructor"))
                 ] if value],
-                isOfficial=True,
                 isFree=True,
             ))
         return result
@@ -159,13 +141,15 @@ class KakaoBookProvider:
         self._client = client
         self._settings = settings
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         key = self._settings.kakao_rest_api_key
         if not key:
             return []
         response = await self._client.get(
             "https://dapi.kakao.com/v3/search/book",
-            params={"query": competency.standardCompetencyName, "size": 5, "sort": "accuracy"},
+            params={"query": search_query, "size": 5, "sort": "accuracy"},
             headers={"Authorization": f"KakaoAK {key}"},
             timeout=self._settings.resource_search_timeout_seconds,
         )
@@ -188,7 +172,6 @@ class KakaoBookProvider:
                 url=url,
                 thumbnailUrl=_clean(item.get("thumbnail")) or None,
                 authors=authors,
-                isOfficial=False,
                 isFree=None,
             ))
         return result
@@ -204,11 +187,13 @@ class TavilyProvider:
             if settings.tavily_api_key else None
         )
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         if self._client is None:
             return []
         response = await self._client.search(
-            query=f"{competency.standardCompetencyName} 학습 가이드 공식 문서 실습",
+            query=search_query,
             search_depth="advanced",
             max_results=5,
             timeout=self._settings.resource_search_timeout_seconds,
@@ -218,16 +203,14 @@ class TavilyProvider:
             title, url = _clean(item.get("title")), _clean(item.get("url"))
             if not title or not url:
                 continue
-            official_provider = _official_provider(url)
             result.append(LearningResource(
                 resourceId=_resource_id("web", url),
                 resourceType=LearningResourceType.WEB_RESOURCE,
                 title=title,
                 description=_summarize(item.get("content")),
-                provider=official_provider or "Web Search",
+                provider="Web Search",
                 url=url,
                 authors=[],
-                isOfficial=official_provider is not None,
                 isFree=True,
             ))
         return result

@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from api.features.roadmap.router import router as roadmap_router
 from api.features.coverletter.router import router as coverletter_router
 from api.features.user_skill.router import router as user_skill_router
+from api.features.skill_gap.router import router as skill_gap_router
 
 
 log_level_name = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -37,6 +38,7 @@ app = FastAPI(
 app.include_router(roadmap_router)
 app.include_router(coverletter_router)
 app.include_router(user_skill_router)
+app.include_router(skill_gap_router)
 
 
 @app.get("/")

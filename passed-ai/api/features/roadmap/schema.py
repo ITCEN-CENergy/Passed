@@ -108,7 +108,6 @@ class LearningResource(RoadmapModel):
     url: str = Field(min_length=1)
     thumbnailUrl: str | None = None
     authors: list[str] = Field(default_factory=list)
-    isOfficial: bool = False
     isFree: bool | None = None
 
 
@@ -147,6 +146,15 @@ class GeneratedLearningStage(RoadmapModel):
     startLevel: int
     targetLevel: int
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
+
+
+class ModelGeneratedSkillContent(RoadmapModel):
+    """Content authored by the model; application keys and stage bounds are excluded."""
+    milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
+
+
+class ModelGeneratedRoadmapContent(RoadmapModel):
+    skills: list[ModelGeneratedSkillContent] = Field(min_length=1, max_length=1)
 
 
 class GeneratedSkillContent(RoadmapModel):

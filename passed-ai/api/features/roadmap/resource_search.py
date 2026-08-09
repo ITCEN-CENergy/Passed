@@ -4,7 +4,6 @@ from time import perf_counter
 
 from api.features.roadmap.resource_provider import (
     LearningResourceProvider,
-    _official_provider,
     _summarize,
 )
 from api.features.roadmap.schema import Competency, LearningResource
@@ -28,7 +27,9 @@ class LearningResourceSearchService:
         self._semaphore = asyncio.Semaphore(max_concurrency)
         self._generation_id = generation_id
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str | None = None
+    ) -> list[LearningResource]:
         if not self._enabled:
             logger.info(
                 "roadmap_resource_search_skipped generationId=%s competencyKey=%s reason=disabled",
@@ -44,8 +45,12 @@ class LearningResourceSearchService:
             return []
 
         search_started = perf_counter()
+        query = search_query or (
+            f"{competency.standardCompetencyName} "
+            f"{competency.category.value.replace('_', ' ')} 학습 가이드 실무 실습"
+        )
         provider_results = await asyncio.gather(*(
-            self._search_provider(provider, competency)
+            self._search_provider(provider, competency, query)
             for provider in self._providers
         ))
         resources = [
@@ -80,6 +85,7 @@ class LearningResourceSearchService:
         self,
         provider: LearningResourceProvider,
         competency: Competency,
+        search_query: str,
     ) -> list[LearningResource]:
         queued_at = perf_counter()
         wait_ms = 0
@@ -87,7 +93,7 @@ class LearningResourceSearchService:
             async with self._semaphore:
                 provider_started = perf_counter()
                 wait_ms = round((provider_started - queued_at) * 1000)
-                provider_resources = await provider.search(competency)
+                provider_resources = await provider.search(competency, search_query)
             status = "SUCCESS" if provider_resources else "EMPTY"
             elapsed_ms = round((perf_counter() - provider_started) * 1000)
             logger.info(
@@ -140,6 +146,5 @@ class LearningResourceSearchService:
 
 __all__ = [
     "LearningResourceSearchService",
-    "_official_provider",
     "_summarize",
 ]

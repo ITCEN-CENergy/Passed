@@ -9,9 +9,13 @@ on:
       - "passed-frontend/**"
       - ".github/workflows/frontend-deploy.yml"
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     defaults:
       run:

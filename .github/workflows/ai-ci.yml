@@ -18,9 +18,13 @@ on:
       - "passed-ai/**"
       - ".github/workflows/ai-ci.yml"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     defaults:
       run:

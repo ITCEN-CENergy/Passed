@@ -14,11 +14,15 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: ai-production
+  cancel-in-progress: false
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     defaults:
       run:
@@ -73,15 +77,15 @@ jobs:
       - name: Build image
         run: |
           docker build \
-            -t ghcr.io/${{ github.repository_owner }}/passed-ai:${{ github.sha }} \
-            -t ghcr.io/${{ github.repository_owner }}/passed-ai:latest \
+            -t ghcr.io/itcen-cenergy/passed-ai:${{ github.sha }} \
+            -t ghcr.io/itcen-cenergy/passed-ai:latest \
             .
 
 
       - name: Push image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/passed-ai:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/passed-ai:latest
+          docker push ghcr.io/itcen-cenergy/passed-ai:${{ github.sha }}
+          docker push ghcr.io/itcen-cenergy/passed-ai:latest
 
 
   deploy:
@@ -91,6 +95,11 @@ jobs:
     runs-on:
       - self-hosted
       - windows
+
+    timeout-minutes: 15
+
+    env:
+      AI_IMAGE: ghcr.io/itcen-cenergy/passed-ai:${{ github.sha }}
 
     steps:
 

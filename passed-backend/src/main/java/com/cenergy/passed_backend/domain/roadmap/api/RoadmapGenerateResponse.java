@@ -69,11 +69,11 @@ public record RoadmapGenerateResponse(Long roadmapId, String title, List<Skill> 
     public record LearningResource(String resourceId, String resourceType, String title,
                                    String description, String provider, String url,
                                    String thumbnailUrl, List<String> authors,
-                                   boolean isOfficial, Boolean isFree) {
+                                   Boolean isFree) {
         private static LearningResource from(RoadmapGenerationResult.LearningResource value) {
             return new LearningResource(value.resourceId(), value.resourceType(), value.title(),
                     value.description(), value.provider(), value.url(), value.thumbnailUrl(),
-                    value.authors(), value.isOfficial(), value.isFree());
+                    value.authors(), value.isFree());
         }
     }
 }

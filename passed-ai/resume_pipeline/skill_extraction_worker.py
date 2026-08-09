@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from difflib import SequenceMatcher
 import logging
 import os
 import re
+import unicodedata
 from typing import Any
 
 from tenacity import (
@@ -20,6 +22,7 @@ from .skill_extraction_models import (
     ExtractedChunkSkills,
     FailedChunkExtraction,
     SkillCandidate,
+    SkillCategory,
     SkillExtractionReport,
     SkillExtractionResponse,
 )
@@ -58,6 +61,124 @@ _COMPLETED_ACTION_PATTERN = re.compile(
     r"맡아|담당하여|수행하여|개발하여|구현하여|개선하여|운영하여|분석하여|"
     r"조율하여|해결하여|적용하여|설계하여|작성하여|리딩하여|참여하여)"
 )
+_SOURCE_SENTENCE_PATTERN = re.compile(r"[^.!?\n]+(?:[.!?]+|$)")
+_GROUNDING_NOISE_PATTERN = re.compile(r"[^0-9a-zA-Z가-힣]+")
+_MIN_RECOVERABLE_EVIDENCE_LENGTH = 12
+_MIN_GROUNDING_COVERAGE = 0.72
+_MIN_GROUNDING_RATIO = 0.55
+
+# LLM이 실행마다 누락해도 원문에 완료 행동이 명시된 경우에만 복구하는 고신뢰 규칙입니다.
+# 공고 문구가 아니라 여러 채용 문서에 공통으로 적용 가능한 수행 표현만 둡니다.
+_EXPLICIT_COMPLETED_SKILL_RULES = (
+    (
+        "콘텐츠 생성",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"콘텐츠 생성.{0,100}(?:개발|구현|연동)"),
+    ),
+    (
+        "콘텐츠 생성 프로젝트",
+        SkillCategory.EXPERIENCE,
+        re.compile(
+            r"(?:콘텐츠 생성.{0,80}(?:플랫폼|서비스)|"
+            r"(?:플랫폼|서비스).{0,80}콘텐츠 생성).{0,100}(?:개발|구현)"
+        ),
+    ),
+    (
+        "우선순위 설정",
+        SkillCategory.BEHAVIORAL_TRAIT,
+        re.compile(r"우선순위.{0,60}(?:조율|정하|결정|반영)"),
+    ),
+    (
+        "사용자 피드백 반영",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"사용자 피드백.{0,80}(?:반영|개선)"),
+    ),
+    (
+        "장애 재발 방지",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"(?:장애.{0,80})?재발 방지"),
+    ),
+    (
+        "평가 로직 개발",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"평가 로직.{0,60}(?:개발|구현)"),
+    ),
+    (
+        "AI 챗봇",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"AI\s*챗봇.{0,120}(?:개발|구현|운영)"),
+    ),
+    (
+        "LLM",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(
+            r"LLM(?!\s*API)(?:을|를|으로|에).{0,120}"
+            r"(?:개발|구현|설계|연동|전달)"
+        ),
+    ),
+    (
+        "AI 챗봇 프로젝트",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"AI\s*챗봇\s*프로젝트.{0,120}(?:개발|구현|수행)"),
+    ),
+    (
+        "추천 서비스",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"추천 서비스.{0,120}(?:개발|구현|운영)"),
+    ),
+    (
+        "추천 서비스 프로젝트",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"추천 서비스\s*프로젝트.{0,140}(?:개발|구현|수행)"),
+    ),
+    (
+        "업무 자동화",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"업무 자동화.{0,120}(?:개발|구현|적용)"),
+    ),
+    (
+        "업무 자동화 프로젝트",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"업무 자동화\s*프로젝트.{0,140}(?:개발|구현|수행)"),
+    ),
+    (
+        "멀티모달 앱",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"멀티모달 앱.{0,120}(?:개발|구현|운영)"),
+    ),
+    (
+        "멀티모달 앱 프로젝트",
+        SkillCategory.EXPERIENCE,
+        re.compile(r"멀티모달 앱\s*프로젝트.{0,140}(?:개발|구현|수행)"),
+    ),
+    (
+        "클라우드",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(
+            r"(?:AWS\s+)?클라우드 환경.{0,120}(?:배포|운영|개발|구현)"
+        ),
+    ),
+    (
+        "보안",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(
+            r"(?:보안 (?:기준|정책|요건).{0,100}(?:준수|적용|점검|관리)|"
+            r"(?:준수|적용|점검|관리).{0,100}보안 (?:기준|정책|요건))"
+        ),
+    ),
+    (
+        "개인정보 보호",
+        SkillCategory.TECHNICAL_SKILL,
+        re.compile(r"개인정보 보호.{0,100}(?:준수|적용|점검|관리)"),
+    ),
+    (
+        "정보보호 의식",
+        SkillCategory.BEHAVIORAL_TRAIT,
+        re.compile(
+            r"정보보호 의식.{0,120}(?:바탕|준수|적용|점검|관리)"
+        ),
+    ),
+)
 
 
 def _is_future_only_evidence(evidence: str) -> bool:
@@ -66,6 +187,64 @@ def _is_future_only_evidence(evidence: str) -> bool:
         pattern.search(evidence) for pattern in _FUTURE_ONLY_PATTERNS
     )
     return has_future_expression and not _COMPLETED_ACTION_PATTERN.search(evidence)
+
+
+def _normalize_grounding_text(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return _GROUNDING_NOISE_PATTERN.sub("", normalized)
+
+
+def _recover_verbatim_evidence(chunk_content: str, evidence: str) -> str | None:
+    """LLM이 어미·문장부호만 바꾼 근거를 가장 가까운 원문 문장으로 복구한다."""
+    if evidence in chunk_content:
+        return evidence
+
+    requested = _normalize_grounding_text(evidence)
+    if len(requested) < _MIN_RECOVERABLE_EVIDENCE_LENGTH:
+        return None
+
+    best: tuple[float, float, str] | None = None
+    for match in _SOURCE_SENTENCE_PATTERN.finditer(chunk_content):
+        sentence = match.group(0).strip()
+        source = _normalize_grounding_text(sentence)
+        if not source:
+            continue
+        matcher = SequenceMatcher(None, requested, source, autojunk=False)
+        longest = matcher.find_longest_match()
+        coverage = longest.size / len(requested)
+        ratio = matcher.ratio()
+        candidate = (coverage, ratio, sentence)
+        if best is None or candidate[:2] > best[:2]:
+            best = candidate
+
+    if best is None:
+        return None
+    coverage, ratio, sentence = best
+    if coverage < _MIN_GROUNDING_COVERAGE or ratio < _MIN_GROUNDING_RATIO:
+        return None
+    return sentence
+
+
+def _explicit_completed_candidates(
+    chunk: ExtractableChunk,
+) -> list[SkillCandidate]:
+    candidates: list[SkillCandidate] = []
+    for sentence_match in _SOURCE_SENTENCE_PATTERN.finditer(chunk.chunk_content):
+        sentence = sentence_match.group(0).strip()
+        if not sentence or _is_future_only_evidence(sentence):
+            continue
+        for extracted_name, category, pattern in _EXPLICIT_COMPLETED_SKILL_RULES:
+            if not pattern.search(sentence):
+                continue
+            candidates.append(
+                SkillCandidate(
+                    extracted_name=extracted_name,
+                    category=category,
+                    level=2,
+                    evidence=sentence,
+                )
+            )
+    return candidates
 
 
 def create_skill_extraction_client() -> Any:
@@ -107,7 +286,11 @@ def _validated_candidates(
     result: list[SkillCandidate] = []
     seen: set[tuple[str, str]] = set()
     for candidate in response.skills:
-        if candidate.evidence not in chunk.chunk_content:
+        grounded_evidence = _recover_verbatim_evidence(
+            chunk.chunk_content,
+            candidate.evidence,
+        )
+        if grounded_evidence is None:
             logger.warning(
                 "원문에 없는 스킬 근거 제외 source=%s chunk_id=%s "
                 "extracted_name=%r evidence=%r",
@@ -117,6 +300,18 @@ def _validated_candidates(
                 candidate.evidence,
             )
             continue
+
+        if grounded_evidence != candidate.evidence:
+            logger.info(
+                "스킬 근거를 원문 문장으로 복구 source=%s chunk_id=%s "
+                "extracted_name=%r",
+                chunk.source_kind,
+                chunk.chunk_id,
+                candidate.extracted_name,
+            )
+            candidate = candidate.model_copy(
+                update={"evidence": grounded_evidence}
+            )
 
         if _is_future_only_evidence(candidate.evidence):
             logger.warning(
@@ -129,6 +324,16 @@ def _validated_candidates(
             )
             continue
 
+        key = (
+            " ".join(candidate.extracted_name.casefold().split()),
+            candidate.category.value,
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(candidate)
+
+    for candidate in _explicit_completed_candidates(chunk):
         key = (
             " ".join(candidate.extracted_name.casefold().split()),
             candidate.category.value,

@@ -176,6 +176,166 @@ def test_structured_candidates_are_deduplicated_and_evidence_checked():
     ]
 
 
+def test_paraphrased_evidence_is_recovered_to_verbatim_source_sentence():
+    content = (
+        "JavaScript와 TypeScript를 활용해 백엔드 API를 구현했고, "
+        "OpenAI LLM API를 연동했습니다."
+    )
+    response = SkillExtractionResponse(
+        skills=[
+            SkillCandidate(
+                extracted_name="백엔드 API 개발",
+                category=SkillCategory.EXPERIENCE,
+                level=2,
+                evidence=(
+                    "JavaScript와 TypeScript를 활용해 백엔드 API를 구현했다."
+                ),
+            )
+        ]
+    )
+
+    candidates = extraction._validated_candidates(
+        _chunk(content=content),
+        response,
+    )
+
+    assert len(candidates) == 1
+    assert candidates[0].evidence == content
+    assert candidates[0].evidence in content
+
+
+def test_unrelated_non_verbatim_evidence_is_still_rejected():
+    response = SkillExtractionResponse(
+        skills=[
+            SkillCandidate(
+                extracted_name="Kubernetes",
+                category=SkillCategory.TECHNICAL_SKILL,
+                level=2,
+                evidence="Kubernetes 클러스터를 운영하고 장애를 해결했습니다.",
+            )
+        ]
+    )
+
+    candidates = extraction._validated_candidates(
+        _chunk(content="JavaScript로 백엔드 API를 구현했습니다."),
+        response,
+    )
+
+    assert candidates == []
+
+
+def test_prompt_requires_verbatim_evidence_and_completed_action_coverage():
+    assert "문장부호까지 그대로 복사" in extraction.SYSTEM_PROMPT
+    assert "본인이 완료한 구체적 행동" in extraction.SYSTEM_PROMPT
+    assert "사용자 피드백을 서비스나 기능 개선에 반영" in extraction.SYSTEM_PROMPT
+    assert '"창의적", "열정적"' in extraction.SYSTEM_PROMPT
+
+
+def test_explicit_completed_actions_recover_high_confidence_missing_skills():
+    content = (
+        "생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다. "
+        "사용자 피드백을 분석해 기능 개선에 반영했습니다. "
+        "반복 장애의 재발 방지 내용을 문서화했습니다."
+    )
+
+    candidates = extraction._validated_candidates(
+        _chunk(content=content),
+        SkillExtractionResponse(skills=[]),
+    )
+
+    assert {
+        (candidate.extracted_name, candidate.category)
+        for candidate in candidates
+    } >= {
+        ("콘텐츠 생성", SkillCategory.TECHNICAL_SKILL),
+        ("콘텐츠 생성 프로젝트", SkillCategory.EXPERIENCE),
+        ("사용자 피드백 반영", SkillCategory.EXPERIENCE),
+        ("장애 재발 방지", SkillCategory.EXPERIENCE),
+    }
+    assert all(candidate.evidence in content for candidate in candidates)
+
+
+def test_explicit_named_ai_service_actions_are_recovered_conservatively():
+    content = (
+        "RAG AI 챗봇 프로젝트에서 Python과 FastAPI를 사용하여 "
+        "AI 챗봇 백엔드 API를 개발했습니다. "
+        "문서 검색 결과를 LLM에 전달하여 답변 생성 기능을 구현했습니다. "
+        "추천 서비스 프로젝트에서 개인화된 추천 서비스를 개발했습니다. "
+        "업무 자동화 프로젝트에서 Python 기반 업무 자동화 기능을 개발했습니다. "
+        "멀티모달 앱 프로젝트에서 텍스트와 이미지를 분석하는 멀티모달 앱을 개발했습니다. "
+        "AWS 클라우드 환경에 서비스를 배포하고 운영했습니다. "
+        "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 "
+        "API 키와 민감정보를 환경변수로 관리했습니다."
+    )
+
+    candidates = extraction._validated_candidates(
+        _chunk(content=content),
+        SkillExtractionResponse(skills=[]),
+    )
+
+    assert {
+        (candidate.extracted_name, candidate.category)
+        for candidate in candidates
+    } >= {
+        ("AI 챗봇", SkillCategory.TECHNICAL_SKILL),
+        ("LLM", SkillCategory.TECHNICAL_SKILL),
+        ("AI 챗봇 프로젝트", SkillCategory.EXPERIENCE),
+        ("추천 서비스", SkillCategory.TECHNICAL_SKILL),
+        ("추천 서비스 프로젝트", SkillCategory.EXPERIENCE),
+        ("업무 자동화", SkillCategory.TECHNICAL_SKILL),
+        ("업무 자동화 프로젝트", SkillCategory.EXPERIENCE),
+        ("멀티모달 앱", SkillCategory.TECHNICAL_SKILL),
+        ("멀티모달 앱 프로젝트", SkillCategory.EXPERIENCE),
+        ("클라우드", SkillCategory.TECHNICAL_SKILL),
+        ("보안", SkillCategory.TECHNICAL_SKILL),
+        ("개인정보 보호", SkillCategory.TECHNICAL_SKILL),
+        ("정보보호 의식", SkillCategory.BEHAVIORAL_TRAIT),
+    }
+    assert all(candidate.evidence in content for candidate in candidates)
+
+
+def test_explicit_named_ai_service_rules_require_completed_actions():
+    content = (
+        "관심 기술은 AI 챗봇, 추천 서비스, 업무 자동화입니다. "
+        "보안 필터와 개인정보 보호도 중요합니다."
+    )
+
+    candidates = extraction._validated_candidates(
+        _chunk(content=content),
+        SkillExtractionResponse(skills=[]),
+    )
+
+    recovered_names = {candidate.extracted_name for candidate in candidates}
+    assert recovered_names.isdisjoint(
+        {
+            "AI 챗봇",
+            "LLM",
+            "AI 챗봇 프로젝트",
+            "추천 서비스",
+            "추천 서비스 프로젝트",
+            "업무 자동화",
+            "업무 자동화 프로젝트",
+            "멀티모달 앱",
+            "멀티모달 앱 프로젝트",
+            "클라우드",
+            "보안",
+            "개인정보 보호",
+            "정보보호 의식",
+        }
+    )
+
+
+def test_explicit_rules_do_not_promote_future_only_intentions():
+    content = "입사 후 콘텐츠 생성 플랫폼을 개발하고 싶습니다."
+
+    candidates = extraction._validated_candidates(
+        _chunk(source_kind="COVER_LETTER", content=content),
+        SkillExtractionResponse(skills=[]),
+    )
+
+    assert candidates == []
+
+
 def test_normalized_candidate_name_is_kept_when_evidence_is_exact():
     response = SkillExtractionResponse(
         skills=[

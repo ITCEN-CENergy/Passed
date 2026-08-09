@@ -8,7 +8,7 @@ from api.features.roadmap.config import RoadmapSettings
 from api.features.roadmap.router import generate as generate_route
 from api.features.roadmap.schema import (
     Competency,
-    GeneratedRoadmapContent,
+    ModelGeneratedRoadmapContent,
     LearningResource,
     LearningStage,
     RoadmapGenerateRequest,
@@ -51,7 +51,9 @@ class NeverEndingProvider:
     def __init__(self) -> None:
         self.cancelled = False
 
-    async def search(self, competency: Competency) -> list[LearningResource]:
+    async def search(
+        self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
         try:
             await asyncio.Event().wait()
         except asyncio.CancelledError:
@@ -68,7 +70,7 @@ class NeverEndingGenerator:
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent:
+    ) -> ModelGeneratedRoadmapContent:
         try:
             await asyncio.Event().wait()
         except asyncio.CancelledError:

@@ -1,0 +1,509 @@
+[
+{
+  "example_id": "resume-experience-backend-001",
+  "predicted": [
+    {
+      "extracted_name": "결제 REST API",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "Java",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "Spring Boot",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-001",
+  "predicted": [
+    {
+      "extracted_name": "정보처리기사",
+      "accepted_names": [],
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-toeic-001",
+  "predicted": [
+    {
+      "extracted_name": "TOEIC",
+      "accepted_names": [],
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-certification-written-pass-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-certification-preparing-001",
+  "predicted": []
+},
+{
+  "example_id": "resume-certification-multiple-001",
+  "predicted": [
+    {
+      "extracted_name": "SQLD",
+      "accepted_names": [],
+      "category": "CERTIFICATION",
+      "level": 1
+    },
+    {
+      "extracted_name": "ADsP",
+      "accepted_names": [],
+      "category": "CERTIFICATION",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "resume-training-aws-services-001",
+  "predicted": [
+    {
+      "extracted_name": "AWS RDS",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-listening-001",
+  "predicted": [
+    {
+      "extracted_name": "의견 경청",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    },
+    {
+      "extracted_name": "요구사항 조율",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-future-only-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-experience-db-optimization-001",
+  "predicted": [
+    {
+      "extracted_name": "PostgreSQL 실행 계획 분석",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "API 응답 시간 개선",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "resume-experience-leadership-001",
+  "predicted": [
+    {
+      "extracted_name": "개발 일정 관리",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "주간 회고 진행",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "프로젝트 기한 내 완료",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "resume-experience-data-analysis-001",
+  "predicted": [
+    {
+      "extracted_name": "SQL 분석",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "데이터 시각화",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-activity-collaboration-001",
+  "predicted": [
+    {
+      "extracted_name": "요구사항 정리",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "개발 범위 합의",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-education-react-variant-001",
+  "predicted": [
+    {
+      "extracted_name": "React.js",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-conflict-001",
+  "predicted": [
+    {
+      "extracted_name": "팀 합의 이끌기",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-ownership-001",
+  "predicted": [
+    {
+      "extracted_name": "장애 원인 조사",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    },
+    {
+      "extracted_name": "수정 배포 책임",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-failure-recovery-001",
+  "predicted": [
+    {
+      "extracted_name": "버전 롤백",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "로그 분석",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "재발 방지 테스트 추가",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "장애 재발 방지",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-communication-001",
+  "predicted": [
+    {
+      "extracted_name": "장애 원인 설명",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 1
+    },
+    {
+      "extracted_name": "대응 계획 설명",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-customer-001",
+  "predicted": [
+    {
+      "extracted_name": "고객 문의 분류",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "불편 사항 개선",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-performance-001",
+  "predicted": [
+    {
+      "extracted_name": "캐시 적용",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "병목 구간 제거",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "초당 처리량 개선",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 3
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-future-only-002",
+  "predicted": []
+},
+{
+  "example_id": "cover-personality-self-claim-only-001",
+  "predicted": []
+},
+{
+  "example_id": "cover-experience-learning-001",
+  "predicted": [
+    {
+      "extracted_name": "질문 목록 작성",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "모의 발표 진행",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-activity-spring-korean-001",
+  "predicted": [
+    {
+      "extracted_name": "게시판 개발",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "스프링부트",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-award-innovation-001",
+  "predicted": [
+    {
+      "extracted_name": "접근성 개선 아이디어",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "resume-overseas-adaptability-001",
+  "predicted": [
+    {
+      "extracted_name": "역할 협의",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    },
+    {
+      "extracted_name": "최종 결과 발표",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-schedule-001",
+  "predicted": [
+    {
+      "extracted_name": "작업 재분배",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "진행 상황 공유",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "마감일 준수",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-code-review-001",
+  "predicted": [
+    {
+      "extracted_name": "코드 리뷰 기준 문서화",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "구체적인 개선 의견 제공",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-incident-001",
+  "predicted": [
+    {
+      "extracted_name": "서비스 복구",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "알림 로그 확인",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 1
+    },
+    {
+      "extracted_name": "역할 나누기",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 1
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-automation-001",
+  "predicted": [
+    {
+      "extracted_name": "Python 자동화",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    },
+    {
+      "extracted_name": "시간 절약",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-empathy-001",
+  "predicted": [
+    {
+      "extracted_name": "작업 나눠 수행",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-motivation-past-and-future-001",
+  "predicted": [
+    {
+      "extracted_name": "Docker",
+      "accepted_names": [],
+      "category": "TECHNICAL_SKILL",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-experience-mentoring-001",
+  "predicted": [
+    {
+      "extracted_name": "온보딩 문서 작성",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    },
+    {
+      "extracted_name": "페어 프로그래밍",
+      "accepted_names": [],
+      "category": "EXPERIENCE",
+      "level": 2
+    }
+  ]
+},
+{
+  "example_id": "cover-personality-unsupported-002",
+  "predicted": [
+    {
+      "extracted_name": "창의적",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    },
+    {
+      "extracted_name": "열정적",
+      "accepted_names": [],
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1
+    }
+  ]
+}
+]

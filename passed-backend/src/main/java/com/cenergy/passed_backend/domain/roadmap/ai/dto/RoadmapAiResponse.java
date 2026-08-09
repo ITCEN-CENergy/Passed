@@ -50,7 +50,6 @@ public record RoadmapAiResponse(
             String url,
             String thumbnailUrl,
             List<String> authors,
-            Boolean isOfficial,
             Boolean isFree
     ) {
         public LearningResource {

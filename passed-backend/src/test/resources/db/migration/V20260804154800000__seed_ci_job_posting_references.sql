@@ -21,3 +21,21 @@ SELECT
     1
 FROM generate_series(1, 4730) AS generated_id
 ON CONFLICT (id) DO NOTHING;
+
+SELECT setval(
+    pg_get_serial_sequence('industries', 'id'),
+    (SELECT MAX(id) FROM industries),
+    TRUE
+);
+
+SELECT setval(
+    pg_get_serial_sequence('job_roles', 'id'),
+    (SELECT MAX(id) FROM job_roles),
+    TRUE
+);
+
+SELECT setval(
+    pg_get_serial_sequence('job_postings', 'id'),
+    (SELECT MAX(id) FROM job_postings),
+    TRUE
+);

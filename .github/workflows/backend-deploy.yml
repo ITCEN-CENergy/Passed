@@ -1,0 +1,177 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "passed-backend/**"
+      - "infra/local/**"
+      - ".github/workflows/backend-deploy.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: backend-production
+  cancel-in-progress: false
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      DB_URL: jdbc:postgresql://localhost:5433/passed
+      DB_USERNAME: passed
+      DB_PASSWORD: passed
+
+    defaults:
+      run:
+        working-directory: passed-backend
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: passed
+          POSTGRES_USER: passed
+          POSTGRES_PASSWORD: passed
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U passed -d passed"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+          cache-dependency-path: |
+            passed-backend/*.gradle
+            passed-backend/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        run: |
+          docker build \
+            -t ghcr.io/itcen-cenergy/passed-backend:${{ github.sha }} \
+            -t ghcr.io/itcen-cenergy/passed-backend:latest \
+            .
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/itcen-cenergy/passed-backend:${{ github.sha }}
+          docker push ghcr.io/itcen-cenergy/passed-backend:latest
+
+  deploy:
+    needs: build
+
+    runs-on:
+      - self-hosted
+      - windows
+
+    timeout-minutes: 15
+
+    env:
+      BACKEND_IMAGE: ghcr.io/itcen-cenergy/passed-backend:${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login GHCR
+        shell: powershell
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" |
+          docker login ghcr.io `
+            -u "${{ github.actor }}" `
+            --password-stdin
+
+      - name: Pull
+        working-directory: infra/local
+        run: docker compose pull backend
+
+      - name: Deploy
+        working-directory: infra/local
+        run: docker compose up -d --no-deps backend
+
+      - name: Health check
+        shell: powershell
+        run: |
+          $maxAttempts = 12
+          $delaySeconds = 5
+          $success = $false
+
+          for ($i = 1; $i -le $maxAttempts; $i++) {
+
+            Write-Host "Health check attempt $i/$maxAttempts"
+
+            try {
+
+              $response = Invoke-WebRequest `
+                -Uri "http://localhost:8080/actuator/health" `
+                -UseBasicParsing `
+                -TimeoutSec 5
+
+              if ($response.StatusCode -eq 200) {
+
+                Write-Host "Backend server is healthy."
+
+                $success = $true
+
+                break
+              }
+
+            }
+            catch {
+
+              Write-Host "Backend server is not ready yet."
+
+            }
+
+            Start-Sleep -Seconds $delaySeconds
+          }
+
+          if (-not $success) {
+
+            Write-Host "Backend deployment health check failed."
+
+            docker compose `
+              -f infra/local/docker-compose.yml `
+              logs `
+              --tail 100 `
+              backend
+
+            exit 1
+          }
+          
+      - name: Show container status
+        if: always()
+        working-directory: infra/local
+        shell: powershell
+        run: |
+          docker compose ps

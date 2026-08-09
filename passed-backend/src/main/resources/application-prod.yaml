@@ -3,9 +3,9 @@ spring:
     name: passed-backend
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5433/edu}
-    username: ${DB_USERNAME:edu}
-    password: ${DB_PASSWORD:1234}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 10
 
@@ -41,8 +41,6 @@ management:
   endpoint:
     health:
       show-details: always
-app:
-  dev-current-user-id: ${DEV_CURRENT_USER_ID:257}
 
 external:
   roadmap-ai:
@@ -54,13 +52,3 @@ external:
     base-url: ${ROADMAP_AI_BASE_URL:http://localhost:8000}
     connect-timeout-millis: ${ROADMAP_AI_CONNECT_TIMEOUT_MILLIS:3000}
     read-timeout-millis: ${ROADMAP_AI_READ_TIMEOUT_MILLIS:420000}
-
-  user-skill-ai:
-    base-url: ${USER_SKILL_AI_BASE_URL:http://localhost:8000}
-    connect-timeout-millis: ${USER_SKILL_AI_CONNECT_TIMEOUT_MILLIS:3000}
-    read-timeout-millis: ${USER_SKILL_AI_READ_TIMEOUT_MILLIS:600000}
-
-  learning-competency-ai:
-    base-url: ${LEARNING_COMPETENCY_AI_BASE_URL:http://localhost:8000}
-    connect-timeout-millis: ${LEARNING_COMPETENCY_AI_CONNECT_TIMEOUT_MILLIS:3000}
-    read-timeout-millis: ${LEARNING_COMPETENCY_AI_READ_TIMEOUT_MILLIS:600000}

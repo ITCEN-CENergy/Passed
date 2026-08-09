@@ -1,0 +1,77 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - dev
+
+    paths:
+      - "passed-backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+  pull_request:
+    branches:
+      - dev
+      - main
+
+    paths:
+      - "passed-backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      DB_URL: jdbc:postgresql://localhost:5433/passed
+      DB_USERNAME: passed
+      DB_PASSWORD: passed
+
+    defaults:
+      run:
+        working-directory: passed-backend
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+
+        env:
+          POSTGRES_DB: passed
+          POSTGRES_USER: passed
+          POSTGRES_PASSWORD: passed
+
+        ports:
+          - 5433:5432
+
+        options: >-
+          --health-cmd="pg_isready -U passed -d passed"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+          cache-dependency-path: |
+            passed-backend/*.gradle
+            passed-backend/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build
+        run: ./gradlew bootJar

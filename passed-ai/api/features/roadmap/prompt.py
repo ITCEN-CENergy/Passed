@@ -16,8 +16,9 @@ Success criteria:
 - Use only the supplied evidence; never invent user experience.
 - Non-certification skills use levels 1 to 3 only: 1 beginner, 2 intermediate, 3 advanced.
 - Only certifications use levels 0 and 1.
-- The input contains exactly one competency and one required learning stage.
-- Generate milestone content only for that supplied stage.
+- The input contains exactly one competency and one or two required learning stages.
+- Return exactly one output stage for every required learning stage, preserving input order.
+- Never merge, omit, or add learning stages. If the input has two requiredLearningStages, the output stages array must contain exactly two items.
 - When a learning stage has the same start and target level, create reinforcement and applied-practice milestones at that level instead of introductory repetition.
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
 - Select zero to three resourceRecommendations for each milestone only from that skill's supplied learningResources.
@@ -51,6 +52,6 @@ def build_user_prompt(
             for resource in resources_by_key.get(competency.roadmapSkillKey, [])
         ]
         payload.append(item)
-    return "Create milestone content for this single validated learning stage:\n" + json.dumps(
+    return "Create milestone content for this single competency's validated learning stages:\n" + json.dumps(
         payload, ensure_ascii=False, separators=(",", ":")
     )

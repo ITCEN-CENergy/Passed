@@ -8,6 +8,7 @@ import httpx
 
 from api.features.roadmap.client import OpenAiRoadmapClient
 from api.features.roadmap.config import RoadmapSettings, get_roadmap_settings
+from api.features.roadmap.exceptions import RoadmapGenerationError
 from api.features.roadmap.planner import create_learning_stages
 from api.features.roadmap.schema import (
     Competency,
@@ -59,12 +60,12 @@ class FakeRoadmapContentGenerator:
     ) -> ModelGeneratedRoadmapContent:
         skills = []
         for competency in competencies:
-            stage = stages_by_key[competency.roadmapSkillKey][0]
+            key = competency.roadmapSkillKey
             skills.append(
                 ModelGeneratedSkillContent(
-                    milestones=self._contents(
-                        competency, stage, resources_by_key.get(competency.roadmapSkillKey, [])
-                    )
+                    stages=[{"milestones": self._contents(
+                        competency, stage, resources_by_key.get(key, [])
+                    )} for stage in stages_by_key[key]]
                 )
             )
         return ModelGeneratedRoadmapContent(skills=skills)
@@ -174,38 +175,108 @@ async def _generate_content_in_batches(
     stages_by_key: dict[str, list[LearningStage]],
     resources_by_key: dict[str, list[LearningResource]],
 ) -> GeneratedRoadmapContent:
-    """Generate only milestone text; bind competency keys and stage bounds in code."""
+    """Generate one skill per call; bind keys and stage bounds in application code."""
     semaphore = asyncio.Semaphore(CONTENT_GENERATION_MAX_CONCURRENCY)
+
+    async def request_content(
+        competency: Competency, stages: list[LearningStage]
+    ) -> ModelGeneratedRoadmapContent:
+        key = competency.roadmapSkillKey
+        async with semaphore:
+            return await generator.generate(
+                [competency],
+                {key: stages},
+                {key: resources_by_key.get(key, [])},
+            )
+
+    def bind_skill(
+        competency: Competency,
+        stages: list[LearningStage],
+        model_content: ModelGeneratedRoadmapContent,
+    ) -> GeneratedSkillContent:
+        if len(model_content.skills) != 1:
+            raise ValueError("single competency generation must return exactly one skill")
+        model_stages = model_content.skills[0].stages
+        if len(model_stages) != len(stages):
+            raise ValueError("generated learning stages do not match required stages")
+        return GeneratedSkillContent(
+            roadmapSkillKey=competency.roadmapSkillKey,
+            stages=[
+                GeneratedLearningStage(
+                    startLevel=stage.startLevel,
+                    targetLevel=stage.targetLevel,
+                    milestones=model_stage.milestones,
+                )
+                for stage, model_stage in zip(stages, model_stages, strict=True)
+            ],
+        )
+
+    def validate_skill(competency: Competency, skill: GeneratedSkillContent) -> None:
+        skill_for_validation = skill.model_copy(deep=True)
+        generated_for_validation = GeneratedRoadmapContent(
+            title=build_roadmap_title([competency]),
+            skills=[skill_for_validation],
+        )
+        # Unknown resource IDs are handled by the existing sanitization pass.
+        # They should not force an otherwise valid batch through the slower fallback.
+        remove_unknown_resource_recommendations(
+            resources_by_key, generated_for_validation
+        )
+        validate_generated_content(
+            [competency],
+            {competency.roadmapSkillKey: stages_by_key[competency.roadmapSkillKey]},
+            resources_by_key,
+            generated_for_validation,
+        )
 
     async def generate_stage(
         competency: Competency, stage: LearningStage
     ) -> GeneratedLearningStage:
-        key = competency.roadmapSkillKey
-        async with semaphore:
-            model_content = await generator.generate(
-                [competency],
-                {key: [stage]},
-                {key: resources_by_key.get(key, [])},
-            )
+        model_content = await request_content(competency, [stage])
         if len(model_content.skills) != 1:
             raise ValueError("single stage generation must return exactly one skill")
+        model_stages = model_content.skills[0].stages
+        if len(model_stages) != 1:
+            raise ValueError("single stage generation must return exactly one stage")
         return GeneratedLearningStage(
             startLevel=stage.startLevel,
             targetLevel=stage.targetLevel,
-            milestones=model_content.skills[0].milestones,
+            milestones=model_stages[0].milestones,
         )
 
-    generated_skills: list[GeneratedSkillContent] = []
-    for competency in competencies:
+    async def generate_skill(competency: Competency) -> GeneratedSkillContent:
         key = competency.roadmapSkillKey
-        generated_stages = await asyncio.gather(*(
-            generate_stage(competency, stage)
-            for stage in stages_by_key[key]
-        ))
-        generated_skills.append(GeneratedSkillContent(
-            roadmapSkillKey=key,
-            stages=generated_stages,
-        ))
+        stages = stages_by_key[key]
+        try:
+            skill = bind_skill(
+                competency, stages, await request_content(competency, stages)
+            )
+            validate_skill(competency, skill)
+            return skill
+        except (ValueError, RoadmapGenerationError) as exception:
+            logger.warning(
+                "roadmap_competency_batch_fallback competencyKey=%s errorType=%s "
+                "errorMessage=%s",
+                key, type(exception).__name__, str(exception),
+                extra={
+                    "event": "roadmap_competency_batch_fallback",
+                    "competencyKey": key,
+                    "errorType": type(exception).__name__,
+                    "errorMessage": str(exception),
+                },
+            )
+            generated_stages = await asyncio.gather(*(
+                generate_stage(competency, stage) for stage in stages
+            ))
+            skill = GeneratedSkillContent(
+                roadmapSkillKey=key, stages=generated_stages
+            )
+            validate_skill(competency, skill)
+            return skill
+
+    generated_skills = await asyncio.gather(*(
+        generate_skill(competency) for competency in competencies
+    ))
 
     return GeneratedRoadmapContent(
         title=build_roadmap_title(competencies),

@@ -46,6 +46,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-batch-test'
 
 	// Spring Security 추후에 추가할 것
+
+
+	// Prometheus
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {

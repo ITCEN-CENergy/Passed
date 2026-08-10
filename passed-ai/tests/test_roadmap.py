@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 os.environ["ROADMAP_GENERATOR"] = "fake"
 os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
-from main import app
+from app.main import app
 from api.features.roadmap.schema import LearningResource
 from api.features.roadmap.schema import ModelGeneratedSkillContent, RoadmapGenerateRequest
 from api.features.roadmap.service import (

@@ -109,7 +109,12 @@ class RoadmapAiResponseValidatorTest {
     @Test void rejectsFirstLevelMismatch() { assertInvalidPath(milestone(1, 0, 2), milestone(2, 2, 3)); }
     @Test void rejectsLastLevelMismatch() { assertInvalidPath(milestone(1, 1, 2)); }
     @Test void rejectsDisconnectedMiddleLevel() { assertInvalidPath(milestone(1, 1, 2), milestone(2, 3, 4)); }
-    @Test void rejectsNonCertificationLevelZero() { assertInvalid(request(technical("docker", 0, 1)), response(skill("docker", milestone(1, 0, 1)))); }
+    @Test
+    void validatesNonCertificationGapFromZero() {
+        assertThat(validator.validate(request(technical("docker", 0, 1)), response(skill("docker",
+                milestone(1, 0, 1), milestone(2, 0, 1), milestone(3, 0, 1))))
+                .skills()).hasSize(1);
+    }
     @Test void rejectsLevelAboveThree() { assertInvalid(request(technical("docker", 2, 4)), response(skill("docker", milestone(1, 2, 4)))); }
     @Test void rejectsCertificationMilestoneForGeneralSkill() {
         RoadmapAiResponse.Milestone value = new RoadmapAiResponse.Milestone(

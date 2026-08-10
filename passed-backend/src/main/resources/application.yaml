@@ -41,6 +41,10 @@ management:
   endpoint:
     health:
       show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 app:
   dev-current-user-id: ${DEV_CURRENT_USER_ID:257}
 

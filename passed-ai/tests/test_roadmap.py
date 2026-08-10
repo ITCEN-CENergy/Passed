@@ -9,8 +9,13 @@ os.environ["ROADMAP_GENERATOR"] = "fake"
 os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
 from app.main import app
+from api.features.roadmap.planner import create_learning_stages
 from api.features.roadmap.schema import LearningResource
-from api.features.roadmap.schema import ModelGeneratedSkillContent, RoadmapGenerateRequest
+from api.features.roadmap.schema import (
+    ModelGeneratedSkillContent,
+    ModelGeneratedTwoStageRoadmapContent,
+    RoadmapGenerateRequest,
+)
 from api.features.roadmap.service import (
     FakeRoadmapContentGenerator,
     generate_roadmap,
@@ -81,7 +86,7 @@ def test_generate_multiple_competencies_in_request_order() -> None:
 
 
 @pytest.mark.asyncio
-async def test_content_generation_runs_per_stage_without_losing_competency_keys() -> None:
+async def test_content_generation_runs_per_competency_with_global_concurrency() -> None:
     class RecordingGenerator(FakeRoadmapContentGenerator):
         def __init__(self) -> None:
             self.batch_sizes: list[int] = []
@@ -101,11 +106,102 @@ async def test_content_generation_runs_per_stage_without_losing_competency_keys(
 
     response = await generate_roadmap(request, generator=generator)
 
-    assert generator.batch_sizes == [1] * 20
-    assert generator.stage_sizes == [1] * 20
+    assert generator.batch_sizes == [1] * 10
+    assert generator.stage_sizes == [2] * 10
     assert [skill.roadmapSkillKey for skill in response.skills] == [
         f"competency-{index}" for index in range(1, 11)
     ]
+
+
+@pytest.mark.asyncio
+async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> None:
+    state = {"generated": False, "searches": 0}
+
+    class TrackingGenerator(FakeRoadmapContentGenerator):
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            assert resources_by_key == {
+                competencies[0].roadmapSkillKey: []
+            }
+            result = await super().generate(
+                competencies, stages_by_key, resources_by_key
+            )
+            state["generated"] = True
+            return result
+
+    async def search_after_generation(
+        self, competency, search_query=None, provider_queries=None
+    ):
+        assert state["generated"] is True
+        assert "Docker" in search_query
+        state["searches"] += 1
+        return []
+
+    monkeypatch.setattr(
+        "api.features.roadmap.service.LearningResourceSearchService.search",
+        search_after_generation,
+    )
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+
+    await generate_roadmap(request, generator=TrackingGenerator())
+
+    assert state["searches"] == 6
+
+
+@pytest.mark.asyncio
+async def test_invalid_competency_batch_falls_back_to_per_stage(caplog) -> None:
+    class MissingStageGenerator(FakeRoadmapContentGenerator):
+        def __init__(self) -> None:
+            self.stage_sizes: list[int] = []
+
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            stages = next(iter(stages_by_key.values()))
+            self.stage_sizes.append(len(stages))
+            generated = await super().generate(
+                competencies, stages_by_key, resources_by_key
+            )
+            if len(stages) > 1:
+                generated.skills[0].stages = generated.skills[0].stages[:1]
+            return generated
+
+    generator = MissingStageGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+
+    with caplog.at_level(logging.WARNING):
+        response = await generate_roadmap(request, generator=generator)
+
+    assert generator.stage_sizes == [2, 1, 1]
+    assert len(response.skills[0].milestones) == 6
+    fallback_records = [
+        record for record in caplog.records
+        if getattr(record, "event", None) == "roadmap_competency_batch_fallback"
+    ]
+    assert len(fallback_records) == 1
+    assert fallback_records[0].competencyKey == "competency-1"
+
+
+@pytest.mark.asyncio
+async def test_external_generation_failure_does_not_trigger_fallback() -> None:
+    class UnavailableGenerator(FakeRoadmapContentGenerator):
+        def __init__(self) -> None:
+            self.call_count = 0
+
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            self.call_count += 1
+            raise ConnectionError("model unavailable")
+
+    generator = UnavailableGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+
+    with pytest.raises(ConnectionError, match="model unavailable"):
+        await generate_roadmap(request, generator=generator)
+
+    assert generator.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -119,6 +215,22 @@ async def test_model_schema_excludes_key_and_business_logic_binds_it() -> None:
 
     assert "roadmapSkillKey" not in ModelGeneratedSkillContent.model_fields
     assert response.skills[0].roadmapSkillKey == "expected-key"
+
+
+@pytest.mark.asyncio
+async def test_two_stage_model_schema_rejects_a_missing_stage() -> None:
+    generator = FakeRoadmapContentGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=2))
+    )
+    generated = await generator.generate(
+        request.competencies,
+        {"competency-1": [create_learning_stages(request.competencies[0])[0]]},
+        {},
+    )
+
+    with pytest.raises(ValueError):
+        ModelGeneratedTwoStageRoadmapContent.model_validate(generated.model_dump())
 
 
 @pytest.mark.asyncio
@@ -257,13 +369,26 @@ def test_nullable_current_evidence_is_accepted() -> None:
     assert response.status_code == 200
 
 
+def test_non_certification_can_start_from_level_zero() -> None:
+    response = client.post(
+        "/api/v1/roadmaps/generate",
+        json=request_with(competency(current_level=0, target_level=2)),
+    )
+
+    assert response.status_code == 200
+    milestones = response.json()["skills"][0]["milestones"]
+    assert [(item["startLevel"], item["targetLevel"]) for item in milestones] == [
+        (0, 1), (0, 1), (0, 1),
+        (1, 2), (1, 2), (1, 2),
+    ]
+
+
 @pytest.mark.parametrize(
     "payload",
     [
         {"userId": 10, "competencies": []},
         request_with(competency(current_level=3, target_level=1)),
         request_with(competency(current_level=-1, target_level=1)),
-        request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
         request_with(competency(name="   ")),
     ],
@@ -352,7 +477,9 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         authors=["홍길동"],
         isFree=None,
     )
-    async def search_resources(self, competency, search_query=None):
+    async def search_resources(
+        self, competency, search_query=None, provider_queries=None
+    ):
         return [resource]
 
     monkeypatch.setattr(

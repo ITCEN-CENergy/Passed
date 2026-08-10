@@ -31,10 +31,10 @@ public class LearningResource extends BaseTimeEntity {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "url", length = 500)
+    @Column(name = "url", columnDefinition = "text")
     private String url;
 
-    @Column(name = "thumbnail_url", length = 500)
+    @Column(name = "thumbnail_url", columnDefinition = "text")
     private String thumbnailUrl;
 
     @Column(name = "duration_minutes")

@@ -28,7 +28,10 @@ class LearningResourceSearchService:
         self._generation_id = generation_id
 
     async def search(
-        self, competency: Competency, search_query: str | None = None
+        self,
+        competency: Competency,
+        search_query: str | None = None,
+        provider_queries: dict[str, str] | None = None,
     ) -> list[LearningResource]:
         if not self._enabled:
             logger.info(
@@ -50,7 +53,11 @@ class LearningResourceSearchService:
             f"{competency.category.value.replace('_', ' ')} 학습 가이드 실무 실습"
         )
         provider_results = await asyncio.gather(*(
-            self._search_provider(provider, competency, query)
+            self._search_provider(
+                provider,
+                competency,
+                (provider_queries or {}).get(provider.name, query),
+            )
             for provider in self._providers
         ))
         resources = [

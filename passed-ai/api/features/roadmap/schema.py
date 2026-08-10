@@ -148,13 +148,42 @@ class GeneratedLearningStage(RoadmapModel):
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
 
 
-class ModelGeneratedSkillContent(RoadmapModel):
-    """Content authored by the model; application keys and stage bounds are excluded."""
+class ModelGeneratedLearningStageContent(RoadmapModel):
+    """One stage authored by the model; application-owned bounds are excluded."""
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
+
+
+class ModelGeneratedSkillContent(RoadmapModel):
+    """One skill authored by the model; application keys and stage bounds are excluded."""
+    stages: list[ModelGeneratedLearningStageContent] = Field(min_length=1, max_length=2)
 
 
 class ModelGeneratedRoadmapContent(RoadmapModel):
     skills: list[ModelGeneratedSkillContent] = Field(min_length=1, max_length=1)
+
+
+class ModelGeneratedSingleStageSkillContent(RoadmapModel):
+    stages: list[ModelGeneratedLearningStageContent] = Field(
+        min_length=1, max_length=1
+    )
+
+
+class ModelGeneratedSingleStageRoadmapContent(RoadmapModel):
+    skills: list[ModelGeneratedSingleStageSkillContent] = Field(
+        min_length=1, max_length=1
+    )
+
+
+class ModelGeneratedTwoStageSkillContent(RoadmapModel):
+    stages: list[ModelGeneratedLearningStageContent] = Field(
+        min_length=2, max_length=2
+    )
+
+
+class ModelGeneratedTwoStageRoadmapContent(RoadmapModel):
+    skills: list[ModelGeneratedTwoStageSkillContent] = Field(
+        min_length=1, max_length=1
+    )
 
 
 class GeneratedSkillContent(RoadmapModel):

@@ -85,3 +85,58 @@ async def build_contextual_search_queries(
             )
             for competency in competencies
         }
+
+
+def _fallback_context(
+    competency: Competency, roadmap_context: str = ""
+) -> str:
+    evidence = " ".join(
+        source.currentEvidence or "" for source in competency.sources
+    )
+    return _normalize(" ".join(filter(None, (
+        competency.standardCompetencyName,
+        competency.category.value.replace("_", " "),
+        evidence,
+        roadmap_context,
+    ))), 700)
+
+
+async def build_competency_ranking_contexts(
+    competencies: list[Competency],
+) -> dict[str, str]:
+    """Build semantic context for disambiguating resource search and ranking."""
+    roadmap_context = _normalize(
+        "연관 역량 " + " ".join(
+            competency.standardCompetencyName for competency in competencies
+        ),
+        300,
+    )
+    try:
+        job_posting_ids = sorted({
+            source.jobPostingId
+            for competency in competencies
+            for source in competency.sources
+        })
+        skill_descriptions, posting_contexts = await asyncio.to_thread(
+            _load_search_context,
+            [competency.standardCompetencyId for competency in competencies],
+            job_posting_ids,
+        )
+        return {
+            competency.roadmapSkillKey: _normalize(" ".join(filter(None, (
+                _fallback_context(competency, roadmap_context),
+                skill_descriptions.get(competency.standardCompetencyId, ""),
+                " ".join(
+                    posting_contexts.get(source.jobPostingId, "")
+                    for source in competency.sources
+                ),
+            ))), 700)
+            for competency in competencies
+        }
+    except Exception:
+        return {
+            competency.roadmapSkillKey: _fallback_context(
+                competency, roadmap_context
+            )
+            for competency in competencies
+        }

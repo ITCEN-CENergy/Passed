@@ -19,6 +19,8 @@ public class Roadmap extends BaseTimeEntity {
     private Long id;
     @Column(name = "user_id", nullable = false)
     private Long userId;
+    @Column(name = "generation_key", columnDefinition = "text")
+    private String generationKey;
     @Column(name = "title", length = 255)
     private String title;
     @Enumerated(EnumType.STRING)

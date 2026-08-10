@@ -1,6 +1,8 @@
 package com.cenergy.passed_backend.domain.roadmap.api;
 
 import com.cenergy.passed_backend.domain.roadmap.application.LearningProgressService;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.MilestoneStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

@@ -30,6 +30,8 @@ public class Roadmap extends BaseTimeEntity {
     private BigDecimal progressRate = BigDecimal.ZERO;
     @Column(name = "estimated_end_date")
     private LocalDate estimatedEndDate;
+    @Column(name = "baseline_end_date")
+    private LocalDate baselineEndDate;
     @Column(name = "failure_reason", columnDefinition = "text")
     private String failureReason;
 
@@ -69,5 +71,23 @@ public class Roadmap extends BaseTimeEntity {
             throw new IllegalArgumentException("estimatedEndDate는 null일 수 없습니다.");
         }
         this.estimatedEndDate = estimatedEndDate;
+    }
+
+    public void initializeEndDate(LocalDate endDate) {
+        if (endDate == null) {
+            throw new IllegalArgumentException("endDate는 null일 수 없습니다.");
+        }
+        if (this.baselineEndDate != null) {
+            throw new IllegalStateException("기준 종료일은 이미 설정되었습니다.");
+        }
+        this.baselineEndDate = endDate;
+        this.estimatedEndDate = endDate;
+    }
+
+    public void updateTotalEstimatedMinutes(int totalEstimatedMinutes) {
+        if (totalEstimatedMinutes < 0) {
+            throw new IllegalArgumentException("totalEstimatedMinutes는 0 이상이어야 합니다.");
+        }
+        this.totalEstimatedMinutes = totalEstimatedMinutes;
     }
 }

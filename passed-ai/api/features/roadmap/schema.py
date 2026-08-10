@@ -165,3 +165,68 @@ class GeneratedSkillContent(RoadmapModel):
 class GeneratedRoadmapContent(RoadmapModel):
     title: str = Field(min_length=1, max_length=100)
     skills: list[GeneratedSkillContent] = Field(min_length=1, max_length=10)
+
+
+class ReplanSourceMilestone(RoadmapModel):
+    title: str = Field(min_length=1)
+    description: str
+    learningObjective: str = Field(min_length=1)
+    completionCriteria: str = Field(min_length=1)
+    startLevel: int
+    targetLevel: int
+    milestoneType: MilestoneType
+    difficulty: Difficulty
+    estimatedMinutes: int = Field(gt=0)
+
+
+class ReplanGroup(RoadmapModel):
+    groupKey: str = Field(min_length=1)
+    roadmapSkillId: int = Field(gt=0)
+    standardCompetencyId: int = Field(gt=0)
+    skillName: str = Field(min_length=1)
+    category: CompetencyCategory
+    currentLevel: int = Field(ge=1, le=3)
+    targetLevel: int = Field(ge=1, le=3)
+    assignedEstimatedMinutes: int = Field(ge=30)
+    sourceMilestones: list[ReplanSourceMilestone] = Field(min_length=1)
+
+
+class RoadmapReplanRequest(RoadmapModel):
+    roadmapId: int = Field(gt=0)
+    title: str = Field(min_length=1)
+    userInstruction: str = Field(default="", max_length=500)
+    groups: list[ReplanGroup] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_unique_groups(self) -> "RoadmapReplanRequest":
+        keys = [item.groupKey for item in self.groups]
+        if len(keys) != len(set(keys)):
+            raise ValueError("groupKey must be unique")
+        return self
+
+
+class CompressedMilestoneContent(RoadmapModel):
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=500)
+    learningObjective: str = Field(min_length=1, max_length=300)
+    completionCriteria: str = Field(min_length=1, max_length=300)
+    milestoneType: MilestoneType
+    difficulty: Difficulty
+    compressionReason: str = Field(min_length=1, max_length=300)
+
+
+class CompressedGroup(RoadmapModel):
+    groupKey: str = Field(min_length=1)
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=500)
+    learningObjective: str = Field(min_length=1, max_length=300)
+    completionCriteria: str = Field(min_length=1, max_length=300)
+    milestoneType: MilestoneType
+    difficulty: Difficulty
+    compressionReason: str = Field(min_length=1, max_length=300)
+    learningResources: list[LearningResource] = Field(default_factory=list, max_length=3)
+
+
+class RoadmapReplanResponse(RoadmapModel):
+    summary: str = Field(min_length=1, max_length=500)
+    groups: list[CompressedGroup] = Field(min_length=1)

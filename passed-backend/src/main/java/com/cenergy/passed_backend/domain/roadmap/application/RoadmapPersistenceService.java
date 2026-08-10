@@ -123,7 +123,7 @@ public class RoadmapPersistenceService {
             totalMinutes += skillMinutes;
         }
         roadmap.activate(result.title(), totalMinutes);
-        roadmap.updateEstimatedEndDate(etaCalculator.calculate(savedRoadmapMilestones));
+        roadmap.initializeEndDate(etaCalculator.calculate(savedRoadmapMilestones));
         return roadmap;
     }
 }

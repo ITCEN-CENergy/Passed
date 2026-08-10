@@ -15,7 +15,13 @@ from api.features.roadmap.exceptions import (
     RoadmapConfigurationError,
     RoadmapGenerationError,
 )
-from api.features.roadmap.schema import RoadmapGenerateRequest, RoadmapGenerateResponse
+from api.features.roadmap.schema import (
+    RoadmapGenerateRequest,
+    RoadmapGenerateResponse,
+    RoadmapReplanRequest,
+    RoadmapReplanResponse,
+)
+from api.features.roadmap.replan import replan_roadmap
 from api.features.roadmap.service import generate_roadmap
 
 
@@ -44,6 +50,23 @@ async def generate(
         raise HTTPException(
             status_code=504, detail="roadmap generation timed out"
         ) from exception
+    except APITimeoutError as exception:
+        raise HTTPException(status_code=504, detail="roadmap model timed out") from exception
+    except (APIConnectionError, InternalServerError, RateLimitError) as exception:
+        raise HTTPException(status_code=503, detail="roadmap model is unavailable") from exception
+    except RoadmapConfigurationError as exception:
+        raise HTTPException(status_code=503, detail=str(exception)) from exception
+    except (BadRequestError, RoadmapGenerationError, ValueError) as exception:
+        raise HTTPException(status_code=502, detail="roadmap model returned invalid output") from exception
+
+
+@router.post("/replan", response_model=RoadmapReplanResponse)
+async def replan(
+    request: RoadmapReplanRequest,
+    http_client: Annotated[httpx.AsyncClient, Depends(get_http_client)],
+) -> RoadmapReplanResponse:
+    try:
+        return await replan_roadmap(request, http_client=http_client)
     except APITimeoutError as exception:
         raise HTTPException(status_code=504, detail="roadmap model timed out") from exception
     except (APIConnectionError, InternalServerError, RateLimitError) as exception:

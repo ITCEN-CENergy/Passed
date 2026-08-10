@@ -8,11 +8,19 @@ from api.features.roadmap.config import get_roadmap_settings
 from api.features.roadmap.exceptions import RoadmapConfigurationError, RoadmapGenerationError
 from api.features.roadmap.resource_provider import create_resource_providers
 from api.features.roadmap.resource_search import LearningResourceSearchService
+from api.features.roadmap.resource_recommender import (
+    LearningResourceRecommender,
+    RecommendationTarget,
+    build_book_search_query,
+    build_milestone_search_query,
+    build_web_search_query,
+)
 from api.features.roadmap.schema import (
     Competency,
     RequirementType,
     CompressedGroup,
     CompressedMilestoneContent,
+    LearningResource,
     ReplanGroup,
     RoadmapReplanRequest,
     RoadmapReplanResponse,
@@ -96,8 +104,16 @@ async def replan_roadmap(
         generation_id=f"replan-{request.roadmapId}",
     )
 
-    async def recommend(group: ReplanGroup, content: CompressedMilestoneContent):
-        competency = Competency(
+    def competency_context(group: ReplanGroup) -> str:
+        return " ".join((
+            group.skillName,
+            group.category.value.replace("_", " "),
+            *(item.description for item in group.sourceMilestones),
+            *(item.learningObjective for item in group.sourceMilestones),
+        ))[:700]
+
+    def competency(group: ReplanGroup) -> Competency:
+        return Competency(
             roadmapSkillKey=group.groupKey,
             standardCompetencyId=group.standardCompetencyId,
             standardCompetencyName=group.skillName,
@@ -110,25 +126,45 @@ async def replan_roadmap(
             priority=0,
             sources=[],
         )
-        query = (
-            f"{group.skillName} {content.title} {content.learningObjective} "
-            f"{content.completionCriteria} 학습 자료 실습"
-        )
-        return (await search_service.search(competency, query))[:3]
 
-    resources = await asyncio.gather(*(
-        recommend(group, content)
+    targets = [
+        RecommendationTarget(
+            key=group.groupKey,
+            competency_name=group.skillName,
+            competency_context=competency_context(group),
+            title=content.title,
+            learning_objective=content.learningObjective,
+            completion_criteria=content.completionCriteria,
+            candidates=[],
+        )
         for group, content in zip(request.groups, contents, strict=True)
-    ))
+    ]
+    competency_by_key = {
+        group.groupKey: competency(group) for group in request.groups
+    }
+
+    async def additional_search(
+        target: RecommendationTarget,
+    ) -> list[LearningResource]:
+        return await search_service.search(
+            competency_by_key[target.key],
+            build_milestone_search_query(target),
+            provider_queries={
+                "kakao_book": build_book_search_query(target),
+                "keenable": build_web_search_query(target),
+            },
+        )
+
+    ranked = await LearningResourceRecommender(settings).recommend(
+        targets, additional_search=additional_search
+    )
     groups = [
         CompressedGroup(
             groupKey=group.groupKey,
             **content.model_dump(),
-            learningResources=group_resources,
+            learningResources=ranked[group.groupKey],
         )
-        for group, content, group_resources in zip(
-            request.groups, contents, resources, strict=True
-        )
+        for group, content in zip(request.groups, contents, strict=True)
     ]
     return RoadmapReplanResponse(
         summary=f"{len(request.groups)}개의 핵심 학습 과정으로 로드맵을 압축했습니다.",

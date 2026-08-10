@@ -1,11 +1,13 @@
+import asyncio
 import hashlib
 import html
 import re
+from time import monotonic
 from typing import Any, Protocol
 from urllib.parse import unquote
 
 import httpx
-from tavily import AsyncTavilyClient
+from fastmcp import Client
 
 from api.features.roadmap.config import RoadmapSettings
 from api.features.roadmap.schema import (
@@ -75,9 +77,28 @@ class KmoocProvider:
     def __init__(self, client: httpx.AsyncClient, settings: RoadmapSettings) -> None:
         self._client = client
         self._settings = settings
+        self._cache: dict[int, list[LearningResource]] = {}
+        self._locks: dict[int, asyncio.Lock] = {}
 
     async def search(
         self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
+        cached = self._cache.get(competency.standardCompetencyId)
+        if cached is not None:
+            return cached
+        lock = self._locks.setdefault(
+            competency.standardCompetencyId, asyncio.Lock()
+        )
+        async with lock:
+            cached = self._cache.get(competency.standardCompetencyId)
+            if cached is not None:
+                return cached
+            result = await self._search_uncached(competency)
+            self._cache[competency.standardCompetencyId] = result
+            return result
+
+    async def _search_uncached(
+        self, competency: Competency
     ) -> list[LearningResource]:
         settings = self._settings
         if not settings.kmooc_service_key or not settings.kmooc_course_list_url:
@@ -140,6 +161,8 @@ class KakaoBookProvider:
     def __init__(self, client: httpx.AsyncClient, settings: RoadmapSettings) -> None:
         self._client = client
         self._settings = settings
+        self._cache: dict[str, list[LearningResource]] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
 
     async def search(
         self, competency: Competency, search_query: str
@@ -147,9 +170,42 @@ class KakaoBookProvider:
         key = self._settings.kakao_rest_api_key
         if not key:
             return []
+        primary_query = search_query[:80].strip()
+        resources = await self._search_query(competency, primary_query, key)
+        fallback_query = (
+            f"{competency.standardCompetencyName} 학습"
+        )[:80].strip()
+        if resources or not fallback_query or fallback_query == primary_query:
+            return resources
+        return await self._search_query(competency, fallback_query, key)
+
+    async def _search_query(
+        self,
+        competency: Competency,
+        query: str,
+        key: str,
+    ) -> list[LearningResource]:
+        cached = self._cache.get(query)
+        if cached is not None:
+            return cached
+        lock = self._locks.setdefault(query, asyncio.Lock())
+        async with lock:
+            cached = self._cache.get(query)
+            if cached is not None:
+                return cached
+            resources = await self._request(competency, query, key)
+            self._cache[query] = resources
+            return resources
+
+    async def _request(
+        self,
+        competency: Competency,
+        query: str,
+        key: str,
+    ) -> list[LearningResource]:
         response = await self._client.get(
             "https://dapi.kakao.com/v3/search/book",
-            params={"query": search_query, "size": 5, "sort": "accuracy"},
+            params={"query": query, "size": 5, "sort": "accuracy"},
             headers={"Authorization": f"KakaoAK {key}"},
             timeout=self._settings.resource_search_timeout_seconds,
         )
@@ -177,43 +233,104 @@ class KakaoBookProvider:
         return result
 
 
-class TavilyProvider:
-    name = "tavily"
+class KeenableWebProvider:
+    name = "keenable"
 
-    def __init__(self, client: httpx.AsyncClient, settings: RoadmapSettings) -> None:
+    def __init__(
+        self,
+        client: httpx.AsyncClient,
+        settings: RoadmapSettings,
+        mcp_client: Any | None = None,
+    ) -> None:
         self._settings = settings
-        self._client = (
-            AsyncTavilyClient(api_key=settings.tavily_api_key, client=client)
-            if settings.tavily_api_key else None
+        self._mcp = mcp_client or Client(
+            settings.keenable_mcp_url,
+            timeout=settings.resource_search_timeout_seconds,
         )
+        self._cache: dict[str, list[LearningResource]] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
+        self._rate_lock = asyncio.Lock()
+        self._next_request_at = 0.0
 
     async def search(
         self, competency: Competency, search_query: str
     ) -> list[LearningResource]:
-        if self._client is None:
+        if not self._settings.keenable_search_enabled:
             return []
-        response = await self._client.search(
-            query=search_query,
-            search_depth="advanced",
-            max_results=5,
-            timeout=self._settings.resource_search_timeout_seconds,
+        cached = self._cache.get(search_query)
+        if cached is not None:
+            return cached
+        lock = self._locks.setdefault(search_query, asyncio.Lock())
+        async with lock:
+            cached = self._cache.get(search_query)
+            if cached is not None:
+                return cached
+            result = await self._search_uncached(search_query)
+            self._cache[search_query] = result
+            return result
+
+    async def _search_uncached(
+        self, search_query: str
+    ) -> list[LearningResource]:
+        result = None
+        for attempt in range(self._settings.keenable_max_retries + 1):
+            try:
+                await self._wait_for_rate_limit()
+                async with self._mcp:
+                    result = await self._mcp.call_tool(
+                        "search_web_pages", {"query": search_query}
+                    )
+                break
+            except Exception:
+                if attempt >= self._settings.keenable_max_retries:
+                    raise
+                await asyncio.sleep(0.5 * (2 ** attempt))
+
+        text = "\n".join(
+            str(item.text) for item in (result.content if result else [])
+            if getattr(item, "text", None)
         )
-        result = []
-        for item in response.get("results", []):
+        resources = []
+        for item in self._parse_results(text)[:5]:
             title, url = _clean(item.get("title")), _clean(item.get("url"))
             if not title or not url:
                 continue
-            result.append(LearningResource(
+            resources.append(LearningResource(
                 resourceId=_resource_id("web", url),
                 resourceType=LearningResourceType.WEB_RESOURCE,
                 title=title,
-                description=_summarize(item.get("content")),
-                provider="Web Search",
+                description=_summarize(item.get("snippet")),
+                provider="Keenable Web Search",
                 url=url,
                 authors=[],
                 isFree=True,
             ))
-        return result
+        return resources
+
+    @staticmethod
+    def _parse_results(value: str) -> list[dict[str, str]]:
+        results = []
+        for block in re.split(r"\n\s*---\s*\n", value):
+            title = re.search(r"^Title:\s*(.+)$", block, re.MULTILINE)
+            url = re.search(r"^URL:\s*(\S+)$", block, re.MULTILINE)
+            snippets = re.search(
+                r"^Snippets:\s*\n([\s\S]*)$", block, re.MULTILINE
+            )
+            if title and url:
+                results.append({
+                    "title": title.group(1).strip(),
+                    "url": url.group(1).strip(),
+                    "snippet": snippets.group(1).strip() if snippets else "",
+                })
+        return results
+
+    async def _wait_for_rate_limit(self) -> None:
+        interval = 1 / self._settings.keenable_requests_per_second
+        async with self._rate_lock:
+            now = monotonic()
+            if self._next_request_at > now:
+                await asyncio.sleep(self._next_request_at - now)
+            self._next_request_at = monotonic() + interval
 
 
 def create_resource_providers(
@@ -223,5 +340,5 @@ def create_resource_providers(
     return (
         KmoocProvider(client, settings),
         KakaoBookProvider(client, settings),
-        TavilyProvider(client, settings),
+        KeenableWebProvider(client, settings),
     )

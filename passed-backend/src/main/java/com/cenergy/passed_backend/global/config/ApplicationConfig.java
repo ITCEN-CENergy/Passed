@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.global.config;
 
 import com.cenergy.passed_backend.domain.auth.service.UserDetailService;
+import com.cenergy.passed_backend.domain.auth.repository.UserAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

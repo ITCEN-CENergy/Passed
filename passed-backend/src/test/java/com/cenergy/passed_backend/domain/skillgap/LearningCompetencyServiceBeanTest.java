@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.skillgap;
 
-import com.cenergy.passed_backend.domain.skillgap.application.AiLearningCompetencyService;
+import com.cenergy.passed_backend.domain.skillgap.application.JpaLearningCompetencyService;
 import com.cenergy.passed_backend.domain.skillgap.application.LearningCompetencyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ class LearningCompetencyServiceBeanTest {
     private LearningCompetencyService learningCompetencyService;
 
     @Test
-    void usesAiLearningCompetencyService() {
-        assertThat(learningCompetencyService).isInstanceOf(AiLearningCompetencyService.class);
+    void usesJpaLearningCompetencyService() {
+        assertThat(learningCompetencyService).isInstanceOf(JpaLearningCompetencyService.class);
     }
 }

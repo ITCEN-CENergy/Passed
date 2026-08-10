@@ -117,8 +117,8 @@ public class RoadmapAiResponseValidator {
                     "requested CERTIFICATION competency must be 0 to 1 or 1 to 1");
             return;
         }
-        invalidIf(competency.currentLevel() < 1 || competency.currentLevel() > 3,
-                "requested currentLevel must be between 1 and 3");
+        invalidIf(competency.currentLevel() < 0 || competency.currentLevel() > 3,
+                "requested currentLevel must be between 0 and 3");
         invalidIf(competency.targetLevel() < 1 || competency.targetLevel() > 3,
                 "requested targetLevel must be between 1 and 3");
         invalidIf(competency.currentLevel() > competency.targetLevel(),
@@ -132,10 +132,6 @@ public class RoadmapAiResponseValidator {
         boolean certification = competency.category() == CompetencyCategory.CERTIFICATION;
         invalidIf(certification != (milestone.milestoneType() == MilestoneType.CERTIFICATION),
                 "milestoneType does not match competency category");
-        if (!certification) {
-            invalidIf(milestone.startLevel() < 1,
-                    "non-certification startLevel must be at least 1");
-        }
     }
 
     private void validateLevelPath(

@@ -43,36 +43,37 @@ public class LearningCompetencyResponseValidator {
                 "standardCompetencyName must not be blank");
         invalidIf(gap.category() == null, "category must not be null");
         invalidIf(gap.requirementType() == null, "requirementType must not be null");
-        requireNonNegative(gap.currentLevel(), "currentLevel");
         requireNonNegative(gap.targetLevel(), "targetLevel");
         invalidIf(!competencyIds.add(gap.standardCompetencyId()), "duplicate standardCompetencyId");
 
-        int calculatedGapLevel = Math.max(gap.targetLevel() - gap.currentLevel(), 0);
-        validateCertification(gap, calculatedGapLevel);
-        validateGeneralCompetency(gap);
+        int currentLevel = gap.currentLevel() == null ? 0 : gap.currentLevel();
+        requireNonNegative(currentLevel, "currentLevel");
+        int calculatedGapLevel = Math.max(gap.targetLevel() - currentLevel, 0);
+        validateCertification(gap, currentLevel, calculatedGapLevel);
+        validateGeneralCompetency(gap, currentLevel);
 
         return new ValidatedCompetencyGap(
                 gap.standardCompetencyId(), gap.standardCompetencyName(), gap.category(), gap.requirementType(),
-                gap.currentLevel(), gap.targetLevel(), calculatedGapLevel, gap.currentLevelEvidence());
+                currentLevel, gap.targetLevel(), calculatedGapLevel, gap.currentLevelEvidence());
     }
 
-    private void validateCertification(LearningCompetencyItem gap, int calculatedGapLevel) {
+    private void validateCertification(LearningCompetencyItem gap, int currentLevel, int calculatedGapLevel) {
         if (gap.category() != CompetencyCategory.CERTIFICATION) {
             return;
         }
-        invalidIf((gap.currentLevel() != 0 && gap.currentLevel() != 1)
+        invalidIf((currentLevel != 0 && currentLevel != 1)
                         || gap.targetLevel() != 1
                         || (calculatedGapLevel != 0 && calculatedGapLevel != 1),
                 "invalid CERTIFICATION levels");
     }
 
-    private void validateGeneralCompetency(LearningCompetencyItem gap) {
+    private void validateGeneralCompetency(LearningCompetencyItem gap, int currentLevel) {
         if (gap.category() == CompetencyCategory.CERTIFICATION) {
             return;
         }
-        invalidIf(gap.currentLevel() < 1 || gap.currentLevel() > 3
+        invalidIf(currentLevel < 0 || currentLevel > 3
                         || gap.targetLevel() < 1 || gap.targetLevel() > 3,
-                "non-certification levels must be between 1 and 3");
+                "non-certification currentLevel must be between 0 and 3 and targetLevel between 1 and 3");
     }
 
     private void requirePositive(Long value, String field) {

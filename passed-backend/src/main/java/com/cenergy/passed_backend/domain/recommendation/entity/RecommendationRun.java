@@ -97,6 +97,28 @@ public class RecommendationRun {
         return run;
     }
 
+    public void complete() {
+        requireProcessing();
+        status = RecommendationRunStatus.COMPLETED;
+        completedAt = OffsetDateTime.now();
+        failureMessage = null;
+    }
+
+    public void fail(String message) {
+        requireProcessing();
+        status = RecommendationRunStatus.FAILED;
+        completedAt = OffsetDateTime.now();
+        failureMessage = message == null || message.isBlank()
+                ? "Recommendation execution failed"
+                : message;
+    }
+
+    private void requireProcessing() {
+        if (status != RecommendationRunStatus.PROCESSING) {
+            throw new IllegalStateException("Recommendation run must be processing");
+        }
+    }
+
     private static String requireSnapshotHash(String value) {
         if (value == null || !value.matches("^[0-9a-f]{64}$")) {
             throw new IllegalArgumentException("userSkillSnapshotHash must be a lowercase SHA-256 hash");

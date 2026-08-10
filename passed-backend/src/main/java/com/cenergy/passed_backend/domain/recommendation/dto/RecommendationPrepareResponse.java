@@ -12,6 +12,8 @@ public record RecommendationPrepareResponse(
         int gradeRuleCount,
         int userSkillCount,
         int importantSkillCount,
+        int candidatePostingCount,
+        int requiredQualifiedPostingCount,
         String userSkillSnapshotHash,
         Long industryId,
         List<Long> jobRoleIds

@@ -44,7 +44,7 @@ public class CompetencyGapMergeService {
         Map<SourceKey, CompetencyGapSource> uniqueSources = new LinkedHashMap<>();
         for (CompetencyGapMergeInput input : inputs) {
             validateInput(input);
-            for (ValidatedCompetencyGap gap : input.competencyGaps()) {
+            for (ValidatedCompetencyGap gap : input.competencies()) {
                 validateGap(gap);
                 CompetencyGapSource source = toSource(input, gap);
                 SourceKey key = new SourceKey(input.jobPostingId(), gap.standardCompetencyId());
@@ -60,8 +60,6 @@ public class CompetencyGapMergeService {
 
         List<MergedCandidate> candidates = sourcesByCompetency.values().stream()
                 .map(this::mergeGroup)
-                .filter(candidate -> candidate.gapLevel() > 0
-                        && candidate.targetLevel() > candidate.currentLevel())
                 .sorted(RESULT_ORDER)
                 .toList();
 
@@ -115,7 +113,7 @@ public class CompetencyGapMergeService {
         invalidIf(input == null, "merge input item must not be null");
         invalidIf(input.jobPostingId() == null || input.jobPostingId() <= 0,
                 "jobPostingId must be positive");
-        invalidIf(input.competencyGaps() == null, "competencyGaps must not be null");
+        invalidIf(input.competencies() == null, "competencies must not be null");
     }
 
     private void validateGap(ValidatedCompetencyGap gap) {

@@ -20,13 +20,16 @@ public class RoadmapProgressSynchronizer {
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
     private final RoadmapSkillRepository roadmapSkillRepository;
     private final RoadmapRepository roadmapRepository;
+    private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapProgressSynchronizer(RoadmapMilestoneRepository roadmapMilestoneRepository,
                                        RoadmapSkillRepository roadmapSkillRepository,
-                                       RoadmapRepository roadmapRepository) {
+                                       RoadmapRepository roadmapRepository,
+                                       RoadmapEtaCalculator etaCalculator) {
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
         this.roadmapSkillRepository = roadmapSkillRepository;
         this.roadmapRepository = roadmapRepository;
+        this.etaCalculator = etaCalculator;
     }
 
     public void synchronizeByMilestone(Long milestoneId) {
@@ -57,7 +60,32 @@ public class RoadmapProgressSynchronizer {
             List<RoadmapMilestone> roadmapLinks = roadmapSkillIds.isEmpty() ? List.of()
                     : roadmapMilestoneRepository.findAllByRoadmapSkillIds(roadmapSkillIds);
             roadmap.updateProgressRate(calculate(roadmapLinks));
+            roadmap.updateEstimatedEndDate(etaCalculator.calculate(roadmapLinks));
         }
+    }
+
+    public void synchronizeRoadmap(Long roadmapId) {
+        Roadmap roadmap = roadmapRepository.findById(roadmapId).orElse(null);
+        if (roadmap == null) return;
+        List<RoadmapSkill> skills = roadmapSkillRepository
+                .findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId);
+        List<Long> skillIds = skills.stream().map(RoadmapSkill::getId).toList();
+        List<RoadmapMilestone> links = skillIds.isEmpty() ? List.of()
+                : roadmapMilestoneRepository.findAllByRoadmapSkillIds(skillIds);
+        Map<Long, List<RoadmapMilestone>> bySkill = links.stream()
+                .collect(Collectors.groupingBy(link -> link.getRoadmapSkill().getId()));
+        for (RoadmapSkill skill : skills) {
+            List<RoadmapMilestone> skillLinks = bySkill.getOrDefault(skill.getId(), List.of());
+            skill.updateProgressRate(calculate(skillLinks));
+            skill.updateEstimatedMinutes(skillLinks.stream()
+                    .filter(RoadmapMilestone::isRequired)
+                    .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
+        }
+        roadmap.updateTotalEstimatedMinutes(links.stream()
+                .filter(RoadmapMilestone::isRequired)
+                .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
+        roadmap.updateProgressRate(calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
     }
 
     private BigDecimal calculate(Collection<RoadmapMilestone> links) {

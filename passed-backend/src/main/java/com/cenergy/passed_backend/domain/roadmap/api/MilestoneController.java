@@ -1,6 +1,8 @@
 package com.cenergy.passed_backend.domain.roadmap.api;
 
 import com.cenergy.passed_backend.domain.roadmap.application.LearningProgressService;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

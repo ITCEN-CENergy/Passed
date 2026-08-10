@@ -89,7 +89,7 @@ public record RoadmapGenerationResult(String title, List<Skill> skills) {
     public record LearningResource(String resourceId, String resourceType, String title,
                                    String description, String provider, String url,
                                    String thumbnailUrl, List<String> authors,
-                                   boolean isOfficial, Boolean isFree) {
+                                   Boolean isFree) {
         public LearningResource {
             authors = List.copyOf(authors);
         }
@@ -97,7 +97,7 @@ public record RoadmapGenerationResult(String title, List<Skill> skills) {
         private static LearningResource from(ValidatedLearningResource value) {
             return new LearningResource(value.resourceId(), value.resourceType(), value.title(),
                     value.description(), value.provider(), value.url(), value.thumbnailUrl(),
-                    value.authors(), value.isOfficial(), value.isFree());
+                    value.authors(), value.isFree());
         }
     }
 }

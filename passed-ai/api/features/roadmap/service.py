@@ -18,6 +18,8 @@ from api.features.roadmap.schema import (
     GeneratedRoadmapContent,
     GeneratedResourceRecommendation,
     GeneratedSkillContent,
+    ModelGeneratedRoadmapContent,
+    ModelGeneratedSkillContent,
     LearningResource,
     Milestone,
     LearningStage,
@@ -28,6 +30,7 @@ from api.features.roadmap.schema import (
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
 from api.features.roadmap.resource_provider import create_resource_providers
+from api.features.roadmap.resource_query import build_contextual_search_queries
 from api.features.roadmap.validator import (
     remove_unknown_resource_recommendations,
     validate_generated_content,
@@ -35,6 +38,7 @@ from api.features.roadmap.validator import (
 
 
 logger = logging.getLogger(__name__)
+CONTENT_GENERATION_MAX_CONCURRENCY = 4
 
 
 class RoadmapContentGenerator(Protocol):
@@ -43,7 +47,7 @@ class RoadmapContentGenerator(Protocol):
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent: ...
+    ) -> ModelGeneratedRoadmapContent: ...
 
 
 class FakeRoadmapContentGenerator:
@@ -52,25 +56,18 @@ class FakeRoadmapContentGenerator:
         competencies: list[Competency],
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
-    ) -> GeneratedRoadmapContent:
+    ) -> ModelGeneratedRoadmapContent:
         skills = []
         for competency in competencies:
-            stages = [
-                GeneratedLearningStage(
-                    startLevel=stage.startLevel,
-                    targetLevel=stage.targetLevel,
+            stage = stages_by_key[competency.roadmapSkillKey][0]
+            skills.append(
+                ModelGeneratedSkillContent(
                     milestones=self._contents(
                         competency, stage, resources_by_key.get(competency.roadmapSkillKey, [])
-                    ),
-                )
-                for stage in stages_by_key[competency.roadmapSkillKey]
-            ]
-            skills.append(
-                GeneratedSkillContent(
-                    roadmapSkillKey=competency.roadmapSkillKey, stages=stages
+                    )
                 )
             )
-        return GeneratedRoadmapContent(title="개인 맞춤 역량 강화 로드맵", skills=skills)
+        return ModelGeneratedRoadmapContent(skills=skills)
 
     def _contents(
         self, competency: Competency, stage: LearningStage,
@@ -164,6 +161,58 @@ def _generator(settings: RoadmapSettings) -> RoadmapContentGenerator:
     return FakeRoadmapContentGenerator()
 
 
+def build_roadmap_title(competencies: list[Competency]) -> str:
+    names = [item.standardCompetencyName for item in competencies]
+    if len(names) == 1:
+        return f"{names[0]} 학습 로드맵"
+    return f"{names[0]}·{names[1]} 중심 직무 역량 강화 로드맵"
+
+
+async def _generate_content_in_batches(
+    generator: RoadmapContentGenerator,
+    competencies: list[Competency],
+    stages_by_key: dict[str, list[LearningStage]],
+    resources_by_key: dict[str, list[LearningResource]],
+) -> GeneratedRoadmapContent:
+    """Generate only milestone text; bind competency keys and stage bounds in code."""
+    semaphore = asyncio.Semaphore(CONTENT_GENERATION_MAX_CONCURRENCY)
+
+    async def generate_stage(
+        competency: Competency, stage: LearningStage
+    ) -> GeneratedLearningStage:
+        key = competency.roadmapSkillKey
+        async with semaphore:
+            model_content = await generator.generate(
+                [competency],
+                {key: [stage]},
+                {key: resources_by_key.get(key, [])},
+            )
+        if len(model_content.skills) != 1:
+            raise ValueError("single stage generation must return exactly one skill")
+        return GeneratedLearningStage(
+            startLevel=stage.startLevel,
+            targetLevel=stage.targetLevel,
+            milestones=model_content.skills[0].milestones,
+        )
+
+    generated_skills: list[GeneratedSkillContent] = []
+    for competency in competencies:
+        key = competency.roadmapSkillKey
+        generated_stages = await asyncio.gather(*(
+            generate_stage(competency, stage)
+            for stage in stages_by_key[key]
+        ))
+        generated_skills.append(GeneratedSkillContent(
+            roadmapSkillKey=key,
+            stages=generated_stages,
+        ))
+
+    return GeneratedRoadmapContent(
+        title=build_roadmap_title(competencies),
+        skills=generated_skills,
+    )
+
+
 async def generate_roadmap(
     request: RoadmapGenerateRequest,
     generator: RoadmapContentGenerator | None = None,
@@ -252,8 +301,11 @@ async def _generate_roadmap(
         max_concurrency=settings.resource_search_max_concurrency,
         generation_id=generation_id,
     )
+    search_queries = await build_contextual_search_queries(request.competencies)
     search_results = await asyncio.gather(*(
-        search_service.search(competency)
+        search_service.search(
+            competency, search_queries[competency.roadmapSkillKey]
+        )
         for competency in request.competencies
     ))
     resources_by_key = {
@@ -288,7 +340,8 @@ async def _generate_roadmap(
     )
     content_generator = generator or _generator(settings)
     generator_started = perf_counter()
-    generated = await content_generator.generate(
+    generated = await _generate_content_in_batches(
+        content_generator,
         request.competencies,
         stages_by_key,
         resources_by_key,

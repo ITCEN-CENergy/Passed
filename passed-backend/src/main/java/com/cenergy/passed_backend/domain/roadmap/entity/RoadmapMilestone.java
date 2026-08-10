@@ -48,4 +48,9 @@ public class RoadmapMilestone extends CreatedAtEntity {
     public static RoadmapMilestone create() {
         return new RoadmapMilestone();
     }
+
+    public void reorder(int learningOrder) {
+        if (learningOrder <= 0) throw new IllegalArgumentException("learningOrder must be positive");
+        this.learningOrder = learningOrder;
+    }
 }

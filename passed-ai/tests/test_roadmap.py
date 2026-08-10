@@ -8,8 +8,13 @@ from fastapi.testclient import TestClient
 os.environ["ROADMAP_GENERATOR"] = "fake"
 os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
-from main import app
+from app.main import app
 from api.features.roadmap.schema import LearningResource
+from api.features.roadmap.schema import ModelGeneratedSkillContent, RoadmapGenerateRequest
+from api.features.roadmap.service import (
+    FakeRoadmapContentGenerator,
+    generate_roadmap,
+)
 
 
 client = TestClient(app)
@@ -54,7 +59,7 @@ def test_generate_normal_request() -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["title"] == "개인 맞춤 역량 강화 로드맵"
+    assert body["title"] == "Docker 학습 로드맵"
     assert body["skills"][0]["roadmapSkillKey"] == "competency-1"
     assert len(body["skills"][0]["milestones"]) == 6
 
@@ -72,6 +77,69 @@ def test_generate_multiple_competencies_in_request_order() -> None:
         "docker",
         "aws",
     ]
+    assert response.json()["title"] == "Docker·AWS 중심 직무 역량 강화 로드맵"
+
+
+@pytest.mark.asyncio
+async def test_content_generation_runs_per_stage_without_losing_competency_keys() -> None:
+    class RecordingGenerator(FakeRoadmapContentGenerator):
+        def __init__(self) -> None:
+            self.batch_sizes: list[int] = []
+            self.stage_sizes: list[int] = []
+
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            self.batch_sizes.append(len(competencies))
+            self.stage_sizes.append(len(next(iter(stages_by_key.values()))))
+            return await super().generate(competencies, stages_by_key, resources_by_key)
+
+    generator = RecordingGenerator()
+    items = [
+        competency(key=f"competency-{index}", name=f"Skill {index}")
+        for index in range(1, 11)
+    ]
+    request = RoadmapGenerateRequest.model_validate(request_with(*items))
+
+    response = await generate_roadmap(request, generator=generator)
+
+    assert generator.batch_sizes == [1] * 20
+    assert generator.stage_sizes == [1] * 20
+    assert [skill.roadmapSkillKey for skill in response.skills] == [
+        f"competency-{index}" for index in range(1, 11)
+    ]
+
+
+@pytest.mark.asyncio
+async def test_model_schema_excludes_key_and_business_logic_binds_it() -> None:
+    generator = FakeRoadmapContentGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(key="expected-key"))
+    )
+
+    response = await generate_roadmap(request, generator=generator)
+
+    assert "roadmapSkillKey" not in ModelGeneratedSkillContent.model_fields
+    assert response.skills[0].roadmapSkillKey == "expected-key"
+
+
+@pytest.mark.asyncio
+async def test_same_milestone_titles_are_allowed_in_different_stages() -> None:
+    class RepeatingTitleGenerator(FakeRoadmapContentGenerator):
+        def _contents(self, competency, stage, resources):
+            contents = super()._contents(competency, stage, resources)
+            for content, title in zip(contents, ["핵심 개념", "단계별 실습", "실전 과제"]):
+                content.title = title
+            return contents
+
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+
+    response = await generate_roadmap(request, generator=RepeatingTitleGenerator())
+
+    assert [item.title for item in response.skills[0].milestones] == [
+        "핵심 개념", "단계별 실습", "실전 과제",
+        "핵심 개념", "단계별 실습", "실전 과제",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -80,6 +148,7 @@ def test_generate_multiple_competencies_in_request_order() -> None:
         (1, 2, [(1, 2), (1, 2), (1, 2)]),
         (2, 3, [(2, 3), (2, 3), (2, 3)]),
         (1, 3, [(1, 2), (1, 2), (1, 2), (2, 3), (2, 3), (2, 3)]),
+        (3, 3, [(3, 3), (3, 3), (3, 3)]),
     ],
 )
 def test_milestones_connect_each_level(
@@ -149,6 +218,26 @@ def test_certification_can_have_multiple_milestones_in_fixed_level_stage() -> No
     assert [item["learningOrder"] for item in milestones] == [1, 2, 3]
 
 
+def test_achieved_certification_gets_reinforcement_milestones() -> None:
+    payload = request_with(
+        competency(
+            key="certification-1",
+            name="SQLD",
+            category="CERTIFICATION",
+            current_level=1,
+            target_level=1,
+        )
+    )
+
+    response = client.post("/api/v1/roadmaps/generate", json=payload)
+
+    assert response.status_code == 200
+    milestones = response.json()["skills"][0]["milestones"]
+    assert len(milestones) == 3
+    assert all(item["startLevel"] == item["targetLevel"] == 1 for item in milestones)
+    assert all(item["milestoneType"] == "CERTIFICATION" for item in milestones)
+
+
 def test_same_request_returns_same_response() -> None:
     payload = request_with(competency(current_level=1, target_level=3))
 
@@ -176,11 +265,6 @@ def test_nullable_current_evidence_is_accepted() -> None:
         request_with(competency(current_level=-1, target_level=1)),
         request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
-        request_with(
-            competency(
-                category="CERTIFICATION", current_level=1, target_level=1
-            )
-        ),
         request_with(competency(name="   ")),
     ],
 )
@@ -266,10 +350,9 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         provider="테스트 출판사",
         url="https://example.com/docker",
         authors=["홍길동"],
-        isOfficial=False,
         isFree=None,
     )
-    async def search_resources(self, competency):
+    async def search_resources(self, competency, search_query=None):
         return [resource]
 
     monkeypatch.setattr(

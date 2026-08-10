@@ -82,7 +82,7 @@ public class RoadmapAiResponseValidator {
         }
 
         if (competency.category() == CompetencyCategory.CERTIFICATION) {
-            validateCertification(milestones);
+            validateCertification(competency, milestones);
         } else {
             validateLevelPath(competency, milestones);
         }
@@ -104,24 +104,25 @@ public class RoadmapAiResponseValidator {
                 "startLevel must be non-negative");
         invalidIf(milestone.targetLevel() == null || milestone.targetLevel() > 3,
                 "targetLevel must not exceed 3");
-        invalidIf(milestone.targetLevel() == null || milestone.targetLevel() <= milestone.startLevel(),
-                "targetLevel must be greater than startLevel");
+        invalidIf(milestone.targetLevel() == null || milestone.targetLevel() < milestone.startLevel(),
+                "targetLevel must be greater than or equal to startLevel");
     }
 
     private void validateRequestedLevels(RoadmapAiRequest.Competency competency) {
         invalidIf(competency.currentLevel() == null || competency.targetLevel() == null,
                 "requested levels must not be null");
         if (competency.category() == CompetencyCategory.CERTIFICATION) {
-            invalidIf(competency.currentLevel() != 0 || competency.targetLevel() != 1,
-                    "requested CERTIFICATION gap must be 0 to 1");
+            invalidIf((competency.currentLevel() != 0 && competency.currentLevel() != 1)
+                            || competency.targetLevel() != 1,
+                    "requested CERTIFICATION competency must be 0 to 1 or 1 to 1");
             return;
         }
         invalidIf(competency.currentLevel() < 1 || competency.currentLevel() > 3,
                 "requested currentLevel must be between 1 and 3");
         invalidIf(competency.targetLevel() < 1 || competency.targetLevel() > 3,
                 "requested targetLevel must be between 1 and 3");
-        invalidIf(competency.currentLevel() >= competency.targetLevel(),
-                "requested currentLevel must be less than targetLevel");
+        invalidIf(competency.currentLevel() > competency.targetLevel(),
+                "requested currentLevel must not exceed targetLevel");
     }
 
     private void validateMilestoneType(
@@ -147,6 +148,15 @@ public class RoadmapAiResponseValidator {
                 "first startLevel does not match request");
         invalidIf(milestones.getLast().targetLevel() != competency.targetLevel(),
                 "last targetLevel does not match request");
+        if (competency.currentLevel().equals(competency.targetLevel())) {
+            for (ValidatedRoadmapMilestone milestone : milestones) {
+                invalidIf(milestone.startLevel() != competency.currentLevel()
+                                || milestone.targetLevel() != competency.targetLevel(),
+                        "reinforcement milestone must remain at the requested level");
+            }
+            validateStageCount(milestones.size());
+            return;
+        }
         int currentStageStart = competency.currentLevel();
         int currentStageCount = 0;
         for (ValidatedRoadmapMilestone milestone : milestones) {
@@ -165,10 +175,14 @@ public class RoadmapAiResponseValidator {
         validateStageCount(currentStageCount);
     }
 
-    private void validateCertification(List<ValidatedRoadmapMilestone> milestones) {
+    private void validateCertification(
+            RoadmapAiRequest.Competency competency,
+            List<ValidatedRoadmapMilestone> milestones
+    ) {
         validateStageCount(milestones.size());
         for (ValidatedRoadmapMilestone milestone : milestones) {
-            invalidIf(milestone.startLevel() != 0 || milestone.targetLevel() != 1
+            invalidIf(milestone.startLevel() != competency.currentLevel()
+                            || milestone.targetLevel() != competency.targetLevel()
                             || milestone.milestoneType() != MilestoneType.CERTIFICATION,
                     "invalid CERTIFICATION milestone");
         }
@@ -212,8 +226,7 @@ public class RoadmapAiResponseValidator {
             validated.add(new ValidatedLearningResource(
                     resource.resourceId(), resource.resourceType(), resource.title(),
                     resource.description() == null ? "" : resource.description(), resource.provider(),
-                    resource.url(), resource.thumbnailUrl(), resource.authors(),
-                    Boolean.TRUE.equals(resource.isOfficial()), resource.isFree()
+                    resource.url(), resource.thumbnailUrl(), resource.authors(), resource.isFree()
             ));
         }
         return validated;

@@ -6,8 +6,8 @@ import com.cenergy.passed_backend.domain.roadmap.skillgap.merge.CompetencyGapMer
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.CompetencyGapMergeInput;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.MergedCompetencyGap;
 import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedSkillGapResult;
-import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.SkillGapResponseValidator;
-import com.cenergy.passed_backend.domain.skillgap.application.SkillGapService;
+import com.cenergy.passed_backend.domain.roadmap.skillgap.validation.LearningCompetencyResponseValidator;
+import com.cenergy.passed_backend.domain.skillgap.application.LearningCompetencyService;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +16,19 @@ import java.util.List;
 
 @Service
 public class RoadmapGenerationService {
-    private final SkillGapService skillGapService;
-    private final SkillGapResponseValidator skillGapValidator;
+    private static final int MAX_ROADMAP_COMPETENCIES = 10;
+
+    private final LearningCompetencyService learningCompetencyService;
+    private final LearningCompetencyResponseValidator learningCompetencyValidator;
     private final CompetencyGapMergeService mergeService;
     private final RoadmapAiClient aiClient;
 
-    public RoadmapGenerationService(SkillGapService skillGapService,
-                                    SkillGapResponseValidator skillGapValidator,
+    public RoadmapGenerationService(LearningCompetencyService learningCompetencyService,
+                                    LearningCompetencyResponseValidator learningCompetencyValidator,
                                     CompetencyGapMergeService mergeService,
                                     RoadmapAiClient aiClient) {
-        this.skillGapService = skillGapService;
-        this.skillGapValidator = skillGapValidator;
+        this.learningCompetencyService = learningCompetencyService;
+        this.learningCompetencyValidator = learningCompetencyValidator;
         this.mergeService = mergeService;
         this.aiClient = aiClient;
     }
@@ -34,15 +36,18 @@ public class RoadmapGenerationService {
     public RoadmapGenerationResult generate(Long userId, List<Long> jobPostingIds) {
         List<CompetencyGapMergeInput> inputs = new ArrayList<>();
         for (Long jobPostingId : jobPostingIds) {
-            ValidatedSkillGapResult validated = skillGapValidator.validate(userId, jobPostingId,
-                    skillGapService.getCompetencyGaps(jobPostingId, userId));
-            inputs.add(new CompetencyGapMergeInput(jobPostingId, null, validated.competencyGaps()));
+            ValidatedSkillGapResult validated = learningCompetencyValidator.validate(userId, jobPostingId,
+                    learningCompetencyService.getLearningCompetencies(jobPostingId, userId));
+            inputs.add(new CompetencyGapMergeInput(jobPostingId, null, validated.competencies()));
         }
-        List<MergedCompetencyGap> gaps = mergeService.merge(inputs);
-        if (gaps.isEmpty()) {
+        List<MergedCompetencyGap> mergedGaps = mergeService.merge(inputs);
+        if (mergedGaps.isEmpty()) {
             throw new RoadmapException(ErrorCode.ROADMAP_NO_COMPETENCY_TO_LEARN,
                     "No competency gap to learn");
         }
+        List<MergedCompetencyGap> gaps = mergedGaps.stream()
+                .limit(MAX_ROADMAP_COMPETENCIES)
+                .toList();
         return RoadmapGenerationResult.combine(gaps,
                 aiClient.generate(RoadmapAiRequest.from(userId, gaps)));
     }

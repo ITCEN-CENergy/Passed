@@ -114,6 +114,42 @@ async def test_content_generation_runs_per_competency_with_global_concurrency() 
 
 
 @pytest.mark.asyncio
+async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> None:
+    state = {"generated": False, "searches": 0}
+
+    class TrackingGenerator(FakeRoadmapContentGenerator):
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            assert resources_by_key == {
+                competencies[0].roadmapSkillKey: []
+            }
+            result = await super().generate(
+                competencies, stages_by_key, resources_by_key
+            )
+            state["generated"] = True
+            return result
+
+    async def search_after_generation(
+        self, competency, search_query=None, provider_queries=None
+    ):
+        assert state["generated"] is True
+        assert "Docker" in search_query
+        state["searches"] += 1
+        return []
+
+    monkeypatch.setattr(
+        "api.features.roadmap.service.LearningResourceSearchService.search",
+        search_after_generation,
+    )
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+
+    await generate_roadmap(request, generator=TrackingGenerator())
+
+    assert state["searches"] == 6
+
+
+@pytest.mark.asyncio
 async def test_invalid_competency_batch_falls_back_to_per_stage(caplog) -> None:
     class MissingStageGenerator(FakeRoadmapContentGenerator):
         def __init__(self) -> None:
@@ -428,7 +464,9 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         authors=["홍길동"],
         isFree=None,
     )
-    async def search_resources(self, competency, search_query=None):
+    async def search_resources(
+        self, competency, search_query=None, provider_queries=None
+    ):
         return [resource]
 
     monkeypatch.setattr(

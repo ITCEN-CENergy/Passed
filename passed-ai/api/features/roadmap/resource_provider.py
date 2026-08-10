@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import html
 import re
@@ -75,9 +76,28 @@ class KmoocProvider:
     def __init__(self, client: httpx.AsyncClient, settings: RoadmapSettings) -> None:
         self._client = client
         self._settings = settings
+        self._cache: dict[int, list[LearningResource]] = {}
+        self._locks: dict[int, asyncio.Lock] = {}
 
     async def search(
         self, competency: Competency, search_query: str
+    ) -> list[LearningResource]:
+        cached = self._cache.get(competency.standardCompetencyId)
+        if cached is not None:
+            return cached
+        lock = self._locks.setdefault(
+            competency.standardCompetencyId, asyncio.Lock()
+        )
+        async with lock:
+            cached = self._cache.get(competency.standardCompetencyId)
+            if cached is not None:
+                return cached
+            result = await self._search_uncached(competency)
+            self._cache[competency.standardCompetencyId] = result
+            return result
+
+    async def _search_uncached(
+        self, competency: Competency
     ) -> list[LearningResource]:
         settings = self._settings
         if not settings.kmooc_service_key or not settings.kmooc_course_list_url:
@@ -140,6 +160,8 @@ class KakaoBookProvider:
     def __init__(self, client: httpx.AsyncClient, settings: RoadmapSettings) -> None:
         self._client = client
         self._settings = settings
+        self._cache: dict[str, list[LearningResource]] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
 
     async def search(
         self, competency: Competency, search_query: str
@@ -147,9 +169,42 @@ class KakaoBookProvider:
         key = self._settings.kakao_rest_api_key
         if not key:
             return []
+        primary_query = search_query[:80].strip()
+        resources = await self._search_query(competency, primary_query, key)
+        fallback_query = (
+            f"{competency.standardCompetencyName} 학습"
+        )[:80].strip()
+        if resources or not fallback_query or fallback_query == primary_query:
+            return resources
+        return await self._search_query(competency, fallback_query, key)
+
+    async def _search_query(
+        self,
+        competency: Competency,
+        query: str,
+        key: str,
+    ) -> list[LearningResource]:
+        cached = self._cache.get(query)
+        if cached is not None:
+            return cached
+        lock = self._locks.setdefault(query, asyncio.Lock())
+        async with lock:
+            cached = self._cache.get(query)
+            if cached is not None:
+                return cached
+            resources = await self._request(competency, query, key)
+            self._cache[query] = resources
+            return resources
+
+    async def _request(
+        self,
+        competency: Competency,
+        query: str,
+        key: str,
+    ) -> list[LearningResource]:
         response = await self._client.get(
             "https://dapi.kakao.com/v3/search/book",
-            params={"query": search_query, "size": 5, "sort": "accuracy"},
+            params={"query": query, "size": 5, "sort": "accuracy"},
             headers={"Authorization": f"KakaoAK {key}"},
             timeout=self._settings.resource_search_timeout_seconds,
         )

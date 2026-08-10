@@ -90,6 +90,48 @@ async def test_kakao_book_response_is_normalized() -> None:
 
 
 @pytest.mark.asyncio
+async def test_kakao_book_falls_back_to_competency_and_caches_result() -> None:
+    queries = []
+
+    def handle_request(request: httpx.Request) -> httpx.Response:
+        query = request.url.params["query"]
+        queries.append(query)
+        documents = [] if query != "Docker 학습" else [{
+            "title": "Docker 입문",
+            "contents": "컨테이너 기초",
+            "url": "https://example.com/docker-book",
+            "isbn": "docker-1",
+            "authors": [],
+            "publisher": "테스트 출판사",
+            "thumbnail": "",
+        }]
+        return httpx.Response(200, request=request, json={"documents": documents})
+
+    settings = RoadmapSettings(
+        ROADMAP_RESOURCE_SEARCH_ENABLED=True,
+        KAKAO_REST_API_KEY="key",
+        KMOOC_SERVICE_KEY=None,
+        TAVILY_API_KEY=None,
+    )
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle_request)) as client:
+        service = LearningResourceSearchService(
+            create_resource_providers(client, settings), enabled=True
+        )
+        first = await service.search(
+            _competency(),
+            provider_queries={"kakao_book": "Docker 네트워크 실습"},
+        )
+        second = await service.search(
+            _competency(),
+            provider_queries={"kakao_book": "Docker 네트워크 실습"},
+        )
+
+    assert [item.title for item in first] == ["Docker 입문"]
+    assert [item.title for item in second] == ["Docker 입문"]
+    assert queries == ["Docker 네트워크 실습", "Docker 학습"]
+
+
+@pytest.mark.asyncio
 async def test_provider_failure_does_not_fail_search(caplog) -> None:
     def failed_get(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("unavailable")

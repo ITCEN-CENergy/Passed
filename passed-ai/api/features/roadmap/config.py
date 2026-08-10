@@ -24,6 +24,12 @@ class RoadmapSettings(BaseSettings):
         ge=1,
         alias="ROADMAP_RESOURCE_SEARCH_MAX_CONCURRENCY",
     )
+    resource_recommendation_limit: int = Field(
+        default=3,
+        ge=1,
+        le=3,
+        alias="ROADMAP_RESOURCE_RECOMMENDATION_LIMIT",
+    )
     generation_total_timeout_seconds: float = Field(
         default=300, gt=0, alias="ROADMAP_GENERATION_TOTAL_TIMEOUT_SECONDS"
     )

@@ -21,10 +21,7 @@ Success criteria:
 - Never merge, omit, or add learning stages. If the input has two requiredLearningStages, the output stages array must contain exactly two items.
 - When a learning stage has the same start and target level, create reinforcement and applied-practice milestones at that level instead of introductory repetition.
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
-- Select zero to three resourceRecommendations for each milestone only from that skill's supplied learningResources.
-- For every selected resource, write recommendationReason in Korean as one concise, specific sentence explaining how that resource supports this milestone's topic, activity, level, or completion criteria.
-- Treat each resource's supplied description only as private selection context. Do not copy it into recommendationReason and do not summarize the resource generally.
-- If no suitable resource exists, return an empty resourceRecommendations list.
+- The application recommends learning resources after milestone generation. Always return an empty resourceRecommendations list.
 - For a certification, use milestoneType CERTIFICATION.
 - Never use milestoneType CERTIFICATION for a non-certification skill.
 - Return only the required structured output.

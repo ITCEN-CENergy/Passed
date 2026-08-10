@@ -31,7 +31,13 @@ from api.features.roadmap.schema import (
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
 from api.features.roadmap.resource_provider import create_resource_providers
-from api.features.roadmap.resource_query import build_contextual_search_queries
+from api.features.roadmap.resource_recommender import (
+    LearningResourceRecommender,
+    RecommendationTarget,
+    build_book_search_query,
+    build_milestone_search_query,
+)
+from api.features.roadmap.resource_query import build_competency_ranking_contexts
 from api.features.roadmap.validator import (
     remove_unknown_resource_recommendations,
     validate_generated_content,
@@ -364,27 +370,103 @@ async def _generate_roadmap(
         competency.roadmapSkillKey: create_learning_stages(competency)
         for competency in request.competencies
     }
-    search_started = perf_counter()
     resources_by_key: dict[str, list[LearningResource]] = {}
+    content_generator = generator or _generator(settings)
+    generator_started = perf_counter()
+    generated = await _generate_content_in_batches(
+        content_generator,
+        request.competencies,
+        stages_by_key,
+        {},
+    )
+    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
+    logger.info(
+        "roadmap_content_generation_completed generationId=%s generator=%s "
+        "elapsedMs=%d",
+        generation_id,
+        type(content_generator).__name__,
+        generator_elapsed_ms,
+        extra={
+            "event": "roadmap_content_generation_completed",
+            "generationId": generation_id,
+            "generator": type(content_generator).__name__,
+            "elapsedMs": generator_elapsed_ms,
+        },
+    )
+
+    search_started = perf_counter()
     search_service = LearningResourceSearchService(
         create_resource_providers(http_client, settings),
         enabled=settings.resource_search_enabled,
         max_concurrency=settings.resource_search_max_concurrency,
         generation_id=generation_id,
     )
-    search_queries = await build_contextual_search_queries(request.competencies)
-    search_results = await asyncio.gather(*(
-        search_service.search(
-            competency, search_queries[competency.roadmapSkillKey]
-        )
+    competency_by_key = {
+        competency.roadmapSkillKey: competency
         for competency in request.competencies
-    ))
-    resources_by_key = {
-        competency.roadmapSkillKey: resources
-        for competency, resources in zip(
-            request.competencies, search_results, strict=True
-        )
     }
+    ranking_contexts = await build_competency_ranking_contexts(
+        request.competencies
+    )
+    targets = [
+        RecommendationTarget(
+            key=f"{skill.roadmapSkillKey}:{stage.startLevel}:{stage.targetLevel}:{index}",
+            competency_name=competency_by_key[
+                skill.roadmapSkillKey
+            ].standardCompetencyName,
+            competency_context=ranking_contexts[skill.roadmapSkillKey],
+            title=milestone.title,
+            learning_objective=milestone.learningObjective,
+            completion_criteria=milestone.completionCriteria,
+            candidates=[],
+        )
+        for skill in generated.skills
+        for stage in skill.stages
+        for index, milestone in enumerate(stage.milestones)
+    ]
+    target_competencies = {
+        target.key: competency_by_key[target.key.rsplit(":", 3)[0]]
+        for target in targets
+    }
+
+    async def additional_search(
+        target: RecommendationTarget,
+    ) -> list[LearningResource]:
+        competency = target_competencies[target.key]
+        resources = await search_service.search(
+            competency,
+            build_milestone_search_query(target),
+            provider_queries={"kakao_book": build_book_search_query(target)},
+        )
+        key = competency.roadmapSkillKey
+        merged = {
+            resource.resourceId: resource
+            for resource in resources_by_key.get(key, [])
+        }
+        merged.update({resource.resourceId: resource for resource in resources})
+        resources_by_key[key] = list(merged.values())
+        return resources
+
+    recommendations = await LearningResourceRecommender(settings).recommend(
+        targets, additional_search=additional_search
+    )
+    target_by_key = {target.key: target for target in targets}
+    for skill in generated.skills:
+        for stage in skill.stages:
+            for index, milestone in enumerate(stage.milestones):
+                target_key = (
+                    f"{skill.roadmapSkillKey}:{stage.startLevel}:"
+                    f"{stage.targetLevel}:{index}"
+                )
+                target = target_by_key[target_key]
+                milestone.resourceRecommendations = [
+                    GeneratedResourceRecommendation(
+                        resourceId=resource.resourceId,
+                        recommendationReason=resource.description,
+                    )
+                    for resource in recommendations[target.key]
+                ]
+
     search_elapsed_ms = round((perf_counter() - search_started) * 1000)
     resource_count = sum(len(resources) for resources in resources_by_key.values())
     resource_description_char_count = sum(
@@ -409,42 +491,6 @@ async def _generate_roadmap(
             "elapsedMs": search_elapsed_ms,
         },
     )
-    content_generator = generator or _generator(settings)
-    generator_started = perf_counter()
-    generated = await _generate_content_in_batches(
-        content_generator,
-        request.competencies,
-        stages_by_key,
-        resources_by_key,
-    )
-    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
-    logger.info(
-        "roadmap_content_generation_completed generationId=%s generator=%s "
-        "elapsedMs=%d",
-        generation_id,
-        type(content_generator).__name__,
-        generator_elapsed_ms,
-        extra={
-            "event": "roadmap_content_generation_completed",
-            "generationId": generation_id,
-            "generator": type(content_generator).__name__,
-            "elapsedMs": generator_elapsed_ms,
-        },
-    )
-    removed_recommendation_count = remove_unknown_resource_recommendations(
-        resources_by_key, generated
-    )
-    if removed_recommendation_count:
-        logger.warning(
-            "roadmap_unknown_resource_recommendations_removed generationId=%s count=%d",
-            generation_id,
-            removed_recommendation_count,
-            extra={
-                "event": "roadmap_unknown_resource_recommendations_removed",
-                "generationId": generation_id,
-                "count": removed_recommendation_count,
-            },
-        )
     validate_generated_content(
         request.competencies, stages_by_key, resources_by_key, generated
     )

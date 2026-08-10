@@ -13,6 +13,7 @@ from api.features.roadmap.resource_recommender import (
     RecommendationTarget,
     build_book_search_query,
     build_milestone_search_query,
+    build_web_search_query,
 )
 from api.features.roadmap.schema import (
     Competency,
@@ -148,7 +149,10 @@ async def replan_roadmap(
         return await search_service.search(
             competency_by_key[target.key],
             build_milestone_search_query(target),
-            provider_queries={"kakao_book": build_book_search_query(target)},
+            provider_queries={
+                "kakao_book": build_book_search_query(target),
+                "keenable": build_web_search_query(target),
+            },
         )
 
     ranked = await LearningResourceRecommender(settings).recommend(

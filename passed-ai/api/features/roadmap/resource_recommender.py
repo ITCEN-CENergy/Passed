@@ -44,6 +44,16 @@ def build_book_search_query(target: RecommendationTarget) -> str:
     )))[:80]
 
 
+def build_web_search_query(target: RecommendationTarget) -> str:
+    """Keep web search focused on the concrete milestone learning task."""
+    return " ".join(filter(None, (
+        target.competency_name,
+        target.title,
+        target.learning_objective,
+        "tutorial guide",
+    )))[:180]
+
+
 def _is_http_url(value: str) -> bool:
     parsed = urlparse(value)
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)

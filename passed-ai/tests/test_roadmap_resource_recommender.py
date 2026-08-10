@@ -6,6 +6,7 @@ from api.features.roadmap.resource_recommender import (
     RecommendationTarget,
     build_book_search_query,
     build_milestone_search_query,
+    build_web_search_query,
 )
 from api.features.roadmap.schema import LearningResource
 
@@ -60,6 +61,17 @@ def test_book_query_contains_competency_milestone_and_job_context() -> None:
     assert query.startswith("JavaScript 비동기 오류 처리")
     assert "웹 애플리케이션" in query
     assert len(query) <= 80
+
+
+def test_web_query_focuses_on_milestone_without_broad_context() -> None:
+    query = build_web_search_query(_target())
+
+    assert query.startswith("JavaScript 비동기 오류 처리")
+    assert "Promise 오류 전파" in query
+    assert "tutorial guide" in query
+    assert "웹 애플리케이션" not in query
+    assert "오류 처리 테스트" not in query
+    assert len(query) <= 180
 
 
 @pytest.mark.asyncio

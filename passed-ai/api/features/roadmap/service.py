@@ -36,6 +36,7 @@ from api.features.roadmap.resource_recommender import (
     RecommendationTarget,
     build_book_search_query,
     build_milestone_search_query,
+    build_web_search_query,
 )
 from api.features.roadmap.resource_query import build_competency_ranking_contexts
 from api.features.roadmap.validator import (
@@ -436,7 +437,10 @@ async def _generate_roadmap(
         resources = await search_service.search(
             competency,
             build_milestone_search_query(target),
-            provider_queries={"kakao_book": build_book_search_query(target)},
+            provider_queries={
+                "kakao_book": build_book_search_query(target),
+                "keenable": build_web_search_query(target),
+            },
         )
         key = competency.roadmapSkillKey
         merged = {

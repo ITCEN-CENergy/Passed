@@ -7,6 +7,7 @@ from fastapi import FastAPI
 
 from api.features.roadmap.router import router as roadmap_router
 from api.features.coverletter.router import router as coverletter_router
+from api.features.recommendation.router import router as recommendation_router
 from api.features.user_skill.router import router as user_skill_router
 from api.features.skill_gap.router import router as skill_gap_router
 
@@ -37,6 +38,7 @@ app = FastAPI(
 
 app.include_router(roadmap_router)
 app.include_router(coverletter_router)
+app.include_router(recommendation_router)
 app.include_router(user_skill_router)
 app.include_router(skill_gap_router)
 
@@ -54,4 +56,4 @@ async def health() -> dict[str, str]:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000)

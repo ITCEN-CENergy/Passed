@@ -69,4 +69,9 @@ public class RoadmapSkill extends BaseTimeEntity {
     public void updateProgressRate(BigDecimal progressRate) {
         this.progressRate = progressRate;
     }
+
+    public void updateEstimatedMinutes(int estimatedMinutes) {
+        if (estimatedMinutes < 0) throw new IllegalArgumentException("estimatedMinutes must not be negative");
+        this.estimatedMinutes = estimatedMinutes;
+    }
 }

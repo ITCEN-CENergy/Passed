@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
-import com.cenergy.passed_backend.domain.roadmap.api.RoadmapGenerateRequest;
-import com.cenergy.passed_backend.domain.roadmap.api.RoadmapGenerateResponse;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapMilestoneRepository;

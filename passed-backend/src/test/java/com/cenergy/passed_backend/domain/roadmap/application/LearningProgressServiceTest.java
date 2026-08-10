@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
-import com.cenergy.passed_backend.domain.roadmap.api.MilestoneCompletionRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionRequest;
 import com.cenergy.passed_backend.domain.roadmap.entity.Difficulty;
 import com.cenergy.passed_backend.domain.roadmap.entity.Milestone;
 import com.cenergy.passed_backend.domain.roadmap.entity.MilestoneStatus;

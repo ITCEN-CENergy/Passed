@@ -3,7 +3,10 @@ package com.cenergy.passed_backend.domain.roadmap.application;
 import com.cenergy.passed_backend.domain.roadmap.ai.client.RoadmapAiClient;
 import com.cenergy.passed_backend.domain.roadmap.ai.dto.RoadmapReplanAiRequest;
 import com.cenergy.passed_backend.domain.roadmap.ai.dto.RoadmapReplanAiResponse;
-import com.cenergy.passed_backend.domain.roadmap.api.*;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapReplanApplyRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapReplanApplyResponse;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapReplanPreviewRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapReplanPreviewResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
 import com.cenergy.passed_backend.global.error.ErrorCode;
@@ -170,7 +173,7 @@ public class RoadmapReplanService {
         for (Map.Entry<Long, List<RoadmapMilestone>> entry : bySkill.entrySet()) {
             List<RoadmapMilestone> values = entry.getValue();
             int groupOrder = 1;
-            for (int index = 0; index < values.size();) {
+            for (int index = 0; index < values.size(); ) {
                 List<RoadmapMilestone> sources = new ArrayList<>();
                 RoadmapMilestone first = values.get(index++);
                 sources.add(first);
@@ -202,7 +205,7 @@ public class RoadmapReplanService {
             int capacity = Math.max(0, group.originalMinutes() - 30);
             int reduction = index == groups.size() - 1 ? remainingReduction
                     : remainingCapacity == 0 ? 0
-                    : Math.min(capacity, (int) ((long) remainingReduction * capacity / remainingCapacity));
+                      : Math.min(capacity, (int) ((long) remainingReduction * capacity / remainingCapacity));
             group.assignMinutes(group.originalMinutes() - reduction);
             remainingReduction -= reduction;
             remainingCapacity -= capacity;
@@ -271,7 +274,7 @@ public class RoadmapReplanService {
 
     private List<RoadmapReplanPreviewResponse.CompressedSkill> previewSkills(RoadmapCompressionPlan plan) {
         return plan.groups().stream().collect(Collectors.groupingBy(
-                RoadmapCompressionPlan.Group::roadmapSkillId, LinkedHashMap::new, Collectors.toList()))
+                        RoadmapCompressionPlan.Group::roadmapSkillId, LinkedHashMap::new, Collectors.toList()))
                 .entrySet().stream().map(entry -> new RoadmapReplanPreviewResponse.CompressedSkill(
                         entry.getKey(), entry.getValue().stream().map(item ->
                         new RoadmapReplanPreviewResponse.CompressedMilestone(
@@ -289,11 +292,13 @@ public class RoadmapReplanService {
         return links.stream().filter(RoadmapMilestone::isRequired)
                 .filter(link -> link.getMilestone().getStatus() == MilestoneStatus.NOT_STARTED).toList();
     }
+
     private List<RoadmapMilestone> links(Long roadmapId) {
         List<Long> ids = skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId)
                 .stream().map(RoadmapSkill::getId).toList();
         return ids.isEmpty() ? List.of() : linkRepository.findAllByRoadmapSkillIds(ids);
     }
+
     private Roadmap activeRoadmap(Long roadmapId, Long userId) {
         if (roadmapId == null || roadmapId <= 0) throw invalid("Invalid roadmapId");
         Roadmap value = roadmapRepository.findByIdAndUserId(roadmapId, userId)
@@ -301,27 +306,39 @@ public class RoadmapReplanService {
         if (value.getStatus() != RoadmapStatus.ACTIVE) throw invalid("Only active roadmaps can be replanned");
         return value;
     }
+
     private int remainingMinutes(Collection<RoadmapMilestone> values) {
         return values.stream().filter(RoadmapMilestone::isRequired)
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
     }
+
     private int totalMinutes(Collection<RoadmapMilestone> values) {
         return values.stream().mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
     }
+
     private RoadmapCompressionPlan read(JsonNode json) {
-        try { return objectMapper.treeToValue(json, RoadmapCompressionPlan.class); }
-        catch (JsonProcessingException exception) { throw invalid("Stored compression preview is invalid"); }
+        try {
+            return objectMapper.treeToValue(json, RoadmapCompressionPlan.class);
+        } catch (JsonProcessingException exception) {
+            throw invalid("Stored compression preview is invalid");
+        }
     }
+
     private String instruction(RoadmapReplanPreviewRequest request) {
         return request == null || request.userInstruction() == null ? "" : request.userInstruction().trim();
     }
+
     private Long currentUserId() {
         Long value = currentUserIdProvider.getCurrentUserId();
         if (value == null || value <= 0) throw invalid("Invalid current user");
         return value;
     }
-    private boolean blank(String value) { return value == null || value.isBlank(); }
+
+    private boolean blank(String value) {
+        return value == null || value.isBlank();
+    }
+
     private RoadmapException invalid(String message) {
         return new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, message);
     }
@@ -335,21 +352,53 @@ public class RoadmapReplanService {
         private final List<RoadmapMilestone> sources;
         private final int originalMinutes;
         private int assignedMinutes;
+
         private GroupDraft(String groupKey, Long roadmapSkillId, String skillName, int learningOrder,
                            List<RoadmapMilestone> sources, int originalMinutes, int assignedMinutes) {
-            this.groupKey = groupKey; this.roadmapSkillId = roadmapSkillId; this.skillName = skillName;
+            this.groupKey = groupKey;
+            this.roadmapSkillId = roadmapSkillId;
+            this.skillName = skillName;
             this.skill = sources.getFirst().getRoadmapSkill();
-            this.learningOrder = learningOrder; this.sources = List.copyOf(sources);
-            this.originalMinutes = originalMinutes; this.assignedMinutes = assignedMinutes;
+            this.learningOrder = learningOrder;
+            this.sources = List.copyOf(sources);
+            this.originalMinutes = originalMinutes;
+            this.assignedMinutes = assignedMinutes;
         }
-        String groupKey() { return groupKey; }
-        Long roadmapSkillId() { return roadmapSkillId; }
-        String skillName() { return skillName; }
-        RoadmapSkill skill() { return skill; }
-        int learningOrder() { return learningOrder; }
-        List<RoadmapMilestone> sources() { return sources; }
-        int originalMinutes() { return originalMinutes; }
-        int assignedMinutes() { return assignedMinutes; }
-        void assignMinutes(int value) { assignedMinutes = value; }
+
+        String groupKey() {
+            return groupKey;
+        }
+
+        Long roadmapSkillId() {
+            return roadmapSkillId;
+        }
+
+        String skillName() {
+            return skillName;
+        }
+
+        RoadmapSkill skill() {
+            return skill;
+        }
+
+        int learningOrder() {
+            return learningOrder;
+        }
+
+        List<RoadmapMilestone> sources() {
+            return sources;
+        }
+
+        int originalMinutes() {
+            return originalMinutes;
+        }
+
+        int assignedMinutes() {
+            return assignedMinutes;
+        }
+
+        void assignMinutes(int value) {
+            assignedMinutes = value;
+        }
     }
 }

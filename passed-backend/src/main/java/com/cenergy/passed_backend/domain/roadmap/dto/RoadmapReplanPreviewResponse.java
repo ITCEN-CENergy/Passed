@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.roadmap.api;
+package com.cenergy.passed_backend.domain.roadmap.dto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +19,9 @@ public record RoadmapReplanPreviewResponse(
     }
 
     public record CompressedSkill(Long roadmapSkillId, List<CompressedMilestone> milestones) {
-        public CompressedSkill { milestones = List.copyOf(milestones); }
+        public CompressedSkill {
+            milestones = List.copyOf(milestones);
+        }
     }
 
     public record CompressedMilestone(List<Long> sourceMilestoneIds, String title,
@@ -35,5 +37,6 @@ public record RoadmapReplanPreviewResponse(
 
     public record LearningResource(String externalId, String resourceType, String title,
                                    String description, String provider, String url,
-                                   String thumbnailUrl) { }
+                                   String thumbnailUrl) {
+    }
 }

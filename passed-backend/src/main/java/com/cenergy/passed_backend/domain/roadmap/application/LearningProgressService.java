@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
-import com.cenergy.passed_backend.domain.roadmap.api.MilestoneCompletionRequest;
-import com.cenergy.passed_backend.domain.roadmap.api.MilestoneCompletionResponse;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionRequest;
+import com.cenergy.passed_backend.domain.roadmap.dto.MilestoneCompletionResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.Milestone;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
@@ -27,7 +27,7 @@ public class LearningProgressService {
 
     @Transactional
     public MilestoneCompletionResponse changeCompletion(Long milestoneId,
-                                                         MilestoneCompletionRequest request) {
+                                                        MilestoneCompletionRequest request) {
         if (milestoneId == null || milestoneId <= 0 || request == null || request.completed() == null) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid milestoneId");
         }

@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
-import com.cenergy.passed_backend.domain.roadmap.api.RoadmapDetailResponse;
-import com.cenergy.passed_backend.domain.roadmap.api.RoadmapListResponse;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapDetailResponse;
+import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapListResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
 import com.cenergy.passed_backend.global.error.ErrorCode;
@@ -113,7 +113,7 @@ public class RoadmapQueryService {
     }
 
     private RoadmapDetailResponse.MilestoneItem toMilestone(RoadmapMilestone link,
-                                                             List<ResourceRecommendation> recommendations) {
+                                                            List<ResourceRecommendation> recommendations) {
         Milestone value = link.getMilestone();
         return new RoadmapDetailResponse.MilestoneItem(value.getId(), value.getTitle(), value.getDescription(),
                 value.getLearningObjective(), value.getCompletionCriteria(), value.getStartLevel(), value.getTargetLevel(),

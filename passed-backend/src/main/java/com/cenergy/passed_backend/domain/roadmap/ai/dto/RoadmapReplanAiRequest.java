@@ -1,22 +1,28 @@
 package com.cenergy.passed_backend.domain.roadmap.ai.dto;
 
-import com.cenergy.passed_backend.domain.roadmap.entity.MilestoneStatus;
+import com.cenergy.passed_backend.domain.roadmap.entity.Difficulty;
+import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
+import com.cenergy.passed_backend.domain.roadmap.entity.MilestoneType;
 
 import java.util.List;
 
 public record RoadmapReplanAiRequest(
         Long roadmapId,
         String title,
-        long delayDays,
         String userInstruction,
-        List<Milestone> milestones
+        List<Group> groups
 ) {
-    public RoadmapReplanAiRequest {
-        milestones = List.copyOf(milestones);
+    public RoadmapReplanAiRequest { groups = List.copyOf(groups); }
+
+    public record Group(String groupKey, Long roadmapSkillId, Long standardCompetencyId, String skillName,
+                        CompetencyCategory category, int currentLevel, int targetLevel,
+                        int assignedEstimatedMinutes, List<SourceMilestone> sourceMilestones) {
+        public Group { sourceMilestones = List.copyOf(sourceMilestones); }
     }
 
-    public record Milestone(Long milestoneId, Long roadmapSkillId, String title,
-                            MilestoneStatus status, int estimatedMinutes,
-                            int learningOrder, boolean required) {
+    public record SourceMilestone(String title, String description, String learningObjective,
+                                  String completionCriteria, int startLevel, int targetLevel,
+                                  MilestoneType milestoneType, Difficulty difficulty,
+                                  int estimatedMinutes) {
     }
 }

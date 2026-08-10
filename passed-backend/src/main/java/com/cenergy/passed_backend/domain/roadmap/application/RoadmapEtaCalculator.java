@@ -25,6 +25,16 @@ public class RoadmapEtaCalculator {
         return calculate(milestones, LocalDate.now());
     }
 
+    public LocalDate calculateRemainingMinutes(int remainingMinutes) {
+        if (remainingMinutes < 0) throw new IllegalArgumentException("remainingMinutes must not be negative");
+        long remainingDays = (remainingMinutes + (long) dailyStudyMinutes - 1) / dailyStudyMinutes;
+        return LocalDate.now().plusDays(remainingDays);
+    }
+
+    public int dailyStudyMinutes() {
+        return dailyStudyMinutes;
+    }
+
     LocalDate calculate(Collection<RoadmapMilestone> milestones, LocalDate baseDate) {
         long remainingMinutes = milestones.stream()
                 .filter(RoadmapMilestone::isRequired)

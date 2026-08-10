@@ -1,7 +1,5 @@
 package com.cenergy.passed_backend.domain.roadmap.api;
 
-import com.cenergy.passed_backend.domain.roadmap.ai.dto.RoadmapReplanAiResponse;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -14,14 +12,28 @@ public record RoadmapReplanPreviewResponse(
         int replannedRemainingMinutes,
         LocalDate previousEstimatedEndDate,
         LocalDate replannedEstimatedEndDate,
-        List<Change> changes
+        List<CompressedSkill> skills
 ) {
     public RoadmapReplanPreviewResponse {
-        changes = List.copyOf(changes);
+        skills = List.copyOf(skills);
     }
 
-    public record Change(Long milestoneId, String title, RoadmapReplanAiResponse.Action action,
-                         int previousLearningOrder, Integer replannedLearningOrder,
-                         int estimatedMinutes, String reason) {
+    public record CompressedSkill(Long roadmapSkillId, List<CompressedMilestone> milestones) {
+        public CompressedSkill { milestones = List.copyOf(milestones); }
     }
+
+    public record CompressedMilestone(List<Long> sourceMilestoneIds, String title,
+                                      String description, String learningObjective,
+                                      String completionCriteria, int estimatedMinutes,
+                                      int learningOrder, String compressionReason,
+                                      List<LearningResource> learningResources) {
+        public CompressedMilestone {
+            sourceMilestoneIds = List.copyOf(sourceMilestoneIds);
+            learningResources = List.copyOf(learningResources);
+        }
+    }
+
+    public record LearningResource(String externalId, String resourceType, String title,
+                                   String description, String provider, String url,
+                                   String thumbnailUrl) { }
 }

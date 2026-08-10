@@ -167,49 +167,66 @@ class GeneratedRoadmapContent(RoadmapModel):
     skills: list[GeneratedSkillContent] = Field(min_length=1, max_length=10)
 
 
-class ReplanMilestoneStatus(StrEnum):
-    NOT_STARTED = "NOT_STARTED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETED = "COMPLETED"
-
-
-class ReplanAction(StrEnum):
-    KEEP = "KEEP"
-    REMOVE = "REMOVE"
-
-
-class ReplanMilestone(RoadmapModel):
-    milestoneId: int = Field(gt=0)
-    roadmapSkillId: int = Field(gt=0)
+class ReplanSourceMilestone(RoadmapModel):
     title: str = Field(min_length=1)
-    status: ReplanMilestoneStatus
+    description: str
+    learningObjective: str = Field(min_length=1)
+    completionCriteria: str = Field(min_length=1)
+    startLevel: int
+    targetLevel: int
+    milestoneType: MilestoneType
+    difficulty: Difficulty
     estimatedMinutes: int = Field(gt=0)
-    learningOrder: int = Field(gt=0)
-    required: bool
+
+
+class ReplanGroup(RoadmapModel):
+    groupKey: str = Field(min_length=1)
+    roadmapSkillId: int = Field(gt=0)
+    standardCompetencyId: int = Field(gt=0)
+    skillName: str = Field(min_length=1)
+    category: CompetencyCategory
+    currentLevel: int = Field(ge=1, le=3)
+    targetLevel: int = Field(ge=1, le=3)
+    assignedEstimatedMinutes: int = Field(ge=30)
+    sourceMilestones: list[ReplanSourceMilestone] = Field(min_length=1)
 
 
 class RoadmapReplanRequest(RoadmapModel):
     roadmapId: int = Field(gt=0)
     title: str = Field(min_length=1)
-    delayDays: int = Field(ge=0)
     userInstruction: str = Field(default="", max_length=500)
-    milestones: list[ReplanMilestone] = Field(min_length=1)
+    groups: list[ReplanGroup] = Field(min_length=1)
 
     @model_validator(mode="after")
-    def validate_unique_milestones(self) -> "RoadmapReplanRequest":
-        ids = [item.milestoneId for item in self.milestones]
-        if len(ids) != len(set(ids)):
-            raise ValueError("milestoneId must be unique")
+    def validate_unique_groups(self) -> "RoadmapReplanRequest":
+        keys = [item.groupKey for item in self.groups]
+        if len(keys) != len(set(keys)):
+            raise ValueError("groupKey must be unique")
         return self
 
 
-class ReplanDecision(RoadmapModel):
-    milestoneId: int = Field(gt=0)
-    action: ReplanAction
-    learningOrder: int | None = Field(default=None, gt=0)
-    reason: str = Field(min_length=1, max_length=300)
+class CompressedMilestoneContent(RoadmapModel):
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=500)
+    learningObjective: str = Field(min_length=1, max_length=300)
+    completionCriteria: str = Field(min_length=1, max_length=300)
+    milestoneType: MilestoneType
+    difficulty: Difficulty
+    compressionReason: str = Field(min_length=1, max_length=300)
+
+
+class CompressedGroup(RoadmapModel):
+    groupKey: str = Field(min_length=1)
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=500)
+    learningObjective: str = Field(min_length=1, max_length=300)
+    completionCriteria: str = Field(min_length=1, max_length=300)
+    milestoneType: MilestoneType
+    difficulty: Difficulty
+    compressionReason: str = Field(min_length=1, max_length=300)
+    learningResources: list[LearningResource] = Field(default_factory=list, max_length=3)
 
 
 class RoadmapReplanResponse(RoadmapModel):
     summary: str = Field(min_length=1, max_length=500)
-    decisions: list[ReplanDecision] = Field(min_length=1)
+    groups: list[CompressedGroup] = Field(min_length=1)

@@ -8,12 +8,11 @@ import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -21,10 +20,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class RoadmapReplanService {
+    private static final int REDUCTION_TOLERANCE_MINUTES = 60;
     private final CurrentUserIdProvider currentUserIdProvider;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapSkillRepository skillRepository;
-    private final RoadmapMilestoneRepository milestoneRepository;
+    private final RoadmapMilestoneRepository linkRepository;
+    private final MilestoneRepository milestoneRepository;
+    private final LearningResourceRepository resourceRepository;
+    private final ResourceRecommendationRepository recommendationRepository;
     private final RoadmapReplanRepository replanRepository;
     private final RoadmapAiClient aiClient;
     private final RoadmapEtaCalculator etaCalculator;
@@ -34,7 +37,10 @@ public class RoadmapReplanService {
     public RoadmapReplanService(CurrentUserIdProvider currentUserIdProvider,
                                 RoadmapRepository roadmapRepository,
                                 RoadmapSkillRepository skillRepository,
-                                RoadmapMilestoneRepository milestoneRepository,
+                                RoadmapMilestoneRepository linkRepository,
+                                MilestoneRepository milestoneRepository,
+                                LearningResourceRepository resourceRepository,
+                                ResourceRecommendationRepository recommendationRepository,
                                 RoadmapReplanRepository replanRepository,
                                 RoadmapAiClient aiClient,
                                 RoadmapEtaCalculator etaCalculator,
@@ -42,7 +48,10 @@ public class RoadmapReplanService {
         this.currentUserIdProvider = currentUserIdProvider;
         this.roadmapRepository = roadmapRepository;
         this.skillRepository = skillRepository;
+        this.linkRepository = linkRepository;
         this.milestoneRepository = milestoneRepository;
+        this.resourceRepository = resourceRepository;
+        this.recommendationRepository = recommendationRepository;
         this.replanRepository = replanRepository;
         this.aiClient = aiClient;
         this.etaCalculator = etaCalculator;
@@ -53,38 +62,41 @@ public class RoadmapReplanService {
     public RoadmapReplanPreviewResponse preview(Long roadmapId, RoadmapReplanPreviewRequest request) {
         Long userId = currentUserId();
         Roadmap roadmap = activeRoadmap(roadmapId, userId);
-        List<RoadmapMilestone> links = links(roadmapId);
-        if (links.isEmpty()) throw invalid("Roadmap has no milestones");
-        LocalDate currentEta = etaCalculator.calculate(links);
+        List<RoadmapMilestone> allLinks = links(roadmapId);
         RoadmapScheduleAssessment schedule = RoadmapScheduleAssessment.assess(
-                roadmap.getBaselineEndDate(), currentEta);
-        RoadmapReplanAiRequest aiRequest = new RoadmapReplanAiRequest(
-                roadmapId, roadmap.getTitle(), schedule.delayDays(), instruction(request),
-                links.stream().map(link -> new RoadmapReplanAiRequest.Milestone(
-                        link.getMilestone().getId(), link.getRoadmapSkill().getId(),
-                        link.getMilestone().getTitle(), link.getMilestone().getStatus(),
-                        link.getMilestone().getEstimatedMinutes(), link.getLearningOrder(),
-                        link.isRequired())).toList());
-        RoadmapReplanAiResponse response = aiClient.replan(aiRequest);
-        Map<Long, RoadmapReplanAiResponse.Decision> decisions = validate(aiRequest, response);
-        JsonNode json = objectMapper.valueToTree(response);
-        RoadmapReplan replan = replanRepository.save(
-                RoadmapReplan.ready(roadmapId, userId, response.summary(), json));
+                roadmap.getBaselineEndDate(), etaCalculator.calculate(allLinks));
+        if (schedule.status() != RoadmapScheduleStatus.DELAYED) {
+            throw invalid("Only delayed roadmaps can be replanned");
+        }
+        List<RoadmapMilestone> candidates = candidates(allLinks);
+        if (candidates.isEmpty()) throw invalid("No not-started milestones are available for compression");
 
-        List<RoadmapMilestone> kept = links.stream()
-                .filter(link -> decisions.get(link.getMilestone().getId()).action()
-                        == RoadmapReplanAiResponse.Action.KEEP).toList();
-        int previousMinutes = remainingMinutes(links);
-        int replannedMinutes = remainingMinutes(kept);
-        List<RoadmapReplanPreviewResponse.Change> changes = links.stream().map(link -> {
-            RoadmapReplanAiResponse.Decision decision = decisions.get(link.getMilestone().getId());
-            return new RoadmapReplanPreviewResponse.Change(
-                    link.getMilestone().getId(), link.getMilestone().getTitle(), decision.action(),
-                    link.getLearningOrder(), decision.learningOrder(),
-                    link.getMilestone().getEstimatedMinutes(), decision.reason());
-        }).toList();
-        return new RoadmapReplanPreviewResponse(roadmapId, replan.getToken(), response.summary(),
-                previousMinutes, replannedMinutes, currentEta, etaCalculator.calculate(kept), changes);
+        List<GroupDraft> groups = group(candidates);
+        int candidateMinutes = totalMinutes(candidates);
+        int requestedReduction = Math.toIntExact(Math.min((long) candidateMinutes,
+                schedule.delayDays() * etaCalculator.dailyStudyMinutes()));
+        int capacity = groups.stream().mapToInt(value -> Math.max(0, value.originalMinutes() - 30)).sum();
+        int maximumReduction = Math.min(capacity, requestedReduction + REDUCTION_TOLERANCE_MINUTES);
+        int targetReduction = Math.min(requestedReduction, maximumReduction);
+        allocateMinutes(groups, targetReduction);
+
+        RoadmapReplanAiRequest aiRequest = new RoadmapReplanAiRequest(
+                roadmapId, roadmap.getTitle(), instruction(request), groups.stream().map(this::toAiGroup).toList());
+        RoadmapReplanAiResponse aiResponse = aiClient.replan(aiRequest);
+        Map<String, RoadmapReplanAiResponse.CompressedGroup> generated = validate(groups, aiResponse);
+        RoadmapCompressionPlan plan = bind(groups, aiResponse.summary(), generated);
+        RoadmapReplan replan = replanRepository.save(RoadmapReplan.ready(
+                roadmapId, userId, plan.summary(), objectMapper.valueToTree(plan)));
+
+        int previousRemaining = remainingMinutes(allLinks);
+        int protectedRemaining = remainingMinutes(allLinks.stream()
+                .filter(link -> !candidates.contains(link)).toList());
+        int replannedRemaining = protectedRemaining + plan.groups().stream()
+                .mapToInt(RoadmapCompressionPlan.Group::assignedEstimatedMinutes).sum();
+        return new RoadmapReplanPreviewResponse(
+                roadmapId, replan.getToken(), plan.summary(), previousRemaining, replannedRemaining,
+                etaCalculator.calculateRemainingMinutes(previousRemaining),
+                etaCalculator.calculateRemainingMinutes(replannedRemaining), previewSkills(plan));
     }
 
     @Transactional
@@ -94,41 +106,56 @@ public class RoadmapReplanService {
         RoadmapReplan replan = replanRepository.findByTokenAndRoadmapIdAndUserIdAndStatus(
                         request.replanToken(), roadmapId, userId, RoadmapReplanStatus.READY)
                 .orElseThrow(() -> invalid("Replan token is invalid or already applied"));
-        List<RoadmapMilestone> links = links(roadmapId);
-        RoadmapReplanAiResponse response = read(replan.getDecisionsJson());
-        RoadmapReplanAiRequest current = new RoadmapReplanAiRequest(
-                roadmapId, "current", 0, "",
-                links.stream().map(link -> new RoadmapReplanAiRequest.Milestone(
-                        link.getMilestone().getId(), link.getRoadmapSkill().getId(),
-                        link.getMilestone().getTitle(), link.getMilestone().getStatus(),
-                        link.getMilestone().getEstimatedMinutes(), link.getLearningOrder(),
-                        link.isRequired())).toList());
-        Map<Long, RoadmapReplanAiResponse.Decision> decisions = validate(current, response);
-        List<RoadmapMilestone> removed = new ArrayList<>();
-        List<RoadmapMilestone> kept = new ArrayList<>();
-        for (RoadmapMilestone link : links) {
-            RoadmapReplanAiResponse.Decision decision = decisions.get(link.getMilestone().getId());
-            if (decision.action() == RoadmapReplanAiResponse.Action.REMOVE) {
-                removed.add(link);
-            } else {
-                kept.add(link);
+        RoadmapCompressionPlan plan = read(replan.getDecisionsJson());
+        List<RoadmapMilestone> allLinks = links(roadmapId);
+        List<RoadmapMilestone> candidates = candidates(allLinks);
+        Set<Long> currentIds = candidates.stream().map(link -> link.getMilestone().getId()).collect(Collectors.toSet());
+        Set<Long> plannedIds = plan.groups().stream().flatMap(group -> group.sourceMilestoneIds().stream())
+                .collect(Collectors.toSet());
+        long plannedOccurrences = plan.groups().stream().mapToLong(group -> group.sourceMilestoneIds().size()).sum();
+        if (!currentIds.equals(plannedIds) || plannedOccurrences != plannedIds.size()) {
+            throw invalid("Roadmap changed after compression preview");
+        }
+
+        Map<Long, RoadmapSkill> skills = skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId)
+                .stream().collect(Collectors.toMap(RoadmapSkill::getId, Function.identity()));
+        List<RoadmapMilestone> protectedLinks = allLinks.stream()
+                .filter(link -> !currentIds.contains(link.getMilestone().getId())).toList();
+        linkRepository.deleteAll(candidates);
+        linkRepository.flush();
+        for (int index = 0; index < protectedLinks.size(); index++) {
+            protectedLinks.get(index).reorder(1_000_000 + index);
+        }
+        linkRepository.flush();
+        Map<Long, List<RoadmapMilestone>> protectedBySkill = protectedLinks.stream()
+                .collect(Collectors.groupingBy(link -> link.getRoadmapSkill().getId()));
+        for (List<RoadmapMilestone> values : protectedBySkill.values()) {
+            for (int index = 0; index < values.size(); index++) values.get(index).reorder(index + 1);
+        }
+        linkRepository.flush();
+
+        for (RoadmapCompressionPlan.Group item : plan.groups()) {
+            RoadmapSkill skill = skills.get(item.roadmapSkillId());
+            if (skill == null) throw invalid("Compressed skill no longer exists");
+            Milestone milestone = milestoneRepository.save(Milestone.create(
+                    userId, skill.getStandardCompetencyId(), item.title(), item.description(),
+                    item.learningObjective(), item.completionCriteria(), item.startLevel(), item.targetLevel(),
+                    item.milestoneType(), item.difficulty(), item.assignedEstimatedMinutes()));
+            int resourceRank = 1;
+            for (RoadmapCompressionPlan.Resource itemResource : item.learningResources()) {
+                LearningResource resource = resourceRepository.save(LearningResource.create(
+                        itemResource.provider(), itemResource.externalId(), itemResource.resourceType(),
+                        itemResource.title(), itemResource.description(), itemResource.url(),
+                        itemResource.thumbnailUrl()));
+                recommendationRepository.save(ResourceRecommendation.create(
+                        milestone, resource, resourceRank++));
             }
+            int offset = protectedBySkill.getOrDefault(item.roadmapSkillId(), List.of()).size();
+            linkRepository.save(RoadmapMilestone.create(
+                    skill, milestone, offset + item.learningOrder(), ReuseType.NEW,
+                    "Compressed from milestones " + item.sourceMilestoneIds()));
         }
-        milestoneRepository.deleteAll(removed);
-        milestoneRepository.flush();
-
-        // Moving order 4 to 3 would collide with the row currently at 3 before
-        // Hibernate deletes/updates every row. Move kept links to a collision-free
-        // temporary range, flush, and only then assign the approved final orders.
-        for (int index = 0; index < kept.size(); index++) {
-            kept.get(index).reorder(1_000_000 + index);
-        }
-        milestoneRepository.flush();
-        for (RoadmapMilestone link : kept) {
-            link.reorder(decisions.get(link.getMilestone().getId()).learningOrder());
-        }
-        milestoneRepository.flush();
-
+        linkRepository.flush();
         replan.markApplied(OffsetDateTime.now());
         progressSynchronizer.synchronizeRoadmap(roadmapId);
         Roadmap updated = roadmapRepository.findById(roadmapId).orElseThrow();
@@ -136,84 +163,193 @@ public class RoadmapReplanService {
                 roadmapId, updated.getTotalEstimatedMinutes(), updated.getEstimatedEndDate());
     }
 
-    private Map<Long, RoadmapReplanAiResponse.Decision> validate(
-            RoadmapReplanAiRequest request, RoadmapReplanAiResponse response) {
-        if (response == null || response.summary() == null || response.summary().isBlank()
-                || response.decisions() == null) throw invalid("Invalid replan AI response");
-        Map<Long, RoadmapReplanAiRequest.Milestone> requested = request.milestones().stream()
-                .collect(Collectors.toMap(RoadmapReplanAiRequest.Milestone::milestoneId, Function.identity()));
-        Map<Long, RoadmapReplanAiResponse.Decision> decisions = new LinkedHashMap<>();
-        for (RoadmapReplanAiResponse.Decision decision : response.decisions()) {
-            if (decision == null || decision.milestoneId() == null || decision.action() == null
-                    || decision.reason() == null || decision.reason().isBlank()
-                    || decisions.putIfAbsent(decision.milestoneId(), decision) != null) {
-                throw invalid("Invalid or duplicate replan decision");
-            }
-            RoadmapReplanAiRequest.Milestone milestone = requested.get(decision.milestoneId());
-            if (milestone == null) throw invalid("Unexpected milestone in replan decision");
-            if ((milestone.status() != MilestoneStatus.NOT_STARTED || !milestone.required())
-                    && decision.action() != RoadmapReplanAiResponse.Action.KEEP) {
-                throw invalid("Protected milestone cannot be removed");
-            }
-            if (decision.action() == RoadmapReplanAiResponse.Action.KEEP
-                    && (decision.learningOrder() == null || decision.learningOrder() <= 0)) {
-                throw invalid("Kept milestone requires a positive learning order");
-            }
-            if (decision.action() == RoadmapReplanAiResponse.Action.REMOVE
-                    && decision.learningOrder() != null) {
-                throw invalid("Removed milestone must not have a learning order");
+    private List<GroupDraft> group(List<RoadmapMilestone> candidates) {
+        Map<Long, List<RoadmapMilestone>> bySkill = candidates.stream().collect(Collectors.groupingBy(
+                link -> link.getRoadmapSkill().getId(), LinkedHashMap::new, Collectors.toList()));
+        List<GroupDraft> result = new ArrayList<>();
+        for (Map.Entry<Long, List<RoadmapMilestone>> entry : bySkill.entrySet()) {
+            List<RoadmapMilestone> values = entry.getValue();
+            int groupOrder = 1;
+            for (int index = 0; index < values.size();) {
+                List<RoadmapMilestone> sources = new ArrayList<>();
+                RoadmapMilestone first = values.get(index++);
+                sources.add(first);
+                if (index < values.size() && mergeable(first, values.get(index))) {
+                    sources.add(values.get(index++));
+                }
+                result.add(new GroupDraft("skill-" + entry.getKey() + "-group-" + groupOrder,
+                        entry.getKey(), first.getRoadmapSkill().getStandardCompetencyName(), groupOrder++,
+                        sources, totalMinutes(sources), totalMinutes(sources)));
             }
         }
-        if (!decisions.keySet().equals(requested.keySet())) throw invalid("Replan decisions are incomplete");
-        Map<Long, List<RoadmapReplanAiRequest.Milestone>> bySkill = request.milestones().stream()
-                .collect(Collectors.groupingBy(RoadmapReplanAiRequest.Milestone::roadmapSkillId));
-        for (List<RoadmapReplanAiRequest.Milestone> skillMilestones : bySkill.values()) {
-            List<RoadmapReplanAiResponse.Decision> kept = skillMilestones.stream()
-                    .map(item -> decisions.get(item.milestoneId()))
-                    .filter(item -> item.action() == RoadmapReplanAiResponse.Action.KEEP).toList();
-            if (kept.isEmpty()) throw invalid("Every skill must keep at least one milestone");
-            long uniqueOrders = kept.stream().map(RoadmapReplanAiResponse.Decision::learningOrder).distinct().count();
-            if (uniqueOrders != kept.size()) throw invalid("Learning orders must be unique within a skill");
-        }
-        return decisions;
+        return result;
     }
 
+    private boolean mergeable(RoadmapMilestone left, RoadmapMilestone right) {
+        Set<MilestoneType> standalone = Set.of(
+                MilestoneType.PROJECT, MilestoneType.ASSESSMENT, MilestoneType.CERTIFICATION);
+        return !standalone.contains(left.getMilestone().getMilestoneType())
+                && !standalone.contains(right.getMilestone().getMilestoneType())
+                && left.getMilestone().getTargetLevel().equals(right.getMilestone().getTargetLevel());
+    }
+
+    private void allocateMinutes(List<GroupDraft> groups, int targetReduction) {
+        int remainingReduction = targetReduction;
+        int remainingCapacity = groups.stream()
+                .mapToInt(value -> Math.max(0, value.originalMinutes() - 30)).sum();
+        for (int index = 0; index < groups.size(); index++) {
+            GroupDraft group = groups.get(index);
+            int capacity = Math.max(0, group.originalMinutes() - 30);
+            int reduction = index == groups.size() - 1 ? remainingReduction
+                    : remainingCapacity == 0 ? 0
+                    : Math.min(capacity, (int) ((long) remainingReduction * capacity / remainingCapacity));
+            group.assignMinutes(group.originalMinutes() - reduction);
+            remainingReduction -= reduction;
+            remainingCapacity -= capacity;
+        }
+        if (remainingReduction != 0) throw invalid("Unable to allocate compression time");
+    }
+
+    private RoadmapReplanAiRequest.Group toAiGroup(GroupDraft group) {
+        return new RoadmapReplanAiRequest.Group(
+                group.groupKey(), group.roadmapSkillId(), group.skill().getStandardCompetencyId(),
+                group.skillName(), group.skill().getCategory(), group.skill().getCurrentLevel(),
+                group.skill().getTargetLevel(), group.assignedMinutes(),
+                group.sources().stream().map(link -> {
+                    Milestone item = link.getMilestone();
+                    return new RoadmapReplanAiRequest.SourceMilestone(
+                            item.getTitle(), item.getDescription() == null ? item.getTitle() : item.getDescription(),
+                            item.getLearningObjective(), item.getCompletionCriteria(), item.getStartLevel(),
+                            item.getTargetLevel(), item.getMilestoneType(), item.getDifficulty(),
+                            item.getEstimatedMinutes());
+                }).toList());
+    }
+
+    private Map<String, RoadmapReplanAiResponse.CompressedGroup> validate(
+            List<GroupDraft> groups, RoadmapReplanAiResponse response) {
+        if (response == null || blank(response.summary()) || response.groups() == null) {
+            throw invalid("Invalid compression response");
+        }
+        Set<String> expected = groups.stream().map(GroupDraft::groupKey).collect(Collectors.toSet());
+        Map<String, RoadmapReplanAiResponse.CompressedGroup> generated = new LinkedHashMap<>();
+        for (RoadmapReplanAiResponse.CompressedGroup item : response.groups()) {
+            if (item == null || !expected.contains(item.groupKey())
+                    || generated.putIfAbsent(item.groupKey(), item) != null
+                    || blank(item.title()) || blank(item.description()) || blank(item.learningObjective())
+                    || blank(item.completionCriteria()) || blank(item.compressionReason())
+                    || item.milestoneType() == null || item.difficulty() == null
+                    || item.learningResources().size() > 3
+                    || item.learningResources().stream().anyMatch(resource -> resource == null
+                    || blank(resource.resourceId()) || blank(resource.resourceType())
+                    || blank(resource.title()) || blank(resource.provider()) || blank(resource.url()))) {
+                throw invalid("Invalid compressed group content");
+            }
+        }
+        if (!generated.keySet().equals(expected)) throw invalid("Compression response is incomplete");
+        return generated;
+    }
+
+    private RoadmapCompressionPlan bind(List<GroupDraft> groups, String summary,
+                                        Map<String, RoadmapReplanAiResponse.CompressedGroup> generated) {
+        return new RoadmapCompressionPlan(summary, groups.stream().map(group -> {
+            RoadmapReplanAiResponse.CompressedGroup content = generated.get(group.groupKey());
+            Milestone first = group.sources().getFirst().getMilestone();
+            Milestone last = group.sources().getLast().getMilestone();
+            return new RoadmapCompressionPlan.Group(
+                    group.groupKey(), group.roadmapSkillId(), group.sources().stream()
+                    .map(link -> link.getMilestone().getId()).toList(), group.assignedMinutes(),
+                    group.learningOrder(), first.getStartLevel(), last.getTargetLevel(), content.title(),
+                    content.description(), content.learningObjective(), content.completionCriteria(),
+                    content.milestoneType(), content.difficulty(), content.compressionReason(),
+                    content.learningResources().stream().map(resource ->
+                            new RoadmapCompressionPlan.Resource(
+                                    resource.resourceId(), resource.resourceType(), resource.title(),
+                                    resource.description(), resource.provider(), resource.url(),
+                                    resource.thumbnailUrl())).toList());
+        }).toList());
+    }
+
+    private List<RoadmapReplanPreviewResponse.CompressedSkill> previewSkills(RoadmapCompressionPlan plan) {
+        return plan.groups().stream().collect(Collectors.groupingBy(
+                RoadmapCompressionPlan.Group::roadmapSkillId, LinkedHashMap::new, Collectors.toList()))
+                .entrySet().stream().map(entry -> new RoadmapReplanPreviewResponse.CompressedSkill(
+                        entry.getKey(), entry.getValue().stream().map(item ->
+                        new RoadmapReplanPreviewResponse.CompressedMilestone(
+                                item.sourceMilestoneIds(), item.title(), item.description(),
+                                item.learningObjective(), item.completionCriteria(),
+                                item.assignedEstimatedMinutes(), item.learningOrder(),
+                                item.compressionReason(), item.learningResources().stream().map(resource ->
+                                new RoadmapReplanPreviewResponse.LearningResource(
+                                        resource.externalId(), resource.resourceType(), resource.title(),
+                                        resource.description(), resource.provider(), resource.url(),
+                                        resource.thumbnailUrl())).toList())).toList())).toList();
+    }
+
+    private List<RoadmapMilestone> candidates(List<RoadmapMilestone> links) {
+        return links.stream().filter(RoadmapMilestone::isRequired)
+                .filter(link -> link.getMilestone().getStatus() == MilestoneStatus.NOT_STARTED).toList();
+    }
     private List<RoadmapMilestone> links(Long roadmapId) {
-        List<Long> skillIds = skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId)
+        List<Long> ids = skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId)
                 .stream().map(RoadmapSkill::getId).toList();
-        return skillIds.isEmpty() ? List.of() : milestoneRepository.findAllByRoadmapSkillIds(skillIds);
+        return ids.isEmpty() ? List.of() : linkRepository.findAllByRoadmapSkillIds(ids);
     }
-
     private Roadmap activeRoadmap(Long roadmapId, Long userId) {
         if (roadmapId == null || roadmapId <= 0) throw invalid("Invalid roadmapId");
-        Roadmap roadmap = roadmapRepository.findByIdAndUserId(roadmapId, userId)
+        Roadmap value = roadmapRepository.findByIdAndUserId(roadmapId, userId)
                 .orElseThrow(() -> new RoadmapException(ErrorCode.ROADMAP_NOT_FOUND, "Roadmap not found"));
-        if (roadmap.getStatus() != RoadmapStatus.ACTIVE) throw invalid("Only active roadmaps can be replanned");
-        return roadmap;
+        if (value.getStatus() != RoadmapStatus.ACTIVE) throw invalid("Only active roadmaps can be replanned");
+        return value;
     }
-
-    private int remainingMinutes(Collection<RoadmapMilestone> links) {
-        return links.stream().filter(RoadmapMilestone::isRequired)
+    private int remainingMinutes(Collection<RoadmapMilestone> values) {
+        return values.stream().filter(RoadmapMilestone::isRequired)
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
     }
-
+    private int totalMinutes(Collection<RoadmapMilestone> values) {
+        return values.stream().mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
+    }
+    private RoadmapCompressionPlan read(JsonNode json) {
+        try { return objectMapper.treeToValue(json, RoadmapCompressionPlan.class); }
+        catch (JsonProcessingException exception) { throw invalid("Stored compression preview is invalid"); }
+    }
     private String instruction(RoadmapReplanPreviewRequest request) {
         return request == null || request.userInstruction() == null ? "" : request.userInstruction().trim();
     }
-
     private Long currentUserId() {
-        Long userId = currentUserIdProvider.getCurrentUserId();
-        if (userId == null || userId <= 0) throw invalid("Invalid current user");
-        return userId;
+        Long value = currentUserIdProvider.getCurrentUserId();
+        if (value == null || value <= 0) throw invalid("Invalid current user");
+        return value;
     }
-
-    private RoadmapReplanAiResponse read(JsonNode json) {
-        try { return objectMapper.treeToValue(json, RoadmapReplanAiResponse.class); }
-        catch (JsonProcessingException exception) { throw invalid("Stored replan preview is invalid"); }
-    }
-
+    private boolean blank(String value) { return value == null || value.isBlank(); }
     private RoadmapException invalid(String message) {
         return new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, message);
+    }
+
+    private static final class GroupDraft {
+        private final String groupKey;
+        private final Long roadmapSkillId;
+        private final String skillName;
+        private final RoadmapSkill skill;
+        private final int learningOrder;
+        private final List<RoadmapMilestone> sources;
+        private final int originalMinutes;
+        private int assignedMinutes;
+        private GroupDraft(String groupKey, Long roadmapSkillId, String skillName, int learningOrder,
+                           List<RoadmapMilestone> sources, int originalMinutes, int assignedMinutes) {
+            this.groupKey = groupKey; this.roadmapSkillId = roadmapSkillId; this.skillName = skillName;
+            this.skill = sources.getFirst().getRoadmapSkill();
+            this.learningOrder = learningOrder; this.sources = List.copyOf(sources);
+            this.originalMinutes = originalMinutes; this.assignedMinutes = assignedMinutes;
+        }
+        String groupKey() { return groupKey; }
+        Long roadmapSkillId() { return roadmapSkillId; }
+        String skillName() { return skillName; }
+        RoadmapSkill skill() { return skill; }
+        int learningOrder() { return learningOrder; }
+        List<RoadmapMilestone> sources() { return sources; }
+        int originalMinutes() { return originalMinutes; }
+        int assignedMinutes() { return assignedMinutes; }
+        void assignMinutes(int value) { assignedMinutes = value; }
     }
 }

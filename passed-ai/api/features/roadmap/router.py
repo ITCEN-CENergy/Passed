@@ -61,9 +61,12 @@ async def generate(
 
 
 @router.post("/replan", response_model=RoadmapReplanResponse)
-async def replan(request: RoadmapReplanRequest) -> RoadmapReplanResponse:
+async def replan(
+    request: RoadmapReplanRequest,
+    http_client: Annotated[httpx.AsyncClient, Depends(get_http_client)],
+) -> RoadmapReplanResponse:
     try:
-        return await replan_roadmap(request)
+        return await replan_roadmap(request, http_client=http_client)
     except APITimeoutError as exception:
         raise HTTPException(status_code=504, detail="roadmap model timed out") from exception
     except (APIConnectionError, InternalServerError, RateLimitError) as exception:

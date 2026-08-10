@@ -110,6 +110,32 @@ class LearningCompetencyResponseValidatorTest {
     }
 
     @Test
+    void treatsNullGeneralCurrentLevelAsNotOwned() {
+        LearningCompetencyItem external = new LearningCompetencyItem(1L, "Docker",
+                CompetencyCategory.TECHNICAL_SKILL, RequirementType.REQUIRED, null, 3, null);
+
+        assertThat(validator.validate(10L, 101L, response(external)).competencies())
+                .singleElement()
+                .satisfies(gap -> {
+                    assertThat(gap.currentLevel()).isZero();
+                    assertThat(gap.gapLevel()).isEqualTo(3);
+                });
+    }
+
+    @Test
+    void treatsNullCertificationCurrentLevelAsNotOwned() {
+        LearningCompetencyItem external = new LearningCompetencyItem(1L, "SQLD",
+                CompetencyCategory.CERTIFICATION, RequirementType.PREFERRED, null, 1, null);
+
+        assertThat(validator.validate(10L, 101L, response(external)).competencies())
+                .singleElement()
+                .satisfies(gap -> {
+                    assertThat(gap.currentLevel()).isZero();
+                    assertThat(gap.gapLevel()).isEqualTo(1);
+                });
+    }
+
+    @Test
     void rejectsNegativeTargetLevel() {
         assertInvalidGap(new LearningCompetencyItem(1L, "Docker", CompetencyCategory.TECHNICAL_SKILL,
                 RequirementType.REQUIRED, 1, -1, null));

@@ -63,10 +63,10 @@ class Competency(RoadmapModel):
         if self.category == CompetencyCategory.CERTIFICATION:
             if self.currentLevel not in (0, 1) or self.targetLevel != 1:
                 raise ValueError("a certification competency must be 0 -> 1 or 1 -> 1")
-        elif not 1 <= self.currentLevel <= self.targetLevel <= 3:
+        elif not 0 <= self.currentLevel <= self.targetLevel <= 3:
             raise ValueError(
                 "non-certification levels must satisfy "
-                "1 <= currentLevel <= targetLevel <= 3"
+                "0 <= currentLevel <= targetLevel <= 3"
             )
         if self.gapLevel != max(self.targetLevel - self.currentLevel, 0):
             raise ValueError("gapLevel must equal max(targetLevel - currentLevel, 0)")

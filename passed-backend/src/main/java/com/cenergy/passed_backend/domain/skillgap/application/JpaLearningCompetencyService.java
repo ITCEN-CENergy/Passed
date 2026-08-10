@@ -12,6 +12,7 @@ import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyItem;
 import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Primary
 @Transactional(readOnly = true)
 public class JpaLearningCompetencyService implements LearningCompetencyService {
 

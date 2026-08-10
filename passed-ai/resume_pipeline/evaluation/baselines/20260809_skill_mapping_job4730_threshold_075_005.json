@@ -1,0 +1,511 @@
+{
+  "min_similarity": 0.75,
+  "min_margin": 0.05,
+  "total_cases": 53,
+  "map_cases": 47,
+  "non_map_cases": 6,
+  "automatically_mapped": 46,
+  "correctly_mapped": 46,
+  "wrongly_mapped": 0,
+  "mapping_accuracy": 1.0,
+  "mapping_coverage": 0.9787234042553191,
+  "correctly_unmapped": 6,
+  "unmapped_accuracy": 1.0,
+  "category_mismatch_rate": 0.0,
+  "failures_by_reason": {
+    "CATEGORY_MISMATCH": 0,
+    "LOW_SIMILARITY": 7,
+    "AMBIGUOUS_MATCH": 0
+  },
+  "by_method": {
+    "EXACT": {
+      "mapped": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "ALIAS": {
+      "mapped": 32,
+      "correct": 32,
+      "accuracy": 1.0
+    }
+  },
+  "decisions": [
+    {
+      "case_id": "map-java-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "Java",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-python-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "Python",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-postgresql-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "PostgreSQL",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-spring-boot-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "Spring Boot",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-rest-api-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "REST API",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-api-design-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "API 설계",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-api-development-alias",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "백엔드 API 개발",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-spring-korean",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "Spring Boot",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-react-js",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "React",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-cert-information-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "정보처리기사",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-cert-sqld-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "SQLD",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-cert-adsp-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "ADsP",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-toeic-score",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "TOEIC",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-aws-ec2",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "AWS EC2",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-aws-s3",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "AWS S3",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-aws-rds",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "AWS RDS",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-listening-communication",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "의사소통",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-requirement-coordination",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "협업",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-api-agreement",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "API 설계",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-execution-plan",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.44874616685051316,
+      "margin": 0.016392943308719543,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "map-full-scan-removal",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "SQL 튜닝",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-api-latency-improvement",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "성능 최적화",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-development-schedule",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "일정 관리",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-weekly-retrospective",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "개선 회고",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-team-consensus",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "협업",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-incident-investigation",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "장애 원인 분석",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-deployment-responsibility",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "책임감",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-rollback-incident",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "배포",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-log-analysis-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "로그 분석",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-incident-explanation",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "의사소통",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-customer-classification",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "고객 상담",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-priority-setting",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "우선순위 설정",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-bottleneck-performance",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "성능 최적화",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-progress-communication",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "의사소통",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-deadline-responsibility",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "책임감",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-code-review-documentation",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "코드 리뷰",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-feedback-communication",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "의사소통",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-service-recovery",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "장애 대응",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-role-sharing",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "협업",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-teammate-listening",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "공감",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-work-sharing",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "협업",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-deployment-automation",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "업무 자동화",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-onboarding-documentation",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "문서화",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-docker-exact",
+      "mapped": true,
+      "method": "EXACT",
+      "skill_name": "Docker",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-english-role-agreement",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "의사소통",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-cache-application",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "캐싱",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "map-pair-programming",
+      "mapped": true,
+      "method": "ALIAS",
+      "skill_name": "페어링",
+      "similarity": null,
+      "margin": null,
+      "failure_reason": null
+    },
+    {
+      "case_id": "no-match-hackathon",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.4212387903898197,
+      "margin": 0.02467220514472379,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "no-match-award-name",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.2882950961983586,
+      "margin": 0.0008593766383341306,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "no-match-future-growth",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.31485175338676874,
+      "margin": 0.009245411936957715,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "no-match-generic-passion",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.2725448428999824,
+      "margin": 0.009836107500465041,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "no-match-company-name",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.22761885244112512,
+      "margin": 0.0006104117994367719,
+      "failure_reason": "LOW_SIMILARITY"
+    },
+    {
+      "case_id": "no-match-club-name",
+      "mapped": false,
+      "method": null,
+      "skill_name": null,
+      "similarity": 0.4031358749623053,
+      "margin": 0.01898106938172761,
+      "failure_reason": "LOW_SIMILARITY"
+    }
+  ]
+}

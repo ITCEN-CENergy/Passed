@@ -16,6 +16,8 @@ import java.util.List;
 
 @Service
 public class RoadmapGenerationService {
+    private static final int MAX_ROADMAP_COMPETENCIES = 10;
+
     private final LearningCompetencyService learningCompetencyService;
     private final LearningCompetencyResponseValidator learningCompetencyValidator;
     private final CompetencyGapMergeService mergeService;
@@ -38,11 +40,14 @@ public class RoadmapGenerationService {
                     learningCompetencyService.getLearningCompetencies(jobPostingId, userId));
             inputs.add(new CompetencyGapMergeInput(jobPostingId, null, validated.competencies()));
         }
-        List<MergedCompetencyGap> gaps = mergeService.merge(inputs);
-        if (gaps.isEmpty()) {
+        List<MergedCompetencyGap> mergedGaps = mergeService.merge(inputs);
+        if (mergedGaps.isEmpty()) {
             throw new RoadmapException(ErrorCode.ROADMAP_NO_COMPETENCY_TO_LEARN,
                     "No competency gap to learn");
         }
+        List<MergedCompetencyGap> gaps = mergedGaps.stream()
+                .limit(MAX_ROADMAP_COMPETENCIES)
+                .toList();
         return RoadmapGenerationResult.combine(gaps,
                 aiClient.generate(RoadmapAiRequest.from(userId, gaps)));
     }

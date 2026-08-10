@@ -1,0 +1,1939 @@
+{
+  "user_id": 56,
+  "extraction_model": "gpt-4o-mini",
+  "processed_chunk_count": 19,
+  "processed_chunks": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 14,
+      "content_hash": "9b67774e03570ac7c57bb0c3fe9f6f358cb886eb576b7fa2554213be1a43d864"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 19,
+      "content_hash": "9ff68219aa8123e8fff695e1fe0e6e4a84f4773901e71d8511c99e86b87fc80f"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 20,
+      "content_hash": "b7c1a764eecdbeba94d732939dd1f69598aa507d611459969081870adf5f3326"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 21,
+      "content_hash": "4ef48099e6fa02bca976ad2ad8e3f5b38322a37d2fdd2bc3b5dfe36759d85845"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 22,
+      "content_hash": "1b9a9a8ad1853da98afdeb3514b5c0564970d8f49e34ea622508ac411f7d2bf3"
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 23,
+      "content_hash": "769505c990260dbdd59e9eb1d5babdc0fee71e52c1d94db046fa546ae927ecab"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 18,
+      "content_hash": "fe20b6f5e39b023daf7331b1be003aa79766a3e285656965a24158ede99a5e3c"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "content_hash": "ca69844fd536a6c0cd5dfb9cc2254dfb95072090ace8a07b8be4c29c1c0be503"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 20,
+      "content_hash": "4d48718a0a242e304e3d33cd0be859d1972ac9f9d34f469dd8ef25181a980dd1"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 21,
+      "content_hash": "eafaa1629f0839aff84d590e7f0dd12e4bd14744047bbc55844aab6ed5cacd1d"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 22,
+      "content_hash": "f5262ffcfd2f6482d5cf37ce81393669597097bd2e2b1fafe6db5a64840b87d1"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "content_hash": "a6f2cdbb5da54d62e45c80a7bb07c226e230131daf232b028be99d70774750c5"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "content_hash": "b9706284eedfe89810c9931c477faa0236fa55e4c06c6316b41a024b87323e96"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "content_hash": "32cddb57ac3f938e8f6463531a7220c0530eaa44a2257502a309b9e22a05c0d6"
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "content_hash": "1950483ce29ddf0effcba6b313c73bc96adb9ba7f4250a326bdbd30987a5fa0e"
+    }
+  ],
+  "skills": [
+    {
+      "skill_id": 1332,
+      "skill_name": "문제 해결",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 3,
+      "mapping_confidence": 1.0,
+      "level_confidence": 1.0,
+      "evidences": [
+        {
+          "skill_id": 1332,
+          "skill_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 20,
+          "context_type": "PERSONALITY",
+          "content_hash": "4d48718a0a242e304e3d33cd0be859d1972ac9f9d34f469dd8ef25181a980dd1",
+          "extracted_name": "문제 해결",
+          "evidence": "기능 오류나 예상하지 못한 결과가 발생했을 때 로그와 데이터를 먼저 확인하고, 어떤 조건에서 문제가 재현되는지 정리한 뒤 해결 방법을 찾으려고 했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        },
+        {
+          "skill_id": 1332,
+          "skill_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 21,
+          "context_type": "PERSONALITY",
+          "content_hash": "eafaa1629f0839aff84d590e7f0dd12e4bd14744047bbc55844aab6ed5cacd1d",
+          "extracted_name": "문제 해결",
+          "evidence": "최근에는 문제를 필수 개선 사항과 추후 개선 사항으로 나누고, 우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        },
+        {
+          "skill_id": 1332,
+          "skill_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 22,
+          "context_type": "PERSONALITY",
+          "content_hash": "f5262ffcfd2f6482d5cf37ce81393669597097bd2e2b1fafe6db5a64840b87d1",
+          "extracted_name": "문제 해결",
+          "evidence": "우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1335,
+      "skill_name": "우선순위 설정",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.75,
+      "evidences": [
+        {
+          "skill_id": 1335,
+          "skill_name": "우선순위 설정",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 21,
+          "context_type": "PERSONALITY",
+          "content_hash": "eafaa1629f0839aff84d590e7f0dd12e4bd14744047bbc55844aab6ed5cacd1d",
+          "extracted_name": "우선순위 설정",
+          "evidence": "우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1343,
+      "skill_name": "피드백 수용",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.75,
+      "evidences": [
+        {
+          "skill_id": 1343,
+          "skill_name": "피드백 수용",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 21,
+          "context_type": "PERSONALITY",
+          "content_hash": "eafaa1629f0839aff84d590e7f0dd12e4bd14744047bbc55844aab6ed5cacd1d",
+          "extracted_name": "피드백 수용",
+          "evidence": "피드백을 듣고 더 나은 방법이 있다면 기존 방식을 수정하는 데 부담을 두지 않는 편입니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1345,
+      "skill_name": "협업",
+      "category": "BEHAVIORAL_TRAIT",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.75,
+      "evidences": [
+        {
+          "skill_id": 1345,
+          "skill_name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 20,
+          "context_type": "PERSONALITY",
+          "content_hash": "4d48718a0a242e304e3d33cd0be859d1972ac9f9d34f469dd8ef25181a980dd1",
+          "extracted_name": "협업",
+          "evidence": "혼자 판단하기보다 팀원의 의견과 피드백을 듣고 더 나은 방법이 있다면 기존 방식을 수정하는 데 부담을 두지 않는 편입니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1355,
+      "skill_name": "AWS Certified AI Practitioner",
+      "category": "CERTIFICATION",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 1.0,
+      "evidences": [
+        {
+          "skill_id": 1355,
+          "skill_name": "AWS Certified AI Practitioner",
+          "category": "CERTIFICATION",
+          "source_kind": "RESUME",
+          "chunk_id": 19,
+          "context_type": "CERTIFICATION",
+          "content_hash": "9ff68219aa8123e8fff695e1fe0e6e4a84f4773901e71d8511c99e86b87fc80f",
+          "extracted_name": "AWS Certified AI Practitioner",
+          "evidence": "AWS Certified AI Practitioner",
+          "extracted_level": 1,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1409,
+      "skill_name": "Microsoft Azure AI Engineer Associate",
+      "category": "CERTIFICATION",
+      "level": 1,
+      "mapping_confidence": 0.95,
+      "level_confidence": 1.0,
+      "evidences": [
+        {
+          "skill_id": 1409,
+          "skill_name": "Microsoft Azure AI Engineer Associate",
+          "category": "CERTIFICATION",
+          "source_kind": "RESUME",
+          "chunk_id": 20,
+          "context_type": "CERTIFICATION",
+          "content_hash": "b7c1a764eecdbeba94d732939dd1f69598aa507d611459969081870adf5f3326",
+          "extracted_name": "Azure AI Engineer Associate",
+          "evidence": "Microsoft Certified: Azure AI Engineer Associate",
+          "extracted_level": 1,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 1498,
+      "skill_name": "빅데이터분석기사",
+      "category": "CERTIFICATION",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 1.0,
+      "evidences": [
+        {
+          "skill_id": 1498,
+          "skill_name": "빅데이터분석기사",
+          "category": "CERTIFICATION",
+          "source_kind": "RESUME",
+          "chunk_id": 21,
+          "context_type": "CERTIFICATION",
+          "content_hash": "4ef48099e6fa02bca976ad2ad8e3f5b38322a37d2fdd2bc3b5dfe36759d85845",
+          "extracted_name": "빅데이터분석기사",
+          "evidence": "자격증: 빅데이터분석기사",
+          "extracted_level": 1,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 587,
+      "skill_name": "RAG 파이프라인 개발",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 587,
+          "skill_name": "RAG 파이프라인 개발",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "RAG 파이프라인 개발",
+          "evidence": "사내 문서를 기반으로 더 정확한 결과를 생성하기 위해 RAG 파이프라인을 개발했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 700,
+      "skill_name": "기술 부채 개선",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 700,
+          "skill_name": "기술 부채 개선",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 17,
+          "context_type": "ACTIVITY",
+          "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+          "extracted_name": "기술 부채 정의",
+          "evidence": "중복된 LLM API 호출과 프롬프트 로직을 기술 부채로 정의하고 공통 모듈로 단계적으로 분리했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 843,
+      "skill_name": "백엔드 API 개발",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 843,
+          "skill_name": "백엔드 API 개발",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "백엔드 API 개발",
+          "evidence": "TypeScript와 JavaScript를 사용하여 콘텐츠 생성 AI 서비스의 백엔드 API를 개발했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 858,
+      "skill_name": "보안 필터 적용",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.99,
+      "evidences": [
+        {
+          "skill_id": 858,
+          "skill_name": "보안 필터 적용",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "개인정보 보안 필터 적용",
+          "evidence": "개인정보가 포함된 요청이 LLM에 그대로 전달되지 않도록 입력 단계에 개인정보 탐지 및 보안 필터를 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 858,
+          "skill_name": "보안 필터 적용",
+          "category": "EXPERIENCE",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 24,
+          "context_type": "EXPERIENCE",
+          "content_hash": "b9706284eedfe89810c9931c477faa0236fa55e4c06c6316b41a024b87323e96",
+          "extracted_name": "보안 필터 적용",
+          "evidence": "개인정보를 탐지하고 차단하는 보안 필터를 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        },
+        {
+          "skill_id": 858,
+          "skill_name": "보안 필터 적용",
+          "category": "EXPERIENCE",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 25,
+          "context_type": "EXPERIENCE",
+          "content_hash": "32cddb57ac3f938e8f6463531a7220c0530eaa44a2257502a309b9e22a05c0d6",
+          "extracted_name": "보안 필터 적용",
+          "evidence": "입력 단계에서 개인정보를 탐지하고 차단하는 보안 필터를 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 873,
+      "skill_name": "비용 최적화",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 873,
+          "skill_name": "비용 최적화",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "비용 최적화",
+          "evidence": "LLM API 호출 횟수와 토큰 사용량을 분석하여 불필요한 요청을 줄이고 프롬프트 길이를 최적화해 AI API 사용 비용을 절감했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 916,
+      "skill_name": "서비스 모니터링",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 916,
+          "skill_name": "서비스 모니터링",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "서비스 배포 및 모니터링",
+          "evidence": "AWS Cloud 환경에 서비스를 배포하고 서비스 상태와 LLM API 오류를 모니터링했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 1145,
+      "skill_name": "장애 분석",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 1145,
+          "skill_name": "장애 분석",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 17,
+          "context_type": "ACTIVITY",
+          "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+          "extracted_name": "장애 분석",
+          "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1146,
+      "skill_name": "장애 원인 분석",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 1146,
+          "skill_name": "장애 원인 분석",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "장애 원인 추적",
+          "evidence": "장애 발생 시 로그, 요청 데이터, 재현 절차를 기준으로 원인을 추적했으며 임시 조치와 근본 개선 작업을 구분하여 처리했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 1225,
+      "skill_name": "콘텐츠 생성 프로젝트",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 1225,
+          "skill_name": "콘텐츠 생성 프로젝트",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "AI 기반 콘텐츠 생성 플랫폼 개발",
+          "evidence": "생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 1282,
+      "skill_name": "프롬프트 관리",
+      "category": "EXPERIENCE",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 1282,
+          "skill_name": "프롬프트 관리",
+          "category": "EXPERIENCE",
+          "source_kind": "RESUME",
+          "chunk_id": 15,
+          "context_type": "EXPERIENCE",
+          "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+          "extracted_name": "프롬프트 관리",
+          "evidence": "프롬프트를 기능별로 분리하여 버전 관리하고, 프롬프트 변경 전후의 생성 결과를 비교하여 품질 저하 여부를 확인했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 16,
+      "skill_name": "AWS",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 16,
+          "skill_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "AWS",
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 27,
+      "skill_name": "Azure",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 27,
+          "skill_name": "Azure",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "Microsoft Azure",
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 96,
+      "skill_name": "JavaScript",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 96,
+          "skill_name": "JavaScript",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "JavaScript",
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 108,
+      "skill_name": "LLM API",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.81,
+      "evidences": [
+        {
+          "skill_id": 108,
+          "skill_name": "LLM API",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "OpenAI LLM API 연동",
+          "evidence": "사용자가 주제를 입력하면 관련 내부 문서를 검색하고 참고 자료를 기반으로 콘텐츠를 생성하도록 OpenAI LLM API와 API 서버를 연동했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 108,
+          "skill_name": "LLM API",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "LLM API",
+          "evidence": "JavaScript와 TypeScript로 LLM API 기반 AI 서비스를 개발하고 임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 1660,
+      "skill_name": "Machine Learning",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.81,
+      "evidences": [
+        {
+          "skill_id": 1660,
+          "skill_name": "Machine Learning",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "머신러닝",
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 1660,
+          "skill_name": "Machine Learning",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "머신러닝",
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다.",
+          "extracted_level": 1,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 158,
+      "skill_name": "RAG",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.99,
+      "evidences": [
+        {
+          "skill_id": 158,
+          "skill_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "RAG 파이프라인 설계",
+          "evidence": "RAG 파이프라인을 설계하여 문서를 청킹하고 임베딩한 뒤 Vector DB에서 관련 데이터를 검색하도록 구현했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 158,
+          "skill_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "RAG",
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        },
+        {
+          "skill_id": 158,
+          "skill_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "COVER_LETTER",
+          "chunk_id": 19,
+          "context_type": "MOTIVATION",
+          "content_hash": "ca69844fd536a6c0cd5dfb9cc2254dfb95072090ace8a07b8be4c29c1c0be503",
+          "extracted_name": "RAG 파이프라인",
+          "evidence": "RAG 파이프라인을 구현했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 191,
+      "skill_name": "TypeScript",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 191,
+          "skill_name": "TypeScript",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "TypeScript",
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 220,
+      "skill_name": "개인정보 보호",
+      "category": "TECHNICAL_SKILL",
+      "level": 1,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 220,
+          "skill_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "개인정보 보호",
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+          "extracted_level": 1,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    },
+    {
+      "skill_id": 300,
+      "skill_name": "로그 분석",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 300,
+          "skill_name": "로그 분석",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 17,
+          "context_type": "ACTIVITY",
+          "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+          "extracted_name": "서비스 로그 분석",
+          "evidence": "서비스 로그와 LLM API 응답 데이터를 분석하여 동일 문서의 반복 임베딩과 불필요하게 긴 프롬프트가 원인임을 확인했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 336,
+      "skill_name": "벡터 데이터베이스",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 336,
+          "skill_name": "벡터 데이터베이스",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "Vector DB",
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 490,
+      "skill_name": "콘텐츠 생성",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 490,
+          "skill_name": "콘텐츠 생성",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 22,
+          "context_type": "AWARD",
+          "content_hash": "1b9a9a8ad1853da98afdeb3514b5c0564970d8f49e34ea622508ac411f7d2bf3",
+          "extracted_name": "콘텐츠 생성 서비스 구현",
+          "evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 498,
+      "skill_name": "클라우드",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 0.95,
+      "level_confidence": 0.73,
+      "evidences": [
+        {
+          "skill_id": 498,
+          "skill_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "클라우드 컴퓨팅",
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        }
+      ]
+    },
+    {
+      "skill_id": 528,
+      "skill_name": "프롬프트 엔지니어링",
+      "category": "TECHNICAL_SKILL",
+      "level": 2,
+      "mapping_confidence": 1.0,
+      "level_confidence": 0.89,
+      "evidences": [
+        {
+          "skill_id": 528,
+          "skill_name": "프롬프트 엔지니어링",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 16,
+          "context_type": "ACTIVITY",
+          "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+          "extracted_name": "프롬프트 설계",
+          "evidence": "검색 결과와 사용자 질문을 조합한 프롬프트를 설계하고 프롬프트별 결과를 비교했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 528,
+          "skill_name": "프롬프트 엔지니어링",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 17,
+          "context_type": "ACTIVITY",
+          "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+          "extracted_name": "프롬프트 최적화",
+          "evidence": "프롬프트의 불필요한 내용을 제거하여 토큰 사용량과 API 비용을 줄이고 응답 속도를 개선했습니다.",
+          "extracted_level": 2,
+          "mapping_method": "ALIAS",
+          "mapping_similarity": null,
+          "mapping_confidence": 0.95
+        },
+        {
+          "skill_id": 528,
+          "skill_name": "프롬프트 엔지니어링",
+          "category": "TECHNICAL_SKILL",
+          "source_kind": "RESUME",
+          "chunk_id": 18,
+          "context_type": "TRAINING",
+          "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+          "extracted_name": "프롬프트 엔지니어링",
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다.",
+          "extracted_level": 1,
+          "mapping_method": "EXACT",
+          "mapping_similarity": null,
+          "mapping_confidence": 1.0
+        }
+      ]
+    }
+  ],
+  "unmapped": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 14,
+      "context_type": "EDUCATION",
+      "extracted_name": "컴퓨터공학",
+      "category": "EXPERIENCE",
+      "evidence": "전공: 컴퓨터공학",
+      "extracted_level": 1,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1221,
+          "name": "컴퓨터 비전 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.43989836991066955
+        },
+        {
+          "skill_id": 1235,
+          "name": "클라우드 아키텍처 설계",
+          "category": "EXPERIENCE",
+          "similarity": 0.3825061914221597
+        },
+        {
+          "skill_id": 1232,
+          "name": "클라우드 AI 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.3346687635635379
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "검색 증강 생성 구조 구현",
+      "category": "EXPERIENCE",
+      "evidence": "사용자 요청과 관련된 문서를 검색하여 LLM 프롬프트에 전달하는 검색 증강 생성 구조를 구현했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1160,
+          "name": "점검 서류 작성",
+          "category": "EXPERIENCE",
+          "similarity": 0.3923853005083686
+        },
+        {
+          "skill_id": 679,
+          "name": "구조 해석",
+          "category": "EXPERIENCE",
+          "similarity": 0.378136306537352
+        },
+        {
+          "skill_id": 756,
+          "name": "디자인 시스템 구축",
+          "category": "EXPERIENCE",
+          "similarity": 0.3676503934231685
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "골든셋 구축",
+      "category": "EXPERIENCE",
+      "evidence": "생성형 AI의 답변 품질을 검증하기 위해 골든셋을 구축하고 Precision, Recall, F1 기반의 평가 로직을 개발했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 912,
+          "name": "서버 구축",
+          "category": "EXPERIENCE",
+          "similarity": 0.3657683676882082
+        },
+        {
+          "skill_id": 564,
+          "name": "DR 구축 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.3347320647579033
+        },
+        {
+          "skill_id": 756,
+          "name": "디자인 시스템 구축",
+          "category": "EXPERIENCE",
+          "similarity": 0.332323095127933
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "생성 실패 유형 분석",
+      "category": "EXPERIENCE",
+      "evidence": "서비스 로그와 사용자 피드백을 수집하여 반복적으로 발생하는 생성 실패 유형을 분석하고 프롬프트와 검색 로직을 개선했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 993,
+          "name": "실패 사례 분석",
+          "category": "EXPERIENCE",
+          "similarity": 0.471139798149365
+        },
+        {
+          "skill_id": 925,
+          "name": "성과 분석",
+          "category": "EXPERIENCE",
+          "similarity": 0.34355894265364784
+        },
+        {
+          "skill_id": 908,
+          "name": "생성형 AI 보안 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.3392313306336521
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "요구사항 문서화",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "요구사항 변경 이유와 기술적 결정 내용을 문서화하여 팀원들과 공유했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1337,
+          "name": "의사소통",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.28416526366469386
+        },
+        {
+          "skill_id": 1330,
+          "name": "꼼꼼함",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2707362378812517
+        },
+        {
+          "skill_id": 1345,
+          "name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.25250818027020294
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "context_type": "ACTIVITY",
+      "extracted_name": "가드레일 및 보안 필터 적용",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "검색 결과가 부족한 경우 답변 생성을 제한하는 가드레일과 보안 필터를 적용했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 78,
+          "name": "GRC",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.38594910397044035
+        },
+        {
+          "skill_id": 339,
+          "name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3829652847154872
+        },
+        {
+          "skill_id": 461,
+          "name": "제로트러스트",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3701580542450631
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "context_type": "ACTIVITY",
+      "extracted_name": "사용자 피드백 반영",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1343,
+          "name": "피드백 수용",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.5160117468664457
+        },
+        {
+          "skill_id": 1333,
+          "name": "사용자 중심 사고",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.4058186044095582
+        },
+        {
+          "skill_id": 1342,
+          "name": "친절함",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.3214601906323813
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "context_type": "ACTIVITY",
+      "extracted_name": "문서화 및 공유",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "역할 분담, 기술 선택 이유, API 명세와 프롬프트 변경 이력을 문서화하여 팀원들과 공유했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1333,
+          "name": "사용자 중심 사고",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.29862540787488656
+        },
+        {
+          "skill_id": 1345,
+          "name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.29582211818997006
+        },
+        {
+          "skill_id": 1342,
+          "name": "친절함",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.24052985228742818
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "context_type": "ACTIVITY",
+      "extracted_name": "성능 개선",
+      "category": "EXPERIENCE",
+      "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 933,
+          "name": "성능·비용·안정성 개선",
+          "category": "EXPERIENCE",
+          "similarity": 0.5134471180399686
+        },
+        {
+          "skill_id": 930,
+          "name": "성능 진단",
+          "category": "EXPERIENCE",
+          "similarity": 0.4928392180661768
+        },
+        {
+          "skill_id": 927,
+          "name": "성능 검증",
+          "category": "EXPERIENCE",
+          "similarity": 0.4918150762242002
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "context_type": "ACTIVITY",
+      "extracted_name": "임베딩 개선",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "콘텐츠 해시로 변경되지 않은 문서는 임베딩을 다시 생성하지 않도록 개선하고 RAG 검색 범위를 조정했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 217,
+          "name": "개선 과제 도출",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.38181018874362904
+        },
+        {
+          "skill_id": 297,
+          "name": "레거시 개선",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.36594612339846444
+        },
+        {
+          "skill_id": 519,
+          "name": "퍼널 분석",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3482869932809258
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "context_type": "ACTIVITY",
+      "extracted_name": "문서화",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "장애 원인, 임시 해결 방법, 근본 개선 방법과 재발 방지 내용을 문서화했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1333,
+          "name": "사용자 중심 사고",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.24288974959135834
+        },
+        {
+          "skill_id": 1345,
+          "name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2398988896914669
+        },
+        {
+          "skill_id": 1337,
+          "name": "의사소통",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.23694705911569125
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "context_type": "TRAINING",
+      "extracted_name": "입력 검증",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "extracted_level": 1,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 447,
+          "name": "자료 입력",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4957901594708656
+        },
+        {
+          "skill_id": 458,
+          "name": "전표 처리",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4251955277817294
+        },
+        {
+          "skill_id": 266,
+          "name": "내부통제",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4010906466787829
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "context_type": "TRAINING",
+      "extracted_name": "보안 필터",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "extracted_level": 1,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 339,
+          "name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.5098341607194259
+        },
+        {
+          "skill_id": 73,
+          "name": "Firewall",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.47064159846683384
+        },
+        {
+          "skill_id": 315,
+          "name": "모델 보안",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.45496082224202106
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "context_type": "TRAINING",
+      "extracted_name": "비용 최적화",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "extracted_level": 1,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 213,
+          "name": "가격 최적화",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.6328835325760425
+        },
+        {
+          "skill_id": 71,
+          "name": "FinOps",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4738062675955441
+        },
+        {
+          "skill_id": 417,
+          "name": "운영 분석",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4358811970039328
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 22,
+      "context_type": "AWARD",
+      "extracted_name": "품질 개선",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 291,
+          "name": "디자인 품질 관리",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.5094476416294014
+        },
+        {
+          "skill_id": 522,
+          "name": "품질 관리",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.497946218448318
+        },
+        {
+          "skill_id": 360,
+          "name": "산업제품 조형",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.4763523850248781
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 23,
+      "context_type": "LANGUAGE",
+      "extracted_name": "영어",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "언어: 영어",
+      "extracted_level": 1,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 350,
+          "name": "비즈니스 영어",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.43226070844899755
+        },
+        {
+          "skill_id": 532,
+          "name": "한국어 문장",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3586382498791034
+        },
+        {
+          "skill_id": 533,
+          "name": "한글",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.3569638043218615
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "context_type": "MOTIVATION",
+      "extracted_name": "Precision",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 218,
+          "name": "개선 조치",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.32585815737757773
+        },
+        {
+          "skill_id": 339,
+          "name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.2841443076237652
+        },
+        {
+          "skill_id": 291,
+          "name": "디자인 품질 관리",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.2794567336105085
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "context_type": "MOTIVATION",
+      "extracted_name": "Recall",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 243,
+          "name": "공급망 추적",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.2967914443872468
+        },
+        {
+          "skill_id": 510,
+          "name": "통계 분석",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.29465834375649447
+        },
+        {
+          "skill_id": 78,
+          "name": "GRC",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.2925812108341207
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "context_type": "MOTIVATION",
+      "extracted_name": "F1",
+      "category": "TECHNICAL_SKILL",
+      "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 65,
+          "name": "FPGA",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.31715546561579133
+        },
+        {
+          "skill_id": 66,
+          "name": "FTA 시스템",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.31544067855635005
+        },
+        {
+          "skill_id": 70,
+          "name": "Figma",
+          "category": "TECHNICAL_SKILL",
+          "similarity": 0.29096486540807176
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 22,
+      "context_type": "PERSONALITY",
+      "extracted_name": "원인 분석",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "장애나 실패를 단순한 오류로 끝내지 않고 원인을 분석해 재발 방지 방법을 찾고",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1343,
+          "name": "피드백 수용",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2772769516207245
+        },
+        {
+          "skill_id": 1332,
+          "name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2542693240212155
+        },
+        {
+          "skill_id": 1333,
+          "name": "사용자 중심 사고",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2352286952634146
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 22,
+      "context_type": "PERSONALITY",
+      "extracted_name": "피드백 반영",
+      "category": "BEHAVIORAL_TRAIT",
+      "evidence": "동료의 피드백을 적극적으로 반영하며",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1343,
+          "name": "피드백 수용",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.5064450028932621
+        },
+        {
+          "skill_id": 1333,
+          "name": "사용자 중심 사고",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.2754753109593122
+        },
+        {
+          "skill_id": 1337,
+          "name": "의사소통",
+          "category": "BEHAVIORAL_TRAIT",
+          "similarity": 0.26329527107788997
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "골든셋 기반 평가",
+      "category": "EXPERIENCE",
+      "evidence": "프로젝트에서는 생성 결과의 품질을 확인하기 위해 골든셋 기반 평가를 진행하고",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 932,
+          "name": "성능 평가",
+          "category": "EXPERIENCE",
+          "similarity": 0.424719722038404
+        },
+        {
+          "skill_id": 1087,
+          "name": "응답 평가",
+          "category": "EXPERIENCE",
+          "similarity": 0.4097910597310941
+        },
+        {
+          "skill_id": 612,
+          "name": "감정평가서 검토",
+          "category": "EXPERIENCE",
+          "similarity": 0.3944635582862154
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "RAG 검색 성능 개선",
+      "category": "EXPERIENCE",
+      "evidence": "검색 결과의 Precision과 Recall을 분석해 RAG 검색 성능을 개선했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 586,
+          "name": "RAG 시나리오 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.5563226085312704
+        },
+        {
+          "skill_id": 587,
+          "name": "RAG 파이프라인 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.5086897311133707
+        },
+        {
+          "skill_id": 933,
+          "name": "성능·비용·안정성 개선",
+          "category": "EXPERIENCE",
+          "similarity": 0.42868871366919326
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "RAG 검색 성능 개선",
+      "category": "EXPERIENCE",
+      "evidence": "검색 결과의 Precision과 Recall을 분석해 RAG 검색 성능을 개선했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 586,
+          "name": "RAG 시나리오 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.5563226085312704
+        },
+        {
+          "skill_id": 587,
+          "name": "RAG 파이프라인 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.5086897311133707
+        },
+        {
+          "skill_id": 933,
+          "name": "성능·비용·안정성 개선",
+          "category": "EXPERIENCE",
+          "similarity": 0.42868871366919326
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "LLM API 사용",
+      "category": "EXPERIENCE",
+      "evidence": "LLM API 사용 과정에서는 토큰 사용량과 호출 횟수를 확인하고 불필요한 프롬프트 내용을 제거해 비용을 줄였습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 575,
+          "name": "LLM API 연동",
+          "category": "EXPERIENCE",
+          "similarity": 0.6078515220516363
+        },
+        {
+          "skill_id": 554,
+          "name": "API 연동",
+          "category": "EXPERIENCE",
+          "similarity": 0.47055018164010187
+        },
+        {
+          "skill_id": 553,
+          "name": "API 설계",
+          "category": "EXPERIENCE",
+          "similarity": 0.44708739110818074
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "비용 절감",
+      "category": "EXPERIENCE",
+      "evidence": "불필요한 프롬프트 내용을 제거해 비용을 줄였습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1067,
+          "name": "원가 절감",
+          "category": "EXPERIENCE",
+          "similarity": 0.5905706517504118
+        },
+        {
+          "skill_id": 873,
+          "name": "비용 최적화",
+          "category": "EXPERIENCE",
+          "similarity": 0.4957177626272735
+        },
+        {
+          "skill_id": 933,
+          "name": "성능·비용·안정성 개선",
+          "category": "EXPERIENCE",
+          "similarity": 0.46852287519739555
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "로그 확인",
+      "category": "EXPERIENCE",
+      "evidence": "API 오류, 응답 시간, LLM 호출 실패와 같은 로그를 확인하고 반복적으로 발생하는 문제를 분석했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 653,
+          "name": "고객 확인",
+          "category": "EXPERIENCE",
+          "similarity": 0.3767953969416229
+        },
+        {
+          "skill_id": 827,
+          "name": "방문 등록",
+          "category": "EXPERIENCE",
+          "similarity": 0.3653878063604594
+        },
+        {
+          "skill_id": 1184,
+          "name": "주문 확인",
+          "category": "EXPERIENCE",
+          "similarity": 0.3635589993932544
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "문제 분석",
+      "category": "EXPERIENCE",
+      "evidence": "반복적으로 발생하는 문제를 분석했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1311,
+          "name": "현황 분석",
+          "category": "EXPERIENCE",
+          "similarity": 0.4828697759515199
+        },
+        {
+          "skill_id": 1046,
+          "name": "요구사항 분석",
+          "category": "EXPERIENCE",
+          "similarity": 0.4612707641429641
+        },
+        {
+          "skill_id": 992,
+          "name": "실적 분석",
+          "category": "EXPERIENCE",
+          "similarity": 0.4599433113179845
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "프롬프트 개선",
+      "category": "EXPERIENCE",
+      "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1283,
+          "name": "프롬프트 설계",
+          "category": "EXPERIENCE",
+          "similarity": 0.5370116261133312
+        },
+        {
+          "skill_id": 1282,
+          "name": "프롬프트 관리",
+          "category": "EXPERIENCE",
+          "similarity": 0.48531206955880823
+        },
+        {
+          "skill_id": 1168,
+          "name": "제로트러스트 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.43548230381260966
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "프롬프트 개선",
+      "category": "EXPERIENCE",
+      "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 1283,
+          "name": "프롬프트 설계",
+          "category": "EXPERIENCE",
+          "similarity": 0.5370116261133312
+        },
+        {
+          "skill_id": 1282,
+          "name": "프롬프트 관리",
+          "category": "EXPERIENCE",
+          "similarity": 0.48531206955880823
+        },
+        {
+          "skill_id": 1168,
+          "name": "제로트러스트 프로젝트",
+          "category": "EXPERIENCE",
+          "similarity": 0.43548230381260966
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "context_type": "EXPERIENCE",
+      "extracted_name": "RAG 검색 로직 개선",
+      "category": "EXPERIENCE",
+      "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다.",
+      "extracted_level": 2,
+      "failure_reason": "LOW_SIMILARITY",
+      "category_top_k": [
+        {
+          "skill_id": 586,
+          "name": "RAG 시나리오 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.576868908764991
+        },
+        {
+          "skill_id": 587,
+          "name": "RAG 파이프라인 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.5166963409882066
+        },
+        {
+          "skill_id": 1262,
+          "name": "평가 로직 개발",
+          "category": "EXPERIENCE",
+          "similarity": 0.39236937508524194
+        }
+      ]
+    }
+  ],
+  "extraction_failures": [],
+  "persisted": false,
+  "persist_stats": null
+}

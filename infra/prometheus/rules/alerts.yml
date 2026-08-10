@@ -1,0 +1,26 @@
+groups:
+  - name: passed-service-availability
+    rules:
+      - alert: PassedBackendDown
+        expr: up{job="backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Passed backend is unavailable
+
+      - alert: PassedAiDown
+        expr: up{job="ai"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Passed AI service is unavailable
+
+      - alert: PassedPostgresExporterDown
+        expr: up{job="postgres"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Passed PostgreSQL exporter is unavailable

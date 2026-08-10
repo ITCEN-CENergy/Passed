@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 import logging
 import os
+from time import perf_counter
 
 import httpx
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from prometheus_client import Counter, Histogram, make_asgi_app
 
 from api.features.roadmap.router import router as roadmap_router
 from api.features.coverletter.router import router as coverletter_router
@@ -23,6 +25,22 @@ for library_logger_name in ("httpx", "httpcore", "openai"):
     logging.getLogger(library_logger_name).setLevel(logging.WARNING)
 
 
+AI_REQUEST_TOTAL = Counter(
+    "ai_inference_requests_total",
+    "Total AI service requests",
+)
+
+AI_ERROR_TOTAL = Counter(
+    "ai_inference_errors_total",
+    "Total AI service errors",
+)
+
+AI_INFERENCE_SECONDS = Histogram(
+    "ai_inference_duration_seconds",
+    "AI service request duration",
+)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as http_client:
@@ -35,6 +53,11 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+# Prometheus 설정
+metrics_app = make_asgi_app()
+
+app.mount("/metrics", metrics_app)
 
 app.include_router(roadmap_router)
 app.include_router(coverletter_router)
@@ -51,6 +74,25 @@ async def root() -> dict[str, str]:
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.middleware("http")
+async def record_request_metrics(request: Request, call_next):
+    if request.url.path in {"/health", "/metrics"}:
+        return await call_next(request)
+
+    AI_REQUEST_TOTAL.inc()
+    started_at = perf_counter()
+    try:
+        response = await call_next(request)
+        if response.status_code >= 500:
+            AI_ERROR_TOTAL.inc()
+        return response
+    except Exception:
+        AI_ERROR_TOTAL.inc()
+        raise
+    finally:
+        AI_INFERENCE_SECONDS.observe(perf_counter() - started_at)
 
 
 if __name__ == "__main__":

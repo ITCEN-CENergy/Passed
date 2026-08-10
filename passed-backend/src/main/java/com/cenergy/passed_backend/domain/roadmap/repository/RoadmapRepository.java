@@ -15,6 +15,9 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
     Optional<Roadmap> findByIdAndUserId(Long roadmapId, Long userId);
 
+    Optional<Roadmap> findFirstByUserIdAndGenerationKeyAndStatusInOrderByIdAsc(
+            Long userId, String generationKey, Collection<RoadmapStatus> statuses);
+
     @Query("""
             select r
             from Roadmap r

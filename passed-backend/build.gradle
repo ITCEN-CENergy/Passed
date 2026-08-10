@@ -54,6 +54,12 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	if (project.hasProperty('showTestOutput')) {
+		testLogging {
+			events 'passed'
+			showStandardStreams = true
+		}
+	}
 }
 
 tasks.named('bootJar') {

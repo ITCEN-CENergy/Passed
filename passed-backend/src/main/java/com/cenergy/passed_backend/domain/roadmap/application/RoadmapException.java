@@ -23,6 +23,13 @@ public class RoadmapException extends RuntimeException {
                 roadmapId);
     }
 
+    public static RoadmapException generationInProgress(Long roadmapId) {
+        return new RoadmapException(
+                ErrorCode.ROADMAP_GENERATION_IN_PROGRESS,
+                "Roadmap generation is already in progress",
+                roadmapId);
+    }
+
     public ErrorCode getErrorCode() {
         return errorCode;
     }

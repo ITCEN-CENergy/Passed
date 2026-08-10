@@ -17,6 +17,7 @@ import java.util.List;
 public class RoadmapCommandService {
     private final CurrentUserIdProvider currentUserIdProvider;
     private final RoadmapGenerationService generationService;
+    private final RoadmapGenerationClaimService claimService;
     private final RoadmapPersistenceService persistenceService;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
@@ -24,12 +25,14 @@ public class RoadmapCommandService {
 
     public RoadmapCommandService(CurrentUserIdProvider currentUserIdProvider,
                                  RoadmapGenerationService generationService,
+                                 RoadmapGenerationClaimService claimService,
                                  RoadmapPersistenceService persistenceService,
                                  RoadmapRepository roadmapRepository,
                                  RoadmapMilestoneRepository roadmapMilestoneRepository,
                                  MilestoneRepository milestoneRepository) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.generationService = generationService;
+        this.claimService = claimService;
         this.persistenceService = persistenceService;
         this.roadmapRepository = roadmapRepository;
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
@@ -42,16 +45,22 @@ public class RoadmapCommandService {
         if (userId == null || userId <= 0) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid current user");
         }
-        roadmapRepository.findAllByUserIdAndStatusAndExactJobPostingIds(
-                        userId, RoadmapStatus.ACTIVE, jobPostingIds, jobPostingIds.size())
-                .stream()
-                .findFirst()
-                .ifPresent(existing -> {
-                    throw RoadmapException.duplicate(existing.getId());
-                });
-        RoadmapGenerationResult result = generationService.generate(userId, jobPostingIds);
-        Long roadmapId = persistenceService.save(userId, jobPostingIds, result).getId();
-        return RoadmapGenerateResponse.from(roadmapId, result);
+        RoadmapGenerationClaim claim = claimService.acquire(
+                userId, generationKey(jobPostingIds), jobPostingIds);
+        if (!claim.acquired()) {
+            throw claim.status() == RoadmapStatus.ACTIVE
+                    ? RoadmapException.duplicate(claim.roadmapId())
+                    : RoadmapException.generationInProgress(claim.roadmapId());
+        }
+
+        try {
+            RoadmapGenerationResult result = generationService.generate(userId, jobPostingIds);
+            Long roadmapId = persistenceService.complete(claim.roadmapId(), userId, result).getId();
+            return RoadmapGenerateResponse.from(roadmapId, result);
+        } catch (RuntimeException generationFailure) {
+            markFailedWithoutMasking(claim.roadmapId(), generationFailure);
+            throw generationFailure;
+        }
     }
 
     @Transactional
@@ -90,5 +99,19 @@ public class RoadmapCommandService {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "jobPostingIds must not be empty");
         }
         return normalized;
+    }
+
+    private String generationKey(List<Long> normalizedJobPostingIds) {
+        return normalizedJobPostingIds.stream()
+                .map(String::valueOf)
+                .collect(java.util.stream.Collectors.joining(","));
+    }
+
+    private void markFailedWithoutMasking(Long roadmapId, RuntimeException generationFailure) {
+        try {
+            claimService.markFailed(roadmapId, "Roadmap generation failed");
+        } catch (RuntimeException failureUpdateException) {
+            generationFailure.addSuppressed(failureUpdateException);
+        }
     }
 }

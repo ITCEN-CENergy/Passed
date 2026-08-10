@@ -18,4 +18,15 @@ class RoadmapExceptionHandlerTest {
         assertThat(response.getBody().code()).isEqualTo(ErrorCode.ROADMAP_ALREADY_EXISTS);
         assertThat(response.getBody().roadmapId()).isEqualTo(77L);
     }
+
+    @Test
+    void returnsConflictWithRoadmapIdWhileGenerationIsInProgress() {
+        var response = new RoadmapExceptionHandler().roadmap(
+                RoadmapException.generationInProgress(88L));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().code()).isEqualTo(ErrorCode.ROADMAP_GENERATION_IN_PROGRESS);
+        assertThat(response.getBody().roadmapId()).isEqualTo(88L);
+    }
 }

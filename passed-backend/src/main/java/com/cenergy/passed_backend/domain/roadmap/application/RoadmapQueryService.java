@@ -8,6 +8,7 @@ import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class RoadmapQueryService {
     private final RoadmapSkillSourceRepository sourceRepository;
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
     private final ResourceRecommendationRepository recommendationRepository;
+    private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapQueryService(CurrentUserIdProvider currentUserIdProvider,
                                RoadmapRepository roadmapRepository,
@@ -29,7 +31,8 @@ public class RoadmapQueryService {
                                RoadmapSkillRepository skillRepository,
                                RoadmapSkillSourceRepository sourceRepository,
                                RoadmapMilestoneRepository roadmapMilestoneRepository,
-                               ResourceRecommendationRepository recommendationRepository) {
+                               ResourceRecommendationRepository recommendationRepository,
+                               RoadmapEtaCalculator etaCalculator) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.roadmapRepository = roadmapRepository;
         this.jobPostingRepository = jobPostingRepository;
@@ -37,6 +40,7 @@ public class RoadmapQueryService {
         this.sourceRepository = sourceRepository;
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
         this.recommendationRepository = recommendationRepository;
+        this.etaCalculator = etaCalculator;
     }
 
     public RoadmapListResponse findAll() {
@@ -77,8 +81,17 @@ public class RoadmapQueryService {
         Map<Long, List<ResourceRecommendation>> resourcesByMilestone = recommendations.stream()
                 .collect(Collectors.groupingBy(value -> value.getMilestone().getId(), LinkedHashMap::new, Collectors.toList()));
 
+        LocalDate currentEstimatedEndDate = roadmap.getBaselineEndDate() == null
+                ? roadmap.getEstimatedEndDate()
+                : etaCalculator.calculate(roadmapMilestones);
+        RoadmapScheduleAssessment schedule = RoadmapScheduleAssessment.assess(
+                roadmap.getBaselineEndDate(), currentEstimatedEndDate);
+        boolean replanRecommended = roadmap.getStatus() == RoadmapStatus.ACTIVE
+                && schedule.replanRecommended();
+
         return new RoadmapDetailResponse(roadmap.getId(), roadmap.getTitle(), roadmap.getStatus(),
-                roadmap.getTotalEstimatedMinutes(), roadmap.getProgressRate(), roadmap.getEstimatedEndDate(),
+                roadmap.getTotalEstimatedMinutes(), roadmap.getProgressRate(), roadmap.getBaselineEndDate(),
+                currentEstimatedEndDate, schedule.status(), schedule.delayDays(), replanRecommended,
                 roadmap.getFailureReason(), postings.stream().map(RoadmapJobPosting::getJobPostingId).toList(),
                 skills.stream().map(skill -> toSkill(skill, sourcesBySkill.getOrDefault(skill.getId(), List.of()),
                         milestonesBySkill.getOrDefault(skill.getId(), List.of()), resourcesByMilestone)).toList(),

@@ -2,6 +2,7 @@ package com.cenergy.passed_backend.domain.roadmap.api;
 
 import com.cenergy.passed_backend.domain.roadmap.application.RoadmapCommandService;
 import com.cenergy.passed_backend.domain.roadmap.application.RoadmapQueryService;
+import com.cenergy.passed_backend.domain.roadmap.application.RoadmapReplanService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,10 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoadmapController {
     private final RoadmapCommandService commandService;
     private final RoadmapQueryService queryService;
+    private final RoadmapReplanService replanService;
 
-    public RoadmapController(RoadmapCommandService commandService, RoadmapQueryService queryService) {
+    public RoadmapController(RoadmapCommandService commandService, RoadmapQueryService queryService,
+                             RoadmapReplanService replanService) {
         this.commandService = commandService;
         this.queryService = queryService;
+        this.replanService = replanService;
     }
 
     @PostMapping("/generate")
@@ -42,5 +46,19 @@ public class RoadmapController {
     public ResponseEntity<Void> delete(@PathVariable Long roadmapId) {
         commandService.delete(roadmapId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{roadmapId}/replan/preview")
+    public ResponseEntity<RoadmapReplanPreviewResponse> previewReplan(
+            @PathVariable Long roadmapId,
+            @Valid @RequestBody RoadmapReplanPreviewRequest request) {
+        return ResponseEntity.ok(replanService.preview(roadmapId, request));
+    }
+
+    @PostMapping("/{roadmapId}/replan/apply")
+    public ResponseEntity<RoadmapReplanApplyResponse> applyReplan(
+            @PathVariable Long roadmapId,
+            @Valid @RequestBody RoadmapReplanApplyRequest request) {
+        return ResponseEntity.ok(replanService.apply(roadmapId, request));
     }
 }

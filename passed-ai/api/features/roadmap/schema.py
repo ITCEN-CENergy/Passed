@@ -165,3 +165,51 @@ class GeneratedSkillContent(RoadmapModel):
 class GeneratedRoadmapContent(RoadmapModel):
     title: str = Field(min_length=1, max_length=100)
     skills: list[GeneratedSkillContent] = Field(min_length=1, max_length=10)
+
+
+class ReplanMilestoneStatus(StrEnum):
+    NOT_STARTED = "NOT_STARTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+
+
+class ReplanAction(StrEnum):
+    KEEP = "KEEP"
+    REMOVE = "REMOVE"
+
+
+class ReplanMilestone(RoadmapModel):
+    milestoneId: int = Field(gt=0)
+    roadmapSkillId: int = Field(gt=0)
+    title: str = Field(min_length=1)
+    status: ReplanMilestoneStatus
+    estimatedMinutes: int = Field(gt=0)
+    learningOrder: int = Field(gt=0)
+    required: bool
+
+
+class RoadmapReplanRequest(RoadmapModel):
+    roadmapId: int = Field(gt=0)
+    title: str = Field(min_length=1)
+    delayDays: int = Field(ge=0)
+    userInstruction: str = Field(default="", max_length=500)
+    milestones: list[ReplanMilestone] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_unique_milestones(self) -> "RoadmapReplanRequest":
+        ids = [item.milestoneId for item in self.milestones]
+        if len(ids) != len(set(ids)):
+            raise ValueError("milestoneId must be unique")
+        return self
+
+
+class ReplanDecision(RoadmapModel):
+    milestoneId: int = Field(gt=0)
+    action: ReplanAction
+    learningOrder: int | None = Field(default=None, gt=0)
+    reason: str = Field(min_length=1, max_length=300)
+
+
+class RoadmapReplanResponse(RoadmapModel):
+    summary: str = Field(min_length=1, max_length=500)
+    decisions: list[ReplanDecision] = Field(min_length=1)

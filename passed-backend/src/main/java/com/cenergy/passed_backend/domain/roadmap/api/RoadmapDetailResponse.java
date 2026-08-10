@@ -9,7 +9,9 @@ import java.util.List;
 
 public record RoadmapDetailResponse(
         Long roadmapId, String title, RoadmapStatus status, int totalEstimatedMinutes,
-        BigDecimal progressRate, LocalDate estimatedEndDate, String failureReason,
+        BigDecimal progressRate, LocalDate baselineEndDate, LocalDate estimatedEndDate,
+        RoadmapScheduleStatus scheduleStatus, long delayDays, boolean replanRecommended,
+        String failureReason,
         List<Long> jobPostingIds, List<Skill> skills,
         OffsetDateTime createdAt, OffsetDateTime updatedAt
 ) {

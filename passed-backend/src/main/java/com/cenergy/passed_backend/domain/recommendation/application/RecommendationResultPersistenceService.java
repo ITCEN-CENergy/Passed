@@ -50,6 +50,7 @@ public class RecommendationResultPersistenceService {
     ) {
         Objects.requireNonNull(rankedRecommendations, "rankedRecommendations must not be null");
         Objects.requireNonNull(explanations, "explanations must not be null");
+        // 추천 실행 이력을 비관적 락으로 조회하여 동일 추천 실행에 대한 동시 완료 처리를 방지
         RecommendationRun run = runRepository.findByIdForUpdate(recommendationRunId)
                 .orElseThrow(() -> new IllegalStateException("Recommendation run not found"));
         if (rankedRecommendations.isEmpty()) {
@@ -60,6 +61,7 @@ public class RecommendationResultPersistenceService {
         List<Long> postingIds = rankedRecommendations.stream()
                 .map(RankedRecommendation::jobPostingId)
                 .toList();
+        // 선택된 공고를 한 번에 조회한 뒤, 공고 ID로 빠르게 접근할 수 있도록 Map으로 변환
         Map<Long, JobPosting> postings = indexPostings(
                 jobPostingRepository.findAllById(postingIds),
                 postingIds.size()
@@ -69,13 +71,15 @@ public class RecommendationResultPersistenceService {
                 .map(EvaluatedSkillDetail::skillId)
                 .distinct()
                 .toList();
+        // 추천 상세에 사용된 스킬을 한 번에 조회한 뒤, 스킬 ID 기준 Map으로 변환
         Map<Long, Skill> skills = indexSkills(skillRepository.findAllByIdIn(skillIds), skillIds.size());
 
+        // 공고별 최종 추천 결과 엔티티 생성 후 일괄 저장
         Map<Long, JobRecommendation> recommendationsByPostingId = new LinkedHashMap<>();
         for (RankedRecommendation ranked : rankedRecommendations) {
             RecommendationExplanation explanation = Objects.requireNonNull(
                     explanations.get(ranked.jobPostingId()),
-                    "Explanation must exist for every selected posting"
+                    "Explanation must exi킬t for every selected posting"
             );
             GradedRecommendation graded = ranked.recommendation();
             RecommendationScoreResult score = graded.score();
@@ -105,6 +109,7 @@ public class RecommendationResultPersistenceService {
         recommendationRepository.saveAll(recommendationsByPostingId.values());
         recommendationRepository.flush();
 
+        // 각 추천 공고의 스킬별 평가 상세 엔티티를 생성하여 일괄 저장
         List<JobRecommendationSkillDetail> details = rankedRecommendations.stream()
                 .flatMap(ranked -> ranked.recommendation().score().skillDetails().stream()
                         .map(detail -> toEntity(
@@ -114,6 +119,7 @@ public class RecommendationResultPersistenceService {
                         )))
                 .toList();
         skillDetailRepository.saveAll(details);
+        // 추천 결과와 상세 저장이 정상적으로 끝나면 추천 실행 이력의 상태를 완료 상태로 변경
         run.complete();
     }
 

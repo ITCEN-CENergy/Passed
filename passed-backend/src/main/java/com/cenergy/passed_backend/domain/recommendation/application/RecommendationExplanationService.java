@@ -30,7 +30,7 @@ public class RecommendationExplanationService {
         this.explanationClient = explanationClient;
         this.postingSummaryLoader = postingSummaryLoader;
     }
-
+    // 추천 결과에 대한 추천 이유, 강점, 보완점의 설명 생성
     public Map<Long, RecommendationExplanation> generate(
             List<RankedRecommendation> recommendations
     ) {
@@ -38,14 +38,19 @@ public class RecommendationExplanationService {
         if (recommendations.isEmpty()) {
             return Map.of();
         }
+        // 공고 id 리스트 저장
         List<Long> postingIds = recommendations.stream()
                 .map(RankedRecommendation::jobPostingId)
                 .toList();
+        // 추천 공고들의 제목, 회사명 등 설명 생성에 필요한 요약 정보를 일괄 조회
         Map<Long, RecommendationPostingSummary> summaries = postingSummaryLoader.load(postingIds);
+        // 추천 점수와 공고 정보를 결합하여 AI 설명 생성용 입력 DTO 생성
         List<RecommendationExplanationInput> inputs = recommendations.stream()
                 .map(value -> toInput(value, summaries.get(value.jobPostingId())))
                 .toList();
 
+        // AI 기반 추천 설명 생성을 최대 2번 요청하고, 반환된 결과를 백엔드에서 검증한 뒤,
+        // 계속 실패하면 fallback 설명을 생성
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
                 return validate(explanationClient.generate(inputs), postingIds);

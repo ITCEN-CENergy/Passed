@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateRequest;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapMilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapRepository;
+import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapStatus;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,13 @@ import java.util.Optional;
 
 import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class RoadmapCommandServiceTest {
     @Test
-    void usesProviderAndRemovesDuplicatesInFirstSeenOrder() {
+    void usesProviderAndNormalizesJobPostingIdsByDeduplicatingAndSorting() {
         CurrentUserIdProvider provider = () -> 1L;
         RoadmapGenerationService generation = mock(RoadmapGenerationService.class);
         when(generation.generate(anyLong(), anyList()))
@@ -31,8 +33,31 @@ class RoadmapCommandServiceTest {
 
         service.generate(new RoadmapGenerateRequest(List.of(102L, 101L, 102L)));
 
-        verify(generation).generate(1L, List.of(102L, 101L));
-        verify(persistence).save(eq(1L), eq(List.of(102L, 101L)), any());
+        verify(generation).generate(1L, List.of(101L, 102L));
+        verify(persistence).save(eq(1L), eq(List.of(101L, 102L)), any());
+    }
+
+    @Test
+    void rejectsDuplicateActiveRoadmapBeforeAiGenerationOrPersistence() {
+        RoadmapRepository roadmapRepository = mock(RoadmapRepository.class);
+        Roadmap existing = mock(Roadmap.class);
+        when(existing.getId()).thenReturn(77L);
+        when(roadmapRepository.findAllByUserIdAndStatusAndExactJobPostingIds(
+                1L, RoadmapStatus.ACTIVE, List.of(101L, 102L), 2L))
+                .thenReturn(List.of(existing));
+        RoadmapGenerationService generation = mock(RoadmapGenerationService.class);
+        RoadmapPersistenceService persistence = mock(RoadmapPersistenceService.class);
+        RoadmapCommandService service = service(() -> 1L, generation, persistence,
+                roadmapRepository, mock(RoadmapMilestoneRepository.class), mock(MilestoneRepository.class));
+
+        assertThatThrownBy(() -> service.generate(
+                new RoadmapGenerateRequest(List.of(102L, 101L, 102L))))
+                .isInstanceOfSatisfying(RoadmapException.class, exception -> {
+                    assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ROADMAP_ALREADY_EXISTS);
+                    assertThat(exception.getRoadmapId()).isEqualTo(77L);
+                });
+
+        verifyNoInteractions(generation, persistence);
     }
 
     @Test

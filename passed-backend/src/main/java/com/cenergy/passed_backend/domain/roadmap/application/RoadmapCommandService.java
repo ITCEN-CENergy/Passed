@@ -3,6 +3,7 @@ package com.cenergy.passed_backend.domain.roadmap.application;
 import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateRequest;
 import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
+import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapStatus;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapMilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapRepository;
@@ -10,7 +11,6 @@ import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
@@ -42,6 +42,13 @@ public class RoadmapCommandService {
         if (userId == null || userId <= 0) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid current user");
         }
+        roadmapRepository.findAllByUserIdAndStatusAndExactJobPostingIds(
+                        userId, RoadmapStatus.ACTIVE, jobPostingIds, jobPostingIds.size())
+                .stream()
+                .findFirst()
+                .ifPresent(existing -> {
+                    throw RoadmapException.duplicate(existing.getId());
+                });
         RoadmapGenerationResult result = generationService.generate(userId, jobPostingIds);
         Long roadmapId = persistenceService.save(userId, jobPostingIds, result).getId();
         return RoadmapGenerateResponse.from(roadmapId, result);
@@ -78,7 +85,7 @@ public class RoadmapCommandService {
         if (values == null || values.isEmpty() || values.stream().anyMatch(id -> id == null || id <= 0)) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid jobPostingIds");
         }
-        List<Long> normalized = List.copyOf(new LinkedHashSet<>(values));
+        List<Long> normalized = values.stream().distinct().sorted().toList();
         if (normalized.isEmpty()) {
             throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "jobPostingIds must not be empty");
         }

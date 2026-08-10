@@ -369,13 +369,26 @@ def test_nullable_current_evidence_is_accepted() -> None:
     assert response.status_code == 200
 
 
+def test_non_certification_can_start_from_level_zero() -> None:
+    response = client.post(
+        "/api/v1/roadmaps/generate",
+        json=request_with(competency(current_level=0, target_level=2)),
+    )
+
+    assert response.status_code == 200
+    milestones = response.json()["skills"][0]["milestones"]
+    assert [(item["startLevel"], item["targetLevel"]) for item in milestones] == [
+        (0, 1), (0, 1), (0, 1),
+        (1, 2), (1, 2), (1, 2),
+    ]
+
+
 @pytest.mark.parametrize(
     "payload",
     [
         {"userId": 10, "competencies": []},
         request_with(competency(current_level=3, target_level=1)),
         request_with(competency(current_level=-1, target_level=1)),
-        request_with(competency(current_level=0, target_level=1)),
         request_with(competency(current_level=0, target_level=6)),
         request_with(competency(name="   ")),
     ],

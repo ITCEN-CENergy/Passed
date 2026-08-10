@@ -1,0 +1,381 @@
+name: Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "passed-frontend/**"
+      - "passed-backend/**"
+      - "passed-ai/**"
+      - "infra/prod/**"
+      - "infra/prometheus/**"
+      - "infra/grafana/provisioning/**"
+      - "infra/oracle/nginx.conf"
+      - ".github/workflows/deploy-prod.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: passed-production
+  cancel-in-progress: false
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: passed-frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: passed-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production frontend
+        env:
+          VITE_API_BASE_URL: ""
+          VITE_AI_BASE_URL: ""
+        run: npm run build
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: passed-frontend-${{ github.sha }}
+          path: passed-frontend/dist
+          if-no-files-found: error
+          retention-days: 7
+
+  build-images:
+    name: Build ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: backend
+            context: ./passed-backend
+            image: ghcr.io/itcen-cenergy/passed-backend
+          - service: ai
+            context: ./passed-ai
+            image: ghcr.io/itcen-cenergy/passed-ai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ matrix.image }}:${{ github.sha }}
+            ${{ matrix.image }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  deploy-home-server:
+    name: Deploy Home Server
+    needs: build-images
+    runs-on:
+      - self-hosted
+      - windows
+    timeout-minutes: 30
+    environment:
+      name: production
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      PROD_ENV_FILE: 'C:\srv\passed\prod.env'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify production environment file
+        shell: powershell
+        run: |
+          if (-not (Test-Path -LiteralPath $env:PROD_ENV_FILE)) {
+            throw "Production environment file not found: $env:PROD_ENV_FILE"
+          }
+
+      - name: Log in to GHCR
+        shell: powershell
+        run: |
+          "${{ secrets.GITHUB_TOKEN }}" |
+            docker login ghcr.io `
+              --username "${{ github.actor }}" `
+              --password-stdin
+
+      - name: Validate Compose configuration
+        shell: powershell
+        run: |
+          docker compose `
+            --project-name passed-prod `
+            --env-file $env:PROD_ENV_FILE `
+            -f infra/prod/compose.prod.yml `
+            config --quiet
+
+      - name: Pull production images
+        shell: powershell
+        run: |
+          docker compose `
+            --project-name passed-prod `
+            --env-file $env:PROD_ENV_FILE `
+            -f infra/prod/compose.prod.yml `
+            pull
+
+      - name: Deploy production stack
+        shell: powershell
+        run: |
+          docker compose `
+            --project-name passed-prod `
+            --env-file $env:PROD_ENV_FILE `
+            -f infra/prod/compose.prod.yml `
+            up -d --remove-orphans
+
+      - name: Verify production services
+        shell: powershell
+        run: |
+          $compose = @(
+            "compose",
+            "--project-name", "passed-prod",
+            "--env-file", $env:PROD_ENV_FILE,
+            "-f", "infra/prod/compose.prod.yml"
+          )
+
+          function Wait-ForService {
+            param(
+              [string]$Service,
+              [string[]]$HealthCommand
+            )
+
+            for ($attempt = 1; $attempt -le 20; $attempt++) {
+              & docker @compose exec -T $Service @HealthCommand
+              if ($LASTEXITCODE -eq 0) {
+                Write-Host "$Service is healthy."
+                return
+              }
+
+              Write-Host "Waiting for $Service ($attempt/20)"
+              Start-Sleep -Seconds 6
+            }
+
+            throw "$Service health check failed."
+          }
+
+          Wait-ForService `
+            -Service "postgres" `
+            -HealthCommand @(
+              "sh",
+              "-c",
+              'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+            )
+
+          Wait-ForService `
+            -Service "ai" `
+            -HealthCommand @(
+              "curl",
+              "--fail",
+              "--silent",
+              "http://localhost:8000/health"
+            )
+
+          Wait-ForService `
+            -Service "backend" `
+            -HealthCommand @(
+              "wget",
+              "-qO-",
+              "http://localhost:8080/actuator/health"
+            )
+
+      - name: Show production status
+        if: always()
+        shell: powershell
+        run: |
+          docker compose `
+            --project-name passed-prod `
+            --env-file $env:PROD_ENV_FILE `
+            -f infra/prod/compose.prod.yml `
+            ps
+
+      - name: Show production logs on failure
+        if: failure()
+        shell: powershell
+        run: |
+          docker compose `
+            --project-name passed-prod `
+            --env-file $env:PROD_ENV_FILE `
+            -f infra/prod/compose.prod.yml `
+            logs --tail 200
+
+  deploy-oci:
+    name: Deploy Frontend and Nginx to OCI
+    needs:
+      - build-frontend
+      - deploy-home-server
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+    env:
+      OCI_HOST: ${{ secrets.OCI_HOST }}
+      OCI_USER: ${{ secrets.OCI_USER }}
+      OCI_SSH_KEY: ${{ secrets.OCI_SSH_KEY }}
+      OCI_KNOWN_HOSTS: ${{ secrets.OCI_KNOWN_HOSTS }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: passed-frontend-${{ github.sha }}
+          path: frontend-dist
+
+      - name: Package frontend artifact
+        shell: bash
+        run: tar -C frontend-dist -czf passed-frontend.tar.gz .
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          install -d -m 700 "${HOME}/.ssh"
+          printf '%s' "${OCI_SSH_KEY}" > "${HOME}/.ssh/id_ed25519"
+          printf '%s\n' "${OCI_KNOWN_HOSTS}" > "${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/id_ed25519" "${HOME}/.ssh/known_hosts"
+
+      - name: Upload frontend and Nginx configuration
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          scp passed-frontend.tar.gz \
+            "${OCI_USER}@${OCI_HOST}:/tmp/passed-frontend.tar.gz"
+          scp infra/oracle/nginx.conf \
+            "${OCI_USER}@${OCI_HOST}:/tmp/passed.conf"
+
+      - name: Activate OCI release
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ssh "${OCI_USER}@${OCI_HOST}" \
+            "RELEASE_SHA='${{ github.sha }}' bash -s" <<'REMOTE'
+          set -Eeuo pipefail
+
+          release_root="/var/www/passed/releases"
+          release_dir="${release_root}/${RELEASE_SHA}"
+          current_link="/var/www/passed/current"
+          temporary_release="/tmp/passed-frontend-${RELEASE_SHA}"
+          previous_release="$(readlink -f "${current_link}" 2>/dev/null || true)"
+          nginx_config="/etc/nginx/sites-available/passed.conf"
+          nginx_backup="/tmp/passed.conf.backup"
+
+          rm -rf "${temporary_release}"
+          mkdir -p "${temporary_release}"
+          tar -xzf /tmp/passed-frontend.tar.gz -C "${temporary_release}"
+
+          sudo install -d -m 755 "${release_root}"
+          sudo rm -rf "${release_dir}"
+          sudo mv "${temporary_release}" "${release_dir}"
+          sudo chown -R root:root "${release_dir}"
+          sudo ln -sfn "${release_dir}" "${current_link}"
+
+          if sudo test -f "${nginx_config}"; then
+            sudo cp "${nginx_config}" "${nginx_backup}"
+          else
+            sudo rm -f "${nginx_backup}"
+          fi
+
+          sudo install -m 644 /tmp/passed.conf "${nginx_config}"
+          sudo ln -sfn "${nginx_config}" \
+            /etc/nginx/sites-enabled/passed.conf
+
+          if ! sudo nginx -t; then
+            if sudo test -f "${nginx_backup}"; then
+              sudo cp "${nginx_backup}" "${nginx_config}"
+            else
+              sudo rm -f "${nginx_config}"
+            fi
+
+            if [ -n "${previous_release}" ]; then
+              sudo ln -sfn "${previous_release}" "${current_link}"
+            fi
+
+            exit 1
+          fi
+
+          sudo systemctl reload nginx
+
+          rm -f /tmp/passed-frontend.tar.gz /tmp/passed.conf
+          sudo rm -f "${nginx_backup}"
+
+          mapfile -t old_releases < <(
+            sudo find "${release_root}" \
+              -mindepth 1 \
+              -maxdepth 1 \
+              -type d \
+              -printf '%T@ %p\n' |
+              sort -rn |
+              tail -n +6 |
+              cut -d' ' -f2-
+          )
+
+          for old_release in "${old_releases[@]}"; do
+            sudo rm -rf -- "${old_release}"
+          done
+          REMOTE
+
+      - name: Verify OCI frontend
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          for attempt in $(seq 1 12); do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              "http://${OCI_HOST}/nginx-health"; then
+              exit 0
+            fi
+
+            echo "Waiting for OCI frontend (${attempt}/12)"
+            sleep 5
+          done
+
+          exit 1

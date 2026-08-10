@@ -48,8 +48,11 @@ COPY --from=builder \
     /app/.venv \
     /app/.venv
 
-# 애플리케이션 소스만 복사합니다.
+# FastAPI 진입점과 기능 모듈을 복사합니다.
 COPY --chown=app:app app ./app
+COPY --chown=app:app api ./api
+COPY --chown=app:app core ./core
+COPY --chown=app:app resume_pipeline ./resume_pipeline
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1

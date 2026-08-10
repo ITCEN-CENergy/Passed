@@ -29,6 +29,11 @@ app:
   dev-current-user-id: ${DEV_CURRENT_USER_ID:257}
 
 external:
+  recommendation-ai:
+    base-url: ${RECOMMENDATION_AI_BASE_URL:http://localhost:8000}
+    connect-timeout-millis: ${RECOMMENDATION_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${RECOMMENDATION_AI_READ_TIMEOUT_MILLIS:300000}
+
   roadmap-ai:
     base-url: ${ROADMAP_AI_BASE_URL:http://localhost:8000}
     connect-timeout-millis: ${ROADMAP_AI_CONNECT_TIMEOUT_MILLIS:3000}

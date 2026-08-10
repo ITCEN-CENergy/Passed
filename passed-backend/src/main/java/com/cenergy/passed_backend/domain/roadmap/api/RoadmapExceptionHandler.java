@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.api;
 
 import com.cenergy.passed_backend.domain.roadmap.ai.client.RoadmapAiException;
+import com.cenergy.passed_backend.domain.skillgap.ai.client.LearningCompetencyAiException;
 import com.cenergy.passed_backend.domain.roadmap.application.RoadmapException;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
@@ -44,6 +45,17 @@ public class RoadmapExceptionHandler {
     public ResponseEntity<ErrorResponse> skillGap(SkillGapException exception) {
         HttpStatus status = exception.getErrorCode() == ErrorCode.SKILL_GAP_NOT_FOUND
                 ? HttpStatus.NOT_FOUND : HttpStatus.BAD_GATEWAY;
+        return response(status, exception.getErrorCode(), "Skill gap service failed");
+    }
+
+    @ExceptionHandler(LearningCompetencyAiException.class)
+    public ResponseEntity<ErrorResponse> learningCompetencyAi(LearningCompetencyAiException exception) {
+        HttpStatus status = switch (exception.getErrorCode()) {
+            case SKILL_GAP_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case SKILL_GAP_AI_TIMEOUT -> HttpStatus.GATEWAY_TIMEOUT;
+            case SKILL_GAP_AI_UNAVAILABLE -> HttpStatus.SERVICE_UNAVAILABLE;
+            default -> HttpStatus.BAD_GATEWAY;
+        };
         return response(status, exception.getErrorCode(), "Skill gap service failed");
     }
 

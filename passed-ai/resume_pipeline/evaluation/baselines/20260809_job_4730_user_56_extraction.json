@@ -1,0 +1,584 @@
+{
+  "user_id": 56,
+  "model": "gpt-4o-mini",
+  "chunks": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 14,
+      "context_type": "EDUCATION",
+      "content_hash": "9b67774e03570ac7c57bb0c3fe9f6f358cb886eb576b7fa2554213be1a43d864",
+      "skills": [
+        {
+          "extracted_name": "컴퓨터공학",
+          "category": "EXPERIENCE",
+          "level": 1,
+          "evidence": "전공: 컴퓨터공학"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "content_hash": "59e9a5566ce5e179ce17263a0f05924cc566a433a03f2bf510ee7dafda6c2897",
+      "skills": [
+        {
+          "extracted_name": "백엔드 API 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "TypeScript와 JavaScript를 사용하여 콘텐츠 생성 AI 서비스의 백엔드 API를 개발했습니다."
+        },
+        {
+          "extracted_name": "RAG 파이프라인 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사내 문서를 기반으로 더 정확한 결과를 생성하기 위해 RAG 파이프라인을 개발했습니다."
+        },
+        {
+          "extracted_name": "검색 증강 생성 구조 구현",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 요청과 관련된 문서를 검색하여 LLM 프롬프트에 전달하는 검색 증강 생성 구조를 구현했습니다."
+        },
+        {
+          "extracted_name": "골든셋 구축",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "생성형 AI의 답변 품질을 검증하기 위해 골든셋을 구축하고 Precision, Recall, F1 기반의 평가 로직을 개발했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 관리",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트를 기능별로 분리하여 버전 관리하고, 프롬프트 변경 전후의 생성 결과를 비교하여 품질 저하 여부를 확인했습니다."
+        },
+        {
+          "extracted_name": "비용 최적화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "LLM API 호출 횟수와 토큰 사용량을 분석하여 불필요한 요청을 줄이고 프롬프트 길이를 최적화해 AI API 사용 비용을 절감했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보안 필터 적용",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "개인정보가 포함된 요청이 LLM에 그대로 전달되지 않도록 입력 단계에 개인정보 탐지 및 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "생성 실패 유형 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스 로그와 사용자 피드백을 수집하여 반복적으로 발생하는 생성 실패 유형을 분석하고 프롬프트와 검색 로직을 개선했습니다."
+        },
+        {
+          "extracted_name": "장애 원인 추적",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "장애 발생 시 로그, 요청 데이터, 재현 절차를 기준으로 원인을 추적했으며 임시 조치와 근본 개선 작업을 구분하여 처리했습니다."
+        },
+        {
+          "extracted_name": "요구사항 문서화",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "요구사항 변경 이유와 기술적 결정 내용을 문서화하여 팀원들과 공유했습니다."
+        },
+        {
+          "extracted_name": "서비스 배포 및 모니터링",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AWS Cloud 환경에 서비스를 배포하고 서비스 상태와 LLM API 오류를 모니터링했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "context_type": "ACTIVITY",
+      "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+      "skills": [
+        {
+          "extracted_name": "AI 기반 콘텐츠 생성 플랫폼 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다."
+        },
+        {
+          "extracted_name": "JavaScript",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "TypeScript",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "머신러닝",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "클라우드 컴퓨팅",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "컴퓨터공학 전공 과정에서 학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "OpenAI LLM API 연동",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "사용자가 주제를 입력하면 관련 내부 문서를 검색하고 참고 자료를 기반으로 콘텐츠를 생성하도록 OpenAI LLM API와 API 서버를 연동했습니다."
+        },
+        {
+          "extracted_name": "RAG 파이프라인 설계",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "RAG 파이프라인을 설계하여 문서를 청킹하고 임베딩한 뒤 Vector DB에서 관련 데이터를 검색하도록 구현했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 설계",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "검색 결과와 사용자 질문을 조합한 프롬프트를 설계하고 프롬프트별 결과를 비교했습니다."
+        },
+        {
+          "extracted_name": "가드레일 및 보안 필터 적용",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "검색 결과가 부족한 경우 답변 생성을 제한하는 가드레일과 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다."
+        },
+        {
+          "extracted_name": "문서화 및 공유",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "역할 분담, 기술 선택 이유, API 명세와 프롬프트 변경 이력을 문서화하여 팀원들과 공유했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "context_type": "ACTIVITY",
+      "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+      "skills": [
+        {
+          "extracted_name": "장애 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다."
+        },
+        {
+          "extracted_name": "성능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다."
+        },
+        {
+          "extracted_name": "서비스 로그 분석",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "서비스 로그와 LLM API 응답 데이터를 분석하여 동일 문서의 반복 임베딩과 불필요하게 긴 프롬프트가 원인임을 확인했습니다."
+        },
+        {
+          "extracted_name": "임베딩 개선",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "콘텐츠 해시로 변경되지 않은 문서는 임베딩을 다시 생성하지 않도록 개선하고 RAG 검색 범위를 조정했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 최적화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "프롬프트의 불필요한 내용을 제거하여 토큰 사용량과 API 비용을 줄이고 응답 속도를 개선했습니다."
+        },
+        {
+          "extracted_name": "문서화",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "장애 원인, 임시 해결 방법, 근본 개선 방법과 재발 방지 내용을 문서화했습니다."
+        },
+        {
+          "extracted_name": "기술 부채 정의",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "중복된 LLM API 호출과 프롬프트 로직을 기술 부채로 정의하고 공통 모듈로 단계적으로 분리했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "context_type": "TRAINING",
+      "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+      "skills": [
+        {
+          "extracted_name": "LLM API",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "JavaScript와 TypeScript로 LLM API 기반 AI 서비스를 개발하고 임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "Vector DB",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다."
+        },
+        {
+          "extracted_name": "Microsoft Azure",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 엔지니어링",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "머신러닝",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "입력 검증",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "보안 필터",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "비용 최적화",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 19,
+      "context_type": "CERTIFICATION",
+      "content_hash": "9ff68219aa8123e8fff695e1fe0e6e4a84f4773901e71d8511c99e86b87fc80f",
+      "skills": [
+        {
+          "extracted_name": "AWS Certified AI Practitioner",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "AWS Certified AI Practitioner"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 20,
+      "context_type": "CERTIFICATION",
+      "content_hash": "b7c1a764eecdbeba94d732939dd1f69598aa507d611459969081870adf5f3326",
+      "skills": [
+        {
+          "extracted_name": "Azure AI Engineer Associate",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "Microsoft Certified: Azure AI Engineer Associate"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 21,
+      "context_type": "CERTIFICATION",
+      "content_hash": "4ef48099e6fa02bca976ad2ad8e3f5b38322a37d2fdd2bc3b5dfe36759d85845",
+      "skills": [
+        {
+          "extracted_name": "빅데이터분석기사",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "자격증: 빅데이터분석기사"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 22,
+      "context_type": "AWARD",
+      "content_hash": "1b9a9a8ad1853da98afdeb3514b5c0564970d8f49e34ea622508ac411f7d2bf3",
+      "skills": [
+        {
+          "extracted_name": "콘텐츠 생성 서비스 구현",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다."
+        },
+        {
+          "extracted_name": "품질 개선",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 23,
+      "context_type": "LANGUAGE",
+      "content_hash": "769505c990260dbdd59e9eb1d5babdc0fee71e52c1d94db046fa546ae927ecab",
+      "skills": [
+        {
+          "extracted_name": "영어",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "언어: 영어"
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 18,
+      "context_type": "MOTIVATION",
+      "content_hash": "fe20b6f5e39b023daf7331b1be003aa79766a3e285656965a24158ede99a5e3c",
+      "skills": []
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "context_type": "MOTIVATION",
+      "content_hash": "ca69844fd536a6c0cd5dfb9cc2254dfb95072090ace8a07b8be4c29c1c0be503",
+      "skills": [
+        {
+          "extracted_name": "RAG 파이프라인",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "Precision",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다."
+        },
+        {
+          "extracted_name": "Recall",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다."
+        },
+        {
+          "extracted_name": "F1",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "골든셋과 Precision, Recall, F1 등의 지표를 활용해 검색 및 생성 결과를 평가했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 20,
+      "context_type": "PERSONALITY",
+      "content_hash": "4d48718a0a242e304e3d33cd0be859d1972ac9f9d34f469dd8ef25181a980dd1",
+      "skills": [
+        {
+          "extracted_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "기능 오류나 예상하지 못한 결과가 발생했을 때 로그와 데이터를 먼저 확인하고, 어떤 조건에서 문제가 재현되는지 정리한 뒤 해결 방법을 찾으려고 했습니다."
+        },
+        {
+          "extracted_name": "협업",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "혼자 판단하기보다 팀원의 의견과 피드백을 듣고 더 나은 방법이 있다면 기존 방식을 수정하는 데 부담을 두지 않는 편입니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 21,
+      "context_type": "PERSONALITY",
+      "content_hash": "eafaa1629f0839aff84d590e7f0dd12e4bd14744047bbc55844aab6ed5cacd1d",
+      "skills": [
+        {
+          "extracted_name": "피드백 수용",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "피드백을 듣고 더 나은 방법이 있다면 기존 방식을 수정하는 데 부담을 두지 않는 편입니다."
+        },
+        {
+          "extracted_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "최근에는 문제를 필수 개선 사항과 추후 개선 사항으로 나누고, 우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다."
+        },
+        {
+          "extracted_name": "우선순위 설정",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 22,
+      "context_type": "PERSONALITY",
+      "content_hash": "f5262ffcfd2f6482d5cf37ce81393669597097bd2e2b1fafe6db5a64840b87d1",
+      "skills": [
+        {
+          "extracted_name": "원인 분석",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "장애나 실패를 단순한 오류로 끝내지 않고 원인을 분석해 재발 방지 방법을 찾고"
+        },
+        {
+          "extracted_name": "피드백 반영",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "동료의 피드백을 적극적으로 반영하며"
+        },
+        {
+          "extracted_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "우선순위를 정한 뒤 단계적으로 해결하는 방식으로 보완하고 있습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "context_type": "EXPERIENCE",
+      "content_hash": "a6f2cdbb5da54d62e45c80a7bb07c226e230131daf232b028be99d70774750c5",
+      "skills": [
+        {
+          "extracted_name": "골든셋 기반 평가",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프로젝트에서는 생성 결과의 품질을 확인하기 위해 골든셋 기반 평가를 진행하고"
+        },
+        {
+          "extracted_name": "RAG 검색 성능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "검색 결과의 Precision과 Recall을 분석해 RAG 검색 성능을 개선했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "context_type": "EXPERIENCE",
+      "content_hash": "b9706284eedfe89810c9931c477faa0236fa55e4c06c6316b41a024b87323e96",
+      "skills": [
+        {
+          "extracted_name": "RAG 검색 성능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "검색 결과의 Precision과 Recall을 분석해 RAG 검색 성능을 개선했습니다."
+        },
+        {
+          "extracted_name": "LLM API 사용",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "LLM API 사용 과정에서는 토큰 사용량과 호출 횟수를 확인하고 불필요한 프롬프트 내용을 제거해 비용을 줄였습니다."
+        },
+        {
+          "extracted_name": "보안 필터 적용",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "개인정보를 탐지하고 차단하는 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "비용 절감",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "불필요한 프롬프트 내용을 제거해 비용을 줄였습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "context_type": "EXPERIENCE",
+      "content_hash": "32cddb57ac3f938e8f6463531a7220c0530eaa44a2257502a309b9e22a05c0d6",
+      "skills": [
+        {
+          "extracted_name": "보안 필터 적용",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "입력 단계에서 개인정보를 탐지하고 차단하는 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "로그 확인",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "API 오류, 응답 시간, LLM 호출 실패와 같은 로그를 확인하고 반복적으로 발생하는 문제를 분석했습니다."
+        },
+        {
+          "extracted_name": "문제 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "반복적으로 발생하는 문제를 분석했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "context_type": "EXPERIENCE",
+      "content_hash": "1950483ce29ddf0effcba6b313c73bc96adb9ba7f4250a326bdbd30987a5fa0e",
+      "skills": [
+        {
+          "extracted_name": "프롬프트 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다."
+        },
+        {
+          "extracted_name": "RAG 검색 로직 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트와 RAG 검색 로직 개선에 반영했습니다."
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

@@ -52,7 +52,6 @@ def validate_generated_content(
         if len(skill.stages) != len(required_stages):
             raise ValueError("generated learning stages do not match required stages")
 
-        titles: set[str] = set()
         allowed_resource_ids = {
             resource.resourceId
             for resource in resources_by_key.get(skill.roadmapSkillKey, [])
@@ -60,6 +59,7 @@ def validate_generated_content(
         for generated_stage, required_stage in zip(
             skill.stages, required_stages, strict=True
         ):
+            titles: set[str] = set()
             if (
                 generated_stage.startLevel != required_stage.startLevel
                 or generated_stage.targetLevel != required_stage.targetLevel

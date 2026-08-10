@@ -226,8 +226,7 @@ public class RoadmapAiResponseValidator {
             validated.add(new ValidatedLearningResource(
                     resource.resourceId(), resource.resourceType(), resource.title(),
                     resource.description() == null ? "" : resource.description(), resource.provider(),
-                    resource.url(), resource.thumbnailUrl(), resource.authors(),
-                    Boolean.TRUE.equals(resource.isOfficial()), resource.isFree()
+                    resource.url(), resource.thumbnailUrl(), resource.authors(), resource.isFree()
             ));
         }
         return validated;

@@ -8,6 +8,10 @@ from api.features.user_skill.schema import UserSkillExtractionResponse
 from api.features.user_skill import router as user_skill_router
 from api.features.user_skill import service
 from app.main import app
+from resume_pipeline.user_skill_analysis_state import (
+    AnalysisFingerprint,
+    ReusableAnalysisState,
+)
 
 
 client = TestClient(app)
@@ -74,6 +78,21 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
         "run_chunking_for_user",
         lambda conn, user_id: calls.append("chunk"),
     )
+    fingerprint = AnalysisFingerprint(
+        document_hash="a" * 64,
+        pipeline_hash="b" * 64,
+        processed_chunk_count=6,
+    )
+    monkeypatch.setattr(
+        service,
+        "build_analysis_fingerprint",
+        lambda conn, user_id: calls.append("fingerprint") or fingerprint,
+    )
+    monkeypatch.setattr(
+        service,
+        "load_reusable_analysis_state",
+        lambda conn, user_id, value: calls.append("cache-miss") or None,
+    )
     monkeypatch.setattr(
         service,
         "_retry_failed_embeddings",
@@ -106,18 +125,26 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
         "persist_user_skill_mapping",
         lambda conn, value: calls.append("persist"),
     )
+    monkeypatch.setattr(
+        service,
+        "save_analysis_state",
+        lambda conn, user_id, value, **kwargs: calls.append("save-state"),
+    )
 
     response = service.run_user_skill_analysis(257)
 
     assert calls == [
         "validate-schema",
         "chunk",
+        "fingerprint",
+        "cache-miss",
         "retry-failed",
         "embed:resume_chunks",
         "embed:cover_letter_chunks",
         "extract",
         "map",
         "persist",
+        "save-state",
     ]
     assert response.user_id == 257
     assert response.skill_count == 4
@@ -125,7 +152,88 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
 
 
 def test_pipeline_does_not_start_without_openai_key(monkeypatch):
+    @contextmanager
+    def connection():
+        yield object()
+
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr(service, "connection", connection)
+    monkeypatch.setattr(service, "validate_embedding_schema", lambda conn: None)
+    monkeypatch.setattr(service, "run_chunking_for_user", lambda conn, user_id: None)
+    monkeypatch.setattr(
+        service,
+        "build_analysis_fingerprint",
+        lambda conn, user_id: AnalysisFingerprint(
+            document_hash="a" * 64,
+            pipeline_hash="b" * 64,
+            processed_chunk_count=1,
+        ),
+    )
+    monkeypatch.setattr(
+        service,
+        "load_reusable_analysis_state",
+        lambda conn, user_id, fingerprint: None,
+    )
 
     with pytest.raises(service.UserSkillPipelineConfigurationError):
         service.run_user_skill_analysis(257)
+
+
+def test_unchanged_analysis_reuses_state_without_openai_calls(monkeypatch):
+    calls: list[str] = []
+
+    @contextmanager
+    def connection():
+        yield object()
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr(service, "connection", connection)
+    monkeypatch.setattr(
+        service,
+        "validate_embedding_schema",
+        lambda conn: calls.append("validate-schema"),
+    )
+    monkeypatch.setattr(
+        service,
+        "run_chunking_for_user",
+        lambda conn, user_id: calls.append("chunk"),
+    )
+    fingerprint = AnalysisFingerprint(
+        document_hash="a" * 64,
+        pipeline_hash="b" * 64,
+        processed_chunk_count=24,
+    )
+    monkeypatch.setattr(
+        service,
+        "build_analysis_fingerprint",
+        lambda conn, user_id: calls.append("fingerprint") or fingerprint,
+    )
+    monkeypatch.setattr(
+        service,
+        "load_reusable_analysis_state",
+        lambda conn, user_id, value: calls.append("cache-hit")
+        or ReusableAnalysisState(
+            processed_chunk_count=24,
+            skill_count=47,
+            unmapped_count=66,
+        ),
+    )
+    monkeypatch.setattr(
+        service,
+        "embed_pending_chunks",
+        lambda *args, **kwargs: pytest.fail("embedding must not run"),
+    )
+    monkeypatch.setattr(
+        service,
+        "extract_user_skill_candidates",
+        lambda *args, **kwargs: pytest.fail("LLM extraction must not run"),
+    )
+
+    response = service.run_user_skill_analysis(257)
+
+    assert calls == ["validate-schema", "chunk", "fingerprint", "cache-hit"]
+    assert response.skill_count == 47
+    assert response.unmapped_count == 66
+    assert response.persisted is True
+    assert response.resume_chunks_embedded == 0
+    assert response.cover_letter_chunks_embedded == 0

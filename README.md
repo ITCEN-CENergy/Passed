@@ -41,11 +41,10 @@ uv sync
 
 ### 3. 개발 서버 실행
 
-FastAPI 진입 파일이 `main.py`이고 그 안에 `app = FastAPI()`가 정의되어
-있다면 다음 명령으로 실행합니다.
+FastAPI 진입 파일은 `app/main.py`이며 다음 명령으로 실행합니다.
 
 ```bash
-uv run fastapi dev main.py
+uv run fastapi dev app/main.py
 ```
 
 서버가 실행되면 다음 주소를 사용할 수 있습니다.
@@ -54,8 +53,7 @@ uv run fastapi dev main.py
 - Swagger 문서: <http://127.0.0.1:8000/docs>
 - ReDoc 문서: <http://127.0.0.1:8000/redoc>
 
-현재 `passed-ai`에는 FastAPI 진입 파일이 아직 없으므로, `main.py`가 추가된
-뒤 위 실행 명령을 사용하세요.
+FastAPI 진입점은 `passed-ai/app/main.py`로 단일화되어 있습니다.
 
 ### 자주 사용하는 uv 명령
 
@@ -63,5 +61,5 @@ uv run fastapi dev main.py
 uv add 패키지명       # 패키지 추가
 uv remove 패키지명    # 패키지 제거
 uv sync               # uv.lock 기준으로 환경 동기화
-uv run python main.py # 가상환경에서 Python 파일 실행
+uv run python app/main.py # 가상환경에서 FastAPI 진입 파일 실행
 ```

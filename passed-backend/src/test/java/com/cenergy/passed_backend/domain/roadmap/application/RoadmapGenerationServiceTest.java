@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -71,12 +72,54 @@ class RoadmapGenerationServiceTest {
         verifyNoInteractions(ai);
     }
 
+    @Test
+    void sendsOnlyTopTenMergedCompetenciesToAi() {
+        when(learningCompetencyService.getLearningCompetencies(101L, 1L))
+                .thenReturn(new LearningCompetencyResponse(1L, 101L, List.of()));
+        when(validator.validate(anyLong(), anyLong(), any()))
+                .thenReturn(new ValidatedSkillGapResult(1L, 101L, List.of()));
+        List<MergedCompetencyGap> merged = IntStream.rangeClosed(1, 11)
+                .mapToObj(this::gap)
+                .toList();
+        when(merge.merge(anyList())).thenReturn(merged);
+        when(ai.generate(any(RoadmapAiRequest.class))).thenAnswer(invocation -> {
+            RoadmapAiRequest request = invocation.getArgument(0);
+            return new ValidatedRoadmapAiResult("top ten", request.competencies().stream()
+                    .map(item -> new ValidatedRoadmapSkill(
+                            item.roadmapSkillKey(),
+                            List.of(milestone(item.currentLevel(), item.targetLevel()))
+                    ))
+                    .toList());
+        });
+
+        RoadmapGenerationResult result = service.generate(1L, List.of(101L));
+
+        assertEquals(10, result.skills().size());
+        verify(ai).generate(argThat(request -> request.competencies().size() == 10
+                && request.competencies().getLast().standardCompetencyId() == 10L));
+    }
+
     private MergedCompetencyGap gap() {
         CompetencyGapSource source = new CompetencyGapSource(101L, null, 1L, "Docker",
                 CompetencyCategory.TECHNICAL_SKILL, 1, null, RequirementType.REQUIRED, 2, 1);
         return new MergedCompetencyGap("competency-1", 1L, "Docker",
                 CompetencyCategory.TECHNICAL_SKILL, 1, 2, RequirementType.REQUIRED,
                 1, 1, 100, 1, List.of(source));
+    }
+
+    private MergedCompetencyGap gap(int id) {
+        CompetencyGapSource source = new CompetencyGapSource(101L, null, (long) id, "Skill " + id,
+                CompetencyCategory.TECHNICAL_SKILL, 1, null, RequirementType.REQUIRED, 2, 1);
+        return new MergedCompetencyGap("competency-" + id, (long) id, "Skill " + id,
+                CompetencyCategory.TECHNICAL_SKILL, 1, 2, RequirementType.REQUIRED,
+                1, 1, 100 - id, id, List.of(source));
+    }
+
+    private ValidatedRoadmapMilestone milestone(int currentLevel, int targetLevel) {
+        return new ValidatedRoadmapMilestone(
+                "학습", "설명", "목표", "완료 기준", currentLevel, targetLevel,
+                MilestoneType.PRACTICE, Difficulty.INTERMEDIATE, 120, 1
+        );
     }
 
     private ValidatedRoadmapAiResult aiResult() {

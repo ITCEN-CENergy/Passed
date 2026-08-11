@@ -2,6 +2,7 @@ package com.cenergy.passed_backend.domain.roadmap.application;
 
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
+import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,6 @@ import java.util.stream.IntStream;
 @Service
 public class RoadmapPersistenceService {
     private final RoadmapRepository roadmapRepository;
-    private final RoadmapJobPostingRepository jobPostingRepository;
     private final RoadmapSkillRepository skillRepository;
     private final RoadmapSkillSourceRepository sourceRepository;
     private final MilestoneRepository milestoneRepository;
@@ -25,7 +25,6 @@ public class RoadmapPersistenceService {
     private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapPersistenceService(RoadmapRepository roadmapRepository,
-                                     RoadmapJobPostingRepository jobPostingRepository,
                                      RoadmapSkillRepository skillRepository,
                                      RoadmapSkillSourceRepository sourceRepository,
                                      MilestoneRepository milestoneRepository,
@@ -35,7 +34,6 @@ public class RoadmapPersistenceService {
                                      MilestoneReuseService milestoneReuseService,
                                      RoadmapEtaCalculator etaCalculator) {
         this.roadmapRepository = roadmapRepository;
-        this.jobPostingRepository = jobPostingRepository;
         this.skillRepository = skillRepository;
         this.sourceRepository = sourceRepository;
         this.milestoneRepository = milestoneRepository;
@@ -47,16 +45,23 @@ public class RoadmapPersistenceService {
     }
 
     @Transactional
-    public Roadmap save(Long userId, List<Long> jobPostingIds, RoadmapGenerationResult result) {
+    public Roadmap complete(Long roadmapId, Long userId, RoadmapGenerationResult result) {
         List<Long> competencyIds = result.skills().stream()
                 .map(RoadmapGenerationResult.Skill::standardCompetencyId)
                 .collect(Collectors.collectingAndThen(
                         Collectors.toCollection(LinkedHashSet::new), List::copyOf));
         List<Milestone> reusableMilestones = milestoneReuseService.findCandidates(userId, competencyIds);
 
-        Roadmap roadmap = roadmapRepository.save(Roadmap.create(userId));
-        jobPostingRepository.saveAll(jobPostingIds.stream()
-                .map(id -> RoadmapJobPosting.create(roadmap, id, null)).toList());
+        Roadmap roadmap = roadmapRepository.findByIdAndUserId(roadmapId, userId)
+                .orElseThrow(() -> new RoadmapException(
+                        ErrorCode.ROADMAP_NOT_FOUND,
+                        "Roadmap not found"));
+        if (roadmap.getStatus() != RoadmapStatus.CREATING) {
+            throw new RoadmapException(
+                    ErrorCode.ROADMAP_GENERATION_CONFLICT,
+                    "Roadmap is not in CREATING status",
+                    roadmapId);
+        }
 
         int totalMinutes = 0;
         List<RoadmapMilestone> savedRoadmapMilestones = new java.util.ArrayList<>();

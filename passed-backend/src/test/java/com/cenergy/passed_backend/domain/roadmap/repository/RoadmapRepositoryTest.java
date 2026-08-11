@@ -5,6 +5,7 @@ import com.cenergy.passed_backend.domain.roadmap.entity.Milestone;
 import com.cenergy.passed_backend.domain.roadmap.entity.Roadmap;
 import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapMilestone;
 import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapSkill;
+import com.cenergy.passed_backend.domain.roadmap.entity.RoadmapStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -61,6 +62,55 @@ class RoadmapRepositoryTest {
 
         assertThat(roadmapRepository.findByIdAndUserId(roadmapId, ownerId)).isPresent();
         assertThat(roadmapRepository.findByIdAndUserId(roadmapId, otherUserId)).isEmpty();
+    }
+
+    @Test
+    void findsOnlyActiveRoadmapWithExactlyTheSameJobPostingSet() {
+        long ownerId = insertUser();
+        long otherUserId = insertUser();
+        long posting101 = insertJobPosting();
+        long posting102 = insertJobPosting();
+        long posting103 = insertJobPosting();
+
+        long exactActive = insertRoadmap(ownerId, "ACTIVE", "2026-01-01T00:00:00Z");
+        insertRoadmapJobPosting(exactActive, posting101);
+        insertRoadmapJobPosting(exactActive, posting102);
+
+        long subsetActive = insertRoadmap(ownerId, "ACTIVE", "2026-01-02T00:00:00Z");
+        insertRoadmapJobPosting(subsetActive, posting101);
+
+        long supersetActive = insertRoadmap(ownerId, "ACTIVE", "2026-01-03T00:00:00Z");
+        insertRoadmapJobPosting(supersetActive, posting101);
+        insertRoadmapJobPosting(supersetActive, posting102);
+        insertRoadmapJobPosting(supersetActive, posting103);
+
+        long otherUserActive = insertRoadmap(otherUserId, "ACTIVE", "2026-01-04T00:00:00Z");
+        insertRoadmapJobPosting(otherUserActive, posting101);
+        insertRoadmapJobPosting(otherUserActive, posting102);
+
+        long completed = insertRoadmap(ownerId, "COMPLETED", "2026-01-05T00:00:00Z");
+        insertRoadmapJobPosting(completed, posting101);
+        insertRoadmapJobPosting(completed, posting102);
+
+        long failed = insertRoadmap(ownerId, "FAILED", "2026-01-06T00:00:00Z");
+        insertRoadmapJobPosting(failed, posting101);
+        insertRoadmapJobPosting(failed, posting102);
+
+        assertThat(findExactActive(ownerId, List.of(posting101, posting102)))
+                .extracting(Roadmap::getId)
+                .containsExactly(exactActive);
+        assertThat(findExactActive(ownerId, List.of(posting102, posting101)))
+                .extracting(Roadmap::getId)
+                .containsExactly(exactActive);
+        assertThat(findExactActive(ownerId, List.of(posting101, posting103))).isEmpty();
+        assertThat(findExactActive(ownerId, List.of(posting101))).extracting(Roadmap::getId)
+                .containsExactly(subsetActive);
+        assertThat(findExactActive(ownerId, List.of(posting101, posting102, posting103)))
+                .extracting(Roadmap::getId)
+                .containsExactly(supersetActive);
+        assertThat(findExactActive(otherUserId, List.of(posting101, posting102)))
+                .extracting(Roadmap::getId)
+                .containsExactly(otherUserActive);
     }
 
     @Test
@@ -250,11 +300,20 @@ class RoadmapRepositoryTest {
     }
 
     private long insertRoadmap(long userId, String createdAt) {
+        return insertRoadmap(userId, "CREATING", createdAt);
+    }
+
+    private long insertRoadmap(long userId, String status, String createdAt) {
         return id("""
                         insert into roadmaps(user_id, status, total_estimated_minutes, progress_rate, created_at, updated_at)
-                        values (?, 'CREATING', 0, 0, ?, ?) returning id
-                        """, userId, Timestamp.from(OffsetDateTime.parse(createdAt).toInstant()),
+                        values (?, ?, 0, 0, ?, ?) returning id
+                        """, userId, status, Timestamp.from(OffsetDateTime.parse(createdAt).toInstant()),
                 Timestamp.from(OffsetDateTime.parse(createdAt).toInstant()));
+    }
+
+    private List<Roadmap> findExactActive(long userId, List<Long> jobPostingIds) {
+        return roadmapRepository.findAllByUserIdAndStatusAndExactJobPostingIds(
+                userId, RoadmapStatus.ACTIVE, jobPostingIds, jobPostingIds.size());
     }
 
     private long insertJobPosting() {

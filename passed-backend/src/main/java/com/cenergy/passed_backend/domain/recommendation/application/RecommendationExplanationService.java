@@ -18,20 +18,22 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendationExplanationService {
     private static final Logger log = LoggerFactory.getLogger(RecommendationExplanationService.class);
-    private static final int MAX_FACTS_PER_GROUP = 5;
     private static final int MAX_POSTING_SECTION_LENGTH = 4_000;
     private static final int MAX_TALENT_PROFILE_LENGTH = 2_000;
     private static final int MAX_ATTEMPTS = 2;
 
     private final RecommendationExplanationClient explanationClient;
     private final RecommendationPostingSummaryLoader postingSummaryLoader;
+    private final RecommendationSkillHighlightSelector highlightSelector;
 
     public RecommendationExplanationService(
             RecommendationExplanationClient explanationClient,
-            RecommendationPostingSummaryLoader postingSummaryLoader
+            RecommendationPostingSummaryLoader postingSummaryLoader,
+            RecommendationSkillHighlightSelector highlightSelector
     ) {
         this.explanationClient = explanationClient;
         this.postingSummaryLoader = postingSummaryLoader;
+        this.highlightSelector = highlightSelector;
     }
     // 공고 설명과 계산된 스킬 사실을 근거로 통합 추천 이유를 생성한다.
     public Map<Long, RecommendationExplanation> generate(
@@ -74,33 +76,8 @@ public class RecommendationExplanationService {
             RecommendationPostingSummary summary
     ) {
         RecommendationScoreResult score = ranked.recommendation().score();
-        List<EvaluatedSkillDetail> matchedSkills = score.skillDetails().stream()
-                .filter(EvaluatedSkillDetail::requirementSatisfied)
-                .sorted(Comparator
-                        .comparingInt(this::skillTypePriority)
-                        .thenComparing(
-                                EvaluatedSkillDetail::baseContributionScore,
-                                Comparator.reverseOrder()
-                        )
-                        .thenComparing(
-                                EvaluatedSkillDetail::matchRate,
-                                Comparator.reverseOrder()
-                        )
-                        .thenComparing(EvaluatedSkillDetail::skillId))
-                .limit(MAX_FACTS_PER_GROUP)
-                .toList();
-        List<EvaluatedSkillDetail> gapSkills = score.skillDetails().stream()
-                .filter(value -> !value.requirementSatisfied())
-                .sorted(Comparator
-                        .comparingInt(this::skillTypePriority)
-                        .thenComparing(this::scoreGap, Comparator.reverseOrder())
-                        .thenComparing(
-                                EvaluatedSkillDetail::requiredLevel,
-                                Comparator.reverseOrder()
-                        )
-                        .thenComparing(EvaluatedSkillDetail::skillId))
-                .limit(MAX_FACTS_PER_GROUP)
-                .toList();
+        RecommendationSkillHighlightSelector.Selection highlights =
+                highlightSelector.selectEvaluated(score.skillDetails());
 
         return new RecommendationExplanationInput(
                 ranked.jobPostingId(),
@@ -113,19 +90,17 @@ public class RecommendationExplanationService {
                         clip(summary.preference(), MAX_POSTING_SECTION_LENGTH),
                         clip(summary.companyTalentProfile(), MAX_TALENT_PROFILE_LENGTH)
                 ),
-                matchedSkills.stream().map(this::toFact).toList(),
-                gapSkills.stream().map(this::toFact).toList()
+                highlights.strengths().stream().map(this::toFact).toList(),
+                highlights.gaps().stream().map(this::toFact).toList()
         );
     }
 
-    private RecommendationExplanationInput.SkillFact toFact(EvaluatedSkillDetail detail) {
+    private RecommendationExplanationInput.SkillFact toFact(
+            RecommendationSkillHighlightSelector.SkillFact detail
+    ) {
         return new RecommendationExplanationInput.SkillFact(
-                detail.skillName(),
-                detail.skillType().name(),
-                detail.userLevel(),
-                detail.requiredLevel(),
-                decimal(detail.matchRate()),
-                detail.requirementSatisfied()
+                detail.skillName(), detail.skillType().name(), detail.userLevel(),
+                detail.requiredLevel(), decimal(detail.matchRate()), detail.requirementSatisfied()
         );
     }
 
@@ -163,7 +138,7 @@ public class RecommendationExplanationService {
             RecommendationPostingSummary summary = summaries.get(ranked.jobPostingId());
             result.put(ranked.jobPostingId(), new RecommendationExplanation(
                     ranked.jobPostingId(),
-                    fallbackReason(summary, score.skillDetails())
+                    fallbackReason(summary, highlightSelector.selectEvaluated(score.skillDetails()))
             ));
         }
         return Map.copyOf(result);
@@ -171,23 +146,10 @@ public class RecommendationExplanationService {
 
     private String fallbackReason(
             RecommendationPostingSummary summary,
-            List<EvaluatedSkillDetail> details
+            RecommendationSkillHighlightSelector.Selection highlights
     ) {
-        String matched = skillNames(details.stream()
-                .filter(EvaluatedSkillDetail::requirementSatisfied)
-                .sorted(Comparator
-                        .comparingInt(this::skillTypePriority)
-                        .thenComparing(
-                                EvaluatedSkillDetail::baseContributionScore,
-                                Comparator.reverseOrder()
-                        ))
-                .toList());
-        String gaps = skillNames(details.stream()
-                .filter(value -> !value.requirementSatisfied())
-                .sorted(Comparator
-                        .comparingInt(this::skillTypePriority)
-                        .thenComparing(this::scoreGap, Comparator.reverseOrder()))
-                .toList());
+        String matched = skillNames(highlights.strengths());
+        String gaps = skillNames(highlights.gaps());
 
         String opening = "%s의 %s 공고는 포지션 상세와 주요 업무를 기준으로 사용자의 역량을 연결해 볼 수 있는 공고입니다."
                 .formatted(summary.companyName(), summary.title());
@@ -202,24 +164,12 @@ public class RecommendationExplanationService {
         return String.join(" ", opening, matchSentence, growthSentence);
     }
 
-    private String skillNames(List<EvaluatedSkillDetail> details) {
+    private String skillNames(List<RecommendationSkillHighlightSelector.SkillFact> details) {
         return details.stream()
-                .map(EvaluatedSkillDetail::skillName)
+                .map(RecommendationSkillHighlightSelector.SkillFact::skillName)
                 .distinct()
                 .limit(2)
                 .collect(Collectors.joining(", "));
-    }
-
-    private int skillTypePriority(EvaluatedSkillDetail detail) {
-        return switch (detail.skillType()) {
-            case REQUIRED -> 0;
-            case PREFERRED -> 1;
-            case RELATED -> 2;
-        };
-    }
-
-    private BigDecimal scoreGap(EvaluatedSkillDetail detail) {
-        return detail.baseMaxScore().subtract(detail.baseContributionScore());
     }
 
     private String clip(String value, int maxLength) {

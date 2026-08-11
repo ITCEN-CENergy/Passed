@@ -3,7 +3,7 @@ package com.cenergy.passed_backend.domain.recommendation.application;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.application.model.RecommendationRunContext;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
@@ -66,7 +66,7 @@ public class RecommendationRunStartService {
     }
 
     @Transactional
-    public RecommendationRunContext start(RecommendationPrepareRequest request) {
+    public RecommendationRunContext start(RecommendationCreateRequest request) {
         NormalizedRequest normalized = normalize(request);
         User user = lockUser(normalized.userId());
         rejectConcurrentRun(normalized.userId());
@@ -82,7 +82,7 @@ public class RecommendationRunStartService {
                 normalized.industryId(),
                 jobRoles
         );
-        RecommendationRun run = runRepository.save(RecommendationRun.startProcessing(
+        RecommendationRun run = runRepository.saveAndFlush(RecommendationRun.startProcessing(
                 user,
                 policy,
                 snapshots.userSkillSnapshotHash(),
@@ -100,11 +100,12 @@ public class RecommendationRunStartService {
                 importantSkillCount,
                 snapshots.userSkillSnapshotHash(),
                 normalized.industryId(),
-                normalized.jobRoleIds()
+                normalized.jobRoleIds(),
+                run.getStartedAt()
         );
     }
 
-    private NormalizedRequest normalize(RecommendationPrepareRequest request) {
+    private NormalizedRequest normalize(RecommendationCreateRequest request) {
         if (request == null || request.userId() == null || request.userId() <= 0
                 || request.industryId() == null || request.industryId() <= 0
                 || request.jobRoleIds() == null

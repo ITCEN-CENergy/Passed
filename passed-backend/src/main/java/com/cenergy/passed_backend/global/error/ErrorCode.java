@@ -29,6 +29,13 @@ public enum ErrorCode {
     USER_SKILL_AI_UNAVAILABLE,
     USER_SKILL_AI_INVALID_RESPONSE,
 
+    USER_PREFERENCE_INVALID_REQUEST,
+    USER_PREFERENCE_USER_NOT_FOUND,
+    USER_PREFERENCE_INDUSTRY_NOT_FOUND,
+    USER_PREFERENCE_JOB_ROLE_NOT_FOUND,
+    USER_PREFERENCE_JOB_ROLE_INDUSTRY_MISMATCH,
+    USER_PREFERENCE_CONFLICT,
+
     /** Covers malformed cover-letter commands and unavailable current-user context. */
     COVER_LETTER_INVALID_REQUEST,
     /** Indicates that an owned company cover letter could not be found. */

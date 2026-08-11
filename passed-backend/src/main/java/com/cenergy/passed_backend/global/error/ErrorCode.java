@@ -32,6 +32,15 @@ public enum ErrorCode {
     USER_SKILL_AI_UNAVAILABLE,
     USER_SKILL_AI_INVALID_RESPONSE,
 
+    RESUME_INVALID_REQUEST,
+    RESUME_NOT_FOUND,
+    RESUME_ALREADY_EXISTS,
+    RESUME_USER_NOT_FOUND,
+    RESUME_PHOTO_INVALID,
+    RESUME_PHOTO_UNSUPPORTED_TYPE,
+    RESUME_PHOTO_TOO_LARGE,
+    RESUME_PHOTO_STORAGE_FAILED,
+
     /** Covers malformed cover-letter commands and unavailable current-user context. */
     COVER_LETTER_INVALID_REQUEST,
     /** Indicates that an owned company cover letter could not be found. */

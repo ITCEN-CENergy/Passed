@@ -20,4 +20,10 @@ public class Resume extends CreatedAtEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    public static Resume create(User user) {
+        Resume resume = new Resume();
+        resume.user = user;
+        return resume;
+    }
 }

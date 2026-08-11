@@ -33,4 +33,17 @@ public class Award {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    public static Award create(Resume resume) {
+        Award award = new Award();
+        award.resume = resume;
+        return award;
+    }
+
+    public void update(String name, String issuer, LocalDate awardDate, String description) {
+        this.name = name;
+        this.issuer = issuer;
+        this.awardDate = awardDate;
+        this.description = description;
+    }
 }

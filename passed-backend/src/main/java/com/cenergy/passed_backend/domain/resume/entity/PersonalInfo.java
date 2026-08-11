@@ -39,4 +39,20 @@ public class PersonalInfo {
 
     @Column(name = "photo_url", length = 500)
     private String photoUrl;
+
+    public static PersonalInfo create(Resume resume) {
+        PersonalInfo personalInfo = new PersonalInfo();
+        personalInfo.resume = resume;
+        return personalInfo;
+    }
+
+    public void update(LocalDate birthDate, String gender, String email, String phone,
+                       String address, String photoUrl) {
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.photoUrl = photoUrl;
+    }
 }

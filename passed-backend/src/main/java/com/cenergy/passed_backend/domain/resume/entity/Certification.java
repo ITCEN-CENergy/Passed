@@ -30,4 +30,16 @@ public class Certification {
 
     @Column(name = "acquisition_date")
     private LocalDate acquisitionDate;
+
+    public static Certification create(Resume resume) {
+        Certification certification = new Certification();
+        certification.resume = resume;
+        return certification;
+    }
+
+    public void update(String name, String issuer, LocalDate acquisitionDate) {
+        this.name = name;
+        this.issuer = issuer;
+        this.acquisitionDate = acquisitionDate;
+    }
 }

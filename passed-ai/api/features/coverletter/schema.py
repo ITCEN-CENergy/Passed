@@ -7,7 +7,6 @@ class CoverLetterEditRequest(BaseModel):
     job_description: Optional[str] = None
 
 class CoverLetterEditResponse(BaseModel):
-    spell_checked_content: str
     qa_alignment_score: int
     qa_alignment_feedback: str
     jd_fit_feedback: str

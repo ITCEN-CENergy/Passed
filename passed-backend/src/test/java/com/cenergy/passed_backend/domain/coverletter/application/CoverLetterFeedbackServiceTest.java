@@ -40,7 +40,7 @@ class CoverLetterFeedbackServiceTest {
                 12L, "question", "answer", 700, "job description"
         );
         ValidatedCoverLetterAiResult aiResult = new ValidatedCoverLetterAiResult(
-                "edited answer", 84, "item feedback", "job feedback", "final answer"
+                84, "item feedback", "job feedback", "final answer"
         );
         CoverLetterFeedbackResult saved = new CoverLetterFeedbackResult(
                 33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",

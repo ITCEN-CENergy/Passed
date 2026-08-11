@@ -19,7 +19,6 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
     )
     
     return CoverLetterEditResponse(
-        spell_checked_content=result["spell_checked_content"],
         qa_alignment_score=result["qa_alignment_score"],
         qa_alignment_feedback=result["qa_alignment_feedback"],
         jd_fit_feedback=result["jd_fit_feedback"],

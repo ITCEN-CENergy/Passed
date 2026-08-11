@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
+import AuthLayout from './AuthLayout.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
@@ -7,6 +8,8 @@ import CoverLetterResultPage from '../features/cover-letter/pages/CoverLetterRes
 // import CoverLetterReviewPage from '../features/cover-letter/pages/CoverLetterReviewPage';
 import CompanyCoverLetterWrite from '../features/cover-letter/pages/CompanyCoverLetterWrite';
 import CompanyCoverLetterList from '../features/cover-letter/pages/CompanyCoverLetterList';
+import LoginPage from '../pages/login/LoginPage.jsx'
+import SignupPage from '../pages/signup/SignupPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -40,6 +43,19 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <NotFoundPage />,
+      },
+    ],
+  },
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/signup',
+        element: <SignupPage />,
       },
     ],
   },

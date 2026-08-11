@@ -1,29 +1,56 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import logo from '../../assets/images/logo.webp'
+import useAuthStore from '../../features/auth/model/useAuthStore.js'
 import styles from './Header.module.css'
 
-const Header = ({ logoSrc = '' }) => (
-  <header className={styles.header}>
-    <div className={styles.inner}>
-      <Link className={styles.brand} to="/" aria-label="Passed 홈">
-        <span className={styles.logoFrame}>
-          {logoSrc ? (
-            <img className={styles.logoImage} src={logoSrc} alt="Passed" />
-          ) : (
-            <span className={styles.logoPlaceholder} aria-hidden="true">P</span>
-          )}
-        </span>
-        <span className={styles.brandText}>
-          <strong>Passed</strong>
-          <small>합격 가능성을 높이는 맞춤 취업 파트너</small>
-        </span>
-      </Link>
+const Header = () => {
+  const user = useAuthStore((state) => state.user)
+  const isChecking = useAuthStore((state) => state.isChecking)
+  const initialize = useAuthStore((state) => state.initialize)
+  const logout = useAuthStore((state) => state.logout)
 
-      <nav className={styles.actions} aria-label="사용자 메뉴">
-        <button className={styles.logout} type="button">로그아웃</button>
-        <button className={styles.myPage} type="button">마이페이지</button>
-      </nav>
-    </div>
-  </header>
-)
+  useEffect(() => {
+    void initialize()
+  }, [initialize])
+
+  const handleLogout = async () => {
+    await logout()
+  }
+
+  return (
+    <header className={styles.header}>
+      <div className={styles.inner}>
+        <Link className={styles.brand} to="/" aria-label="PASSED 홈">
+          <img className={styles.logo} src={logo} alt="PASSED" />
+        </Link>
+
+        <nav className={styles.navigation} aria-label="주요 메뉴">
+          <div className={styles.serviceLinks}>
+            <Link to="/roadmap">학습로드맵</Link>
+            <Link to="/cover-letter-list">자소서 첨삭</Link>
+          </div>
+          <div className={styles.authLinks}>
+            {isChecking ? (
+              <span className={styles.authPlaceholder} aria-hidden="true" />
+            ) : user ? (
+              <>
+                <Link className={styles.loginLink} to="/mypage">마이페이지</Link>
+                <button className={styles.logoutButton} type="button" onClick={handleLogout}>
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <>
+                <NavLink className={styles.loginLink} to="/login">로그인</NavLink>
+                <NavLink className={styles.signupLink} to="/signup">회원가입</NavLink>
+              </>
+            )}
+          </div>
+        </nav>
+      </div>
+    </header>
+  )
+}
 
 export default Header

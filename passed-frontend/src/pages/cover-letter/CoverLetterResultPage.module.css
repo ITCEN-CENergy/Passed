@@ -1,0 +1,136 @@
+.page {
+  min-height: 100%;
+  padding: 42px 24px 64px;
+  background: var(--color-page);
+}
+
+.content,
+.statePage {
+  width: min(100%, 820px);
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.intro,
+.itemCard {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.intro {
+  margin-bottom: 12px;
+}
+
+.company,
+.itemHeading {
+  color: var(--color-primary);
+  font-weight: 750;
+}
+
+.intro h1 {
+  margin: 7px 0 8px;
+  font-size: 26px;
+  letter-spacing: -1px;
+}
+
+.title,
+.meta,
+.itemHeading small {
+  color: var(--color-muted);
+}
+
+.meta {
+  margin-top: 14px;
+  font-size: 12px;
+}
+
+.items {
+  display: grid;
+  gap: 12px;
+}
+
+.itemHeading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+  font-size: 12px;
+}
+
+.itemCard h2 {
+  margin: 0 0 14px;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.itemCard p {
+  color: #475467;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.statePage {
+  display: grid;
+  min-height: 340px;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 32px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.stateActions {
+  display: flex;
+  gap: 8px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  padding: 8px 13px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primaryButton {
+  color: #fff;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.secondaryButton {
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid var(--color-border);
+}
+
+@media (max-width: 620px) {
+  .page {
+    padding-inline: 16px;
+  }
+
+  .intro,
+  .itemCard {
+    padding: 19px 17px;
+  }
+
+  .stateActions {
+    flex-direction: column;
+  }
+}

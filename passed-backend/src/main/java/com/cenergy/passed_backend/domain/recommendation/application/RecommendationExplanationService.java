@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -17,7 +18,9 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendationExplanationService {
     private static final Logger log = LoggerFactory.getLogger(RecommendationExplanationService.class);
-    private static final int MAX_FACTS_PER_GROUP = 10;
+    private static final int MAX_FACTS_PER_GROUP = 5;
+    private static final int MAX_POSTING_SECTION_LENGTH = 4_000;
+    private static final int MAX_TALENT_PROFILE_LENGTH = 2_000;
     private static final int MAX_ATTEMPTS = 2;
 
     private final RecommendationExplanationClient explanationClient;
@@ -30,7 +33,7 @@ public class RecommendationExplanationService {
         this.explanationClient = explanationClient;
         this.postingSummaryLoader = postingSummaryLoader;
     }
-    // 추천 결과에 대한 추천 이유, 강점, 보완점의 설명 생성
+    // 공고 설명과 계산된 스킬 사실을 근거로 통합 추천 이유를 생성한다.
     public Map<Long, RecommendationExplanation> generate(
             List<RankedRecommendation> recommendations
     ) {
@@ -42,7 +45,7 @@ public class RecommendationExplanationService {
         List<Long> postingIds = recommendations.stream()
                 .map(RankedRecommendation::jobPostingId)
                 .toList();
-        // 추천 공고들의 제목, 회사명 등 설명 생성에 필요한 요약 정보를 일괄 조회
+        // 추천 공고들의 제목, 회사명, 상세 업무와 요구사항을 일괄 조회한다.
         Map<Long, RecommendationPostingSummary> summaries = postingSummaryLoader.load(postingIds);
         // 추천 점수와 공고 정보를 결합하여 AI 설명 생성용 입력 DTO 생성
         List<RecommendationExplanationInput> inputs = recommendations.stream()
@@ -70,20 +73,31 @@ public class RecommendationExplanationService {
             RankedRecommendation ranked,
             RecommendationPostingSummary summary
     ) {
-        GradedRecommendation graded = ranked.recommendation();
-        RecommendationScoreResult score = graded.score();
-        List<EvaluatedSkillDetail> strengths = score.skillDetails().stream()
-                .filter(EvaluatedSkillDetail::owned)
+        RecommendationScoreResult score = ranked.recommendation().score();
+        List<EvaluatedSkillDetail> matchedSkills = score.skillDetails().stream()
+                .filter(EvaluatedSkillDetail::requirementSatisfied)
                 .sorted(Comparator
-                        .comparing(EvaluatedSkillDetail::userImportant).reversed()
-                        .thenComparing(EvaluatedSkillDetail::skillType)
+                        .comparingInt(this::skillTypePriority)
+                        .thenComparing(
+                                EvaluatedSkillDetail::baseContributionScore,
+                                Comparator.reverseOrder()
+                        )
+                        .thenComparing(
+                                EvaluatedSkillDetail::matchRate,
+                                Comparator.reverseOrder()
+                        )
                         .thenComparing(EvaluatedSkillDetail::skillId))
                 .limit(MAX_FACTS_PER_GROUP)
                 .toList();
-        List<EvaluatedSkillDetail> gaps = score.skillDetails().stream()
+        List<EvaluatedSkillDetail> gapSkills = score.skillDetails().stream()
                 .filter(value -> !value.requirementSatisfied())
                 .sorted(Comparator
-                        .comparing(EvaluatedSkillDetail::skillType)
+                        .comparingInt(this::skillTypePriority)
+                        .thenComparing(this::scoreGap, Comparator.reverseOrder())
+                        .thenComparing(
+                                EvaluatedSkillDetail::requiredLevel,
+                                Comparator.reverseOrder()
+                        )
                         .thenComparing(EvaluatedSkillDetail::skillId))
                 .limit(MAX_FACTS_PER_GROUP)
                 .toList();
@@ -92,19 +106,15 @@ public class RecommendationExplanationService {
                 ranked.jobPostingId(),
                 summary.title(),
                 summary.companyName(),
-                ranked.rankOrder(),
-                graded.grade().name(),
-                score.candidateTier().name(),
-                decimal(score.totalScore()),
-                decimal(score.requiredScore()),
-                decimal(score.preferredScore()),
-                decimal(score.relatedScore()),
-                decimal(score.importantSkillBonus()),
-                decimal(score.requiredCoverageRate()),
-                decimal(score.requiredLevelMatchRate()),
-                score.importantMatchCount(),
-                strengths.stream().map(this::toFact).toList(),
-                gaps.stream().map(this::toFact).toList()
+                new RecommendationExplanationInput.JobPostingContext(
+                        clip(summary.positionDetail(), MAX_POSTING_SECTION_LENGTH),
+                        clip(summary.mainDuty(), MAX_POSTING_SECTION_LENGTH),
+                        clip(summary.qualification(), MAX_POSTING_SECTION_LENGTH),
+                        clip(summary.preference(), MAX_POSTING_SECTION_LENGTH),
+                        clip(summary.companyTalentProfile(), MAX_TALENT_PROFILE_LENGTH)
+                ),
+                matchedSkills.stream().map(this::toFact).toList(),
+                gapSkills.stream().map(this::toFact).toList()
         );
     }
 
@@ -112,11 +122,9 @@ public class RecommendationExplanationService {
         return new RecommendationExplanationInput.SkillFact(
                 detail.skillName(),
                 detail.skillType().name(),
-                detail.evaluationType().name(),
                 detail.userLevel(),
                 detail.requiredLevel(),
                 decimal(detail.matchRate()),
-                detail.userImportant(),
                 detail.requirementSatisfied()
         );
     }
@@ -135,8 +143,6 @@ public class RecommendationExplanationService {
                 throw new IllegalStateException("Explanation contains an unexpected posting ID");
             }
             requireText(value.reason(), "reason");
-            requireText(value.strengths(), "strengths");
-            requireText(value.weaknesses(), "weaknesses");
             if (result.putIfAbsent(value.jobPostingId(), value) != null) {
                 throw new IllegalStateException("Explanation contains a duplicated posting ID");
             }
@@ -155,42 +161,72 @@ public class RecommendationExplanationService {
         for (RankedRecommendation ranked : recommendations) {
             RecommendationScoreResult score = ranked.recommendation().score();
             RecommendationPostingSummary summary = summaries.get(ranked.jobPostingId());
-            String strengths = skillNames(
-                    score.skillDetails().stream().filter(EvaluatedSkillDetail::owned).toList(),
-                    "매칭된 보유 스킬이 없어 기본 역량 중심의 검토가 필요합니다."
-            );
-            String weaknesses = skillNames(
-                    score.skillDetails().stream()
-                            .filter(value -> !value.requirementSatisfied())
-                            .toList(),
-                    "현재 확인된 스킬 기준으로 뚜렷한 미충족 항목이 없습니다."
-            );
             result.put(ranked.jobPostingId(), new RecommendationExplanation(
                     ranked.jobPostingId(),
-                    "%s의 %s 공고는 총점 %s점, 자격요건 보유율 %s를 기준으로 %s 등급으로 선정되었습니다."
-                            .formatted(
-                                    summary.companyName(),
-                                    summary.title(),
-                                    decimal(score.totalScore()),
-                                    decimal(score.requiredCoverageRate()),
-                                    ranked.recommendation().grade().name()
-                            ),
-                    strengths,
-                    weaknesses
+                    fallbackReason(summary, score.skillDetails())
             ));
         }
         return Map.copyOf(result);
     }
 
-    private String skillNames(List<EvaluatedSkillDetail> details, String emptyText) {
-        if (details.isEmpty()) {
-            return emptyText;
-        }
+    private String fallbackReason(
+            RecommendationPostingSummary summary,
+            List<EvaluatedSkillDetail> details
+    ) {
+        String matched = skillNames(details.stream()
+                .filter(EvaluatedSkillDetail::requirementSatisfied)
+                .sorted(Comparator
+                        .comparingInt(this::skillTypePriority)
+                        .thenComparing(
+                                EvaluatedSkillDetail::baseContributionScore,
+                                Comparator.reverseOrder()
+                        ))
+                .toList());
+        String gaps = skillNames(details.stream()
+                .filter(value -> !value.requirementSatisfied())
+                .sorted(Comparator
+                        .comparingInt(this::skillTypePriority)
+                        .thenComparing(this::scoreGap, Comparator.reverseOrder()))
+                .toList());
+
+        String opening = "%s의 %s 공고는 포지션 상세와 주요 업무를 기준으로 사용자의 역량을 연결해 볼 수 있는 공고입니다."
+                .formatted(summary.companyName(), summary.title());
+        String matchSentence = matched.isBlank()
+                ? "현재 계산 결과에서는 구체적으로 충족한 스킬이 확인되지 않아 자격요건을 추가로 점검하는 것이 좋습니다."
+                : "%s 역량은 공고에 명시된 업무와 자격요건을 수행하는 데 활용할 수 있습니다."
+                .formatted(matched);
+        String growthSentence = gaps.isBlank()
+                ? "현재 충족한 역량을 바탕으로 해당 직무의 핵심 업무까지 수행 범위를 넓혀갈 수 있습니다."
+                : "%s 역량을 우선 보완하면 공고의 요구 범위에 더 폭넓게 대응하며 직무 역량을 확장할 수 있습니다."
+                .formatted(gaps);
+        return String.join(" ", opening, matchSentence, growthSentence);
+    }
+
+    private String skillNames(List<EvaluatedSkillDetail> details) {
         return details.stream()
                 .map(EvaluatedSkillDetail::skillName)
                 .distinct()
-                .limit(5)
+                .limit(2)
                 .collect(Collectors.joining(", "));
+    }
+
+    private int skillTypePriority(EvaluatedSkillDetail detail) {
+        return switch (detail.skillType()) {
+            case REQUIRED -> 0;
+            case PREFERRED -> 1;
+            case RELATED -> 2;
+        };
+    }
+
+    private BigDecimal scoreGap(EvaluatedSkillDetail detail) {
+        return detail.baseMaxScore().subtract(detail.baseContributionScore());
+    }
+
+    private String clip(String value, int maxLength) {
+        if (value == null || value.length() <= maxLength) {
+            return value;
+        }
+        return value.substring(0, maxLength);
     }
 
     private String decimal(java.math.BigDecimal value) {

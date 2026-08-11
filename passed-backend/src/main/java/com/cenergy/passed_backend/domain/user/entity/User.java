@@ -4,9 +4,7 @@ import com.cenergy.passed_backend.common.entity.BaseTimeEntity;
 import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -16,10 +14,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Builder
 @Getter
+@Setter
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
     @Id
@@ -40,6 +41,7 @@ public class User extends BaseTimeEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "desired_jobs", columnDefinition = "jsonb")
+    @Builder.Default
     private List<String> desiredJobs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -71,4 +73,5 @@ public class User extends BaseTimeEntity {
         this.field = industry.getIndustryName();
         this.desiredJobs = jobRoles.stream().map(JobRole::getJobRoleName).toList();
     }
+
 }

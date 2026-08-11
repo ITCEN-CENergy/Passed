@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.auth.service;
+package com.cenergy.passed_backend.domain.auth.application;
 
 import com.cenergy.passed_backend.domain.auth.dto.request.LoginRequest;
 import com.cenergy.passed_backend.domain.auth.dto.request.PasswordChangeRequest;
@@ -9,7 +9,6 @@ import com.cenergy.passed_backend.domain.auth.dto.response.JwtTokenResponse;
 import com.cenergy.passed_backend.domain.auth.entity.CustomUserDetails;
 import com.cenergy.passed_backend.domain.auth.entity.RefreshToken;
 import com.cenergy.passed_backend.domain.auth.repository.RefreshTokenRepository;
-import com.cenergy.passed_backend.domain.auth.repository.UserAccountCommandRepository;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.config.JwtProvider;
@@ -29,23 +28,25 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final UserAccountCommandRepository userAccountCommandRepository;
-    private final UserDetailService userDetailService;
+    private final CustomUserDetailService customUserDetailService;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public String register(RegisterRequest request) {
-        String email = UserDetailService.normalizeEmail(request.getEmail());
+        String email = CustomUserDetailService.normalizeEmail(request.getEmail());
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
         try {
-            userAccountCommandRepository.create(
-                    request.getName().trim(),
-                    email,
-                    passwordEncoder.encode(request.getPassword())
-            );
+            User user = User.builder()
+                    .name(request.getName().trim())
+                    .email(email)
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .build();
+            // Flush inside this boundary so a concurrent duplicate signup is
+            // translated to the public duplicate-email response here.
+            userRepository.saveAndFlush(user);
         } catch (DataIntegrityViolationException exception) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.", exception);
         }
@@ -54,17 +55,17 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public boolean isEmailDuplicated(String email) {
-        return userRepository.existsByEmail(UserDetailService.normalizeEmail(email));
+        return userRepository.existsByEmail(CustomUserDetailService.normalizeEmail(email));
     }
 
     @Transactional
     public JwtTokenResponse login(LoginRequest request) {
-        String email = UserDetailService.normalizeEmail(request.getEmail());
+        String email = CustomUserDetailService.normalizeEmail(request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, request.getPassword())
         );
 
-        CustomUserDetails principal = userDetailService.loadByEmail(email);
+        CustomUserDetails principal = customUserDetailService.loadByEmail(email);
         String accessToken = jwtProvider.generateAccessToken(principal);
         String refreshToken = jwtProvider.generateRefreshToken(principal);
         saveOrRotateRefreshToken(principal.getUserId(), refreshToken);
@@ -79,7 +80,7 @@ public class AuthService {
 
         RefreshToken persisted = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("폐기되었거나 존재하지 않는 Refresh Token입니다."));
-        CustomUserDetails principal = userDetailService.loadById(persisted.getUserId());
+        CustomUserDetails principal = customUserDetailService.loadById(persisted.getUserId());
         if (!jwtProvider.isValidRefreshToken(refreshToken, principal)) {
             throw new IllegalArgumentException("Refresh Token의 사용자 정보가 일치하지 않습니다.");
         }
@@ -103,25 +104,14 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
         }
-        int updated = userAccountCommandRepository.updatePassword(
-                user.getId(),
-                passwordEncoder.encode(request.getNewPassword())
-        );
-        if (updated != 1) {
-            throw new IllegalStateException("비밀번호를 변경하지 못했습니다.");
-        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         refreshTokenRepository.deleteByUserId(user.getId());
     }
 
     @Transactional
     public void updateUserInfo(CustomUserDetails principal, UpdateUserRequest request) {
-        int updated = userAccountCommandRepository.updateName(
-                principal.getUserId(),
-                request.getName().trim()
-        );
-        if (updated != 1) {
-            throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
-        }
+        User user = requiredUser(principal.getUserId());
+        user.setName(request.getName().trim());
     }
 
     @Transactional

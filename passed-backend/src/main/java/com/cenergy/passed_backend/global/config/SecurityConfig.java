@@ -43,19 +43,21 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .accessDeniedHandler((request, response, exception) ->
+                                response.sendError(HttpStatus.FORBIDDEN.value())))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                        .requestMatchers(
-//                                "/api/auth/signup",
-//                                "/api/auth/login",
-//                                "/api/auth/refresh",
-//                                "/api/auth/check-email",
-//                                "/api/auth/csrf",
-//                                "/actuator/health"
-//                        ).permitAll()
+                        .requestMatchers("/**").permitAll() // 원활한 개발을 위해서 임시로 적용
                         .requestMatchers(
-                                "/**"
+                                "/api/auth/signup",
+                                "/api/auth/login",
+                                "/api/auth/refresh",
+                                "/api/auth/logout",
+                                "/api/auth/check-email",
+                                "/api/auth/csrf",
+                                "/actuator/health",
+                                "/actuator/info"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)

@@ -1,7 +1,7 @@
 package com.cenergy.passed_backend.global.config;
 
 import com.cenergy.passed_backend.domain.auth.entity.CustomUserDetails;
-import com.cenergy.passed_backend.domain.auth.service.UserDetailService;
+import com.cenergy.passed_backend.domain.auth.application.CustomUserDetailService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String ACCESS_COOKIE = "accessToken";
 
     private final JwtProvider jwtProvider;
-    private final UserDetailService userDetailService;
+    private final CustomUserDetailService customUserDetailService;
 
     @Override
     protected void doFilterInternal(
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
             Long userId = jwtProvider.extractUserId(token);
-            CustomUserDetails principal = userDetailService.loadById(userId);
+            CustomUserDetails principal = customUserDetailService.loadById(userId);
             if (!jwtProvider.isValidAccessToken(token, principal)) {
                 return;
             }
@@ -68,16 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String resolveAccessToken(HttpServletRequest request) {
-        String cookieToken = cookieValue(request, ACCESS_COOKIE);
-        if (StringUtils.hasText(cookieToken)) {
-            return cookieToken;
-        }
-
-        String authorization = request.getHeader("Authorization");
-        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
-            return authorization.substring(7);
-        }
-        return null;
+        return cookieValue(request, ACCESS_COOKIE);
     }
 
     private String cookieValue(HttpServletRequest request, String name) {

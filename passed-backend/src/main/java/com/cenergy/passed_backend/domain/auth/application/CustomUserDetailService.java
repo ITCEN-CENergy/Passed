@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.auth.service;
+package com.cenergy.passed_backend.domain.auth.application;
 
 import com.cenergy.passed_backend.domain.auth.entity.CustomUserDetails;
 import com.cenergy.passed_backend.domain.user.entity.User;
@@ -14,7 +14,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailService implements UserDetailsService {
+public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 

@@ -9,7 +9,7 @@ import com.cenergy.passed_backend.domain.auth.dto.response.JwtTokenResponse;
 import com.cenergy.passed_backend.domain.auth.dto.response.LoginResponse;
 import com.cenergy.passed_backend.domain.auth.dto.response.UserResponse;
 import com.cenergy.passed_backend.domain.auth.entity.CustomUserDetails;
-import com.cenergy.passed_backend.domain.auth.service.AuthService;
+import com.cenergy.passed_backend.domain.auth.application.AuthService;
 import com.cenergy.passed_backend.global.config.JwtProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

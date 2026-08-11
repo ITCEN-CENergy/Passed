@@ -5,9 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import com.cenergy.passed_backend.domain.auth.entity.UserAuth;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -31,6 +30,18 @@ public class JwtProvider {
 
     @Value("${application.security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+    @PostConstruct
+    void validateConfiguration() {
+        if (secretKey == null || secretKey.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET must contain at least 32 bytes");
+        }
+        if (accessTokenExpiration <= 0 || refreshTokenExpiration <= accessTokenExpiration) {
+            throw new IllegalStateException(
+                    "JWT token expiration must be positive and refresh expiration must exceed access expiration"
+            );
+        }
+    }
 
     public String generateAccessToken(CustomUserDetails user) {
         return buildToken(user, ACCESS, accessTokenExpiration, true);

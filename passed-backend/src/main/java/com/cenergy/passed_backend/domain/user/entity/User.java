@@ -2,19 +2,20 @@ package com.cenergy.passed_backend.domain.user.entity;
 
 import com.cenergy.passed_backend.common.entity.CreatedAtEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
+@Setter
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends CreatedAtEntity {
 
     @Id
@@ -35,5 +36,7 @@ public class User extends CreatedAtEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "desired_jobs", columnDefinition = "jsonb")
+    @Builder.Default
     private List<String> desiredJobs = new ArrayList<>();
+
 }

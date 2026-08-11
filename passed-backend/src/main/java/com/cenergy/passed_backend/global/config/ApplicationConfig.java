@@ -1,7 +1,6 @@
 package com.cenergy.passed_backend.global.config;
 
-import com.cenergy.passed_backend.domain.auth.service.UserDetailService;
-import com.cenergy.passed_backend.domain.auth.repository.UserAuthRepository;
+import com.cenergy.passed_backend.domain.auth.application.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserDetailService userDetailService;
+    private final CustomUserDetailService customUserDetailService;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

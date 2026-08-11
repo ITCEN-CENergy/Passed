@@ -1,6 +1,11 @@
 from fastapi import APIRouter
-from .schema import CoverLetterEditRequest, CoverLetterEditResponse
-from .service import process_cover_letter_chain
+from .schema import (
+    CoverLetterEditRequest,
+    CoverLetterEditResponse,
+    CoverLetterReviewRequest,
+    CoverLetterReviewResponse,
+)
+from .service import process_cover_letter_chain, process_cover_letter_review_chain
 
 router = APIRouter(
     prefix="/coverletter",
@@ -24,3 +29,13 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
         jd_fit_feedback=result["jd_fit_feedback"],
         final_edited_content=result["final_edited_content"]
     )
+
+
+@router.post("/review", response_model=CoverLetterReviewResponse)
+async def review_cover_letter(request: CoverLetterReviewRequest):
+    """Return only aggregate and item feedback needed by the feedback page."""
+    result = process_cover_letter_review_chain(
+        items=[item.model_dump() for item in request.items],
+        job_description=request.job_description or "",
+    )
+    return CoverLetterReviewResponse.model_validate(result)

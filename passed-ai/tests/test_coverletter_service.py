@@ -1,3 +1,5 @@
+import json
+
 from api.features.coverletter import service
 
 
@@ -54,3 +56,58 @@ def test_job_feedback_is_skipped_when_job_description_is_missing(monkeypatch):
     assert jd_chain.calls == []
     assert result["jd_fit_feedback"] == "제공된 채용 공고 정보가 없습니다."
     assert final_chain.calls[0]["jd_fit_feedback"] == "제공된 채용 공고 정보가 없습니다."
+
+
+def test_review_returns_overall_and_ordered_item_feedback_without_page_metadata(monkeypatch):
+    qa_chain = RecordingChain({"score": 81, "feedback": "문항 피드백"})
+    jd_chain = RecordingChain("직무 적합도 피드백")
+    final_chain = RecordingChain("첨삭 답변")
+    overall_chain = RecordingChain({
+        "overall_score": 79,
+        "summary": "전체 요약",
+        "strengths": "공통 강점",
+        "improvements": "공통 개선점",
+    })
+    monkeypatch.setattr(
+        service,
+        "_create_cover_letter_chains",
+        lambda: (qa_chain, jd_chain, final_chain),
+    )
+    monkeypatch.setattr(
+        service,
+        "_create_overall_review_chain",
+        lambda: overall_chain,
+    )
+
+    result = service.process_cover_letter_review_chain([
+        {
+            "item_id": 2,
+            "display_order": 2,
+            "question": "두 번째 질문",
+            "content": "두 번째 답변",
+            "character_limit": 800,
+        },
+        {
+            "item_id": 1,
+            "display_order": 1,
+            "question": "첫 번째 질문",
+            "content": "첫 번째 답변",
+            "character_limit": 500,
+        },
+    ], "비공개 분석용 채용 공고")
+
+    assert [item["item_id"] for item in result["items"]] == [1, 2]
+    assert result["overall_feedback"] == {
+        "overall_score": 79,
+        "summary": "전체 요약",
+        "strengths": "공통 강점",
+        "improvements": "공통 개선점",
+    }
+    assert set(result) == {"overall_feedback", "items"}
+    assert "job_description" not in result
+
+    aggregate_call = overall_chain.calls[0]
+    assert aggregate_call["job_description"] == "비공개 분석용 채용 공고"
+    aggregate_items = json.loads(aggregate_call["items_json"])
+    assert [item["item_id"] for item in aggregate_items] == [1, 2]
+    assert aggregate_items[0]["content"] == "첫 번째 답변"

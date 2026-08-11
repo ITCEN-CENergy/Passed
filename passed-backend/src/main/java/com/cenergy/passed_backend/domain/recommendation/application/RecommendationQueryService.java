@@ -14,6 +14,7 @@ import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
 import com.cenergy.passed_backend.domain.user.dto.JobRoleResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -33,18 +34,21 @@ public class RecommendationQueryService {
     private static final BigDecimal ZERO_RATE = new BigDecimal("0.0000");
 
     private final RecommendationRunRepository runRepository;
+    private final CurrentUserIdProvider currentUserIdProvider;
     private final JobRecommendationRepository recommendationRepository;
     private final JobRecommendationSkillDetailRepository skillDetailRepository;
     private final SkillRepository skillRepository;
     private final RecommendationSkillHighlightSelector highlightSelector;
 
     public RecommendationQueryService(
+            CurrentUserIdProvider currentUserIdProvider,
             RecommendationRunRepository runRepository,
             JobRecommendationRepository recommendationRepository,
             JobRecommendationSkillDetailRepository skillDetailRepository,
             SkillRepository skillRepository,
             RecommendationSkillHighlightSelector highlightSelector
     ) {
+        this.currentUserIdProvider = currentUserIdProvider;
         this.runRepository = runRepository;
         this.recommendationRepository = recommendationRepository;
         this.skillDetailRepository = skillDetailRepository;
@@ -53,8 +57,9 @@ public class RecommendationQueryService {
     }
 
     public RecommendationHistoryResponse getHistory(RecommendationHistoryRequest request) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
         Page<RecommendationRun> page = runRepository.findAllByUserIdOrderByStartedAtDescIdDesc(
-                request.userId(), PageRequest.of(request.page(), request.size())
+                userId, PageRequest.of(request.page(), request.size())
         );
         return new RecommendationHistoryResponse(
                 page.getContent().stream().map(this::historyItem).toList(),
@@ -62,7 +67,8 @@ public class RecommendationQueryService {
         );
     }
 
-    public RecommendationResultResponse getResult(Long runId, Long userId) {
+    public RecommendationResultResponse getResult(Long runId) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
         RecommendationRun run = ownedRun(runId, userId);
         List<RecommendationItemResponse> items = recommendationRepository
                 .findAllByRecommendationRunIdOrderByRankOrderAsc(runId)
@@ -72,7 +78,8 @@ public class RecommendationQueryService {
         return new RecommendationResultResponse(runResponse(run), items);
     }
 
-    public RecommendationDetailResponse getDetail(Long runId, Long jobRecommendationId, Long userId) {
+    public RecommendationDetailResponse getDetail(Long runId, Long jobRecommendationId) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
         JobRecommendation recommendation = recommendationRepository
                 .findByIdAndRecommendationRunIdAndRecommendationRunUserId(
                         jobRecommendationId, runId, userId
@@ -102,7 +109,8 @@ public class RecommendationQueryService {
         );
     }
 
-    public RecommendationUserSkillsResponse getUserSkills(Long runId, Long userId) {
+    public RecommendationUserSkillsResponse getUserSkills(Long runId) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
         RecommendationRun run = ownedRun(runId, userId);
         List<Map<String, Object>> snapshots = mapList(run.getUserSkillSnapshot().get("skills"));
         List<Long> skillIds = snapshots.stream()

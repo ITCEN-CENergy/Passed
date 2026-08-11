@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.recommendation.application.model.*;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateResponse;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @Service
 public class RecommendationPreparationService {
+    private final CurrentUserIdProvider currentUserIdProvider;
     private final RecommendationRunStartService runStartService;
     private final RecommendationCandidateSelectionService candidateSelectionService;
     private final RecommendationDetailedEvaluationService detailedEvaluationService;
@@ -21,6 +23,7 @@ public class RecommendationPreparationService {
     private final RecommendationRunFailureService failureService;
 
     public RecommendationPreparationService(
+            CurrentUserIdProvider currentUserIdProvider,
             RecommendationRunStartService runStartService,
             RecommendationCandidateSelectionService candidateSelectionService,
             RecommendationDetailedEvaluationService detailedEvaluationService,
@@ -30,6 +33,7 @@ public class RecommendationPreparationService {
             RecommendationResultPersistenceService persistenceService,
             RecommendationRunFailureService failureService
     ) {
+        this.currentUserIdProvider = currentUserIdProvider;
         this.runStartService = runStartService;
         this.candidateSelectionService = candidateSelectionService;
         this.detailedEvaluationService = detailedEvaluationService;
@@ -41,7 +45,8 @@ public class RecommendationPreparationService {
     }
 
     public RecommendationCreateResponse prepare(RecommendationCreateRequest request) {
-        RecommendationRunContext context = runStartService.start(request);
+        Long userId = currentUserIdProvider.getCurrentUserId();
+        RecommendationRunContext context = runStartService.start(userId, request);
         try {
             RecommendationCandidateSelectionResult selection = candidateSelectionService.select(
                     context.jobRoleIds(),

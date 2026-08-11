@@ -26,38 +26,45 @@ public class RecommendationController {
     public ResponseEntity<RecommendationCreateResponse> create(
             @Valid @RequestBody RecommendationCreateRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(preparationService.prepare(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(preparationService.prepare(request));
     }
 
     @GetMapping
-    public RecommendationHistoryResponse getHistory(
+    public ResponseEntity<RecommendationHistoryResponse> getHistory(
             @Valid @ModelAttribute RecommendationHistoryRequest request
     ) {
-        return queryService.getHistory(request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(queryService.getHistory(request));
     }
 
     @GetMapping("/{recommendationRunId}")
-    public RecommendationResultResponse getResult(
-            @PathVariable Long recommendationRunId,
-            @Valid @ModelAttribute RecommendationUserRequest request
+    public ResponseEntity<RecommendationResultResponse> getResult(
+            @PathVariable Long recommendationRunId
     ) {
-        return queryService.getResult(recommendationRunId, request.userId());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(queryService.getResult(recommendationRunId));
     }
 
     @GetMapping("/{recommendationRunId}/{jobRecommendationId}")
-    public RecommendationDetailResponse getDetail(
+    public ResponseEntity<RecommendationDetailResponse> getDetail(
             @PathVariable Long recommendationRunId,
-            @PathVariable Long jobRecommendationId,
-            @Valid @ModelAttribute RecommendationUserRequest request
+            @PathVariable Long jobRecommendationId
     ) {
-        return queryService.getDetail(recommendationRunId, jobRecommendationId, request.userId());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(queryService.getDetail(recommendationRunId, jobRecommendationId));
     }
 
     @GetMapping("/{recommendationRunId}/user-skills")
-    public RecommendationUserSkillsResponse getUserSkills(
-            @PathVariable Long recommendationRunId,
-            @Valid @ModelAttribute RecommendationUserRequest request
+    public ResponseEntity<RecommendationUserSkillsResponse> getUserSkills(
+            @PathVariable Long recommendationRunId
     ) {
-        return queryService.getUserSkills(recommendationRunId, request.userId());
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(queryService.getUserSkills(recommendationRunId));
     }
 }

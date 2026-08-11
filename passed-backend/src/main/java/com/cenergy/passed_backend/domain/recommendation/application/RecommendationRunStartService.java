@@ -66,8 +66,8 @@ public class RecommendationRunStartService {
     }
 
     @Transactional
-    public RecommendationRunContext start(RecommendationCreateRequest request) {
-        NormalizedRequest normalized = normalize(request);
+    public RecommendationRunContext start(Long userId, RecommendationCreateRequest request) {
+        NormalizedRequest normalized = normalize(userId, request);
         User user = lockUser(normalized.userId());
         rejectConcurrentRun(normalized.userId());
         RecommendationScoringPolicy policy = loadPolicy();
@@ -105,8 +105,8 @@ public class RecommendationRunStartService {
         );
     }
 
-    private NormalizedRequest normalize(RecommendationCreateRequest request) {
-        if (request == null || request.userId() == null || request.userId() <= 0
+    private NormalizedRequest normalize(Long userId, RecommendationCreateRequest request) {
+        if (request == null || userId == null || userId <= 0
                 || request.industryId() == null || request.industryId() <= 0
                 || request.jobRoleIds() == null
                 || request.jobRoleIds().stream().anyMatch(id -> id == null || id <= 0)) {
@@ -116,7 +116,7 @@ public class RecommendationRunStartService {
             );
         }
         return new NormalizedRequest(
-                request.userId(),
+                userId,
                 request.industryId(),
                 List.copyOf(new TreeSet<>(request.jobRoleIds()))
         );

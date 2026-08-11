@@ -4,11 +4,11 @@ import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.IndustryRepository;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.dto.UserJobPreferenceUpdateRequest;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +32,7 @@ class UserJobPreferenceServiceTest {
     @BeforeEach
     void setUp() {
         currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
         userRepository = mock(UserRepository.class);
         industryRepository = mock(IndustryRepository.class);
         jobRoleRepository = mock(JobRoleRepository.class);
@@ -51,7 +52,6 @@ class UserJobPreferenceServiceTest {
         User user = mock(User.class);
         OffsetDateTime updatedAt = OffsetDateTime.parse("2026-08-11T12:00:00+09:00");
 
-        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
         when(userRepository.findByIdForUpdate(257L)).thenReturn(Optional.of(user));
         when(industryRepository.findById(8L)).thenReturn(Optional.of(industry));
         when(jobRoleRepository.findAllByIdIn(List.of(239L, 227L)))
@@ -61,7 +61,6 @@ class UserJobPreferenceServiceTest {
         when(user.getUpdatedAt()).thenReturn(updatedAt);
 
         var response = service.update(new UserJobPreferenceUpdateRequest(
-                257L,
                 8L,
                 List.of(239L, 227L)
         ));
@@ -82,14 +81,13 @@ class UserJobPreferenceServiceTest {
         Industry otherIndustry = industry(7L, "IT·정보통신");
         JobRole mismatchedRole = jobRole(100L, "서버개발자", otherIndustry);
 
-        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
         when(userRepository.findByIdForUpdate(257L)).thenReturn(Optional.of(mock(User.class)));
         when(industryRepository.findById(8L)).thenReturn(Optional.of(selectedIndustry));
         when(jobRoleRepository.findAllByIdIn(List.of(100L))).thenReturn(List.of(mismatchedRole));
 
         UserPreferenceException exception = assertThrows(
                 UserPreferenceException.class,
-                () -> service.update(new UserJobPreferenceUpdateRequest(257L, 8L, List.of(100L)))
+                () -> service.update(new UserJobPreferenceUpdateRequest(8L, List.of(100L)))
         );
 
         assertEquals(
@@ -103,7 +101,6 @@ class UserJobPreferenceServiceTest {
         UserPreferenceException exception = assertThrows(
                 UserPreferenceException.class,
                 () -> service.update(new UserJobPreferenceUpdateRequest(
-                        257L,
                         8L,
                         List.of(227L, 227L)
                 ))

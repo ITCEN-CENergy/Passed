@@ -15,6 +15,7 @@ import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommenda
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
+import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -35,6 +36,8 @@ class RecommendationQueryServiceTest {
         JobRecommendationSkillDetailRepository detailRepository =
                 mock(JobRecommendationSkillDetailRepository.class);
         SkillRepository skillRepository = mock(SkillRepository.class);
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(2L);
         JobRecommendation recommendation = recommendation(posting());
         List<JobRecommendationSkillDetail> details = List.of(
                 detail(10L, "TypeScript", JobPostingSkillType.REQUIRED, true, "1.0000"),
@@ -46,11 +49,12 @@ class RecommendationQueryServiceTest {
         )).thenReturn(Optional.of(recommendation));
         when(detailRepository.findAllByJobRecommendationIdOrderByIdAsc(100L)).thenReturn(details);
         RecommendationQueryService service = new RecommendationQueryService(
+                currentUserIdProvider,
                 runRepository, recommendationRepository, detailRepository, skillRepository,
                 new RecommendationSkillHighlightSelector()
         );
 
-        RecommendationDetailResponse response = service.getDetail(10L, 100L, 2L);
+        RecommendationDetailResponse response = service.getDetail(10L, 100L);
 
         assertEquals(List.of(
                         JobPostingSkillType.REQUIRED,

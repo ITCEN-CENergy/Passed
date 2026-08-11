@@ -93,8 +93,7 @@ class RecommendationRunStartServiceTest {
                 new RecommendationSnapshotFactory(new ObjectMapper())
         );
 
-        RecommendationRunContext result = service.start(new RecommendationCreateRequest(
-                2L,
+        RecommendationRunContext result = service.start(2L, new RecommendationCreateRequest(
                 8L,
                 List.of(239L, 227L, 239L)
         ));

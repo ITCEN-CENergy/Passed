@@ -63,10 +63,10 @@ class Competency(RoadmapModel):
         if self.category == CompetencyCategory.CERTIFICATION:
             if self.currentLevel not in (0, 1) or self.targetLevel != 1:
                 raise ValueError("a certification competency must be 0 -> 1 or 1 -> 1")
-        elif not 1 <= self.currentLevel <= self.targetLevel <= 3:
+        elif not 0 <= self.currentLevel <= self.targetLevel <= 3:
             raise ValueError(
                 "non-certification levels must satisfy "
-                "1 <= currentLevel <= targetLevel <= 3"
+                "0 <= currentLevel <= targetLevel <= 3"
             )
         if self.gapLevel != max(self.targetLevel - self.currentLevel, 0):
             raise ValueError("gapLevel must equal max(targetLevel - currentLevel, 0)")
@@ -148,13 +148,42 @@ class GeneratedLearningStage(RoadmapModel):
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
 
 
-class ModelGeneratedSkillContent(RoadmapModel):
-    """Content authored by the model; application keys and stage bounds are excluded."""
+class ModelGeneratedLearningStageContent(RoadmapModel):
+    """One stage authored by the model; application-owned bounds are excluded."""
     milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
+
+
+class ModelGeneratedSkillContent(RoadmapModel):
+    """One skill authored by the model; application keys and stage bounds are excluded."""
+    stages: list[ModelGeneratedLearningStageContent] = Field(min_length=1, max_length=2)
 
 
 class ModelGeneratedRoadmapContent(RoadmapModel):
     skills: list[ModelGeneratedSkillContent] = Field(min_length=1, max_length=1)
+
+
+class ModelGeneratedSingleStageSkillContent(RoadmapModel):
+    stages: list[ModelGeneratedLearningStageContent] = Field(
+        min_length=1, max_length=1
+    )
+
+
+class ModelGeneratedSingleStageRoadmapContent(RoadmapModel):
+    skills: list[ModelGeneratedSingleStageSkillContent] = Field(
+        min_length=1, max_length=1
+    )
+
+
+class ModelGeneratedTwoStageSkillContent(RoadmapModel):
+    stages: list[ModelGeneratedLearningStageContent] = Field(
+        min_length=2, max_length=2
+    )
+
+
+class ModelGeneratedTwoStageRoadmapContent(RoadmapModel):
+    skills: list[ModelGeneratedTwoStageSkillContent] = Field(
+        min_length=1, max_length=1
+    )
 
 
 class GeneratedSkillContent(RoadmapModel):

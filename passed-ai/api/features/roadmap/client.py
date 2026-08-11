@@ -11,6 +11,8 @@ from api.features.roadmap.schema import (
     ModelGeneratedRoadmapContent,
     LearningResource,
     LearningStage,
+    ModelGeneratedSingleStageRoadmapContent,
+    ModelGeneratedTwoStageRoadmapContent,
 )
 
 
@@ -33,6 +35,15 @@ class OpenAiRoadmapClient:
         stages_by_key: dict[str, list[LearningStage]],
         resources_by_key: dict[str, list[LearningResource]],
     ) -> ModelGeneratedRoadmapContent:
+        stage_count = sum(len(stages) for stages in stages_by_key.values())
+        if stage_count == 1:
+            response_format = ModelGeneratedSingleStageRoadmapContent
+        elif stage_count == 2:
+            response_format = ModelGeneratedTwoStageRoadmapContent
+        else:
+            raise RoadmapGenerationError(
+                f"roadmap generation requires one or two stages, got {stage_count}"
+            )
         response = await self._client.responses.parse(
             model=self._model,
             input=[
@@ -41,8 +52,10 @@ class OpenAiRoadmapClient:
                     competencies, stages_by_key, resources_by_key
                 )},
             ],
-            text_format=ModelGeneratedRoadmapContent,
+            text_format=response_format,
         )
         if response.output_parsed is None:
             raise RoadmapGenerationError("roadmap model returned no parsed output")
-        return response.output_parsed
+        return ModelGeneratedRoadmapContent.model_validate(
+            response.output_parsed.model_dump()
+        )

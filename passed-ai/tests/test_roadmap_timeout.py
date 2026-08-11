@@ -41,7 +41,7 @@ def _settings(*, search_enabled: bool) -> RoadmapSettings:
         ROADMAP_GENERATION_TOTAL_TIMEOUT_SECONDS=0.01,
         KMOOC_SERVICE_KEY=None,
         KAKAO_REST_API_KEY=None,
-        TAVILY_API_KEY=None,
+        KEENABLE_SEARCH_ENABLED=False,
     )
 
 

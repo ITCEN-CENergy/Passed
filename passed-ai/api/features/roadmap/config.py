@@ -24,6 +24,12 @@ class RoadmapSettings(BaseSettings):
         ge=1,
         alias="ROADMAP_RESOURCE_SEARCH_MAX_CONCURRENCY",
     )
+    resource_recommendation_limit: int = Field(
+        default=3,
+        ge=1,
+        le=3,
+        alias="ROADMAP_RESOURCE_RECOMMENDATION_LIMIT",
+    )
     generation_total_timeout_seconds: float = Field(
         default=300, gt=0, alias="ROADMAP_GENERATION_TOTAL_TIMEOUT_SECONDS"
     )
@@ -33,7 +39,26 @@ class RoadmapSettings(BaseSettings):
         alias="KMOOC_COURSE_LIST_URL",
     )
     kakao_rest_api_key: str | None = Field(default=None, alias="KAKAO_REST_API_KEY")
-    tavily_api_key: str | None = Field(default=None, alias="TAVILY_API_KEY")
+    keenable_search_enabled: bool = Field(
+        default=True,
+        alias="KEENABLE_SEARCH_ENABLED",
+    )
+    keenable_mcp_url: str = Field(
+        default="https://api.keenable.ai/mcp",
+        alias="KEENABLE_MCP_URL",
+    )
+    keenable_requests_per_second: float = Field(
+        default=8,
+        gt=0,
+        le=10,
+        alias="KEENABLE_REQUESTS_PER_SECOND",
+    )
+    keenable_max_retries: int = Field(
+        default=2,
+        ge=0,
+        le=5,
+        alias="KEENABLE_MAX_RETRIES",
+    )
 
 
 @lru_cache

@@ -282,3 +282,11 @@ datasets/
 wandb/
 
 mlruns/
+
+################################################################################
+# Generated infrastructure state
+################################################################################
+
+infra/checksums/
+infra/fileChanges/
+infra/grafana/provisioning/fileHashes.bin

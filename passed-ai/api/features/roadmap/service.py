@@ -8,6 +8,7 @@ import httpx
 
 from api.features.roadmap.client import OpenAiRoadmapClient
 from api.features.roadmap.config import RoadmapSettings, get_roadmap_settings
+from api.features.roadmap.exceptions import RoadmapGenerationError
 from api.features.roadmap.planner import create_learning_stages
 from api.features.roadmap.schema import (
     Competency,
@@ -30,7 +31,14 @@ from api.features.roadmap.schema import (
 )
 from api.features.roadmap.resource_search import LearningResourceSearchService
 from api.features.roadmap.resource_provider import create_resource_providers
-from api.features.roadmap.resource_query import build_contextual_search_queries
+from api.features.roadmap.resource_recommender import (
+    LearningResourceRecommender,
+    RecommendationTarget,
+    build_book_search_query,
+    build_milestone_search_query,
+    build_web_search_query,
+)
+from api.features.roadmap.resource_query import build_competency_ranking_contexts
 from api.features.roadmap.validator import (
     remove_unknown_resource_recommendations,
     validate_generated_content,
@@ -59,12 +67,12 @@ class FakeRoadmapContentGenerator:
     ) -> ModelGeneratedRoadmapContent:
         skills = []
         for competency in competencies:
-            stage = stages_by_key[competency.roadmapSkillKey][0]
+            key = competency.roadmapSkillKey
             skills.append(
                 ModelGeneratedSkillContent(
-                    milestones=self._contents(
-                        competency, stage, resources_by_key.get(competency.roadmapSkillKey, [])
-                    )
+                    stages=[{"milestones": self._contents(
+                        competency, stage, resources_by_key.get(key, [])
+                    )} for stage in stages_by_key[key]]
                 )
             )
         return ModelGeneratedRoadmapContent(skills=skills)
@@ -174,38 +182,108 @@ async def _generate_content_in_batches(
     stages_by_key: dict[str, list[LearningStage]],
     resources_by_key: dict[str, list[LearningResource]],
 ) -> GeneratedRoadmapContent:
-    """Generate only milestone text; bind competency keys and stage bounds in code."""
+    """Generate one skill per call; bind keys and stage bounds in application code."""
     semaphore = asyncio.Semaphore(CONTENT_GENERATION_MAX_CONCURRENCY)
+
+    async def request_content(
+        competency: Competency, stages: list[LearningStage]
+    ) -> ModelGeneratedRoadmapContent:
+        key = competency.roadmapSkillKey
+        async with semaphore:
+            return await generator.generate(
+                [competency],
+                {key: stages},
+                {key: resources_by_key.get(key, [])},
+            )
+
+    def bind_skill(
+        competency: Competency,
+        stages: list[LearningStage],
+        model_content: ModelGeneratedRoadmapContent,
+    ) -> GeneratedSkillContent:
+        if len(model_content.skills) != 1:
+            raise ValueError("single competency generation must return exactly one skill")
+        model_stages = model_content.skills[0].stages
+        if len(model_stages) != len(stages):
+            raise ValueError("generated learning stages do not match required stages")
+        return GeneratedSkillContent(
+            roadmapSkillKey=competency.roadmapSkillKey,
+            stages=[
+                GeneratedLearningStage(
+                    startLevel=stage.startLevel,
+                    targetLevel=stage.targetLevel,
+                    milestones=model_stage.milestones,
+                )
+                for stage, model_stage in zip(stages, model_stages, strict=True)
+            ],
+        )
+
+    def validate_skill(competency: Competency, skill: GeneratedSkillContent) -> None:
+        skill_for_validation = skill.model_copy(deep=True)
+        generated_for_validation = GeneratedRoadmapContent(
+            title=build_roadmap_title([competency]),
+            skills=[skill_for_validation],
+        )
+        # Unknown resource IDs are handled by the existing sanitization pass.
+        # They should not force an otherwise valid batch through the slower fallback.
+        remove_unknown_resource_recommendations(
+            resources_by_key, generated_for_validation
+        )
+        validate_generated_content(
+            [competency],
+            {competency.roadmapSkillKey: stages_by_key[competency.roadmapSkillKey]},
+            resources_by_key,
+            generated_for_validation,
+        )
 
     async def generate_stage(
         competency: Competency, stage: LearningStage
     ) -> GeneratedLearningStage:
-        key = competency.roadmapSkillKey
-        async with semaphore:
-            model_content = await generator.generate(
-                [competency],
-                {key: [stage]},
-                {key: resources_by_key.get(key, [])},
-            )
+        model_content = await request_content(competency, [stage])
         if len(model_content.skills) != 1:
             raise ValueError("single stage generation must return exactly one skill")
+        model_stages = model_content.skills[0].stages
+        if len(model_stages) != 1:
+            raise ValueError("single stage generation must return exactly one stage")
         return GeneratedLearningStage(
             startLevel=stage.startLevel,
             targetLevel=stage.targetLevel,
-            milestones=model_content.skills[0].milestones,
+            milestones=model_stages[0].milestones,
         )
 
-    generated_skills: list[GeneratedSkillContent] = []
-    for competency in competencies:
+    async def generate_skill(competency: Competency) -> GeneratedSkillContent:
         key = competency.roadmapSkillKey
-        generated_stages = await asyncio.gather(*(
-            generate_stage(competency, stage)
-            for stage in stages_by_key[key]
-        ))
-        generated_skills.append(GeneratedSkillContent(
-            roadmapSkillKey=key,
-            stages=generated_stages,
-        ))
+        stages = stages_by_key[key]
+        try:
+            skill = bind_skill(
+                competency, stages, await request_content(competency, stages)
+            )
+            validate_skill(competency, skill)
+            return skill
+        except (ValueError, RoadmapGenerationError) as exception:
+            logger.warning(
+                "roadmap_competency_batch_fallback competencyKey=%s errorType=%s "
+                "errorMessage=%s",
+                key, type(exception).__name__, str(exception),
+                extra={
+                    "event": "roadmap_competency_batch_fallback",
+                    "competencyKey": key,
+                    "errorType": type(exception).__name__,
+                    "errorMessage": str(exception),
+                },
+            )
+            generated_stages = await asyncio.gather(*(
+                generate_stage(competency, stage) for stage in stages
+            ))
+            skill = GeneratedSkillContent(
+                roadmapSkillKey=key, stages=generated_stages
+            )
+            validate_skill(competency, skill)
+            return skill
+
+    generated_skills = await asyncio.gather(*(
+        generate_skill(competency) for competency in competencies
+    ))
 
     return GeneratedRoadmapContent(
         title=build_roadmap_title(competencies),
@@ -293,27 +371,106 @@ async def _generate_roadmap(
         competency.roadmapSkillKey: create_learning_stages(competency)
         for competency in request.competencies
     }
-    search_started = perf_counter()
     resources_by_key: dict[str, list[LearningResource]] = {}
+    content_generator = generator or _generator(settings)
+    generator_started = perf_counter()
+    generated = await _generate_content_in_batches(
+        content_generator,
+        request.competencies,
+        stages_by_key,
+        {},
+    )
+    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
+    logger.info(
+        "roadmap_content_generation_completed generationId=%s generator=%s "
+        "elapsedMs=%d",
+        generation_id,
+        type(content_generator).__name__,
+        generator_elapsed_ms,
+        extra={
+            "event": "roadmap_content_generation_completed",
+            "generationId": generation_id,
+            "generator": type(content_generator).__name__,
+            "elapsedMs": generator_elapsed_ms,
+        },
+    )
+
+    search_started = perf_counter()
     search_service = LearningResourceSearchService(
         create_resource_providers(http_client, settings),
         enabled=settings.resource_search_enabled,
         max_concurrency=settings.resource_search_max_concurrency,
         generation_id=generation_id,
     )
-    search_queries = await build_contextual_search_queries(request.competencies)
-    search_results = await asyncio.gather(*(
-        search_service.search(
-            competency, search_queries[competency.roadmapSkillKey]
-        )
+    competency_by_key = {
+        competency.roadmapSkillKey: competency
         for competency in request.competencies
-    ))
-    resources_by_key = {
-        competency.roadmapSkillKey: resources
-        for competency, resources in zip(
-            request.competencies, search_results, strict=True
-        )
     }
+    ranking_contexts = await build_competency_ranking_contexts(
+        request.competencies
+    )
+    targets = [
+        RecommendationTarget(
+            key=f"{skill.roadmapSkillKey}:{stage.startLevel}:{stage.targetLevel}:{index}",
+            competency_name=competency_by_key[
+                skill.roadmapSkillKey
+            ].standardCompetencyName,
+            competency_context=ranking_contexts[skill.roadmapSkillKey],
+            title=milestone.title,
+            learning_objective=milestone.learningObjective,
+            completion_criteria=milestone.completionCriteria,
+            candidates=[],
+        )
+        for skill in generated.skills
+        for stage in skill.stages
+        for index, milestone in enumerate(stage.milestones)
+    ]
+    target_competencies = {
+        target.key: competency_by_key[target.key.rsplit(":", 3)[0]]
+        for target in targets
+    }
+
+    async def additional_search(
+        target: RecommendationTarget,
+    ) -> list[LearningResource]:
+        competency = target_competencies[target.key]
+        resources = await search_service.search(
+            competency,
+            build_milestone_search_query(target),
+            provider_queries={
+                "kakao_book": build_book_search_query(target),
+                "keenable": build_web_search_query(target),
+            },
+        )
+        key = competency.roadmapSkillKey
+        merged = {
+            resource.resourceId: resource
+            for resource in resources_by_key.get(key, [])
+        }
+        merged.update({resource.resourceId: resource for resource in resources})
+        resources_by_key[key] = list(merged.values())
+        return resources
+
+    recommendations = await LearningResourceRecommender(settings).recommend(
+        targets, additional_search=additional_search
+    )
+    target_by_key = {target.key: target for target in targets}
+    for skill in generated.skills:
+        for stage in skill.stages:
+            for index, milestone in enumerate(stage.milestones):
+                target_key = (
+                    f"{skill.roadmapSkillKey}:{stage.startLevel}:"
+                    f"{stage.targetLevel}:{index}"
+                )
+                target = target_by_key[target_key]
+                milestone.resourceRecommendations = [
+                    GeneratedResourceRecommendation(
+                        resourceId=resource.resourceId,
+                        recommendationReason=resource.description,
+                    )
+                    for resource in recommendations[target.key]
+                ]
+
     search_elapsed_ms = round((perf_counter() - search_started) * 1000)
     resource_count = sum(len(resources) for resources in resources_by_key.values())
     resource_description_char_count = sum(
@@ -338,42 +495,6 @@ async def _generate_roadmap(
             "elapsedMs": search_elapsed_ms,
         },
     )
-    content_generator = generator or _generator(settings)
-    generator_started = perf_counter()
-    generated = await _generate_content_in_batches(
-        content_generator,
-        request.competencies,
-        stages_by_key,
-        resources_by_key,
-    )
-    generator_elapsed_ms = round((perf_counter() - generator_started) * 1000)
-    logger.info(
-        "roadmap_content_generation_completed generationId=%s generator=%s "
-        "elapsedMs=%d",
-        generation_id,
-        type(content_generator).__name__,
-        generator_elapsed_ms,
-        extra={
-            "event": "roadmap_content_generation_completed",
-            "generationId": generation_id,
-            "generator": type(content_generator).__name__,
-            "elapsedMs": generator_elapsed_ms,
-        },
-    )
-    removed_recommendation_count = remove_unknown_resource_recommendations(
-        resources_by_key, generated
-    )
-    if removed_recommendation_count:
-        logger.warning(
-            "roadmap_unknown_resource_recommendations_removed generationId=%s count=%d",
-            generation_id,
-            removed_recommendation_count,
-            extra={
-                "event": "roadmap_unknown_resource_recommendations_removed",
-                "generationId": generation_id,
-                "count": removed_recommendation_count,
-            },
-        )
     validate_generated_content(
         request.competencies, stages_by_key, resources_by_key, generated
     )

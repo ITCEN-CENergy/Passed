@@ -79,7 +79,7 @@ public class RecommendationResultPersistenceService {
         for (RankedRecommendation ranked : rankedRecommendations) {
             RecommendationExplanation explanation = Objects.requireNonNull(
                     explanations.get(ranked.jobPostingId()),
-                    "Explanation must exi킬t for every selected posting"
+                    "Explanation must exist for every selected posting"
             );
             GradedRecommendation graded = ranked.recommendation();
             RecommendationScoreResult score = graded.score();
@@ -100,9 +100,7 @@ public class RecommendationResultPersistenceService {
                     score.candidateTier(),
                     graded.grade(),
                     ranked.rankOrder(),
-                    explanation.reason(),
-                    explanation.strengths(),
-                    explanation.weaknesses()
+                    explanation.reason()
             );
             recommendationsByPostingId.put(ranked.jobPostingId(), entity);
         }

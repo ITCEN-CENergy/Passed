@@ -22,30 +22,24 @@ def explanation_input(job_posting_id: int = 101) -> dict:
         "jobPostingId": job_posting_id,
         "jobPostingTitle": "백엔드 개발자",
         "companyName": "Passed",
-        "rankOrder": 1,
-        "recommendationGrade": "RECOMMENDED",
-        "candidateTier": "PRIMARY",
-        "totalScore": "75.0000",
-        "requiredScore": "70.0000",
-        "preferredScore": "5.0000",
-        "relatedScore": "0.0000",
-        "importantSkillBonus": "0.0000",
-        "requiredCoverageRate": "0.8000",
-        "requiredLevelMatchRate": "0.7000",
-        "importantMatchCount": 1,
-        "strengths": [
+        "posting": {
+            "positionDetail": "AI 기반 서비스를 개발합니다.",
+            "mainDuty": "백엔드 API 개발과 운영",
+            "qualification": "Java 서비스 개발 역량",
+            "preference": "Docker 활용 역량",
+            "companyTalentProfile": "주도적으로 문제를 해결하는 인재",
+        },
+        "matchedSkills": [
             {
                 "skillName": "Java",
                 "skillType": "REQUIRED",
-                "evaluationType": "LEVEL",
                 "userLevel": 2,
-                "requiredLevel": 3,
-                "matchRate": "0.6667",
-                "userImportant": True,
-                "requirementSatisfied": False,
+                "requiredLevel": 2,
+                "matchRate": "1.0000",
+                "requirementSatisfied": True,
             }
         ],
-        "gaps": [],
+        "gapSkills": [],
     }
 
 
@@ -62,9 +56,10 @@ def response_for(job_posting_id: int) -> RecommendationExplanationResponse:
         recommendations=[
             RecommendationExplanationItem(
                 jobPostingId=job_posting_id,
-                reason="추천 근거",
-                strengths="Java 역량",
-                weaknesses="AWS 보완 필요",
+                reason=(
+                    "Java 역량이 백엔드 API 개발 업무와 연결됩니다. "
+                    "이 역량을 기반으로 서비스 운영 범위까지 성장할 수 있습니다."
+                ),
             )
         ]
     )
@@ -90,9 +85,10 @@ def test_endpoint_returns_camel_case_structured_response(monkeypatch) -> None:
         "recommendations": [
             {
                 "jobPostingId": 101,
-                "reason": "추천 근거",
-                "strengths": "Java 역량",
-                "weaknesses": "AWS 보완 필요",
+                "reason": (
+                    "Java 역량이 백엔드 API 개발 업무와 연결됩니다. "
+                    "이 역량을 기반으로 서비스 운영 범위까지 성장할 수 있습니다."
+                ),
             }
         ]
     }

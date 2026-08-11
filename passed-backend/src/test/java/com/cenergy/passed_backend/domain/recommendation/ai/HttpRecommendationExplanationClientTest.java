@@ -36,13 +36,17 @@ class HttpRecommendationExplanationClientTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString(
                         "\"jobPostingId\":101"
                 )))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(
+                        "\"mainDuty\":\"백엔드 API 개발과 배포 자동화\""
+                )))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(
+                        "\"matchedSkills\""
+                )))
                 .andRespond(withSuccess("""
                         {
                           "recommendations": [{
                             "jobPostingId": 101,
-                            "reason": "추천 근거",
-                            "strengths": "Java 역량",
-                            "weaknesses": "AWS 보완 필요"
+                            "reason": "Java 역량이 주요 API 개발 업무와 연결됩니다. Docker를 보완하면 배포 업무까지 역할을 확장할 수 있습니다."
                           }]
                         }
                         """, MediaType.APPLICATION_JSON));
@@ -51,9 +55,7 @@ class HttpRecommendationExplanationClientTest {
 
         assertThat(result).containsExactly(new RecommendationExplanation(
                 101L,
-                "추천 근거",
-                "Java 역량",
-                "AWS 보완 필요"
+                "Java 역량이 주요 API 개발 업무와 연결됩니다. Docker를 보완하면 배포 업무까지 역할을 확장할 수 있습니다."
         ));
         server.verify();
     }
@@ -87,28 +89,22 @@ class HttpRecommendationExplanationClientTest {
                 new RecommendationExplanationInput.SkillFact(
                         "Java",
                         "REQUIRED",
-                        "LEVEL",
                         (short) 2,
                         (short) 3,
                         "0.6667",
-                        true,
                         false
                 );
         return new RecommendationExplanationInput(
                 101L,
                 "백엔드 개발자",
                 "Passed",
-                1,
-                "RECOMMENDED",
-                "PRIMARY",
-                "75.0000",
-                "70.0000",
-                "5.0000",
-                "0.0000",
-                "0.0000",
-                "0.8000",
-                "0.7000",
-                1,
+                new RecommendationExplanationInput.JobPostingContext(
+                        "API 플랫폼을 개발하고 운영합니다.",
+                        "백엔드 API 개발과 배포 자동화",
+                        "Java 기반 서비스 개발 역량",
+                        "Docker 활용 경험",
+                        "사용자 문제를 주도적으로 해결하는 인재"
+                ),
                 List.of(strength),
                 List.of()
         );

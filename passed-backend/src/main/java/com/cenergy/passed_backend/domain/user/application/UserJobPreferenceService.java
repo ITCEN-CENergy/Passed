@@ -4,11 +4,11 @@ import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.IndustryRepository;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.dto.*;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +56,7 @@ public class UserJobPreferenceService {
     @Transactional
     public UserJobPreferenceResponse update(UserJobPreferenceUpdateRequest request) {
         validateRequest(request);
-        Long userId = request.userId();
+        Long userId = currentUserId();
         User user = userRepository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new UserPreferenceException(
                         ErrorCode.USER_PREFERENCE_USER_NOT_FOUND,

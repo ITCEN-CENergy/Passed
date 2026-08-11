@@ -26,6 +26,14 @@ public interface RoadmapMilestoneRepository extends JpaRepository<RoadmapMilesto
     List<Long> findRoadmapSkillIdsByMilestoneId(@Param("milestoneId") Long milestoneId);
 
     @Query("""
+            select distinct rm.roadmapSkill.roadmap.id
+            from RoadmapMilestone rm
+            where rm.milestone.id = :milestoneId
+            order by rm.roadmapSkill.roadmap.id
+            """)
+    List<Long> findRoadmapIdsByMilestoneId(@Param("milestoneId") Long milestoneId);
+
+    @Query("""
             select distinct rm.milestone.id
             from RoadmapMilestone rm
             where rm.roadmapSkill.roadmap.id = :roadmapId

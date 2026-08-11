@@ -26,4 +26,15 @@ public class LanguageProficiency {
     @Enumerated(EnumType.STRING)
     @Column(name = "proficiency_level", length = 30, nullable = false)
     private ProficiencyLevel proficiencyLevel;
+
+    public static LanguageProficiency create(Resume resume) {
+        LanguageProficiency language = new LanguageProficiency();
+        language.resume = resume;
+        return language;
+    }
+
+    public void update(String languageName, ProficiencyLevel proficiencyLevel) {
+        this.languageName = languageName;
+        this.proficiencyLevel = proficiencyLevel;
+    }
 }

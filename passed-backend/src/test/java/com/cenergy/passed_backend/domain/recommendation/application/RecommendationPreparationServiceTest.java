@@ -1,8 +1,9 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.application.model.*;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.mockito.InOrder;
 
 import java.util.List;
 import java.util.Map;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,7 +59,7 @@ class RecommendationPreparationServiceTest {
 
     @Test
     void calculatesExplainsAndPersistsOnlyRankedResultsInOrder() {
-        RecommendationPrepareRequest request = new RecommendationPrepareRequest(
+        RecommendationCreateRequest request = new RecommendationCreateRequest(
                 2L,
                 8L,
                 List.of(239L)
@@ -68,12 +70,16 @@ class RecommendationPreparationServiceTest {
         RecommendationRunContext context = new RecommendationRunContext(
                 10L,
                 policy,
-                List.of(mock(), mock(), mock(), mock()),
+                List.of(
+                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class),
+                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class)
+                ),
                 List.of(new UserSkillData(12L, (short) 3, true)),
                 1,
                 "a".repeat(64),
                 8L,
-                List.of(239L)
+                List.of(239L),
+                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
         );
         RecommendationCandidateSelectionResult selection = new RecommendationCandidateSelectionResult(
                 Map.of(100L, PostingSkillBundle.empty()),
@@ -112,12 +118,12 @@ class RecommendationPreparationServiceTest {
         order.verify(gradeResolver).resolveAll(scores, context.gradeRules());
         order.verify(topKSelector).select(graded);
         order.verify(explanationService).generate(ranked);
-        order.verify(persistenceService).complete(10L, ranked, explanations);
+        order.verify(persistenceService).complete(10L, ranked, explanations, 1, 0);
     }
 
     @Test
     void marksStartedRunFailedWhenCalculationThrows() {
-        RecommendationPrepareRequest request = new RecommendationPrepareRequest(2L, 8L, List.of());
+        RecommendationCreateRequest request = new RecommendationCreateRequest(2L, 8L, List.of());
         RecommendationScoringPolicy policy = mock(RecommendationScoringPolicy.class);
         RecommendationRunContext context = new RecommendationRunContext(
                 10L,
@@ -127,7 +133,8 @@ class RecommendationPreparationServiceTest {
                 0,
                 "a".repeat(64),
                 8L,
-                List.of()
+                List.of(),
+                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
         );
         RuntimeException failure = new RuntimeException("calculation failed");
         when(runStartService.start(request)).thenReturn(context);

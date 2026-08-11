@@ -1,8 +1,8 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.application.model.*;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateResponse;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class RecommendationPreparationService {
         this.failureService = failureService;
     }
 
-    public RecommendationPrepareResponse prepare(RecommendationPrepareRequest request) {
+    public RecommendationCreateResponse prepare(RecommendationCreateRequest request) {
         RecommendationRunContext context = runStartService.start(request);
         try {
             RecommendationCandidateSelectionResult selection = candidateSelectionService.select(
@@ -62,7 +62,9 @@ public class RecommendationPreparationService {
             persistenceService.complete(
                     context.recommendationRunId(),
                     ranked,
-                    explanations
+                    explanations,
+                    selection.candidatePostingCount(),
+                    selection.requiredQualifiedPostingCount()
             );
             return response(context, selection);
         } catch (RuntimeException exception) {
@@ -75,23 +77,18 @@ public class RecommendationPreparationService {
         }
     }
 
-    private RecommendationPrepareResponse response(
+    private RecommendationCreateResponse response(
             RecommendationRunContext context,
             RecommendationCandidateSelectionResult selection
     ) {
-        return new RecommendationPrepareResponse(
+        return new RecommendationCreateResponse(
                 context.recommendationRunId(),
                 RecommendationRunStatus.COMPLETED,
-                context.policy().getPolicyCode(),
-                context.policy().getVersion(),
-                context.gradeRules().size(),
-                context.userSkills().size(),
-                context.importantSkillCount(),
                 selection.candidatePostingCount(),
                 selection.requiredQualifiedPostingCount(),
-                context.userSkillSnapshotHash(),
                 context.industryId(),
-                context.jobRoleIds()
+                context.jobRoleIds(),
+                context.startedAt()
         );
     }
 }

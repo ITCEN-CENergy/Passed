@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest
 class JpaLearningCompetencyServiceE2ETest {
-
+    // 본인 결과로 바꿔서 테스트 해야됨
     private static final Long TEST_USER_ID = 56L;
     private static final Long TEST_JOB_POSTING_ID = 4682L;
 

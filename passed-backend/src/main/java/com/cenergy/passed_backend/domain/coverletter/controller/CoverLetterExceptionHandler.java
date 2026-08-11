@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice(assignableTypes = {
         CoverLetterController.class,
+        CommonCoverLetterController.class, //조윤지: 새로 추가된 컨트롤러
+        CoverLetterQuestionController.class, //조윤지: 새로 추가된 질문 컨트롤러
         CompanyCoverLetterController.class,
         CompanyCoverLetterItemController.class
 })

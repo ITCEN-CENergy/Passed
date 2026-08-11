@@ -52,4 +52,25 @@ public class Education {
 
     @Column(name = "other_majors", length = 200)
     private String otherMajors;
+
+    public static Education create(Resume resume) {
+        Education education = new Education();
+        education.resume = resume;
+        return education;
+    }
+
+    public void update(String schoolType, String schoolName, LocalDate admissionDate,
+                       LocalDate graduationDate, String status, Boolean transfer,
+                       String majorName, BigDecimal gpa, BigDecimal maxGpa, String otherMajors) {
+        this.schoolType = schoolType;
+        this.schoolName = schoolName;
+        this.admissionDate = admissionDate;
+        this.graduationDate = graduationDate;
+        this.status = status;
+        this.transfer = transfer;
+        this.majorName = majorName;
+        this.gpa = gpa;
+        this.maxGpa = maxGpa;
+        this.otherMajors = otherMajors;
+    }
 }

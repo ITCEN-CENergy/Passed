@@ -36,4 +36,19 @@ public class Training {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    public static Training create(Resume resume) {
+        Training training = new Training();
+        training.resume = resume;
+        return training;
+    }
+
+    public void update(String name, String institution, LocalDate startDate,
+                       LocalDate endDate, String description) {
+        this.name = name;
+        this.institution = institution;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+    }
 }

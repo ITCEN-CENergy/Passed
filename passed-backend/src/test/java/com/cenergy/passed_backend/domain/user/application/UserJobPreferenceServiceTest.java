@@ -61,6 +61,7 @@ class UserJobPreferenceServiceTest {
         when(user.getUpdatedAt()).thenReturn(updatedAt);
 
         var response = service.update(new UserJobPreferenceUpdateRequest(
+                257L,
                 8L,
                 List.of(239L, 227L)
         ));
@@ -88,7 +89,7 @@ class UserJobPreferenceServiceTest {
 
         UserPreferenceException exception = assertThrows(
                 UserPreferenceException.class,
-                () -> service.update(new UserJobPreferenceUpdateRequest(8L, List.of(100L)))
+                () -> service.update(new UserJobPreferenceUpdateRequest(257L, 8L, List.of(100L)))
         );
 
         assertEquals(
@@ -101,7 +102,11 @@ class UserJobPreferenceServiceTest {
     void rejectsDuplicateJobRoleIds() {
         UserPreferenceException exception = assertThrows(
                 UserPreferenceException.class,
-                () -> service.update(new UserJobPreferenceUpdateRequest(8L, List.of(227L, 227L)))
+                () -> service.update(new UserJobPreferenceUpdateRequest(
+                        257L,
+                        8L,
+                        List.of(227L, 227L)
+                ))
         );
 
         assertEquals(ErrorCode.USER_PREFERENCE_INVALID_REQUEST, exception.getErrorCode());

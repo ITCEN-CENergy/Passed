@@ -24,6 +24,10 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     Optional<Milestone> findOwnedForUpdate(@Param("milestoneId") Long milestoneId,
                                            @Param("userId") Long userId);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select m from Milestone m where m.id in :milestoneIds order by m.id")
+    List<Milestone> findAllForUpdateByIdInOrderById(@Param("milestoneIds") Collection<Long> milestoneIds);
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             delete from Milestone m

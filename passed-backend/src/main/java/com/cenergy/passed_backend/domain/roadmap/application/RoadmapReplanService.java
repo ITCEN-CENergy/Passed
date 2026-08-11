@@ -87,7 +87,7 @@ public class RoadmapReplanService {
                 roadmapId, roadmap.getTitle(), instruction(request), groups.stream().map(this::toAiGroup).toList());
         RoadmapReplanAiResponse aiResponse = aiClient.replan(aiRequest);
         Map<String, RoadmapReplanAiResponse.CompressedGroup> generated = validate(groups, aiResponse);
-        RoadmapCompressionPlan plan = bind(groups, aiResponse.summary(), generated);
+        RoadmapCompressionPlan plan = bind(groups, aiResponse.summary(), generated, allLinks);
         RoadmapReplan replan = replanRepository.save(RoadmapReplan.ready(
                 roadmapId, userId, plan.summary(), objectMapper.valueToTree(plan)));
 
@@ -105,12 +105,20 @@ public class RoadmapReplanService {
     @Transactional
     public RoadmapReplanApplyResponse apply(Long roadmapId, RoadmapReplanApplyRequest request) {
         Long userId = currentUserId();
-        activeRoadmap(roadmapId, userId);
-        RoadmapReplan replan = replanRepository.findByTokenAndRoadmapIdAndUserIdAndStatus(
-                        request.replanToken(), roadmapId, userId, RoadmapReplanStatus.READY)
-                .orElseThrow(() -> invalid("Replan token is invalid or already applied"));
+        Roadmap roadmap = activeRoadmapForUpdate(roadmapId, userId);
+        RoadmapReplan replan = replanRepository.findOwnedForUpdate(request.replanToken(), roadmapId, userId)
+                .orElseThrow(() -> invalid("Replan token is invalid for this roadmap"));
+        if (replan.getStatus() == RoadmapReplanStatus.APPLIED) {
+            return response(roadmap);
+        }
         RoadmapCompressionPlan plan = read(replan.getDecisionsJson());
         List<RoadmapMilestone> allLinks = links(roadmapId);
+        if (!snapshot(allLinks).equals(plan.sourceSnapshot())) {
+            throw invalid("Roadmap changed after compression preview");
+        }
+        List<Long> milestoneIds = allLinks.stream().map(link -> link.getMilestone().getId())
+                .distinct().sorted().toList();
+        if (!milestoneIds.isEmpty()) milestoneRepository.findAllForUpdateByIdInOrderById(milestoneIds);
         List<RoadmapMilestone> candidates = candidates(allLinks);
         Set<Long> currentIds = candidates.stream().map(link -> link.getMilestone().getId()).collect(Collectors.toSet());
         Set<Long> plannedIds = plan.groups().stream().flatMap(group -> group.sourceMilestoneIds().stream())
@@ -161,9 +169,7 @@ public class RoadmapReplanService {
         linkRepository.flush();
         replan.markApplied(OffsetDateTime.now());
         progressSynchronizer.synchronizeRoadmap(roadmapId);
-        Roadmap updated = roadmapRepository.findById(roadmapId).orElseThrow();
-        return new RoadmapReplanApplyResponse(
-                roadmapId, updated.getTotalEstimatedMinutes(), updated.getEstimatedEndDate());
+        return response(roadmap);
     }
 
     private List<GroupDraft> group(List<RoadmapMilestone> candidates) {
@@ -253,7 +259,8 @@ public class RoadmapReplanService {
     }
 
     private RoadmapCompressionPlan bind(List<GroupDraft> groups, String summary,
-                                        Map<String, RoadmapReplanAiResponse.CompressedGroup> generated) {
+                                        Map<String, RoadmapReplanAiResponse.CompressedGroup> generated,
+                                        List<RoadmapMilestone> allLinks) {
         return new RoadmapCompressionPlan(summary, groups.stream().map(group -> {
             RoadmapReplanAiResponse.CompressedGroup content = generated.get(group.groupKey());
             Milestone first = group.sources().getFirst().getMilestone();
@@ -269,7 +276,7 @@ public class RoadmapReplanService {
                                     resource.resourceId(), resource.resourceType(), resource.title(),
                                     resource.description(), resource.provider(), resource.url(),
                                     resource.thumbnailUrl())).toList());
-        }).toList());
+        }).toList(), snapshot(allLinks));
     }
 
     private List<RoadmapReplanPreviewResponse.CompressedSkill> previewSkills(RoadmapCompressionPlan plan) {
@@ -305,6 +312,27 @@ public class RoadmapReplanService {
                 .orElseThrow(() -> new RoadmapException(ErrorCode.ROADMAP_NOT_FOUND, "Roadmap not found"));
         if (value.getStatus() != RoadmapStatus.ACTIVE) throw invalid("Only active roadmaps can be replanned");
         return value;
+    }
+
+    private Roadmap activeRoadmapForUpdate(Long roadmapId, Long userId) {
+        if (roadmapId == null || roadmapId <= 0) throw invalid("Invalid roadmapId");
+        Roadmap value = roadmapRepository.findOwnedForUpdate(roadmapId, userId)
+                .orElseThrow(() -> new RoadmapException(ErrorCode.ROADMAP_NOT_FOUND, "Roadmap not found"));
+        if (value.getStatus() != RoadmapStatus.ACTIVE) throw invalid("Only active roadmaps can be replanned");
+        return value;
+    }
+
+    private List<RoadmapCompressionPlan.SourceSnapshot> snapshot(List<RoadmapMilestone> links) {
+        return links.stream().map(link -> new RoadmapCompressionPlan.SourceSnapshot(
+                        link.getId(), link.getRoadmapSkill().getId(), link.getMilestone().getId(),
+                        link.getLearningOrder(), link.isRequired(), link.getMilestone().getStatus()))
+                .sorted(Comparator.comparing(RoadmapCompressionPlan.SourceSnapshot::linkId))
+                .toList();
+    }
+
+    private RoadmapReplanApplyResponse response(Roadmap roadmap) {
+        return new RoadmapReplanApplyResponse(
+                roadmap.getId(), roadmap.getTotalEstimatedMinutes(), roadmap.getEstimatedEndDate());
     }
 
     private int remainingMinutes(Collection<RoadmapMilestone> values) {

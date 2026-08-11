@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record RecommendationCreateRequest(
-        @NotNull @Positive Long userId,
         @NotNull @Positive Long industryId,
         @NotNull @Size(max = 3) List<@NotNull @Positive Long> jobRoleIds
 ) {

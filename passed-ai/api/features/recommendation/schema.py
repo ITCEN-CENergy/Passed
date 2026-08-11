@@ -8,31 +8,27 @@ class RecommendationModel(BaseModel):
 class SkillFact(RecommendationModel):
     skillName: str = Field(min_length=1)
     skillType: str = Field(min_length=1)
-    evaluationType: str = Field(min_length=1)
     userLevel: int | None = Field(default=None, ge=1, le=3)
     requiredLevel: int = Field(ge=1, le=3)
     matchRate: str = Field(pattern=r"^(0(\.\d+)?|1(\.0+)?)$")
-    userImportant: bool
     requirementSatisfied: bool
+
+
+class JobPostingContext(RecommendationModel):
+    positionDetail: str | None = Field(default=None, max_length=4000)
+    mainDuty: str | None = Field(default=None, max_length=4000)
+    qualification: str | None = Field(default=None, max_length=4000)
+    preference: str | None = Field(default=None, max_length=4000)
+    companyTalentProfile: str | None = Field(default=None, max_length=2000)
 
 
 class RecommendationExplanationInput(RecommendationModel):
     jobPostingId: int = Field(gt=0)
     jobPostingTitle: str = Field(min_length=1)
     companyName: str = Field(min_length=1)
-    rankOrder: int = Field(gt=0)
-    recommendationGrade: str = Field(min_length=1)
-    candidateTier: str = Field(min_length=1)
-    totalScore: str = Field(min_length=1)
-    requiredScore: str = Field(min_length=1)
-    preferredScore: str = Field(min_length=1)
-    relatedScore: str = Field(min_length=1)
-    importantSkillBonus: str = Field(min_length=1)
-    requiredCoverageRate: str = Field(min_length=1)
-    requiredLevelMatchRate: str = Field(min_length=1)
-    importantMatchCount: int = Field(ge=0)
-    strengths: list[SkillFact] = Field(default_factory=list, max_length=10)
-    gaps: list[SkillFact] = Field(default_factory=list, max_length=10)
+    posting: JobPostingContext
+    matchedSkills: list[SkillFact] = Field(default_factory=list, max_length=5)
+    gapSkills: list[SkillFact] = Field(default_factory=list, max_length=5)
 
 
 class RecommendationExplanationRequest(RecommendationModel):
@@ -51,9 +47,7 @@ class RecommendationExplanationRequest(RecommendationModel):
 
 class RecommendationExplanationItem(RecommendationModel):
     jobPostingId: int = Field(gt=0)
-    reason: str = Field(min_length=1)
-    strengths: str = Field(min_length=1)
-    weaknesses: str = Field(min_length=1)
+    reason: str = Field(min_length=1, max_length=600)
 
 
 class RecommendationExplanationResponse(RecommendationModel):

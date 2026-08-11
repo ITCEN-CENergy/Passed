@@ -119,9 +119,7 @@ public class JobRecommendation extends BaseTimeEntity {
             RecommendationCandidateTier candidateTier,
             RecommendationGrade recommendationGrade,
             int rankOrder,
-            String reason,
-            String strengths,
-            String weaknesses
+            String reason
     ) {
         JobRecommendation value = new JobRecommendation();
         value.recommendationRun = Objects.requireNonNull(
@@ -159,8 +157,6 @@ public class JobRecommendation extends BaseTimeEntity {
         }
         value.rankOrder = rankOrder;
         value.reason = requireText(reason, "reason");
-        value.strengths = strengths;
-        value.weaknesses = weaknesses;
         return value;
     }
 

@@ -48,4 +48,24 @@ public class Experience {
 
     @Column(name = "career_desc", columnDefinition = "text")
     private String careerDescription;
+
+    public static Experience create(Resume resume) {
+        Experience experience = new Experience();
+        experience.resume = resume;
+        return experience;
+    }
+
+    public void update(String companyName, String departmentName, LocalDate startDate,
+                       LocalDate endDate, Boolean working, String position,
+                       String responsibilities, String salary, String careerDescription) {
+        this.companyName = companyName;
+        this.departmentName = departmentName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.working = working;
+        this.position = position;
+        this.responsibilities = responsibilities;
+        this.salary = salary;
+        this.careerDescription = careerDescription;
+    }
 }

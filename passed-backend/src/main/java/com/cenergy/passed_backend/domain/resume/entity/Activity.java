@@ -35,4 +35,19 @@ public class Activity {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    public static Activity create(Resume resume) {
+        Activity activity = new Activity();
+        activity.resume = resume;
+        return activity;
+    }
+
+    public void update(String activityType, String organization, LocalDate startDate,
+                       LocalDate endDate, String description) {
+        this.activityType = activityType;
+        this.organization = organization;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+    }
 }

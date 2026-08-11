@@ -6,33 +6,30 @@ public record RecommendationExplanationInput(
         Long jobPostingId,
         String jobPostingTitle,
         String companyName,
-        int rankOrder,
-        String recommendationGrade,
-        String candidateTier,
-        String totalScore,
-        String requiredScore,
-        String preferredScore,
-        String relatedScore,
-        String importantSkillBonus,
-        String requiredCoverageRate,
-        String requiredLevelMatchRate,
-        int importantMatchCount,
-        List<SkillFact> strengths,
-        List<SkillFact> gaps
+        JobPostingContext posting,
+        List<SkillFact> matchedSkills,
+        List<SkillFact> gapSkills
 ) {
     public RecommendationExplanationInput {
-        strengths = List.copyOf(strengths);
-        gaps = List.copyOf(gaps);
+        matchedSkills = List.copyOf(matchedSkills);
+        gapSkills = List.copyOf(gapSkills);
+    }
+
+    public record JobPostingContext(
+            String positionDetail,
+            String mainDuty,
+            String qualification,
+            String preference,
+            String companyTalentProfile
+    ) {
     }
 
     public record SkillFact(
             String skillName,
             String skillType,
-            String evaluationType,
             Short userLevel,
             short requiredLevel,
             String matchRate,
-            boolean userImportant,
             boolean requirementSatisfied
     ) {
     }

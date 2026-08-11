@@ -25,4 +25,11 @@ public class CoverLetter extends CreatedAtEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    //조윤지: 사용자별 공통 자기소개서 생성
+    public static CoverLetter create(User user) {
+        CoverLetter coverLetter = new CoverLetter();
+        coverLetter.user = user;
+        return coverLetter;
+    }
+
 }

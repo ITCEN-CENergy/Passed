@@ -33,4 +33,17 @@ public class OverseasExperience {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    public static OverseasExperience create(Resume resume) {
+        OverseasExperience experience = new OverseasExperience();
+        experience.resume = resume;
+        return experience;
+    }
+
+    public void update(String countryName, LocalDate startDate, LocalDate endDate, String description) {
+        this.countryName = countryName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+    }
 }

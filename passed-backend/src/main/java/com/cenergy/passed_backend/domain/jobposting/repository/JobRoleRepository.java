@@ -10,4 +10,7 @@ import java.util.List;
 public interface JobRoleRepository extends JpaRepository<JobRole, Long> {
     @EntityGraph(attributePaths = "industry")
     List<JobRole> findAllByIdIn(Collection<Long> ids);
+
+    @EntityGraph(attributePaths = "industry")
+    List<JobRole> findAllByIndustryIdOrderByIdAsc(Long industryId);
 }

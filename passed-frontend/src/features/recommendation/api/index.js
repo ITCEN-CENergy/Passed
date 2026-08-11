@@ -49,7 +49,7 @@ function query(params) {
  */
 
 /**
- * @param {{userId:number, industryId:number, jobRoleIds:number[]}} payload
+ * @param {{industryId:number, jobRoleIds:number[]}} payload
  * @param {{signal?:AbortSignal}} options
  * @returns {Promise<{runId:number, status:RecommendationRunStatus, candidatePostingCount:number, requiredQualifiedPostingCount:number, industryId:number, jobRoleIds:number[], startedAt:string}>}
  */
@@ -62,17 +62,17 @@ export const createRecommendationRun = (payload, { signal } = {}) =>
   })
 
 /**
- * @param {{userId:number, page?:number, size?:number, signal?:AbortSignal}} params
+ * @param {{page?:number, size?:number, signal?:AbortSignal}} params
  */
-export const getRecommendationHistory = ({ userId, page = 0, size = 10, signal } = {}) =>
-  request(`${recommendationPath}?${query({ userId, page, size })}`, { signal })
+export const getRecommendationHistory = ({ page = 0, size = 10, signal } = {}) =>
+  request(`${recommendationPath}?${query({ page, size })}`, { signal })
 
-/** @param {number} recommendationRunId @param {{userId:number, signal?:AbortSignal}} options */
+/** @param {number} recommendationRunId @param {{signal?:AbortSignal}} options */
 export const getRecommendationResult = (
   recommendationRunId,
-  { userId, signal } = {},
+  { signal } = {},
 ) => request(
-  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}?${query({ userId })}`,
+  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}`,
   { signal },
 )
 
@@ -80,23 +80,23 @@ export const getRecommendationResult = (
  * report.skillGroups는 REQUIRED, PREFERRED, RELATED 세 타입을 항상 모두 포함한다.
  * @param {number} recommendationRunId
  * @param {number} jobRecommendationId
- * @param {{userId:number, signal?:AbortSignal}} options
+ * @param {{signal?:AbortSignal}} options
  * @returns {Promise<{runId:number, jobRecommendationId:number, rankOrder:number, jobPosting:Object, report:{grade:RecommendationGrade, totalScore:number, reason:string, skillGroups:SkillGroup[], topStrengthSkills:HighlightedSkill[], topGapSkills:HighlightedSkill[]}}>}
  */
 export const getRecommendationDetail = (
   recommendationRunId,
   jobRecommendationId,
-  { userId, signal } = {},
+  { signal } = {},
 ) => request(
-  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}/${encodeURIComponent(jobRecommendationId)}?${query({ userId })}`,
+  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}/${encodeURIComponent(jobRecommendationId)}`,
   { signal },
 )
 
-/** @param {number} recommendationRunId @param {{userId:number, signal?:AbortSignal}} options */
+/** @param {number} recommendationRunId @param {{signal?:AbortSignal}} options */
 export const getRecommendationUserSkills = (
   recommendationRunId,
-  { userId, signal } = {},
+  { signal } = {},
 ) => request(
-  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}/user-skills?${query({ userId })}`,
+  `${recommendationPath}/${encodeURIComponent(recommendationRunId)}/user-skills`,
   { signal },
 )

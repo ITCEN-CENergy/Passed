@@ -30,7 +30,12 @@ public class RecommendationPostingSummaryLoader {
             result.put(posting.getId(), new RecommendationPostingSummary(
                     posting.getId(),
                     posting.getTitle(),
-                    posting.getCompany().getCompanyName()
+                    posting.getCompany().getCompanyName(),
+                    posting.getPositionDetail(),
+                    posting.getMainDuty(),
+                    posting.getQualification(),
+                    posting.getPreference(),
+                    posting.getCompany().getTalentProfile()
             ));
         }
         if (result.size() != jobPostingIds.size()) {

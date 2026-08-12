@@ -1,5 +1,6 @@
 package com.cenergy.passed_backend.domain.recommendation.dto;
 
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingSummaryResponse;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
 
 import java.math.BigDecimal;

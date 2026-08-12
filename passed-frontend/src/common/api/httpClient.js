@@ -20,21 +20,53 @@ const parseResponse = async (response) => {
   return response.text()
 }
 
-export const httpClient = async (path, options = {}) => {
+const sendRequest = (path, options = {}) => {
   const { body, headers, ...requestOptions } = options
+  return fetch(resolveUrl(path), {
+    credentials: 'include',
+    ...requestOptions,
+    headers: {
+      Accept: 'application/json',
+      ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      ...headers,
+    },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  })
+}
+
+const refreshAccessToken = async () => {
+  const csrfResponse = await sendRequest('/api/v1/auth/csrf')
+  if (!csrfResponse.ok) return null
+
+  const csrf = await parseResponse(csrfResponse)
+  const refreshResponse = await sendRequest('/api/v1/auth/refresh', {
+    method: 'POST',
+    headers: {
+      [csrf.headerName || 'X-XSRF-TOKEN']: csrf.token,
+    },
+  })
+  return refreshResponse.ok ? csrf : null
+}
+
+export const httpClient = async (path, options = {}) => {
   let response
 
   try {
-    response = await fetch(resolveUrl(path), {
-      credentials: 'include',
-      ...requestOptions,
-      headers: {
-        Accept: 'application/json',
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-        ...headers,
-      },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    })
+    response = await sendRequest(path, options)
+
+    const isAuthenticationRequest = path.startsWith('/api/v1/auth/')
+    if (response.status === 401 && !isAuthenticationRequest) {
+      const csrf = await refreshAccessToken()
+      if (csrf) {
+        response = await sendRequest(path, {
+          ...options,
+          headers: {
+            ...options.headers,
+            [csrf.headerName || 'X-XSRF-TOKEN']: csrf.token,
+          },
+        })
+      }
+    }
   } catch (error) {
     if (error?.name === 'AbortError') throw error
     throw new ApiError('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.')

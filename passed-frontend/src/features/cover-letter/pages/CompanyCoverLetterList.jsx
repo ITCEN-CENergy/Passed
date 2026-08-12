@@ -16,7 +16,16 @@ function formatDate(value) {
 }
 
 const CompanyCoverLetterList = () => {
-  const { coverLetters, error, isLoading, reload } = useCompanyCoverLetters()
+  const {
+    coverLetters,
+    error,
+    isLoading,
+    page,
+    totalPages,
+    goToPreviousPage,
+    goToNextPage,
+    reload,
+  } = useCompanyCoverLetters()
 
   return (
     <div className={styles.page}>
@@ -58,18 +67,29 @@ const CompanyCoverLetterList = () => {
         {!isLoading && !error && coverLetters.length > 0 && (
           <ul className={styles.list} aria-label="자기소개서 목록">
             {coverLetters.map((coverLetter) => (
-              <li key={coverLetter.id}>
+              <li className={styles.card} key={coverLetter.id}>
                 <Link
-                  className={styles.card}
+                  className={styles.cardContent}
                   to={`/cover-letter-result?coverLetterId=${coverLetter.id}`}
                   aria-label={`${coverLetter.title} 자기소개서 확인`}
                 >
                   <h2>{coverLetter.title}</h2>
                   <p>최종 수정일: {formatDate(coverLetter.updatedAt)}</p>
                 </Link>
+                <Link className={styles.editButton} to={`/cover-letter-write/${coverLetter.id}`}>
+                  수정하기
+                </Link>
               </li>
             ))}
           </ul>
+        )}
+
+        {!isLoading && !error && totalPages > 1 && (
+          <nav className={styles.pagination} aria-label="자기소개서 목록 페이지">
+            <button type="button" disabled={page === 0} onClick={goToPreviousPage}>이전</button>
+            <span>{page + 1} / {totalPages}</span>
+            <button type="button" disabled={page + 1 >= totalPages} onClick={goToNextPage}>다음</button>
+          </nav>
         )}
       </main>
     </div>

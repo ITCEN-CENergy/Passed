@@ -11,6 +11,6 @@ import java.util.List;
 public record CompanyCoverLetterReplaceRequest(
         @NotBlank @Size(max = 255) String title,
         @Valid ManualJobPostingRequest jobPosting,
-        @NotEmpty List<@Valid CompanyCoverLetterItemReplaceRequest> items
+        @NotEmpty @Size(max = 30) List<@Valid CompanyCoverLetterItemReplaceRequest> items
 ) {
 }

@@ -57,6 +57,8 @@ public enum ErrorCode {
     COVER_LETTER_ITEM_NOT_FOUND,
     /** Indicates that a requested item feedback does not exist for the current user. */
     COVER_LETTER_ITEM_FEEDBACK_NOT_FOUND,
+    /** Indicates that a requested overall feedback does not exist. */
+    COVER_LETTER_FEEDBACK_NOT_FOUND,
     /** Indicates that AI feedback requires a nonblank answer. */
     COVER_LETTER_ITEM_ANSWER_REQUIRED,
     /** Indicates that a feedback target changed while feedback was being generated. */

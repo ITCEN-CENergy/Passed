@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -54,14 +55,19 @@ class CoverLetterCompanyRepositoryTest {
         long latestId = insertCoverLetter(userId, insertJobPosting("latest"), "최근 자기소개서", "2026-08-12T10:00:00+09:00");
         insertCoverLetter(otherUserId, insertJobPosting("hidden"), "다른 사용자 자기소개서", "2026-08-13T10:00:00+09:00");
 
-        var result = coverLetterRepository.findAllOwnedSummary(userId);
+        var result = coverLetterRepository.findAllOwnedSummary(userId, PageRequest.of(0, 20)).getContent();
 
         assertThat(result)
-                .extracting(CoverLetterCompany::getId)
+                .extracting(response -> response.id())
                 .containsExactly(latestId, olderId);
         assertThat(result)
-                .extracting(CoverLetterCompany::getTitle)
+                .extracting(response -> response.title())
                 .containsExactly("최근 자기소개서", "이전 자기소개서");
+        var firstPage = coverLetterRepository.findAllOwnedSummary(userId, PageRequest.of(0, 1));
+        assertThat(firstPage.getTotalElements()).isEqualTo(2);
+        assertThat(firstPage.getContent())
+                .extracting(response -> response.id())
+                .containsExactly(latestId);
     }
 
     @Test
@@ -107,8 +113,8 @@ class CoverLetterCompanyRepositoryTest {
         assertThat(result.getJobPosting()).isNull();
         assertThat(result.isManual()).isTrue();
         assertThat(result.getManualJobPosting().getCompanyName()).isEqualTo("직접 입력 기업");
-        assertThat(coverLetterRepository.findAllOwnedSummary(userId))
-                .extracting(CoverLetterCompany::getId)
+        assertThat(coverLetterRepository.findAllOwnedSummary(userId, PageRequest.of(0, 20)).getContent())
+                .extracting(response -> response.id())
                 .containsExactly(coverLetterId);
     }
 
@@ -148,6 +154,60 @@ class CoverLetterCompanyRepositoryTest {
     }
 
     @Test
+    void deletesPreviousManualPostingWhenForeignKeyChanges() {
+        long userId = insertUser("manual-replace");
+        long previousPostingId = id("""
+                insert into cover_letter_manual_job_postings(posting_title, job_role_name)
+                values ('이전 공고', '개발자') returning id
+                """);
+        long nextPostingId = id("""
+                insert into cover_letter_manual_job_postings(posting_title, job_role_name)
+                values ('다음 공고', '개발자') returning id
+                """);
+        long coverLetterId = id("""
+                insert into cover_letters_company(user_id, manual_job_posting_id, title)
+                values (?, ?, 'FK 교체 자기소개서') returning id
+                """, userId, previousPostingId);
+
+        jdbc.update(
+                "update cover_letters_company set manual_job_posting_id = ? where id = ?",
+                nextPostingId,
+                coverLetterId
+        );
+
+        assertThat(jdbc.queryForObject(
+                "select count(*) from cover_letter_manual_job_postings where id = ?",
+                Long.class,
+                previousPostingId
+        )).isZero();
+        assertThat(jdbc.queryForObject(
+                "select count(*) from cover_letter_manual_job_postings where id = ?",
+                Long.class,
+                nextPostingId
+        )).isEqualTo(1L);
+    }
+
+    @Test
+    void generatesCompanyNameThenSequentialTitlesWhenTitleIsMissing() {
+        long userId = insertUser("manual-title");
+        CompanyCoverLetterQueryService queryService = new CompanyCoverLetterQueryService(
+                () -> userId, coverLetterRepository, itemRepository
+        );
+        CompanyCoverLetterCommandService commandService = new CompanyCoverLetterCommandService(
+                () -> userId, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+
+        var companyTitle = commandService.createManual(manualCreateRequest("회사명 공고", "테스트 기업"));
+        var firstNumbered = commandService.createManual(manualCreateRequest("번호 공고 1", null));
+        var secondNumbered = commandService.createManual(manualCreateRequest("번호 공고 2", "  "));
+
+        assertThat(companyTitle.title()).isEqualTo("테스트 기업");
+        assertThat(firstNumbered.title()).isEqualTo("자기소개서 1");
+        assertThat(secondNumbered.title()).isEqualTo("자기소개서 2");
+    }
+
+    @Test
     void createsAndReplacesManualCoverLetterWithSwappedItemOrder() {
         long userId = insertUser("manual-service");
         CompanyCoverLetterQueryService queryService = new CompanyCoverLetterQueryService(
@@ -180,9 +240,9 @@ class CoverLetterCompanyRepositoryTest {
                 "수정된 자기소개서",
                 manualPosting("수정 공고", "수정 업무"),
                 List.of(
+                        new CompanyCoverLetterItemReplaceRequest(null, "새 질문", "새 답변", 700, 3),
                         new CompanyCoverLetterItemReplaceRequest(secondId, "둘째 질문", "둘째 답변", 1000, 1),
-                        new CompanyCoverLetterItemReplaceRequest(firstId, "첫 질문", "수정된 답변", 1000, 2),
-                        new CompanyCoverLetterItemReplaceRequest(null, "새 질문", "새 답변", 700, 3)
+                        new CompanyCoverLetterItemReplaceRequest(firstId, "첫 질문", "수정된 답변", 1000, 2)
                 )
         ));
 
@@ -199,6 +259,17 @@ class CoverLetterCompanyRepositoryTest {
         return new ManualJobPostingRequest(
                 postingTitle, "직접 입력 기업", "백엔드 개발자", null,
                 "신입", "정규직", mainDuty, "Java 경험", "Spring 경험"
+        );
+    }
+
+    private ManualCompanyCoverLetterCreateRequest manualCreateRequest(String postingTitle, String companyName) {
+        return new ManualCompanyCoverLetterCreateRequest(
+                null,
+                new ManualJobPostingRequest(
+                        postingTitle, companyName, "백엔드 개발자", null,
+                        null, null, null, null, null
+                ),
+                List.of(new CompanyCoverLetterItemCreateRequest("지원 동기", "", 1000, 1))
         );
     }
 

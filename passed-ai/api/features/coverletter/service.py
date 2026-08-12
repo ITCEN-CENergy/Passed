@@ -21,11 +21,42 @@ class OverallReviewOutput(BaseModel):
     strengths: str = Field(min_length=1, description="문항 전반에서 반복되는 강점")
     improvements: str = Field(min_length=1, description="우선순위가 높은 공통 개선점")
 
+
+FEEDBACK_SECTION_LABELS = {
+    "content_specificity": "내용 구체성",
+    "logical_flow": "논리성",
+    "grammar_and_expression": "문법 및 표현",
+    "grammatical_expression": "문법 및 표현",
+    "improvement_suggestion": "개선 방향",
+}
+
+
+def _feedback_to_text(value) -> str:
+    """Normalize occasional nested LLM feedback into the public string contract."""
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, dict):
+        sections = []
+        for key, section_value in value.items():
+            text = _feedback_to_text(section_value)
+            if text:
+                label = FEEDBACK_SECTION_LABELS.get(key, key.replace("_", " "))
+                sections.append(f"{label}: {text}")
+        return "\n".join(sections)
+    if isinstance(value, (list, tuple)):
+        return "\n".join(
+            text for item in value if (text := _feedback_to_text(item))
+        )
+    return str(value).strip()
+
 qa_alignment_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 엄격한 면접관이자 자기소개서 편집자입니다.
 질문의 핵심 의도와 답변의 일치도를 100점 만점으로 평가하세요.
 피드백에는 내용의 구체성·논리성뿐 아니라 맞춤법, 띄어쓰기, 문법, 어색하거나 모호한 표현도 함께 지적하고 개선 방향을 제안하세요.
-답변 전체를 교정한 별도 원고는 만들지 말고 JSON 형태로 반환하세요."""),
+답변 전체를 교정한 별도 원고는 만들지 마세요.
+반드시 score는 정수, feedback은 중첩 객체가 아닌 하나의 문자열인 JSON 객체로 반환하세요."""),
     ("user", "질문: {question}\n\n답변: {content}")
 ])
 
@@ -109,6 +140,7 @@ def _process_cover_letter_with_chains(
         "question": question,
         "content": content,
     })
+    qa_alignment_feedback = _feedback_to_text(qa_result.get("feedback"))
 
     jd_fit_feedback = "제공된 채용 공고 정보가 없습니다."
     if job_description:
@@ -120,13 +152,13 @@ def _process_cover_letter_with_chains(
     final_edited_content = final_edit_chain.invoke({
         "question": question,
         "content": content,
-        "qa_alignment_feedback": qa_result.get("feedback", ""),
+        "qa_alignment_feedback": qa_alignment_feedback,
         "jd_fit_feedback": jd_fit_feedback,
     })
 
     return {
         "qa_alignment_score": qa_result.get("score", 0),
-        "qa_alignment_feedback": qa_result.get("feedback", ""),
+        "qa_alignment_feedback": qa_alignment_feedback,
         "jd_fit_feedback": jd_fit_feedback,
         "final_edited_content": final_edited_content,
     }
@@ -177,7 +209,13 @@ def process_cover_letter_review_chain(items: list[dict], job_description: str = 
         "job_description": job_description or "제공된 채용 공고 정보가 없습니다.",
         "items_json": json.dumps(aggregate_source, ensure_ascii=False),
     })
-    overall_feedback = OverallReviewOutput.model_validate(overall_raw).model_dump()
+    normalized_overall = {
+        **overall_raw,
+        "summary": _feedback_to_text(overall_raw.get("summary")),
+        "strengths": _feedback_to_text(overall_raw.get("strengths")),
+        "improvements": _feedback_to_text(overall_raw.get("improvements")),
+    }
+    overall_feedback = OverallReviewOutput.model_validate(normalized_overall).model_dump()
 
     return {
         "overall_feedback": overall_feedback,

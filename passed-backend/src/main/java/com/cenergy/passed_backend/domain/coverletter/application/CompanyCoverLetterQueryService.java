@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 현재 사용자가 소유한 공고별 자기소개서를 조회하는 서비스다.
@@ -36,10 +38,8 @@ public class CompanyCoverLetterQueryService {
     }
 
     /** 현재 사용자의 공고별 자기소개서 목록을 최근 수정 순으로 반환한다. */
-    public List<CompanyCoverLetterSummaryResponse> findAll() {
-        return coverLetterRepository.findAllOwnedSummary(currentUserId()).stream()
-                .map(CompanyCoverLetterSummaryResponse::from)
-                .toList();
+    public Page<CompanyCoverLetterSummaryResponse> findAll(Pageable pageable) {
+        return coverLetterRepository.findAllOwnedSummary(currentUserId(), pageable);
     }
 
     /** 현재 사용자가 소유한 한 건의 자기소개서와 정렬된 문항을 반환한다. */

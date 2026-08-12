@@ -26,7 +26,7 @@ public class CoverLetterManualJobPosting extends BaseTimeEntity {
     @Column(name = "posting_title", nullable = false, length = 255)
     private String postingTitle;
 
-    @Column(name = "company_name", nullable = false, length = 255)
+    @Column(name = "company_name", length = 255)
     private String companyName;
 
     @Column(name = "job_role_name", nullable = false, length = 255)
@@ -80,7 +80,7 @@ public class CoverLetterManualJobPosting extends BaseTimeEntity {
             String preference
     ) {
         String normalizedPostingTitle = requireText(postingTitle, "postingTitle");
-        String normalizedCompanyName = requireText(companyName, "companyName");
+        String normalizedCompanyName = normalize(companyName);
         String normalizedJobRoleName = requireText(jobRoleName, "jobRoleName");
         boolean changed = !Objects.equals(this.postingTitle, normalizedPostingTitle)
                 || !Objects.equals(this.companyName, normalizedCompanyName)

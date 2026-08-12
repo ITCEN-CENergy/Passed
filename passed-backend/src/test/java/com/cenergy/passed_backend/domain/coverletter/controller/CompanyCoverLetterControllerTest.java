@@ -10,6 +10,9 @@ import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverL
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -30,7 +33,7 @@ class CompanyCoverLetterControllerTest {
         CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
         CompanyCoverLetterController controller = new CompanyCoverLetterController(commandService, queryService);
         OffsetDateTime updatedAt = OffsetDateTime.parse("2026-08-12T09:30:00+09:00");
-        List<CompanyCoverLetterSummaryResponse> response = List.of(
+        Page<CompanyCoverLetterSummaryResponse> response = new PageImpl<>(List.of(
                 new CompanyCoverLetterSummaryResponse(
                         1L,
                         301L,
@@ -40,10 +43,11 @@ class CompanyCoverLetterControllerTest {
                         updatedAt.minusDays(1),
                         updatedAt
                 )
-        );
-        when(queryService.findAll()).thenReturn(response);
+        ));
+        PageRequest pageable = PageRequest.of(0, 20);
+        when(queryService.findAll(pageable)).thenReturn(response);
 
-        var actual = controller.findAll();
+        var actual = controller.findAll(pageable);
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(response, actual.getBody());

@@ -55,9 +55,9 @@ class JobPostingDescriptionBuilderTest {
 
         assertThat(description)
                 .contains("[공고 제목]\n직접 입력 공고")
-                .contains("[기업명]\n테스트 기업")
-                .contains("[직무]\n백엔드 개발자")
                 .contains("[주요 업무]\nAPI 개발")
+                .doesNotContain("[기업명]")
+                .doesNotContain("[직무]")
                 .doesNotContain("[직무 상세]");
     }
 }

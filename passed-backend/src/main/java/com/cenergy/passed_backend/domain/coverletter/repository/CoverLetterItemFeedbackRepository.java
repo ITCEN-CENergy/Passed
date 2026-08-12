@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterItemFeedb
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface CoverLetterItemFeedbackRepository extends JpaRepository<CoverLetterItemFeedback, Long> {
     /** 특정 문항의 기존 첨삭 결과를 삭제해 답변 변경 후 오래된 피드백을 막는다. */
@@ -19,5 +20,9 @@ public interface CoverLetterItemFeedbackRepository extends JpaRepository<CoverLe
     Optional<CoverLetterItemFeedback> findByCoverLetterCompanyItemIdAndCoverLetterCompanyItemCoverLetterCompanyUserId(
             Long itemId,
             Long userId
+    );
+
+    List<CoverLetterItemFeedback> findAllByCoverLetterCompanyItemCoverLetterCompanyIdOrderByCoverLetterCompanyItemDisplayOrderAsc(
+            Long coverLetterId
     );
 }

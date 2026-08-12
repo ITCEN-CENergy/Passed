@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,16 +20,40 @@ import java.util.Optional;
 public interface CoverLetterCompanyRepository extends JpaRepository<CoverLetterCompany, Long> {
 
     /** 현재 사용자의 자기소개서 목록과 목록에 필요한 공고·기업 정보를 최근 수정 순으로 가져온다. */
-    @Query("""
-            select coverLetter
+    @Query(value = """
+            select new com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse(
+                coverLetter.id,
+                jobPosting.id,
+                coalesce(manualPosting.companyName, company.companyName),
+                coalesce(manualPosting.postingTitle, jobPosting.title),
+                coverLetter.title,
+                coverLetter.createdAt,
+                coverLetter.updatedAt
+            )
             from CoverLetterCompany coverLetter
-            left join fetch coverLetter.jobPosting jobPosting
-            left join fetch jobPosting.company
-            left join fetch coverLetter.manualJobPosting
+            left join coverLetter.jobPosting jobPosting
+            left join jobPosting.company company
+            left join coverLetter.manualJobPosting manualPosting
             where coverLetter.user.id = :userId
             order by coverLetter.updatedAt desc, coverLetter.id desc
+            """, countQuery = """
+            select count(coverLetter)
+            from CoverLetterCompany coverLetter
+            where coverLetter.user.id = :userId
             """)
-    List<CoverLetterCompany> findAllOwnedSummary(@Param("userId") Long userId);
+    Page<CompanyCoverLetterSummaryResponse> findAllOwnedSummary(
+            @Param("userId") Long userId,
+            Pageable pageable
+    );
+
+    /** 번호형 기본 제목을 만들 때 이미 사용한 제목만 최소 컬럼으로 조회한다. */
+    @Query("""
+            select coverLetter.title
+            from CoverLetterCompany coverLetter
+            where coverLetter.user.id = :userId
+              and coverLetter.title like '자기소개서 %'
+            """)
+    List<String> findNumberedTitles(@Param("userId") Long userId);
 
     /** 한 사용자가 동일 공고에 이미 자기소개서를 작성했는지 확인한다. */
     boolean existsByUserIdAndJobPostingId(Long userId, Long jobPostingId);

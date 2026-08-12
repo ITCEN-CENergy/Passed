@@ -1,6 +1,8 @@
 package com.cenergy.passed_backend.domain.coverletter.application;
 
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemUpdateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemReplaceRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterReplaceRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
@@ -17,6 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,6 +32,56 @@ import static org.mockito.Mockito.when;
  * Verifies command-side business rules that do not require a database.
  */
 class CompanyCoverLetterCommandServiceTest {
+
+    @Test
+    void rejectsMoreThanThirtyItemsBeforeWriting() {
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        JobPostingRepository jobPostingRepository = mock(JobPostingRepository.class);
+        CoverLetterCompanyRepository coverLetterRepository = mock(CoverLetterCompanyRepository.class);
+        CoverLetterCompanyItemRepository itemRepository = mock(CoverLetterCompanyItemRepository.class);
+        CoverLetterItemFeedbackRepository feedbackRepository = mock(CoverLetterItemFeedbackRepository.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CompanyCoverLetterCommandService service = new CompanyCoverLetterCommandService(
+                currentUserIdProvider, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        List<CompanyCoverLetterItemCreateRequest> items = IntStream.rangeClosed(1, 31)
+                .mapToObj(order -> new CompanyCoverLetterItemCreateRequest(
+                        "질문 " + order, "", 1000, order
+                ))
+                .toList();
+
+        assertThatThrownBy(() -> service.create(new CompanyCoverLetterCreateRequest(1L, "제목", items)))
+                .isInstanceOf(CoverLetterException.class)
+                .hasMessageContaining("at most 30 items");
+    }
+
+    @Test
+    void rejectsAddingAThirtyFirstItem() {
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        JobPostingRepository jobPostingRepository = mock(JobPostingRepository.class);
+        CoverLetterCompanyRepository coverLetterRepository = mock(CoverLetterCompanyRepository.class);
+        CoverLetterCompanyItemRepository itemRepository = mock(CoverLetterCompanyItemRepository.class);
+        CoverLetterItemFeedbackRepository feedbackRepository = mock(CoverLetterItemFeedbackRepository.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CoverLetterCompany coverLetter = mock(CoverLetterCompany.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        when(coverLetterRepository.findOwnedForUpdate(3L, 257L)).thenReturn(Optional.of(coverLetter));
+        when(itemRepository.countByCoverLetterCompanyId(3L)).thenReturn(30L);
+        CompanyCoverLetterCommandService service = new CompanyCoverLetterCommandService(
+                currentUserIdProvider, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+
+        assertThatThrownBy(() -> service.addItem(
+                3L,
+                new CompanyCoverLetterItemCreateRequest("31번째 질문", "", 1000, 31)
+        )).isInstanceOf(CoverLetterException.class)
+                .hasMessageContaining("at most 30 items");
+    }
 
     /**
      * A changed answer invalidates the feedback generated from the older answer.

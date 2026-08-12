@@ -75,7 +75,8 @@
 
 .backLink:focus-visible,
 .writeButton:focus-visible,
-.card:focus-visible,
+.cardContent:focus-visible,
+.editButton:focus-visible,
 .retryButton:focus-visible {
   outline: 3px solid rgba(8, 103, 242, 0.32);
   outline-offset: 3px;
@@ -92,14 +93,13 @@
 .card {
   display: flex;
   min-height: 136px;
-  justify-content: center;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   padding: 28px 31px;
-  color: inherit;
   background: #fff;
   border: 1.5px solid #d1d9e5;
   border-radius: 11px;
-  text-decoration: none;
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -109,7 +109,14 @@
   transform: translateY(-2px);
 }
 
-.card h2 {
+.cardContent {
+  min-width: 0;
+  flex: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardContent h2 {
   margin: 0 0 8px;
   overflow: hidden;
   color: #101318;
@@ -121,11 +128,56 @@
   white-space: nowrap;
 }
 
-.card p {
+.cardContent p {
   color: #252a32;
   font-size: 17px;
   line-height: 1.45;
   letter-spacing: -0.025em;
+}
+
+.editButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 10px 17px;
+  color: #0867f2;
+  background: #f5f9ff;
+  border: 1px solid #a9caf8;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  color: #475467;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pagination button {
+  min-width: 64px;
+  min-height: 38px;
+  color: #0867f2;
+  background: #fff;
+  border: 1px solid #a9caf8;
+  border-radius: 7px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  color: #98a2b3;
+  background: #f2f4f7;
+  border-color: #e4e7ec;
+  cursor: not-allowed;
 }
 
 .stateCard,
@@ -194,15 +246,21 @@
   }
 
   .card {
+    align-items: stretch;
+    flex-direction: column;
     min-height: 116px;
     padding: 23px 21px;
   }
 
-  .card h2 {
+  .cardContent h2 {
     font-size: 21px;
   }
 
-  .card p {
+  .cardContent p {
     font-size: 15px;
+  }
+
+  .editButton {
+    width: 100%;
   }
 }

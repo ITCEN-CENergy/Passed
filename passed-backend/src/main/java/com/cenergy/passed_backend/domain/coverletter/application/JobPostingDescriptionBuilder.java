@@ -21,27 +21,40 @@ public class JobPostingDescriptionBuilder {
             return build(coverLetter.getJobPosting());
         }
         CoverLetterManualJobPosting posting = coverLetter.getManualJobPosting();
-        List<String> sections = new ArrayList<>();
-        add(sections, "공고 제목", posting.getPostingTitle());
-        add(sections, "기업명", posting.getCompanyName());
-        add(sections, "직무", posting.getJobRoleName());
-        add(sections, "직무 상세", posting.getPositionDetail());
-        add(sections, "경력", posting.getCareerType());
-        add(sections, "고용 형태", posting.getHireType());
-        add(sections, "주요 업무", posting.getMainDuty());
-        add(sections, "자격 요건", posting.getQualification());
-        add(sections, "우대 사항", posting.getPreference());
-        return String.join("\n\n", sections);
+        return build(
+                posting.getPostingTitle(),
+                posting.getPositionDetail(),
+                posting.getMainDuty(),
+                posting.getQualification(),
+                posting.getPreference()
+        );
     }
 
     /** Collects only populated job-posting sections in a predictable prompt order. */
     public String build(JobPosting jobPosting) {
+        return build(
+                jobPosting.getTitle(),
+                jobPosting.getPositionDetail(),
+                jobPosting.getMainDuty(),
+                jobPosting.getQualification(),
+                jobPosting.getPreference()
+        );
+    }
+
+    /** 두 공고 출처가 동일한 필드와 순서로 AI 프롬프트를 만들도록 공통 조합 규칙을 사용한다. */
+    private String build(
+            String postingTitle,
+            String positionDetail,
+            String mainDuty,
+            String qualification,
+            String preference
+    ) {
         List<String> sections = new ArrayList<>();
-        add(sections, "\uACF5\uACE0 \uC81C\uBAA9", jobPosting.getTitle());
-        add(sections, "\uC9C1\uBB34 \uC0C1\uC138", jobPosting.getPositionDetail());
-        add(sections, "\uC8FC\uC694 \uC5C5\uBB34", jobPosting.getMainDuty());
-        add(sections, "\uC790\uACA9 \uC694\uAC74", jobPosting.getQualification());
-        add(sections, "\uC6B0\uB300 \uC0AC\uD56D", jobPosting.getPreference());
+        add(sections, "\uACF5\uACE0 \uC81C\uBAA9", postingTitle);
+        add(sections, "\uC9C1\uBB34 \uC0C1\uC138", positionDetail);
+        add(sections, "\uC8FC\uC694 \uC5C5\uBB34", mainDuty);
+        add(sections, "\uC790\uACA9 \uC694\uAC74", qualification);
+        add(sections, "\uC6B0\uB300 \uC0AC\uD56D", preference);
         return String.join("\n\n", sections);
     }
 

@@ -53,6 +53,12 @@ public class CoverLetterFeedback extends BaseTimeEntity {
     @Column(name = "summary", columnDefinition = "text")
     private String summary;
 
+    @Column(name = "strengths", columnDefinition = "text")
+    private String strengths;
+
+    @Column(name = "improvements", columnDefinition = "text")
+    private String improvements;
+
     /** The model identifier used to generate the feedback. */
     @Column(name = "ai_model", length = 100)
     private String aiModel;
@@ -62,13 +68,27 @@ public class CoverLetterFeedback extends BaseTimeEntity {
             CoverLetterCompany coverLetterCompany,
             CoverLetterScore overallScore,
             String summary,
+            String strengths,
+            String improvements,
             String aiModel
     ) {
         CoverLetterFeedback value = new CoverLetterFeedback();
         value.coverLetterCompany = coverLetterCompany;
-        value.overallScore = overallScore;
-        value.summary = summary;
-        value.aiModel = aiModel;
+        value.update(overallScore, summary, strengths, improvements, aiModel);
         return value;
+    }
+
+    public void update(
+            CoverLetterScore overallScore,
+            String summary,
+            String strengths,
+            String improvements,
+            String aiModel
+    ) {
+        this.overallScore = overallScore;
+        this.summary = summary;
+        this.strengths = strengths;
+        this.improvements = improvements;
+        this.aiModel = aiModel;
     }
 }

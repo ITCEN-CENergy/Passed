@@ -17,6 +17,7 @@ services:
 
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
 
+      # Container-to-container traffic uses Docker DNS and container ports.
       RECOMMENDATION_AI_BASE_URL: http://ai:8000
       ROADMAP_AI_BASE_URL: http://ai:8000
       COVER_LETTER_AI_BASE_URL: http://ai:8000

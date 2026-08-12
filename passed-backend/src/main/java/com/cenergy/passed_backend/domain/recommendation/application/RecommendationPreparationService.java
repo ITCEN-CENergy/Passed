@@ -46,26 +46,26 @@ public class RecommendationPreparationService {
 
     public RecommendationCreateResponse prepare(RecommendationCreateRequest request) {
         Long userId = currentUserIdProvider.getCurrentUserId();
-        RecommendationRunContext context = runStartService.start(userId, request);
+        PreferenceRecommendationRunContext context = runStartService.startForPreference(userId, request);
         try {
             RecommendationCandidateSelectionResult selection = candidateSelectionService.select(
                     context.jobRoleIds(),
-                    context.userSkills(),
-                    context.policy()
+                    context.run().userSkills(),
+                    context.run().policy()
             );
-            List<RecommendationScoreResult> scores = detailedEvaluationService.evaluate(
+            List<RecommendationScoreResult> scores = detailedEvaluationService.evaluateAll(
                     selection,
-                    context.userSkills(),
-                    context.policy()
+                    context.run().userSkills(),
+                    context.run().policy()
             );
             List<GradedRecommendation> graded = gradeResolver.resolveAll(
                     scores,
-                    context.gradeRules()
+                    context.run().gradeRules()
             );
             List<RankedRecommendation> ranked = topKSelector.select(graded);
-            Map<Long, RecommendationExplanation> explanations = explanationService.generate(ranked);
+            Map<Long, RecommendationExplanation> explanations = explanationService.generateAll(ranked);
             persistenceService.complete(
-                    context.recommendationRunId(),
+                    context.run().recommendationRunId(),
                     ranked,
                     explanations,
                     selection.candidatePostingCount(),
@@ -74,7 +74,7 @@ public class RecommendationPreparationService {
             return response(context, selection);
         } catch (RuntimeException exception) {
             try {
-                failureService.fail(context.recommendationRunId(), exception);
+                failureService.fail(context.run().recommendationRunId(), exception);
             } catch (RuntimeException failureUpdateException) {
                 exception.addSuppressed(failureUpdateException);
             }
@@ -83,17 +83,17 @@ public class RecommendationPreparationService {
     }
 
     private RecommendationCreateResponse response(
-            RecommendationRunContext context,
+            PreferenceRecommendationRunContext context,
             RecommendationCandidateSelectionResult selection
     ) {
         return new RecommendationCreateResponse(
-                context.recommendationRunId(),
+                context.run().recommendationRunId(),
                 RecommendationRunStatus.COMPLETED,
                 selection.candidatePostingCount(),
                 selection.requiredQualifiedPostingCount(),
                 context.industryId(),
                 context.jobRoleIds(),
-                context.startedAt()
+                context.run().startedAt()
         );
     }
 }

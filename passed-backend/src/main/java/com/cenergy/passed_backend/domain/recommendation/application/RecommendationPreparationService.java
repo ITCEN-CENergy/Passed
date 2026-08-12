@@ -4,7 +4,7 @@ import com.cenergy.passed_backend.domain.recommendation.application.model.*;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateResponse;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

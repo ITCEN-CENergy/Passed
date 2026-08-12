@@ -4,7 +4,7 @@ import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiClie
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.model.ValidatedCoverLetterAiResult;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterScore;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

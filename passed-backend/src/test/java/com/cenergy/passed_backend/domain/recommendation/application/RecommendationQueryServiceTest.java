@@ -15,7 +15,7 @@ import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommenda
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

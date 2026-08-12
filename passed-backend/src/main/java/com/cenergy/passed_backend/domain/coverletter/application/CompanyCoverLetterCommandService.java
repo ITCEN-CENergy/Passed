@@ -113,6 +113,7 @@ public class CompanyCoverLetterCommandService {
         CoverLetterCompany coverLetter = findOwnedForUpdate(coverLetterId, currentUserId());
         rejectDuplicateDisplayOrder(coverLetter.getId(), request.displayOrder(), null);
         CoverLetterCompanyItem saved = itemRepository.save(toEntity(coverLetter, request));
+        coverLetter.markItemsChanged();
         return CompanyCoverLetterItemResponse.from(saved);
     }
 
@@ -140,6 +141,7 @@ public class CompanyCoverLetterCommandService {
                 request.characterLimit(),
                 request.displayOrder()
         );
+        item.getCoverLetterCompany().markItemsChanged();
         if (answerChanged) {
             itemFeedbackRepository.deleteByCoverLetterCompanyItemId(item.getId());
         }
@@ -167,6 +169,7 @@ public class CompanyCoverLetterCommandService {
                         ErrorCode.COVER_LETTER_ITEM_NOT_FOUND,
                         "Company cover letter item not found"
                 ));
+        item.getCoverLetterCompany().markItemsChanged();
         itemRepository.delete(item);
     }
 

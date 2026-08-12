@@ -63,6 +63,11 @@ public class CoverLetterCompany extends BaseTimeEntity {
         this.title = requireText(title, "title");
     }
 
+    /** 문항 추가·수정·삭제를 자기소개서 전체의 최종 수정 시각에 반영한다. */
+    public void markItemsChanged() {
+        touchUpdatedAt();
+    }
+
     /**
      * 사용자 입력 텍스트를 trim하고, 비어 있으면 호출자에게 잘못된 입력임을 알린다.
      */

@@ -64,6 +64,7 @@ class CompanyCoverLetterCommandServiceTest {
         service.updateItem(10L, request);
 
         verify(item).update("updated question", "updated answer", 1000, 1);
+        verify(coverLetter).markItemsChanged();
         verify(feedbackRepository).deleteByCoverLetterCompanyItemId(10L);
     }
 }

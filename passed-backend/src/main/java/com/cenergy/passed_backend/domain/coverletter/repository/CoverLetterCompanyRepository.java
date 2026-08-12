@@ -20,8 +20,9 @@ public interface CoverLetterCompanyRepository extends JpaRepository<CoverLetterC
     @Query("""
             select coverLetter
             from CoverLetterCompany coverLetter
-            join fetch coverLetter.jobPosting jobPosting
-            join fetch jobPosting.company
+            left join fetch coverLetter.jobPosting jobPosting
+            left join fetch jobPosting.company
+            left join fetch coverLetter.manualJobPosting
             where coverLetter.user.id = :userId
             order by coverLetter.updatedAt desc, coverLetter.id desc
             """)
@@ -34,8 +35,10 @@ public interface CoverLetterCompanyRepository extends JpaRepository<CoverLetterC
     @Query("""
             select coverLetter
             from CoverLetterCompany coverLetter
-            join fetch coverLetter.jobPosting jobPosting
-            join fetch jobPosting.company
+            left join fetch coverLetter.jobPosting jobPosting
+            left join fetch jobPosting.company
+            left join fetch jobPosting.jobRole
+            left join fetch coverLetter.manualJobPosting
             where coverLetter.id = :coverLetterId
               and coverLetter.user.id = :userId
             """)

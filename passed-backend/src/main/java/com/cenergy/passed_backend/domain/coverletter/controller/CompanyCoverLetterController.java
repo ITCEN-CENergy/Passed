@@ -4,7 +4,9 @@ import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLet
 import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLetterQueryService;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterReplaceRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterUpdateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualCompanyCoverLetterCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterDetailResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterItemResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +45,14 @@ public class CompanyCoverLetterController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commandService.create(request));
     }
 
+    /** 자기소개서 목록에서 직접 입력한 공고와 자기소개서를 생성한다. */
+    @PostMapping("/manual")
+    public ResponseEntity<CompanyCoverLetterDetailResponse> createManual(
+            @Valid @RequestBody ManualCompanyCoverLetterCreateRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(commandService.createManual(request));
+    }
+
     /** 현재 사용자가 소유한 공고별 자기소개서 목록을 반환한다. */
     @GetMapping
     public ResponseEntity<List<CompanyCoverLetterSummaryResponse>> findAll() {
@@ -63,6 +74,15 @@ public class CompanyCoverLetterController {
             @Valid @RequestBody CompanyCoverLetterUpdateRequest request
     ) {
         return ResponseEntity.ok(commandService.updateTitle(coverLetterId, request));
+    }
+
+    /** 편집 화면의 제목, 공고 정보, 전체 문항을 한 번에 저장한다. */
+    @PutMapping("/{coverLetterId}")
+    public ResponseEntity<CompanyCoverLetterDetailResponse> replace(
+            @PathVariable Long coverLetterId,
+            @Valid @RequestBody CompanyCoverLetterReplaceRequest request
+    ) {
+        return ResponseEntity.ok(commandService.replace(coverLetterId, request));
     }
 
     /** 현재 사용자가 소유한 자기소개서를 삭제한다. */

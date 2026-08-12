@@ -1,6 +1,17 @@
 package com.cenergy.passed_backend.domain.coverletter.repository;
 
+import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLetterCommandService;
+import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLetterQueryService;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemReplaceRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterReplaceRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualCompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompany;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterItemFeedback;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterScore;
+import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -8,8 +19,10 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** 자기소개서 목록의 소유권, 정렬, 최종 수정일 저장 규칙을 실제 JPA 쿼리로 검증한다. */
 @DataJpaTest
@@ -17,6 +30,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CoverLetterCompanyRepositoryTest {
     @Autowired
     CoverLetterCompanyRepository coverLetterRepository;
+
+    @Autowired
+    CoverLetterCompanyItemRepository itemRepository;
+
+    @Autowired
+    CoverLetterItemFeedbackRepository feedbackRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    JobPostingRepository jobPostingRepository;
 
     @Autowired
     JdbcTemplate jdbc;
@@ -61,6 +86,120 @@ class CoverLetterCompanyRepositoryTest {
                 coverLetterId
         );
         assertThat(updatedAt).isAfter(OffsetDateTime.parse("2020-01-01T00:00:00+09:00"));
+    }
+
+    @Test
+    void returnsManualCoverLetterWithoutAJobPostingRow() {
+        long userId = insertUser("manual-owner");
+        long manualPostingId = id("""
+                insert into cover_letter_manual_job_postings(
+                  posting_title, company_name, job_role_name, main_duty, qualification
+                ) values ('직접 입력 공고', '직접 입력 기업', '백엔드 개발자', 'API 개발', 'Java 경험')
+                returning id
+                """);
+        long coverLetterId = id("""
+                insert into cover_letters_company(user_id, manual_job_posting_id, title)
+                values (?, ?, '직접 입력 자기소개서') returning id
+                """, userId, manualPostingId);
+
+        CoverLetterCompany result = coverLetterRepository.findOwnedDetail(coverLetterId, userId).orElseThrow();
+
+        assertThat(result.getJobPosting()).isNull();
+        assertThat(result.isManual()).isTrue();
+        assertThat(result.getManualJobPosting().getCompanyName()).isEqualTo("직접 입력 기업");
+        assertThat(coverLetterRepository.findAllOwnedSummary(userId))
+                .extracting(CoverLetterCompany::getId)
+                .containsExactly(coverLetterId);
+    }
+
+    @Test
+    void rejectsCoverLetterWithoutExactlyOnePostingSource() {
+        long userId = insertUser("invalid-source");
+
+        assertThatThrownBy(() -> jdbc.update(
+                "insert into cover_letters_company(user_id, title) values (?, '잘못된 자기소개서')",
+                userId
+        )).hasMessageContaining("ck_cover_letters_company_exactly_one_posting");
+    }
+
+    @Test
+    void deletesManualPostingTogetherWithCoverLetter() {
+        long userId = insertUser("manual-delete");
+        long manualPostingId = id("""
+                insert into cover_letter_manual_job_postings(posting_title, company_name, job_role_name)
+                values ('삭제 공고', '삭제 기업', '개발자') returning id
+                """);
+        long coverLetterId = id("""
+                insert into cover_letters_company(user_id, manual_job_posting_id, title)
+                values (?, ?, '삭제 자기소개서') returning id
+                """, userId, manualPostingId);
+        CoverLetterCompany coverLetter = coverLetterRepository
+                .findOwnedDetail(coverLetterId, userId)
+                .orElseThrow();
+
+        coverLetterRepository.delete(coverLetter);
+        coverLetterRepository.flush();
+
+        assertThat(jdbc.queryForObject(
+                "select count(*) from cover_letter_manual_job_postings where id = ?",
+                Long.class,
+                manualPostingId
+        )).isZero();
+    }
+
+    @Test
+    void createsAndReplacesManualCoverLetterWithSwappedItemOrder() {
+        long userId = insertUser("manual-service");
+        CompanyCoverLetterQueryService queryService = new CompanyCoverLetterQueryService(
+                () -> userId, coverLetterRepository, itemRepository
+        );
+        CompanyCoverLetterCommandService commandService = new CompanyCoverLetterCommandService(
+                () -> userId, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+        var created = commandService.createManual(new ManualCompanyCoverLetterCreateRequest(
+                null,
+                manualPosting("최초 공고", "최초 업무"),
+                List.of(
+                        new CompanyCoverLetterItemCreateRequest("첫 질문", "첫 답변", 1000, 1),
+                        new CompanyCoverLetterItemCreateRequest("둘째 질문", "둘째 답변", 1000, 2)
+                )
+        ));
+        coverLetterRepository.flush();
+        Long firstId = created.items().get(0).id();
+        Long secondId = created.items().get(1).id();
+        feedbackRepository.saveAndFlush(CoverLetterItemFeedback.create(
+                itemRepository.findOwnedItem(firstId, userId).orElseThrow(),
+                CoverLetterScore.SUFFICIENT,
+                null,
+                "기존 개선점",
+                "기존 수정안"
+        ));
+
+        var replaced = commandService.replace(created.id(), new CompanyCoverLetterReplaceRequest(
+                "수정된 자기소개서",
+                manualPosting("수정 공고", "수정 업무"),
+                List.of(
+                        new CompanyCoverLetterItemReplaceRequest(secondId, "둘째 질문", "둘째 답변", 1000, 1),
+                        new CompanyCoverLetterItemReplaceRequest(firstId, "첫 질문", "수정된 답변", 1000, 2),
+                        new CompanyCoverLetterItemReplaceRequest(null, "새 질문", "새 답변", 700, 3)
+                )
+        ));
+
+        assertThat(replaced.manual()).isTrue();
+        assertThat(replaced.title()).isEqualTo("수정된 자기소개서");
+        assertThat(replaced.jobPosting().postingTitle()).isEqualTo("수정 공고");
+        assertThat(replaced.items())
+                .extracting(item -> item.displayOrder())
+                .containsExactly(1, 2, 3);
+        assertThat(feedbackRepository.findByCoverLetterCompanyItemId(firstId)).isEmpty();
+    }
+
+    private ManualJobPostingRequest manualPosting(String postingTitle, String mainDuty) {
+        return new ManualJobPostingRequest(
+                postingTitle, "직접 입력 기업", "백엔드 개발자", null,
+                "신입", "정규직", mainDuty, "Java 경험", "Spring 경험"
+        );
     }
 
     private long insertUser(String label) {

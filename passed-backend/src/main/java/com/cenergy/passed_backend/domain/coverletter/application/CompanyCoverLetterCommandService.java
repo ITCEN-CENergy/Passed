@@ -2,12 +2,17 @@ package com.cenergy.passed_backend.domain.coverletter.application;
 
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemReplaceRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemUpdateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterReplaceRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterUpdateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualCompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterDetailResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterItemResponse;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompany;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompanyItem;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterManualJobPosting;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyItemRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemFeedbackRepository;
@@ -21,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -93,6 +100,68 @@ public class CompanyCoverLetterCommandService {
         return CompanyCoverLetterDetailResponse.from(coverLetter, items);
     }
 
+    /** 직접 입력한 공고 스냅샷과 최초 자기소개서 문항을 함께 저장한다. */
+    @Transactional
+    public CompanyCoverLetterDetailResponse createManual(ManualCompanyCoverLetterCreateRequest request) {
+        validateDistinctDisplayOrders(request.items());
+        User user = userRepository.findById(currentUserId())
+                .orElseThrow(() -> new CoverLetterException(
+                        ErrorCode.COVER_LETTER_USER_NOT_FOUND,
+                        "Current user not found"
+                ));
+        CoverLetterManualJobPosting posting = manualPosting(request.jobPosting());
+        String title = request.title() == null || request.title().isBlank()
+                ? posting.getCompanyName() + " " + posting.getJobRoleName() + " 지원용 자소서"
+                : request.title();
+        CoverLetterCompany coverLetter = coverLetterRepository.save(
+                CoverLetterCompany.createManual(user, posting, title)
+        );
+        List<CoverLetterCompanyItem> items = request.items().stream()
+                .map(item -> toEntity(coverLetter, item))
+                .toList();
+        itemRepository.saveAll(items);
+        return CompanyCoverLetterDetailResponse.from(coverLetter, items);
+    }
+
+    /** 편집 화면의 제목, 직접 입력 공고, 전체 문항 목록을 한 트랜잭션으로 동기화한다. */
+    @Transactional
+    public CompanyCoverLetterDetailResponse replace(
+            Long coverLetterId,
+            CompanyCoverLetterReplaceRequest request
+    ) {
+        Long userId = currentUserId();
+        CoverLetterCompany coverLetter = findOwnedForUpdate(coverLetterId, userId);
+        validateReplaceRequest(request);
+        boolean postingChanged = updatePosting(coverLetter, request.jobPosting());
+
+        List<CoverLetterCompanyItem> existingItems = itemRepository
+                .findAllByCoverLetterCompanyIdOrderByDisplayOrderAscIdAsc(coverLetterId);
+        Map<Long, CoverLetterCompanyItem> existingById = new HashMap<>();
+        for (int index = 0; index < existingItems.size(); index++) {
+            CoverLetterCompanyItem item = existingItems.get(index);
+            existingById.put(item.getId(), item);
+            item.prepareDisplayOrder(1_000_000 + index);
+        }
+        itemRepository.flush();
+
+        Set<Long> retainedIds = new HashSet<>();
+        List<CoverLetterCompanyItem> resultItems = request.items().stream()
+                .map(itemRequest -> replaceItem(coverLetter, existingById, retainedIds, itemRequest))
+                .toList();
+        List<CoverLetterCompanyItem> removedItems = existingItems.stream()
+                .filter(item -> !retainedIds.contains(item.getId()))
+                .toList();
+        itemRepository.deleteAll(removedItems);
+
+        if (postingChanged) {
+            itemFeedbackRepository.deleteByCoverLetterCompanyItemCoverLetterCompanyId(coverLetterId);
+        }
+        coverLetter.updateTitle(request.title());
+        coverLetter.markItemsChanged();
+        itemRepository.flush();
+        return CompanyCoverLetterDetailResponse.from(coverLetter, resultItems);
+    }
+
     /** 현재 사용자가 소유한 자기소개서 제목을 수정한 뒤 최신 상세 응답을 반환한다. */
     @Transactional
     public CompanyCoverLetterDetailResponse updateTitle(
@@ -134,7 +203,8 @@ public class CompanyCoverLetterCommandService {
         rejectDuplicateDisplayOrder(
                 item.getCoverLetterCompany().getId(), request.displayOrder(), item.getId()
         );
-        boolean answerChanged = !Objects.equals(item.getAnswer(), request.answer());
+        boolean feedbackInputChanged = !Objects.equals(item.getQuestionText(), request.questionText().trim())
+                || !Objects.equals(item.getAnswer(), request.answer());
         item.update(
                 request.questionText(),
                 request.answer(),
@@ -142,7 +212,7 @@ public class CompanyCoverLetterCommandService {
                 request.displayOrder()
         );
         item.getCoverLetterCompany().markItemsChanged();
-        if (answerChanged) {
+        if (feedbackInputChanged) {
             itemFeedbackRepository.deleteByCoverLetterCompanyItemId(item.getId());
         }
         return CompanyCoverLetterItemResponse.from(item);
@@ -185,6 +255,84 @@ public class CompanyCoverLetterCommandService {
                 request.characterLimit(),
                 request.displayOrder()
         );
+    }
+
+    private static CoverLetterManualJobPosting manualPosting(ManualJobPostingRequest request) {
+        return CoverLetterManualJobPosting.create(
+                request.postingTitle(), request.companyName(), request.jobRoleName(),
+                request.positionDetail(), request.careerType(), request.hireType(), request.mainDuty(),
+                request.qualification(), request.preference()
+        );
+    }
+
+    private boolean updatePosting(CoverLetterCompany coverLetter, ManualJobPostingRequest request) {
+        if (coverLetter.isManual()) {
+            if (request == null) {
+                throw new CoverLetterException(
+                        ErrorCode.COVER_LETTER_INVALID_REQUEST,
+                        "Manual job posting is required"
+                );
+            }
+            return coverLetter.updateManualJobPosting(
+                    request.postingTitle(), request.companyName(), request.jobRoleName(),
+                    request.positionDetail(), request.careerType(), request.hireType(), request.mainDuty(),
+                    request.qualification(), request.preference()
+            );
+        }
+        if (request != null) {
+            throw new CoverLetterException(
+                    ErrorCode.COVER_LETTER_INVALID_REQUEST,
+                    "Linked job posting cannot be edited from cover letter"
+            );
+        }
+        return false;
+    }
+
+    private CoverLetterCompanyItem replaceItem(
+            CoverLetterCompany coverLetter,
+            Map<Long, CoverLetterCompanyItem> existingById,
+            Set<Long> retainedIds,
+            CompanyCoverLetterItemReplaceRequest request
+    ) {
+        if (request.id() == null) {
+            return itemRepository.save(CoverLetterCompanyItem.create(
+                    coverLetter, request.questionText(), request.answer(),
+                    request.characterLimit(), request.displayOrder()
+            ));
+        }
+        CoverLetterCompanyItem item = existingById.get(request.id());
+        if (item == null || !retainedIds.add(request.id())) {
+            throw new CoverLetterException(
+                    ErrorCode.COVER_LETTER_INVALID_REQUEST,
+                    "Item must belong to the edited cover letter and appear once"
+            );
+        }
+        boolean feedbackInputChanged = !Objects.equals(item.getQuestionText(), request.questionText().trim())
+                || !Objects.equals(item.getAnswer(), request.answer());
+        item.update(request.questionText(), request.answer(), request.characterLimit(), request.displayOrder());
+        if (feedbackInputChanged) {
+            itemFeedbackRepository.deleteByCoverLetterCompanyItemId(item.getId());
+        }
+        return item;
+    }
+
+    private static void validateReplaceRequest(CompanyCoverLetterReplaceRequest request) {
+        Set<Integer> displayOrders = new HashSet<>();
+        Set<Long> ids = new HashSet<>();
+        for (CompanyCoverLetterItemReplaceRequest item : request.items()) {
+            if (!displayOrders.add(item.displayOrder())) {
+                throw new CoverLetterException(
+                        ErrorCode.COVER_LETTER_DISPLAY_ORDER_CONFLICT,
+                        "Duplicate displayOrder in request"
+                );
+            }
+            if (item.id() != null && !ids.add(item.id())) {
+                throw new CoverLetterException(
+                        ErrorCode.COVER_LETTER_INVALID_REQUEST,
+                        "Duplicate item id in request"
+                );
+            }
+        }
     }
 
     /** 생성 시 요청 본문 안에서 중복되는 문항 순서를 미리 검증한다. */

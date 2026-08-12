@@ -4,6 +4,8 @@ import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLet
 import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLetterQueryService;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualCompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterDetailResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
 import org.junit.jupiter.api.Test;
@@ -64,6 +66,31 @@ class CompanyCoverLetterControllerTest {
         when(commandService.create(request)).thenReturn(response);
 
         var actual = controller.create(request);
+
+        assertEquals(HttpStatus.CREATED, actual.getStatusCode());
+        assertEquals(response, actual.getBody());
+    }
+
+    @Test
+    void createsManualCompanyCoverLetterWithCreatedStatus() {
+        CompanyCoverLetterCommandService commandService = mock(CompanyCoverLetterCommandService.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CompanyCoverLetterController controller = new CompanyCoverLetterController(commandService, queryService);
+        ManualCompanyCoverLetterCreateRequest request = new ManualCompanyCoverLetterCreateRequest(
+                null,
+                new ManualJobPostingRequest(
+                        "직접 입력 공고", "테스트 기업", "백엔드 개발자", null,
+                        "신입", "정규직", "API 개발", "Java 경험", "Spring 경험"
+                ),
+                List.of(new CompanyCoverLetterItemCreateRequest("지원 동기", "답변", 1000, 1))
+        );
+        CompanyCoverLetterDetailResponse response = new CompanyCoverLetterDetailResponse(
+                2L, null, "테스트 기업", "직접 입력 공고", "테스트 기업 백엔드 개발자 지원용 자소서",
+                List.of(), null, null
+        );
+        when(commandService.createManual(request)).thenReturn(response);
+
+        var actual = controller.createManual(request);
 
         assertEquals(HttpStatus.CREATED, actual.getStatusCode());
         assertEquals(response, actual.getBody());

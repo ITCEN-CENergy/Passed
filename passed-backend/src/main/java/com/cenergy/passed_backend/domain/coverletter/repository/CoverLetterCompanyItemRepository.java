@@ -33,7 +33,10 @@ public interface CoverLetterCompanyItemRepository extends JpaRepository<CoverLet
             select item
             from CoverLetterCompanyItem item
             join fetch item.coverLetterCompany coverLetter
-            join fetch coverLetter.jobPosting
+            left join fetch coverLetter.jobPosting jobPosting
+            left join fetch jobPosting.company
+            left join fetch jobPosting.jobRole
+            left join fetch coverLetter.manualJobPosting
             where item.id = :itemId
               and coverLetter.user.id = :userId
             """)

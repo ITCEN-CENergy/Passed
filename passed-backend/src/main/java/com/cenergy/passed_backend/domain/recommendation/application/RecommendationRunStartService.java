@@ -2,7 +2,9 @@ package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
+import com.cenergy.passed_backend.domain.recommendation.application.model.PreferenceRecommendationRunContext;
 import com.cenergy.passed_backend.domain.recommendation.application.model.RecommendationRunContext;
+import com.cenergy.passed_backend.domain.recommendation.application.model.SinglePostingRecommendationRunContext;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
@@ -66,41 +68,79 @@ public class RecommendationRunStartService {
     }
 
     @Transactional
-    public RecommendationRunContext start(Long userId, RecommendationCreateRequest request) {
+    public PreferenceRecommendationRunContext startForPreference(Long userId, RecommendationCreateRequest request) {
         NormalizedRequest normalized = normalize(userId, request);
-        User user = lockUser(normalized.userId());
-        rejectConcurrentRun(normalized.userId());
-        RecommendationScoringPolicy policy = loadPolicy();
-        List<RecommendationGradeRule> gradeRules = loadGradeRules(policy.getId());
-        List<UserSkillData> userSkills = loadAndValidateUserSkills(normalized.userId());
-        validateCommonSkills(userSkills);
+        CommonStartData common = prepareCommon(normalized.userId());
         List<RecommendationSnapshotFactory.JobRoleSnapshot> jobRoles = loadAndValidateJobRoles(
                 normalized
         );
         RecommendationSnapshotFactory.SnapshotResult snapshots = snapshotFactory.create(
-                userSkills,
+                common.userSkills(),
                 normalized.industryId(),
                 jobRoles
         );
-        RecommendationRun run = runRepository.saveAndFlush(RecommendationRun.startProcessing(
-                user,
-                policy,
+        RecommendationRun run = runRepository.saveAndFlush(RecommendationRun.startForPreferenceRecommendation(
+                common.user(),
+                common.policy(),
                 snapshots.userSkillSnapshotHash(),
                 snapshots.userSkillSnapshot(),
                 snapshots.preferenceSnapshot()
         ));
+        return new PreferenceRecommendationRunContext(
+                createRunContext(common, run, snapshots.userSkillSnapshotHash()),
+                normalized.industryId(),
+                normalized.jobRoleIds()
+        );
+    }
+
+    @Transactional
+    public SinglePostingRecommendationRunContext startForSinglePosting(Long userId, Long jobPostingId) {
+        CommonStartData common = prepareCommon(userId);
+        RecommendationSnapshotFactory.UserSkillSnapshotResult snapshots =
+                snapshotFactory.createUserSkillSnapshot(common.userSkills());
+        RecommendationRun run = runRepository.saveAndFlush(RecommendationRun.startForSinglePostingRecommendation(
+                common.user(),
+                common.policy(),
+                snapshots.userSkillSnapshotHash(),
+                snapshots.userSkillSnapshot()
+        ));
+        return new SinglePostingRecommendationRunContext(
+                createRunContext(common, run, snapshots.userSkillSnapshotHash()),
+                jobPostingId
+        );
+    }
+
+    private CommonStartData prepareCommon(Long userId) {
+        User user = lockUser(userId);
+        rejectConcurrentRun(userId);
+        RecommendationScoringPolicy policy = loadPolicy();
+        List<RecommendationGradeRule> gradeRules = loadGradeRules(policy.getId());
+        List<UserSkillData> userSkills = loadAndValidateUserSkills(userId);
+        validateCommonSkills(userSkills);
         int importantSkillCount = (int) userSkills.stream()
                 .filter(UserSkillData::important)
                 .count();
-        return new RecommendationRunContext(
-                run.getId(),
+        return new CommonStartData(
+                user,
                 policy,
                 gradeRules,
                 userSkills,
-                importantSkillCount,
-                snapshots.userSkillSnapshotHash(),
-                normalized.industryId(),
-                normalized.jobRoleIds(),
+                importantSkillCount
+        );
+    }
+
+    private RecommendationRunContext createRunContext(
+            CommonStartData common,
+            RecommendationRun run,
+            String userSkillSnapshotHash
+    ) {
+        return new RecommendationRunContext(
+                run.getId(),
+                common.policy(),
+                common.gradeRules(),
+                common.userSkills(),
+                common.importantSkillCount(),
+                userSkillSnapshotHash,
                 run.getStartedAt()
         );
     }
@@ -245,5 +285,14 @@ public class RecommendationRunStartService {
     }
 
     private record NormalizedRequest(Long userId, Long industryId, List<Long> jobRoleIds) {
+    }
+
+    private record CommonStartData(
+            User user,
+            RecommendationScoringPolicy policy,
+            List<RecommendationGradeRule> gradeRules,
+            List<UserSkillData> userSkills,
+            int importantSkillCount
+    ) {
     }
 }

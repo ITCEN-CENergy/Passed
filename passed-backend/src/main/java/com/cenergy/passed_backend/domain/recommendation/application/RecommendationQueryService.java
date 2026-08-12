@@ -1,5 +1,6 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingDetailResponse;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPostingSkillType;
 import com.cenergy.passed_backend.domain.recommendation.dto.*;

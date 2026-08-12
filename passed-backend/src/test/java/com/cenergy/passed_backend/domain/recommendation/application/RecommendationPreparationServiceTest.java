@@ -6,7 +6,7 @@ import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;

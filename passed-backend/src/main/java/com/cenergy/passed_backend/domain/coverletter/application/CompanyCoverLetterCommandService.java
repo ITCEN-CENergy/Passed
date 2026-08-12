@@ -13,7 +13,7 @@ import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompa
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemFeedbackRepository;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;

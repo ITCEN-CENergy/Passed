@@ -10,6 +10,7 @@ import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapReplanPreviewRespons
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
 import com.cenergy.passed_backend.domain.roadmap.repository.*;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

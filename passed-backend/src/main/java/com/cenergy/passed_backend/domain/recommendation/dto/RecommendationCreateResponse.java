@@ -2,23 +2,19 @@ package com.cenergy.passed_backend.domain.recommendation.dto;
 
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
-public record RecommendationPrepareResponse(
-        Long recommendationRunId,
+public record RecommendationCreateResponse(
+        Long runId,
         RecommendationRunStatus status,
-        String policyCode,
-        String policyVersion,
-        int gradeRuleCount,
-        int userSkillCount,
-        int importantSkillCount,
         int candidatePostingCount,
         int requiredQualifiedPostingCount,
-        String userSkillSnapshotHash,
         Long industryId,
-        List<Long> jobRoleIds
+        List<Long> jobRoleIds,
+        OffsetDateTime startedAt
 ) {
-    public RecommendationPrepareResponse {
+    public RecommendationCreateResponse {
         jobRoleIds = List.copyOf(jobRoleIds);
     }
 }

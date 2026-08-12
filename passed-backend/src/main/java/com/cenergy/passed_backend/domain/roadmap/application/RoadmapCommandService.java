@@ -8,6 +8,7 @@ import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapMilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

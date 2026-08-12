@@ -1,5 +1,7 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
+
 import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapGenerateRequest;
 import com.cenergy.passed_backend.domain.roadmap.repository.MilestoneRepository;
 import com.cenergy.passed_backend.domain.roadmap.repository.RoadmapMilestoneRepository;

@@ -53,7 +53,8 @@ class RecommendationExplanationServiceTest {
 
         Map<Long, RecommendationExplanation> result = new RecommendationExplanationService(
                 client,
-                summaryLoader
+                summaryLoader,
+                new RecommendationSkillHighlightSelector()
         ).generate(List.of(ranked));
 
         verify(client, times(2)).generate(any());
@@ -110,7 +111,8 @@ class RecommendationExplanationServiceTest {
 
         Map<Long, RecommendationExplanation> result = new RecommendationExplanationService(
                 client,
-                summaryLoader
+                summaryLoader,
+                new RecommendationSkillHighlightSelector()
         ).generate(List.of(ranked));
 
         assertTrue(result.get(100L).reason().contains("TypeScript"));

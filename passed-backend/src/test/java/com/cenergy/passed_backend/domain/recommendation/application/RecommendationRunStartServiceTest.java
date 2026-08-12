@@ -4,7 +4,7 @@ import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.recommendation.application.model.RecommendationRunContext;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationPolicyStatus;
@@ -25,6 +25,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -73,9 +74,12 @@ class RecommendationRunStartServiceTest {
         ));
         when(skillRepository.findAllByIdIn(any())).thenReturn(skills);
         when(jobRoleRepository.findAllByIdIn(List.of(227L, 239L))).thenReturn(roles);
-        when(runRepository.save(any(RecommendationRun.class))).thenAnswer(invocation -> {
+        when(runRepository.saveAndFlush(any(RecommendationRun.class))).thenAnswer(invocation -> {
             RecommendationRun run = invocation.getArgument(0);
             ReflectionTestUtils.setField(run, "id", 10L);
+            ReflectionTestUtils.setField(
+                    run, "startedAt", OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
+            );
             return run;
         });
         RecommendationRunStartService service = new RecommendationRunStartService(
@@ -89,8 +93,7 @@ class RecommendationRunStartServiceTest {
                 new RecommendationSnapshotFactory(new ObjectMapper())
         );
 
-        RecommendationRunContext result = service.start(new RecommendationPrepareRequest(
-                2L,
+        RecommendationRunContext result = service.start(2L, new RecommendationCreateRequest(
                 8L,
                 List.of(239L, 227L, 239L)
         ));

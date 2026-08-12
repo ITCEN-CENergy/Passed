@@ -7,7 +7,7 @@ import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompa
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemFeedbackRepository;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 

@@ -6,7 +6,7 @@ import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompany;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompanyItem;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyItemRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

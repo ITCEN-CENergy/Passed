@@ -18,7 +18,6 @@ class UserJobPreferenceControllerTest {
     void delegatesPreferenceUpdateForCurrentUser() {
         UserJobPreferenceService service = mock(UserJobPreferenceService.class);
         UserJobPreferenceUpdateRequest request = new UserJobPreferenceUpdateRequest(
-                257L,
                 8L,
                 List.of(227L, 239L)
         );

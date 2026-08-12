@@ -43,4 +43,27 @@ public class JobPostingSkill extends CreatedAtEntity {
 
     @Column(name = "skill_level", nullable = false)
     private short skillLevel = 1;
+
+    public static JobPostingSkill create(
+            JobPosting jobPosting,
+            Skill skill,
+            JobPostingSkillType skillType,
+            short skillLevel
+    ) {
+        if (skillLevel < 1 || skillLevel > 3) {
+            throw new IllegalArgumentException("skillLevel must be between 1 and 3");
+        }
+        JobPostingSkill postingSkill = new JobPostingSkill();
+        postingSkill.jobPosting = java.util.Objects.requireNonNull(
+                jobPosting,
+                "jobPosting must not be null"
+        );
+        postingSkill.skill = java.util.Objects.requireNonNull(skill, "skill must not be null");
+        postingSkill.skillType = java.util.Objects.requireNonNull(
+                skillType,
+                "skillType must not be null"
+        );
+        postingSkill.skillLevel = skillLevel;
+        return postingSkill;
+    }
 }

@@ -214,7 +214,7 @@ class ReplanGroup(RoadmapModel):
     standardCompetencyId: int = Field(gt=0)
     skillName: str = Field(min_length=1)
     category: CompetencyCategory
-    currentLevel: int = Field(ge=1, le=3)
+    currentLevel: int = Field(ge=0, le=3)
     targetLevel: int = Field(ge=1, le=3)
     assignedEstimatedMinutes: int = Field(ge=30)
     sourceMilestones: list[ReplanSourceMilestone] = Field(min_length=1)

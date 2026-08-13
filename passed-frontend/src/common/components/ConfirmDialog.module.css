@@ -1,0 +1,82 @@
+.backdrop {
+  position: fixed;
+  z-index: 1000;
+  display: grid;
+  background: rgba(18, 31, 52, .56);
+  inset: 0;
+  place-items: center;
+  padding: 24px;
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 500px);
+  padding: 46px 42px 38px;
+  color: #13264b;
+  background: #fff;
+  border: 1px solid #dfe6ef;
+  border-radius: 14px;
+  box-shadow: 0 22px 55px rgba(18, 39, 70, .24);
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  padding: 2px 7px;
+  color: #40516c;
+  background: transparent;
+  border: 0;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 22px;
+  place-items: center;
+  color: #0877ed;
+  background: #eaf4ff;
+  border: 8px solid #f4f8ff;
+  border-radius: 50%;
+  font-size: 25px;
+  font-weight: 900;
+  font-family: Georgia, serif;
+}
+
+.dialog h2 { font-size: 24px; letter-spacing: -.04em; }
+.dialog > p { margin-top: 15px; color: #6b7c98; font-size: 15px; line-height: 1.6; }
+.content { margin-top: 22px; }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1.12fr;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.actions button {
+  min-height: 54px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cancel { color: #283b5d; background: #fff; border: 1px solid #ced8e5; }
+.confirm { color: #fff; background: #0877ed; border: 1px solid #0877ed; }
+.confirm:hover { background: #0768d1; }
+.actions button:disabled, .close:disabled { cursor: not-allowed; opacity: .55; }
+.actions button:focus-visible, .close:focus-visible { outline: 3px solid rgba(8, 119, 237, .3); outline-offset: 3px; }
+
+@media (max-width: 520px) {
+  .dialog { padding: 42px 22px 24px; }
+  .dialog h2 { font-size: 21px; }
+  .actions { grid-template-columns: 1fr; }
+  .confirm { grid-row: 1; }
+}

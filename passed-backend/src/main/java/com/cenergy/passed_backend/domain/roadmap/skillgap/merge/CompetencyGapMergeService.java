@@ -90,7 +90,7 @@ public class CompetencyGapMergeService {
                     reference.standardCompetencyId(), currentLevels.stream().sorted().toList(), currentLevel);
         }
 
-        RequirementType requirementType = priorityPolicy.strongestOf(
+        RequirementType requirementType = priorityPolicy.majorityOf(
                 sources.stream().map(CompetencyGapSource::requirementType).toList());
         int gapLevel = Math.max(targetLevel - currentLevel, 0);
         int frequency = Math.toIntExact(sources.stream()

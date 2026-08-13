@@ -12,6 +12,7 @@ import LoginPage from '../pages/login/LoginPage.jsx'
 import SignupPage from '../pages/signup/SignupPage.jsx'
 import { JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
 import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
+import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,12 @@ const router = createBrowserRouter([
       {
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
+        path: 'roadmap',
+        element: <RoadmapListPage />,
+      },
+      {
+        path: 'roadmap/:roadmapId',
+        element: <RoadmapDetailPage />,
       },
       {
         path: 'cover-letter-result',

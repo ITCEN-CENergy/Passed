@@ -65,6 +65,8 @@ def validate_generated_content(
                 or generated_stage.targetLevel != required_stage.targetLevel
             ):
                 raise ValueError("generated learning stage does not match required stage")
+            if not any(item.required for item in generated_stage.milestones):
+                raise ValueError("each learning stage must contain a required milestone")
             for milestone in generated_stage.milestones:
                 if milestone.title in titles:
                     raise ValueError("duplicate milestone title")

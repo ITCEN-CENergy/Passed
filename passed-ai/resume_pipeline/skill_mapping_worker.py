@@ -94,6 +94,7 @@ class MappingDecision(BaseModel):
 
 
 _IGNORABLE_SEPARATORS = re.compile(r"[\s._\-]+")
+_REPEATED_WHITESPACE = re.compile(r"\s+")
 _CERTIFICATION_SCORE_SUFFIX = re.compile(r"\s+\d+(?:\.\d+)?\s*(?:점|급|등급)$")
 
 
@@ -103,12 +104,35 @@ def normalize_skill_name(value: str) -> str:
     return _IGNORABLE_SEPARATORS.sub("", normalized)
 
 
+def normalize_skill_name_conservative(value: str) -> str:
+    """NFKC·casefold·trim·연속 공백 축소만 수행하는 비교용 정규화다.
+
+    Q. 왜 바로 기존 normalize_skill_name을 교체하지 않나요?
+    A. 현재 DB의 normalized_alias와 회귀 데이터가 공백·점·하이픈 제거 규칙으로
+       만들어졌습니다. 먼저 두 규칙의 충돌과 커버리지를 측정한 뒤 전환해야 기존
+       alias 매핑을 조용히 깨뜨리지 않습니다.
+    """
+    normalized = unicodedata.normalize("NFKC", value).casefold().strip()
+    return _REPEATED_WHITESPACE.sub(" ", normalized)
+
+
 def normalize_alias_candidate(value: str, category: SkillCategory) -> str:
     """카테고리상 확실한 구조 정보만 제거한 뒤 별칭 비교값을 만든다."""
     candidate = value.strip()
     if category is SkillCategory.CERTIFICATION:
         candidate = _CERTIFICATION_SCORE_SUFFIX.sub("", candidate)
     return normalize_skill_name(candidate)
+
+
+def normalize_alias_candidate_conservative(
+    value: str,
+    category: SkillCategory,
+) -> str:
+    """자격 점수 접미사만 제거하고 보수적 표기 정규화를 적용한다."""
+    candidate = value.strip()
+    if category is SkillCategory.CERTIFICATION:
+        candidate = _CERTIFICATION_SCORE_SUFFIX.sub("", candidate)
+    return normalize_skill_name_conservative(candidate)
 
 
 def apply_mapping_thresholds(

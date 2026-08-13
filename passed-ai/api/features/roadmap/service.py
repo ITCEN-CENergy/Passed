@@ -112,6 +112,7 @@ class FakeRoadmapContentGenerator:
                     milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.INTERMEDIATE,
                     estimatedMinutes=60,
+                    required=False,
                     resourceRecommendations=recommendations,
                 ),
                 GeneratedMilestoneContent(
@@ -148,6 +149,7 @@ class FakeRoadmapContentGenerator:
                 milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=False,
                 resourceRecommendations=recommendations,
             ),
             GeneratedMilestoneContent(

@@ -115,6 +115,151 @@ python -m resume_pipeline.run_skill_eval `
 카테고리별 점수를 출력합니다. 스킬 마스터 동의어·유사도 매핑 평가는 다음 단계에서
 별도로 수행합니다.
 
+## deterministic recovery 제거 실험
+
+Q. `_EXPLICIT_COMPLETED_SKILL_RULES`를 왜 바로 삭제하지 않나요?
+
+A. 현재 규칙이 고정해 주던 후보를 Pass 2가 실제로 복구하는지 확인하지 않고 삭제하면
+Recall이 조용히 낮아질 수 있습니다. 운영 기본값은 유지하고 평가에서만 전체 또는 특정
+규칙을 끈 뒤 같은 입력으로 비교합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_extraction `
+  --user-id 56 `
+  --disable-all-recovery-rules `
+  --output recovery_off.json
+
+python -m resume_pipeline.run_skill_eval `
+  --golden resume_pipeline/evaluation/golden_skill_extraction.json `
+  --generate `
+  --disable-recovery-rule "콘텐츠 생성" `
+  --save-predictions predictions_without_content_generation.json `
+  --save-report metrics_without_content_generation.json
+```
+
+평가 보고서에는 프롬프트뿐 아니라 활성 recovery 규칙까지 포함한
+`pipeline_sha256`이 기록됩니다.
+
+## 반복 실행 안정성
+
+같은 입력을 세 번 실행한 결과는 청크별·전체 후보 집합 Jaccard로 비교합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_stability_eval `
+  --extractions extraction_run1.json `
+  --extractions extraction_run2.json `
+  --extractions extraction_run3.json `
+  --output extraction_stability.json
+```
+
+두 실행이 모두 빈 후보인 음성 예제는 결과가 동일하므로 Jaccard 1로 계산합니다.
+
+## 정규화 감사
+
+현재 정규화는 공백·점·밑줄·하이픈을 제거합니다. 이를 바로 바꾸지 않고 NFKC,
+casefold, trim, 연속 공백 축소만 수행하는 보수적 전략과 먼저 비교합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_normalization_audit `
+  --golden resume_pipeline/evaluation/golden_skill_mapping.json `
+  --output normalization_audit.json
+```
+
+`stored_alias_mismatch_conservative`가 0이 아니면 Python 함수만 바꾸면 안 됩니다.
+`skill_aliases.normalized_alias`도 새 Flyway 마이그레이션으로 함께 이관해야 합니다.
+
+## Master Top-K Retrieval과 Pass 2 preview
+
+Q. Retrieval이 스킬을 바로 확정하나요?
+
+A. 아닙니다. 기존 Pass 1에서 이미 매핑된 `skill_id`를 제외한 뒤, 저장된 청크
+embedding과 `skills.embedding`으로 TECHNICAL_SKILL·BEHAVIORAL_TRAIT 후보만 찾습니다.
+Pass 2는 제시된 ID 중 원문에서 직접 입증된 후보만 고릅니다. 이 명령은 DB를 수정하지
+않습니다.
+
+```powershell
+python -m resume_pipeline.run_skill_recall_experiment `
+  --user-id 56 `
+  --extraction-input recovery_off.json `
+  --mapping-input recovery_off_mapping.json `
+  --top-k 20 `
+  --top-k 40 `
+  --verify-top-k 20 `
+  --output recovery_pass2_preview.json
+```
+
+`--mapping-input`을 생략하면 현재 Pass 1 매핑기를 읽기 전용으로 실행합니다. 기존
+preview를 넣으면 후보명 임베딩 API를 다시 호출하지 않습니다. `--verify-top-k`를
+지정한 경우에만 Pass 2 LLM 비용이 발생합니다.
+
+### 청크/문장/Hybrid Retrieval A/B/C 비교
+
+DB 청크는 그대로 유지하면서 Retrieval 때만 임시 문장으로 나누어 비교할 수 있습니다.
+`chunk`가 기본값이므로 기존 동작은 바뀌지 않습니다. `sentence`는 문장 임베딩 API를
+호출하지만 DB에는 저장하지 않으며, 같은 실행의 Top 20/40 비교에서는 벡터를
+재사용합니다. `hybrid`는 chunk와 sentence 후보의 합집합에서 같은 `skill_id`의
+최고 유사도만 남기고 카테고리별 최종 K개를 선택합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_recall_experiment `
+  --user-id 56 `
+  --extraction-input resume_pipeline/evaluation/baselines/20260812_user56_extraction_recovery_off.json `
+  --mapping-input resume_pipeline/evaluation/baselines/20260812_user56_mapping_recovery_off.json `
+  --retrieval-mode chunk `
+  --retrieval-mode sentence `
+  --retrieval-mode hybrid `
+  --sentence-top-k 5 `
+  --top-k 20 `
+  --top-k 40 `
+  --output resume_pipeline/evaluation/baselines/retrieval_chunk_sentence_ab.json
+```
+
+후보에는 `retrieval_source`가 기록됩니다. 문장 검색이 대표 결과라면 가장 높은
+유사도를 만든 `matched_sentence`/`sentence_index`도 함께 남깁니다. 그 뒤
+카테고리별 최종 K개만 Pass 2 후보로 사용합니다. 여러 모드를 동시에 비교할 때는
+Pass 2를 실행하지 않습니다.
+
+### Strict Pass 2 preview
+
+`--strict-pass2`는 Hybrid 후보를 의미적으로 관련 있는지 판단하는 대신, 원문이 사용자
+보유를 직접 증명하는지 Precision 우선으로 검증합니다. TECHNICAL_SKILL은 canonical
+name 또는 활성 alias의 직접 명시가 필요하고, BEHAVIORAL_TRAIT은 완료 행동이 직접
+입증되어야 합니다. 행동 특성은 canonical/alias 직접 명시 또는 마스터 설명의 구별력
+있는 근거 앵커가 필요하며, 단순 개선·공유·문서화만으로 성향을 승격하지 않습니다.
+결과는 `NEW_SKILL_RECOVERY`와 `EVIDENCE_ENRICHMENT`로 구분하며,
+Pass 1과 동일한 `skill_id + source + chunk + evidence`는 제외합니다.
+
+```powershell
+python -m resume_pipeline.run_skill_recall_experiment `
+  --user-id 56 `
+  --extraction-input recovery_off.json `
+  --mapping-input recovery_off_mapping.json `
+  --retrieval-mode hybrid `
+  --sentence-top-k 5 `
+  --top-k 40 `
+  --verify-top-k 40 `
+  --strict-pass2 `
+  --output strict_pass2_preview.json
+```
+
+이 명령은 preview 전용이며 `user_skills`나 `user_skill_evidences`를 저장하지 않습니다.
+평가는 `run_pass2_eval`로 수행하며 REVIEW 라벨은 주 지표에서 제외합니다.
+
+## Unmapped 후보 JSON 집계
+
+운영 검수 흐름이 확정되기 전에는 새 테이블을 만들지 않고 mapping preview를
+집계합니다.
+
+```powershell
+python -m resume_pipeline.run_unmapped_skill_report `
+  --mapping skill_mapping_run1.json `
+  --mapping skill_mapping_run2.json `
+  --output unmapped_summary.json
+```
+
+보수적으로 정규화한 이름과 카테고리별로 반복 횟수, 표본 이름·근거, 실패 사유를
+저장합니다. 관리자 승인·거절 상태를 실제로 운영할 때만 별도 DB 테이블을 추가합니다.
+
 ## 단위 테스트 데이터와 실제 DB 데이터의 차이
 
 Q. `tests`에 예비 이력서와 자기소개서가 있는데 CLI 결과가 왜 0건이었나요?

@@ -16,7 +16,7 @@ import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
 import com.cenergy.passed_backend.domain.user.dto.JobRoleResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

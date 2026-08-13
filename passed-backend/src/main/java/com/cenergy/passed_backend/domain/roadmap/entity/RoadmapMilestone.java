@@ -36,12 +36,18 @@ public class RoadmapMilestone extends CreatedAtEntity {
 
     public static RoadmapMilestone create(RoadmapSkill roadmapSkill, Milestone milestone, int learningOrder,
                                           ReuseType reuseType, String reuseReason) {
+        return create(roadmapSkill, milestone, learningOrder, reuseType, reuseReason, true);
+    }
+
+    public static RoadmapMilestone create(RoadmapSkill roadmapSkill, Milestone milestone, int learningOrder,
+                                          ReuseType reuseType, String reuseReason, boolean required) {
         RoadmapMilestone value = new RoadmapMilestone();
         value.roadmapSkill = roadmapSkill;
         value.milestone = milestone;
         value.learningOrder = learningOrder;
         value.reuseType = reuseType;
         value.reuseReason = reuseReason;
+        value.required = required;
         return value;
     }
 

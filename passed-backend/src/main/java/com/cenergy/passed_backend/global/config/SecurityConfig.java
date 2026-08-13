@@ -48,7 +48,6 @@ public class SecurityConfig {
                                 response.sendError(HttpStatus.FORBIDDEN.value())))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/**").permitAll() // 원활한 개발을 위해서 임시로 적용
                         .requestMatchers(
                                 "/api/auth/signup",
                                 "/api/auth/login",

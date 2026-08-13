@@ -8,7 +8,7 @@ import com.cenergy.passed_backend.domain.user.dto.UserJobPreferenceUpdateRequest
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

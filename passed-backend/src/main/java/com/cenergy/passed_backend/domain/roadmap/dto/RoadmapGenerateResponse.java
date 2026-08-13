@@ -56,12 +56,13 @@ public record RoadmapGenerateResponse(Long roadmapId, String title, List<Skill> 
             Difficulty difficulty,
             int estimatedMinutes,
             int learningOrder,
+            boolean required,
             List<LearningResource> learningResources
     ) {
         private static Milestone from(RoadmapGenerationResult.Milestone value) {
             return new Milestone(value.title(), value.description(), value.learningObjective(),
                     value.completionCriteria(), value.startLevel(), value.targetLevel(), value.milestoneType(),
-                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(),
+                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(), value.required(),
                     value.learningResources().stream().map(LearningResource::from).toList());
         }
     }

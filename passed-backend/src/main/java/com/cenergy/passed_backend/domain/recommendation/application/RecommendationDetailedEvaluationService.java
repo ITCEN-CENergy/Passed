@@ -27,7 +27,7 @@ public class RecommendationDetailedEvaluationService {
     private static final BigDecimal ZERO_RATE = BigDecimal.ZERO.setScale(RATE_SCALE);
     private static final BigDecimal FULL_RATE = BigDecimal.ONE.setScale(RATE_SCALE);
 
-    public List<RecommendationScoreResult> evaluate(
+    public List<RecommendationScoreResult> evaluateAll(
             RecommendationCandidateSelectionResult selection,
             Collection<UserSkillData> userSkills,
             RecommendationScoringPolicy policy
@@ -35,17 +35,7 @@ public class RecommendationDetailedEvaluationService {
         Objects.requireNonNull(selection, "selection must not be null");
         Objects.requireNonNull(policy, "policy must not be null");
         Map<Long, UserSkillData> userSkillMap = indexUserSkills(userSkills);
-        // 사용자 중요 스킬 개수 계산 후, 중요 스킬 1개당 배정할 최대 보너스 점수 계산
-        int importantSkillCount = (int) userSkillMap.values().stream()
-                .filter(UserSkillData::important)
-                .count();
-        BigDecimal importantBonusUnitScore = importantSkillCount == 0
-                ? ZERO_SCORE
-                : policy.getImportantBonusMaxScore().divide(
-                        BigDecimal.valueOf(importantSkillCount),
-                        CALCULATION_SCALE,
-                        RoundingMode.DOWN
-                );
+        ImportantScoreContext importantScoreContext = calculateImportantScore(userSkillMap, policy);
 
         // 필수 자격요건 필터를 통과한 각 공고의 최종 평가 결과 저장
         List<RecommendationScoreResult> result = new ArrayList<>();
@@ -60,12 +50,57 @@ public class RecommendationDetailedEvaluationService {
                     bundle,
                     entry.getValue(),
                     userSkillMap,
-                    importantSkillCount,
-                    importantBonusUnitScore,
+                    importantScoreContext.importantSkillCount,
+                    importantScoreContext.importantBonusUnitScore,
                     policy
             ));
         }
         return List.copyOf(result);
+    }
+    public RecommendationScoreResult evaluate(
+            Long jobPostingId,
+            PostingSkillBundle postingSkillBundle,
+            RequiredSkillEvaluation requiredSkillEvaluation,
+            Collection<UserSkillData> userSkills,
+            RecommendationScoringPolicy policy
+    ) {
+        Objects.requireNonNull(postingSkillBundle, "postingSkillBundle must not be null");
+        Objects.requireNonNull(requiredSkillEvaluation, "requiredSkillEvaluation must not be null");
+        Objects.requireNonNull(policy, "policy must not be null");
+        Map<Long, UserSkillData> userSkillMap = indexUserSkills(userSkills);
+        ImportantScoreContext importantScoreContext = calculateImportantScore(userSkillMap, policy);
+
+        // 필수 자격요건 필터를 통과한 각 공고의 최종 평가 결과 저장
+        return evaluatePosting(
+                jobPostingId,
+                postingSkillBundle,
+                requiredSkillEvaluation,
+                userSkillMap,
+                importantScoreContext.importantSkillCount,
+                importantScoreContext.importantBonusUnitScore,
+                policy
+        );
+    }
+
+    private ImportantScoreContext calculateImportantScore(
+            Map<Long, UserSkillData> userSkillMap,
+            RecommendationScoringPolicy policy
+    ){
+        // 사용자 중요 스킬 개수 계산 후, 중요 스킬 1개당 배정할 최대 보너스 점수 계산
+        int importantSkillCount = (int) userSkillMap.values().stream()
+                .filter(UserSkillData::important)
+                .count();
+        BigDecimal importantBonusUnitScore = importantSkillCount == 0
+                ? ZERO_SCORE
+                : policy.getImportantBonusMaxScore().divide(
+                BigDecimal.valueOf(importantSkillCount),
+                CALCULATION_SCALE,
+                RoundingMode.DOWN
+        );
+        return new ImportantScoreContext(
+                importantSkillCount,
+                importantBonusUnitScore
+        );
     }
 
     private RecommendationScoreResult evaluatePosting(
@@ -279,6 +314,12 @@ public class RecommendationDetailedEvaluationService {
             throw new IllegalStateException("required skill evaluation count is inconsistent");
         }
         return Map.copyOf(result);
+    }
+
+    private record ImportantScoreContext(
+        int importantSkillCount,
+        BigDecimal importantBonusUnitScore
+    ){
     }
 
     private record SkillMatch(

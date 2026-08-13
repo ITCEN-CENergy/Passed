@@ -71,4 +71,49 @@ public class JobPosting extends BaseTimeEntity {
 
     @Column(name = "process", columnDefinition = "text")
     private String process;
+
+    public static JobPosting create(
+            String title,
+            Company company,
+            JobRole jobRole,
+            String startYmd,
+            String endYmd,
+            Integer headcount,
+            String careerType,
+            String hireType,
+            String region,
+            String educationLevel,
+            String positionDetail,
+            String mainDuty,
+            String qualification,
+            String preference,
+            String disqualifyReason,
+            String process
+    ) {
+        JobPosting posting = new JobPosting();
+        posting.title = requireText(title, "title");
+        posting.company = java.util.Objects.requireNonNull(company, "company must not be null");
+        posting.jobRole = java.util.Objects.requireNonNull(jobRole, "jobRole must not be null");
+        posting.startYmd = startYmd;
+        posting.endYmd = endYmd;
+        posting.headcount = headcount;
+        posting.careerType = careerType;
+        posting.hireType = hireType;
+        posting.region = region;
+        posting.educationLevel = educationLevel;
+        posting.positionDetail = positionDetail;
+        posting.mainDuty = mainDuty;
+        posting.qualification = qualification;
+        posting.preference = preference;
+        posting.disqualifyReason = disqualifyReason;
+        posting.process = process;
+        return posting;
+    }
+
+    private static String requireText(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " must not be blank");
+        }
+        return value.trim();
+    }
 }

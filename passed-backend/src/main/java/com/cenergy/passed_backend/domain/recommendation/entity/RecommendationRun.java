@@ -1,8 +1,6 @@
 package com.cenergy.passed_backend.domain.recommendation.entity;
 
 import com.cenergy.passed_backend.domain.user.entity.User;
-import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
-import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -82,7 +80,38 @@ public class RecommendationRun {
     @Column(name = "failure_message", columnDefinition = "text")
     private String failureMessage;
 
-    public static RecommendationRun startProcessing(
+    public static RecommendationRun startForPreferenceRecommendation(
+            User user,
+            RecommendationScoringPolicy scoringPolicy,
+            String userSkillSnapshotHash,
+            Map<String, Object> userSkillSnapshot,
+            Map<String, Object> preferenceSnapshot
+    ) {
+        return startProcessing(
+                user,
+                scoringPolicy,
+                userSkillSnapshotHash,
+                userSkillSnapshot,
+                preferenceSnapshot
+        );
+    }
+
+    public static RecommendationRun startForSinglePostingRecommendation(
+            User user,
+            RecommendationScoringPolicy scoringPolicy,
+            String userSkillSnapshotHash,
+            Map<String, Object> userSkillSnapshot
+    ) {
+        return startProcessing(
+                user,
+                scoringPolicy,
+                userSkillSnapshotHash,
+                userSkillSnapshot,
+                Map.of()
+        );
+    }
+
+    private static RecommendationRun startProcessing(
             User user,
             RecommendationScoringPolicy scoringPolicy,
             String userSkillSnapshotHash,

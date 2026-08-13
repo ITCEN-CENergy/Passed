@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.recommendation.dto;
+package com.cenergy.passed_backend.domain.jobposting.dto;
 
 public record JobPostingDetailResponse(
         Long jobPostingId,

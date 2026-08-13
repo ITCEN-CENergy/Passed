@@ -2,6 +2,7 @@ package com.cenergy.passed_backend.domain.recommendation.api;
 
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationPreparationService;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationQueryService;
+import com.cenergy.passed_backend.domain.recommendation.application.RecommendationOneService;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateResponse;
@@ -38,6 +39,7 @@ class RecommendationControllerTest {
 
         var actual = new RecommendationController(
                 service,
+                mock(RecommendationOneService.class),
                 mock(RecommendationQueryService.class)
         ).create(request);
 
@@ -52,6 +54,7 @@ class RecommendationControllerTest {
         RecommendationQueryService queryService = mock(RecommendationQueryService.class);
         RecommendationController controller = new RecommendationController(
                 preparationService,
+                mock(RecommendationOneService.class),
                 queryService
         );
         RecommendationHistoryRequest historyRequest = new RecommendationHistoryRequest(0, 10);

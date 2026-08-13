@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class RecommendationExplanationService {
         this.highlightSelector = highlightSelector;
     }
     // 공고 설명과 계산된 스킬 사실을 근거로 통합 추천 이유를 생성한다.
-    public Map<Long, RecommendationExplanation> generate(
+    public Map<Long, RecommendationExplanation> generateAll(
             List<RankedRecommendation> recommendations
     ) {
         Objects.requireNonNull(recommendations, "recommendations must not be null");
@@ -54,8 +52,33 @@ public class RecommendationExplanationService {
                 .map(value -> toInput(value, summaries.get(value.jobPostingId())))
                 .toList();
 
-        // AI 기반 추천 설명 생성을 최대 2번 요청하고, 반환된 결과를 백엔드에서 검증한 뒤,
-        // 계속 실패하면 fallback 설명을 생성
+        Map<Long, RecommendationExplanation> generated = generateWithRetry(inputs, postingIds);
+        return generated != null ? generated : fallback(recommendations, summaries);
+    }
+
+    public RecommendationExplanation generate(GradedRecommendation recommendation) {
+        Objects.requireNonNull(recommendation, "recommendation must not be null");
+        Long jobPostingId = recommendation.score().jobPostingId();
+        Map<Long, RecommendationPostingSummary> summaries = postingSummaryLoader.load(
+                List.of(jobPostingId)
+        );
+        RecommendationPostingSummary summary = Objects.requireNonNull(
+                summaries.get(jobPostingId),
+                "Recommendation posting summary must exist"
+        );
+        Map<Long, RecommendationExplanation> generated = generateWithRetry(
+                List.of(toInput(recommendation, summary)),
+                List.of(jobPostingId)
+        );
+        return generated != null
+                ? generated.get(jobPostingId)
+                : fallback(recommendation, summary);
+    }
+
+    private Map<Long, RecommendationExplanation> generateWithRetry(
+            List<RecommendationExplanationInput> inputs,
+            List<Long> postingIds
+    ) {
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             try {
                 return validate(explanationClient.generate(inputs), postingIds);
@@ -68,19 +91,26 @@ public class RecommendationExplanationService {
                 );
             }
         }
-        return fallback(recommendations, summaries);
+        return null;
     }
 
     private RecommendationExplanationInput toInput(
             RankedRecommendation ranked,
             RecommendationPostingSummary summary
     ) {
-        RecommendationScoreResult score = ranked.recommendation().score();
+        return toInput(ranked.recommendation(), summary);
+    }
+
+    private RecommendationExplanationInput toInput(
+            GradedRecommendation recommendation,
+            RecommendationPostingSummary summary
+    ) {
+        RecommendationScoreResult score = recommendation.score();
         RecommendationSkillHighlightSelector.Selection highlights =
                 highlightSelector.selectEvaluated(score.skillDetails());
 
         return new RecommendationExplanationInput(
-                ranked.jobPostingId(),
+                score.jobPostingId(),
                 summary.title(),
                 summary.companyName(),
                 new RecommendationExplanationInput.JobPostingContext(
@@ -126,6 +156,17 @@ public class RecommendationExplanationService {
             throw new IllegalStateException("Explanation is missing a selected posting ID");
         }
         return Map.copyOf(result);
+    }
+
+    private RecommendationExplanation fallback(
+            GradedRecommendation recommendation,
+            RecommendationPostingSummary summary
+    ) {
+        RecommendationScoreResult score = recommendation.score();
+        return new RecommendationExplanation(
+                score.jobPostingId(),
+                fallbackReason(summary, highlightSelector.selectEvaluated(score.skillDetails()))
+        );
     }
 
     private Map<Long, RecommendationExplanation> fallback(

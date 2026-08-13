@@ -31,16 +31,16 @@ class RecommendationDetailedEvaluationServiceTest {
                 List.of(skill(2L, "정보처리기사", SkillCategory.CERTIFICATION, 3)),
                 List.of(skill(3L, "API", SkillCategory.TECHNICAL_SKILL, 2))
         );
+        RequiredSkillEvaluator requiredEvaluator = new RequiredSkillEvaluator();
         RequiredSkillFilter requiredFilter = new RequiredSkillFilter();
         Map<Long, PostingSkillBundle> candidates = Map.of(100L, bundle);
         Map<Long, RequiredSkillEvaluation> qualified = requiredFilter.filter(
-                candidates,
-                userSkills,
+                requiredEvaluator.evaluateAll(candidates, userSkills),
                 policy
         );
 
         RecommendationScoreResult result = new RecommendationDetailedEvaluationService()
-                .evaluate(
+                .evaluateAll(
                         new RecommendationCandidateSelectionResult(candidates, qualified),
                         userSkills,
                         policy
@@ -75,13 +75,12 @@ class RecommendationDetailedEvaluationServiceTest {
         );
         Map<Long, PostingSkillBundle> candidates = Map.of(100L, bundle);
         Map<Long, RequiredSkillEvaluation> qualified = new RequiredSkillFilter().filter(
-                candidates,
-                userSkills,
+                new RequiredSkillEvaluator().evaluateAll(candidates, userSkills),
                 policy
         );
 
         RecommendationScoreResult result = new RecommendationDetailedEvaluationService()
-                .evaluate(
+                .evaluateAll(
                         new RecommendationCandidateSelectionResult(candidates, qualified),
                         userSkills,
                         policy

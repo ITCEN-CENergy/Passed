@@ -16,6 +16,7 @@ public record ValidatedRoadmapMilestone(
         Difficulty difficulty,
         int estimatedMinutes,
         int learningOrder,
+        boolean required,
         List<ValidatedLearningResource> learningResources
 ) {
     public ValidatedRoadmapMilestone {
@@ -25,8 +26,17 @@ public record ValidatedRoadmapMilestone(
     public ValidatedRoadmapMilestone(String title, String description, String learningObjective,
                                      String completionCriteria, int startLevel, int targetLevel,
                                      MilestoneType milestoneType, Difficulty difficulty,
+                                     int estimatedMinutes, int learningOrder,
+                                     List<ValidatedLearningResource> learningResources) {
+        this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
+                milestoneType, difficulty, estimatedMinutes, learningOrder, true, learningResources);
+    }
+
+    public ValidatedRoadmapMilestone(String title, String description, String learningObjective,
+                                     String completionCriteria, int startLevel, int targetLevel,
+                                     MilestoneType milestoneType, Difficulty difficulty,
                                      int estimatedMinutes, int learningOrder) {
         this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
-                milestoneType, difficulty, estimatedMinutes, learningOrder, List.of());
+                milestoneType, difficulty, estimatedMinutes, learningOrder, true, List.of());
     }
 }

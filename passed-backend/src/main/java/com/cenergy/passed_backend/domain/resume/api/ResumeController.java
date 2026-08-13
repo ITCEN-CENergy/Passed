@@ -20,19 +20,19 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resumeService.create(request));
     }
 
-    @GetMapping("/me")
+    @GetMapping
     public ResponseEntity<ResumeResponse> findMine() {
         return ResponseEntity.ok(resumeService.findMine());
     }
 
-    @PutMapping("/me")
+    @PutMapping
     public ResponseEntity<ResumeResponse> updateMine(
             @Valid @RequestBody ResumeUpsertRequest request
     ) {
         return ResponseEntity.ok(resumeService.update(request));
     }
 
-    @DeleteMapping("/me")
+    @DeleteMapping
     public ResponseEntity<Void> deleteMine() {
         resumeService.deleteMine();
         return ResponseEntity.noContent().build();

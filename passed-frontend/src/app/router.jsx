@@ -10,6 +10,7 @@ import CompanyCoverLetterWrite from '../features/cover-letter/pages/CompanyCover
 import CompanyCoverLetterList from '../features/cover-letter/pages/CompanyCoverLetterList';
 import LoginPage from '../pages/login/LoginPage.jsx'
 import SignupPage from '../pages/signup/SignupPage.jsx'
+import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,14 @@ const router = createBrowserRouter([
       {
         path: 'about',
         element: <AboutPage />,
+      },
+      {
+        path: 'roadmap',
+        element: <RoadmapListPage />,
+      },
+      {
+        path: 'roadmap/:roadmapId',
+        element: <RoadmapDetailPage />,
       },
       {
         path: 'cover-letter-result',

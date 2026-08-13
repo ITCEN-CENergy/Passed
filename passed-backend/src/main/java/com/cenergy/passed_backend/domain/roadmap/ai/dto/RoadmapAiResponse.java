@@ -26,6 +26,7 @@ public record RoadmapAiResponse(
             Difficulty difficulty,
             Integer estimatedMinutes,
             Integer learningOrder,
+            Boolean required,
             List<LearningResource> learningResources
     ) {
         public Milestone {
@@ -35,9 +36,18 @@ public record RoadmapAiResponse(
         public Milestone(String title, String description, String learningObjective,
                          String completionCriteria, Integer startLevel, Integer targetLevel,
                          MilestoneType milestoneType, Difficulty difficulty,
+                         Integer estimatedMinutes, Integer learningOrder,
+                         List<LearningResource> learningResources) {
+            this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
+                    milestoneType, difficulty, estimatedMinutes, learningOrder, true, learningResources);
+        }
+
+        public Milestone(String title, String description, String learningObjective,
+                         String completionCriteria, Integer startLevel, Integer targetLevel,
+                         MilestoneType milestoneType, Difficulty difficulty,
                          Integer estimatedMinutes, Integer learningOrder) {
             this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
-                    milestoneType, difficulty, estimatedMinutes, learningOrder, List.of());
+                    milestoneType, difficulty, estimatedMinutes, learningOrder, true, List.of());
         }
     }
 

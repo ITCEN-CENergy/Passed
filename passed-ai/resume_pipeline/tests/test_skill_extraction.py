@@ -255,6 +255,20 @@ def test_explicit_completed_actions_recover_high_confidence_missing_skills():
     assert all(candidate.evidence in content for candidate in candidates)
 
 
+def test_one_deterministic_recovery_rule_can_be_disabled_for_regression_experiment():
+    content = "사용자 피드백을 분석해 기능 개선에 반영했습니다."
+
+    candidates = extraction._validated_candidates(
+        _chunk(content=content),
+        SkillExtractionResponse(skills=[]),
+        disabled_recovery_rules=frozenset({"사용자 피드백 반영"}),
+    )
+
+    assert "사용자 피드백 반영" not in {
+        candidate.extracted_name for candidate in candidates
+    }
+
+
 def test_explicit_named_ai_service_actions_are_recovered_conservatively():
     content = (
         "RAG AI 챗봇 프로젝트에서 Python과 FastAPI를 사용하여 "
@@ -599,7 +613,7 @@ def test_golden_predictions_use_same_chunk_extractor(monkeypatch):
     ]
     monkeypatch.setattr(
         "resume_pipeline.skill_extraction_eval.extract_chunk_candidates",
-        lambda chunk, client: [
+        lambda chunk, client, **_kwargs: [
             SkillCandidate(
                 extracted_name="Java",
                 category=SkillCategory.TECHNICAL_SKILL,

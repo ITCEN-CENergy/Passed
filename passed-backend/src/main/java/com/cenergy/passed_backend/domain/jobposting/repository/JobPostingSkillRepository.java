@@ -13,4 +13,6 @@ public interface JobPostingSkillRepository extends JpaRepository<JobPostingSkill
     List<JobPostingSkill> findAllByJobPosting_IdInOrderByJobPosting_IdAscSkill_IdAsc(
             Collection<Long> jobPostingIds
     );
+    @EntityGraph(attributePaths = {"jobPosting", "skill"})
+    List<JobPostingSkill> findAllByJobPostingId(Long jobPostingId);
 }

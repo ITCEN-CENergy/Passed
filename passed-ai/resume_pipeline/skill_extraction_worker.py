@@ -227,6 +227,8 @@ def _recover_verbatim_evidence(chunk_content: str, evidence: str) -> str | None:
 
 def _explicit_completed_candidates(
     chunk: ExtractableChunk,
+    *,
+    disabled_recovery_rules: frozenset[str] = frozenset(),
 ) -> list[SkillCandidate]:
     candidates: list[SkillCandidate] = []
     for sentence_match in _SOURCE_SENTENCE_PATTERN.finditer(chunk.chunk_content):
@@ -234,6 +236,8 @@ def _explicit_completed_candidates(
         if not sentence or _is_future_only_evidence(sentence):
             continue
         for extracted_name, category, pattern in _EXPLICIT_COMPLETED_SKILL_RULES:
+            if extracted_name in disabled_recovery_rules:
+                continue
             if not pattern.search(sentence):
                 continue
             candidates.append(
@@ -281,6 +285,8 @@ def _request_structured_extraction(client: Any, chunk: ExtractableChunk) -> Any:
 def _validated_candidates(
     chunk: ExtractableChunk,
     response: SkillExtractionResponse,
+    *,
+    disabled_recovery_rules: frozenset[str] = frozenset(),
 ) -> list[SkillCandidate]:
     """원문 evidence가 있는 후보만 남기고 미래 포부와 중복을 제거한다."""
     result: list[SkillCandidate] = []
@@ -333,7 +339,10 @@ def _validated_candidates(
         seen.add(key)
         result.append(candidate)
 
-    for candidate in _explicit_completed_candidates(chunk):
+    for candidate in _explicit_completed_candidates(
+        chunk,
+        disabled_recovery_rules=disabled_recovery_rules,
+    ):
         key = (
             " ".join(candidate.extracted_name.casefold().split()),
             candidate.category.value,
@@ -349,6 +358,7 @@ def extract_chunk_candidates(
     chunk: ExtractableChunk,
     *,
     client: Any | None = None,
+    disabled_recovery_rules: frozenset[str] = frozenset(),
 ) -> list[SkillCandidate]:
     """청크 한 건을 최대 3회 재시도해 검증된 후보 목록으로 반환한다."""
     api_client = client or create_skill_extraction_client()
@@ -367,7 +377,11 @@ def extract_chunk_candidates(
         )
     if not isinstance(parsed, SkillExtractionResponse):
         parsed = SkillExtractionResponse.model_validate(parsed)
-    return _validated_candidates(chunk, parsed)
+    return _validated_candidates(
+        chunk,
+        parsed,
+        disabled_recovery_rules=disabled_recovery_rules,
+    )
 
 
 def _chunk_from_row(row: Any, source_kind: str) -> ExtractableChunk:

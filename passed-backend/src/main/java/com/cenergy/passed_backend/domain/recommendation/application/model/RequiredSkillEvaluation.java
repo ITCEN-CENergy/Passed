@@ -11,7 +11,6 @@ public record RequiredSkillEvaluation(
         int requiredOwnedCount,
         BigDecimal requiredCoverageRate,
         BigDecimal requiredLevelMatchRate,
-        BigDecimal requiredScore,
         List<RequiredSkillMatch> skillMatches
 ) {
     public RequiredSkillEvaluation {
@@ -23,7 +22,6 @@ public record RequiredSkillEvaluation(
                 requiredLevelMatchRate,
                 "requiredLevelMatchRate must not be null"
         );
-        requiredScore = Objects.requireNonNull(requiredScore, "requiredScore must not be null");
         skillMatches = List.copyOf(Objects.requireNonNull(skillMatches, "skillMatches must not be null"));
     }
 

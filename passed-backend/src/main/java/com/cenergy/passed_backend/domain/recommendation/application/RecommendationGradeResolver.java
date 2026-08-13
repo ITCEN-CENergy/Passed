@@ -20,18 +20,40 @@ public class RecommendationGradeResolver {
             Collection<RecommendationGradeRule> rules
     ) {
         Objects.requireNonNull(scores, "scores must not be null");
+        List<RecommendationGradeRule> sortedRules = sortRules(rules);
+
+        return scores.stream()
+                .map(score -> resolveGrade(score, sortedRules))
+                .toList();
+    }
+
+    public GradedRecommendation resolve(
+            RecommendationScoreResult score,
+            Collection<RecommendationGradeRule> rules
+    ) {
+        return resolveGrade(
+                Objects.requireNonNull(score, "score must not be null"),
+                sortRules(rules)
+        );
+    }
+
+    private List<RecommendationGradeRule> sortRules(
+            Collection<RecommendationGradeRule> rules
+    ) {
         List<RecommendationGradeRule> sortedRules = new ArrayList<>(
                 Objects.requireNonNull(rules, "rules must not be null")
         );
         // priority가 높은 등급 규칙부터 검사하도록 내림차순 정렬
-        sortedRules.sort(Comparator.comparingInt(RecommendationGradeRule::getPriority).reversed());
+        sortedRules.sort(
+                Comparator.comparingInt(RecommendationGradeRule::getPriority)
+                        .reversed()
+        );
 
-        return scores.stream()
-                .map(score -> resolve(score, sortedRules))
-                .toList();
+        return List.copyOf(sortedRules);
     }
 
-    private GradedRecommendation resolve(
+
+    private GradedRecommendation resolveGrade(
             RecommendationScoreResult score,
             List<RecommendationGradeRule> rules
     ) {

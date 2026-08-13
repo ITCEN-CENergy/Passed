@@ -1,10 +1,7 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
-import com.cenergy.passed_backend.domain.recommendation.application.model.PostingSkillBundle;
 import com.cenergy.passed_backend.domain.recommendation.application.model.RequiredSkillEvaluation;
-import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
-import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,133 +24,41 @@ class RequiredSkillFilterTest {
         filter = new RequiredSkillFilter();
         policy = mock(RecommendationScoringPolicy.class);
         when(policy.getRequiredCoverageThreshold()).thenReturn(new BigDecimal("0.5000"));
-        when(policy.getRequiredMaxScore()).thenReturn(new BigDecimal("60.00"));
     }
 
     @Test
     void keepsOnlyPostingsMeetingRequiredCoverageThreshold() {
-        Map<Long, PostingSkillBundle> candidates = Map.of(
-                100L,
-                bundle(
-                        List.of(skill(12L, 3), skill(999L, 2)),
-                        List.of(skill(888L, 3)),
-                        List.of(skill(777L, 1))
-                ),
-                200L,
-                bundle(
-                        List.of(skill(999L, 1), skill(888L, 1), skill(777L, 1)),
-                        List.of(),
-                        List.of()
-                )
+        RequiredSkillEvaluation qualifiedEvaluation = evaluation("0.5000");
+        RequiredSkillEvaluation rejectedEvaluation = evaluation("0.3333");
+        Map<Long, RequiredSkillEvaluation> evaluations = Map.of(
+                100L, qualifiedEvaluation,
+                200L, rejectedEvaluation
         );
-        List<UserSkillData> userSkills = List.of(
-                new UserSkillData(12L, (short) 3, true),
-                new UserSkillData(13L, (short) 2, false)
-        );
-
-        Map<Long, RequiredSkillEvaluation> result = filter.filter(candidates, userSkills, policy);
+        Map<Long, RequiredSkillEvaluation> result = filter.filter(evaluations, policy);
 
         assertEquals(1, result.size());
         assertTrue(result.containsKey(100L));
         assertFalse(result.containsKey(200L));
-
-        RequiredSkillEvaluation evaluation = result.get(100L);
-        assertEquals(2, evaluation.requiredSkillCount());
-        assertEquals(1, evaluation.requiredOwnedCount());
-        assertEquals(new BigDecimal("0.5000"), evaluation.requiredCoverageRate());
-        assertEquals(new BigDecimal("0.5000"), evaluation.requiredLevelMatchRate());
-        assertEquals(new BigDecimal("30.0000"), evaluation.requiredScore());
-        assertEquals(2, evaluation.skillMatches().size());
-        assertTrue(evaluation.skillMatches().getFirst().owned());
-        assertFalse(evaluation.skillMatches().getLast().owned());
+        assertEquals(qualifiedEvaluation, result.get(100L));
     }
 
     @Test
-    void passesPostingWithoutRequiredSkillsUsingExplicitDefaultRates() {
-        Map<Long, RequiredSkillEvaluation> result = filter.filter(
-                Map.of(100L, PostingSkillBundle.empty()),
-                List.of(),
-                policy
-        );
+    void keepsEvaluationAboveRequiredCoverageThreshold() {
+        RequiredSkillEvaluation evaluation = evaluation("0.7500");
+        Map<Long, RequiredSkillEvaluation> evaluations = Map.of(100L, evaluation);
 
-        RequiredSkillEvaluation evaluation = result.get(100L);
-        assertEquals(0, evaluation.requiredSkillCount());
-        assertEquals(0, evaluation.requiredOwnedCount());
-        assertEquals(new BigDecimal("1.0000"), evaluation.requiredCoverageRate());
-        assertEquals(new BigDecimal("1.0000"), evaluation.requiredLevelMatchRate());
-        assertEquals(new BigDecimal("0.0000"), evaluation.requiredScore());
-        assertTrue(evaluation.skillMatches().isEmpty());
+        Map<Long, RequiredSkillEvaluation> result = filter.filter(evaluations, policy);
+
+        assertEquals(Map.of(100L, evaluation), result);
     }
 
-    @Test
-    void calculatesLevelMatchRateFromMatchingSkillIdsAndLevels() {
-        Map<Long, PostingSkillBundle> candidates = Map.of(
-                100L,
-                bundle(
-                        List.of(skill(12L, 3), skill(13L, 2)),
-                        List.of(),
-                        List.of()
-                )
-        );
-        List<UserSkillData> userSkills = List.of(
-                new UserSkillData(12L, (short) 2, true),
-                new UserSkillData(13L, (short) 3, false)
-        );
-
-        RequiredSkillEvaluation evaluation = filter.filter(candidates, userSkills, policy).get(100L);
-
-        assertEquals(new BigDecimal("1.0000"), evaluation.requiredCoverageRate());
-        assertEquals(new BigDecimal("0.8333"), evaluation.requiredLevelMatchRate());
-        assertEquals(new BigDecimal("49.9980"), evaluation.requiredScore());
-        assertFalse(evaluation.skillMatches().getFirst().requirementSatisfied());
-        assertTrue(evaluation.skillMatches().getLast().requirementSatisfied());
-    }
-
-    @Test
-    void evaluatesCertificationByOwnershipRegardlessOfRequiredLevel() {
-        Map<Long, PostingSkillBundle> candidates = Map.of(
-                100L,
-                bundle(
-                        List.of(certification(12L, 3)),
-                        List.of(),
-                        List.of()
-                )
-        );
-
-        RequiredSkillEvaluation evaluation = filter.filter(
-                candidates,
-                List.of(new UserSkillData(12L, (short) 1, false)),
-                policy
-        ).get(100L);
-
-        assertEquals(new BigDecimal("1.0000"), evaluation.requiredCoverageRate());
-        assertEquals(new BigDecimal("1.0000"), evaluation.requiredLevelMatchRate());
-        assertTrue(evaluation.skillMatches().getFirst().requirementSatisfied());
-    }
-
-    private PostingSkillBundle bundle(
-            List<PostingSkillBundle.PostingSkill> required,
-            List<PostingSkillBundle.PostingSkill> preferred,
-            List<PostingSkillBundle.PostingSkill> related
-    ) {
-        return new PostingSkillBundle(required, preferred, related);
-    }
-
-    private PostingSkillBundle.PostingSkill skill(Long skillId, int requiredLevel) {
-        return new PostingSkillBundle.PostingSkill(
-                skillId,
-                "skill-" + skillId,
-                SkillCategory.TECHNICAL_SKILL,
-                (short) requiredLevel
-        );
-    }
-
-    private PostingSkillBundle.PostingSkill certification(Long skillId, int requiredLevel) {
-        return new PostingSkillBundle.PostingSkill(
-                skillId,
-                "certification-" + skillId,
-                SkillCategory.CERTIFICATION,
-                (short) requiredLevel
+    private RequiredSkillEvaluation evaluation(String coverageRate) {
+        return new RequiredSkillEvaluation(
+                1,
+                0,
+                new BigDecimal(coverageRate),
+                BigDecimal.ZERO.setScale(4),
+                List.of()
         );
     }
 }

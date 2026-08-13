@@ -22,19 +22,19 @@ public class CommonCoverLetterController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
-    @GetMapping("/me")
+    @GetMapping
     public ResponseEntity<CommonCoverLetterResponse> findMine() {
         return ResponseEntity.ok(service.findMine());
     }
 
-    @PutMapping("/me")
+    @PutMapping
     public ResponseEntity<CommonCoverLetterResponse> updateMine(
             @Valid @RequestBody CommonCoverLetterUpsertRequest request
     ) {
         return ResponseEntity.ok(service.update(request));
     }
 
-    @DeleteMapping("/me")
+    @DeleteMapping
     public ResponseEntity<Void> deleteMine() {
         service.deleteMine();
         return ResponseEntity.noContent().build();

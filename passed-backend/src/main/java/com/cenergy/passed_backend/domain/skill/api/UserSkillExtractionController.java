@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users/me/skill-extractions")
+@RequestMapping("/api/v1/skill-extractions")
 public class UserSkillExtractionController {
     private final UserSkillExtractionService extractionService;
 

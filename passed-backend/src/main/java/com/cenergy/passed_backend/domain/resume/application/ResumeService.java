@@ -4,7 +4,7 @@ import com.cenergy.passed_backend.domain.resume.dto.ResumeResponse;
 import com.cenergy.passed_backend.domain.resume.dto.ResumeUpsertRequest;
 import com.cenergy.passed_backend.domain.resume.entity.*;
 import com.cenergy.passed_backend.domain.resume.repository.*;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;

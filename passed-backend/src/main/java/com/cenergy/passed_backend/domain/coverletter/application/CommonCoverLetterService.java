@@ -9,7 +9,7 @@ import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterQuestion;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterQuestionRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterRepository;
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.user.entity.User;
 import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;

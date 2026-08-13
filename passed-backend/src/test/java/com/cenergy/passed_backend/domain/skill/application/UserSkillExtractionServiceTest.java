@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.skill.application;
 
-import com.cenergy.passed_backend.domain.roadmap.application.CurrentUserIdProvider;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.domain.skill.ai.client.UserSkillAiClient;
 import com.cenergy.passed_backend.domain.skill.ai.dto.UserSkillAiResponse;
 import org.junit.jupiter.api.Test;

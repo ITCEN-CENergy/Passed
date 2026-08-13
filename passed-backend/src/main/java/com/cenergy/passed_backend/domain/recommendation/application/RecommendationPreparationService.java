@@ -1,9 +1,10 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.application.model.*;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareResponse;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateResponse;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @Service
 public class RecommendationPreparationService {
+    private final CurrentUserIdProvider currentUserIdProvider;
     private final RecommendationRunStartService runStartService;
     private final RecommendationCandidateSelectionService candidateSelectionService;
     private final RecommendationDetailedEvaluationService detailedEvaluationService;
@@ -21,6 +23,7 @@ public class RecommendationPreparationService {
     private final RecommendationRunFailureService failureService;
 
     public RecommendationPreparationService(
+            CurrentUserIdProvider currentUserIdProvider,
             RecommendationRunStartService runStartService,
             RecommendationCandidateSelectionService candidateSelectionService,
             RecommendationDetailedEvaluationService detailedEvaluationService,
@@ -30,6 +33,7 @@ public class RecommendationPreparationService {
             RecommendationResultPersistenceService persistenceService,
             RecommendationRunFailureService failureService
     ) {
+        this.currentUserIdProvider = currentUserIdProvider;
         this.runStartService = runStartService;
         this.candidateSelectionService = candidateSelectionService;
         this.detailedEvaluationService = detailedEvaluationService;
@@ -40,8 +44,9 @@ public class RecommendationPreparationService {
         this.failureService = failureService;
     }
 
-    public RecommendationPrepareResponse prepare(RecommendationPrepareRequest request) {
-        RecommendationRunContext context = runStartService.start(request);
+    public RecommendationCreateResponse prepare(RecommendationCreateRequest request) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
+        RecommendationRunContext context = runStartService.start(userId, request);
         try {
             RecommendationCandidateSelectionResult selection = candidateSelectionService.select(
                     context.jobRoleIds(),
@@ -62,7 +67,9 @@ public class RecommendationPreparationService {
             persistenceService.complete(
                     context.recommendationRunId(),
                     ranked,
-                    explanations
+                    explanations,
+                    selection.candidatePostingCount(),
+                    selection.requiredQualifiedPostingCount()
             );
             return response(context, selection);
         } catch (RuntimeException exception) {
@@ -75,23 +82,18 @@ public class RecommendationPreparationService {
         }
     }
 
-    private RecommendationPrepareResponse response(
+    private RecommendationCreateResponse response(
             RecommendationRunContext context,
             RecommendationCandidateSelectionResult selection
     ) {
-        return new RecommendationPrepareResponse(
+        return new RecommendationCreateResponse(
                 context.recommendationRunId(),
                 RecommendationRunStatus.COMPLETED,
-                context.policy().getPolicyCode(),
-                context.policy().getVersion(),
-                context.gradeRules().size(),
-                context.userSkills().size(),
-                context.importantSkillCount(),
                 selection.candidatePostingCount(),
                 selection.requiredQualifiedPostingCount(),
-                context.userSkillSnapshotHash(),
                 context.industryId(),
-                context.jobRoleIds()
+                context.jobRoleIds(),
+                context.startedAt()
         );
     }
 }

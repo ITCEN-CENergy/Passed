@@ -73,6 +73,12 @@ public class RecommendationRun {
     @Column(name = "completed_at")
     private OffsetDateTime completedAt;
 
+    @Column(name = "candidate_posting_count")
+    private Integer candidatePostingCount;
+
+    @Column(name = "required_qualified_posting_count")
+    private Integer requiredQualifiedPostingCount;
+
     @Column(name = "failure_message", columnDefinition = "text")
     private String failureMessage;
 
@@ -97,8 +103,14 @@ public class RecommendationRun {
         return run;
     }
 
-    public void complete() {
+    public void complete(int candidatePostingCount, int requiredQualifiedPostingCount) {
         requireProcessing();
+        if (candidatePostingCount < 0 || requiredQualifiedPostingCount < 0
+                || requiredQualifiedPostingCount > candidatePostingCount) {
+            throw new IllegalArgumentException("Recommendation run counts are invalid");
+        }
+        this.candidatePostingCount = candidatePostingCount;
+        this.requiredQualifiedPostingCount = requiredQualifiedPostingCount;
         status = RecommendationRunStatus.COMPLETED;
         completedAt = OffsetDateTime.now();
         failureMessage = null;

@@ -1,16 +1,19 @@
 package com.cenergy.passed_backend.domain.recommendation.application;
 
 import com.cenergy.passed_backend.domain.recommendation.application.model.*;
-import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationPrepareRequest;
+import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationScoringPolicy;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.util.List;
 import java.util.Map;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 class RecommendationPreparationServiceTest {
     private RecommendationRunStartService runStartService;
+    private CurrentUserIdProvider currentUserIdProvider;
     private RecommendationCandidateSelectionService candidateSelectionService;
     private RecommendationDetailedEvaluationService detailedEvaluationService;
     private RecommendationGradeResolver gradeResolver;
@@ -35,6 +39,8 @@ class RecommendationPreparationServiceTest {
 
     @BeforeEach
     void setUp() {
+        currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(2L);
         runStartService = mock(RecommendationRunStartService.class);
         candidateSelectionService = mock(RecommendationCandidateSelectionService.class);
         detailedEvaluationService = mock(RecommendationDetailedEvaluationService.class);
@@ -44,6 +50,7 @@ class RecommendationPreparationServiceTest {
         persistenceService = mock(RecommendationResultPersistenceService.class);
         failureService = mock(RecommendationRunFailureService.class);
         service = new RecommendationPreparationService(
+                currentUserIdProvider,
                 runStartService,
                 candidateSelectionService,
                 detailedEvaluationService,
@@ -57,8 +64,7 @@ class RecommendationPreparationServiceTest {
 
     @Test
     void calculatesExplainsAndPersistsOnlyRankedResultsInOrder() {
-        RecommendationPrepareRequest request = new RecommendationPrepareRequest(
-                2L,
+        RecommendationCreateRequest request = new RecommendationCreateRequest(
                 8L,
                 List.of(239L)
         );
@@ -68,12 +74,16 @@ class RecommendationPreparationServiceTest {
         RecommendationRunContext context = new RecommendationRunContext(
                 10L,
                 policy,
-                List.of(mock(), mock(), mock(), mock()),
+                List.of(
+                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class),
+                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class)
+                ),
                 List.of(new UserSkillData(12L, (short) 3, true)),
                 1,
                 "a".repeat(64),
                 8L,
-                List.of(239L)
+                List.of(239L),
+                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
         );
         RecommendationCandidateSelectionResult selection = new RecommendationCandidateSelectionResult(
                 Map.of(100L, PostingSkillBundle.empty()),
@@ -83,7 +93,7 @@ class RecommendationPreparationServiceTest {
         List<GradedRecommendation> graded = List.of();
         List<RankedRecommendation> ranked = List.of();
         Map<Long, RecommendationExplanation> explanations = Map.of();
-        when(runStartService.start(request)).thenReturn(context);
+        when(runStartService.start(2L, request)).thenReturn(context);
         when(candidateSelectionService.select(context.jobRoleIds(), context.userSkills(), policy))
                 .thenReturn(selection);
         when(detailedEvaluationService.evaluate(selection, context.userSkills(), policy))
@@ -106,18 +116,18 @@ class RecommendationPreparationServiceTest {
                 explanationService,
                 persistenceService
         );
-        order.verify(runStartService).start(request);
+        order.verify(runStartService).start(2L, request);
         order.verify(candidateSelectionService).select(context.jobRoleIds(), context.userSkills(), policy);
         order.verify(detailedEvaluationService).evaluate(selection, context.userSkills(), policy);
         order.verify(gradeResolver).resolveAll(scores, context.gradeRules());
         order.verify(topKSelector).select(graded);
         order.verify(explanationService).generate(ranked);
-        order.verify(persistenceService).complete(10L, ranked, explanations);
+        order.verify(persistenceService).complete(10L, ranked, explanations, 1, 0);
     }
 
     @Test
     void marksStartedRunFailedWhenCalculationThrows() {
-        RecommendationPrepareRequest request = new RecommendationPrepareRequest(2L, 8L, List.of());
+        RecommendationCreateRequest request = new RecommendationCreateRequest(8L, List.of());
         RecommendationScoringPolicy policy = mock(RecommendationScoringPolicy.class);
         RecommendationRunContext context = new RecommendationRunContext(
                 10L,
@@ -127,13 +137,17 @@ class RecommendationPreparationServiceTest {
                 0,
                 "a".repeat(64),
                 8L,
-                List.of()
+                List.of(),
+                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
         );
         RuntimeException failure = new RuntimeException("calculation failed");
-        when(runStartService.start(request)).thenReturn(context);
+        when(runStartService.start(2L, request)).thenReturn(context);
         when(candidateSelectionService.select(any(), any(), same(policy))).thenThrow(failure);
 
-        RuntimeException actual = assertThrows(RuntimeException.class, () -> service.prepare(request));
+        RuntimeException actual = assertThrows(
+                RuntimeException.class,
+                () -> service.prepare(request)
+        );
 
         assertEquals(failure, actual);
         verify(failureService).fail(10L, failure);

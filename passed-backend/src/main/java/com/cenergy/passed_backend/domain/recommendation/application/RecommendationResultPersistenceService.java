@@ -46,7 +46,9 @@ public class RecommendationResultPersistenceService {
     public void complete(
             Long recommendationRunId,
             List<RankedRecommendation> rankedRecommendations,
-            Map<Long, RecommendationExplanation> explanations
+            Map<Long, RecommendationExplanation> explanations,
+            int candidatePostingCount,
+            int requiredQualifiedPostingCount
     ) {
         Objects.requireNonNull(rankedRecommendations, "rankedRecommendations must not be null");
         Objects.requireNonNull(explanations, "explanations must not be null");
@@ -54,7 +56,7 @@ public class RecommendationResultPersistenceService {
         RecommendationRun run = runRepository.findByIdForUpdate(recommendationRunId)
                 .orElseThrow(() -> new IllegalStateException("Recommendation run not found"));
         if (rankedRecommendations.isEmpty()) {
-            run.complete();
+            run.complete(candidatePostingCount, requiredQualifiedPostingCount);
             return;
         }
 
@@ -79,7 +81,7 @@ public class RecommendationResultPersistenceService {
         for (RankedRecommendation ranked : rankedRecommendations) {
             RecommendationExplanation explanation = Objects.requireNonNull(
                     explanations.get(ranked.jobPostingId()),
-                    "Explanation must exi킬t for every selected posting"
+                    "Explanation must exist for every selected posting"
             );
             GradedRecommendation graded = ranked.recommendation();
             RecommendationScoreResult score = graded.score();
@@ -100,9 +102,7 @@ public class RecommendationResultPersistenceService {
                     score.candidateTier(),
                     graded.grade(),
                     ranked.rankOrder(),
-                    explanation.reason(),
-                    explanation.strengths(),
-                    explanation.weaknesses()
+                    explanation.reason()
             );
             recommendationsByPostingId.put(ranked.jobPostingId(), entity);
         }
@@ -120,7 +120,7 @@ public class RecommendationResultPersistenceService {
                 .toList();
         skillDetailRepository.saveAll(details);
         // 추천 결과와 상세 저장이 정상적으로 끝나면 추천 실행 이력의 상태를 완료 상태로 변경
-        run.complete();
+        run.complete(candidatePostingCount, requiredQualifiedPostingCount);
     }
 
     private JobRecommendationSkillDetail toEntity(

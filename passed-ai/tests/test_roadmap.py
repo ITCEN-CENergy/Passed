@@ -114,6 +114,33 @@ async def test_content_generation_runs_per_competency_with_global_concurrency() 
 
 
 @pytest.mark.asyncio
+async def test_three_stage_competency_is_generated_per_stage() -> None:
+    class RecordingGenerator(FakeRoadmapContentGenerator):
+        def __init__(self) -> None:
+            self.stage_sizes: list[int] = []
+
+        async def generate(self, competencies, stages_by_key, resources_by_key):
+            self.stage_sizes.append(len(next(iter(stages_by_key.values()))))
+            return await super().generate(
+                competencies, stages_by_key, resources_by_key
+            )
+
+    generator = RecordingGenerator()
+    request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=0, target_level=3))
+    )
+
+    response = await generate_roadmap(request, generator=generator)
+
+    assert generator.stage_sizes == [1, 1, 1]
+    assert len(response.skills[0].milestones) == 9
+    assert [
+        (item.startLevel, item.targetLevel)
+        for item in response.skills[0].milestones
+    ] == [(0, 1)] * 3 + [(1, 2)] * 3 + [(2, 3)] * 3
+
+
+@pytest.mark.asyncio
 async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> None:
     state = {"generated": False, "searches": 0}
 

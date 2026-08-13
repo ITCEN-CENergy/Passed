@@ -190,7 +190,10 @@ class ModelGeneratedTwoStageRoadmapContent(RoadmapModel):
 
 class GeneratedSkillContent(RoadmapModel):
     roadmapSkillKey: str = Field(min_length=1)
-    stages: list[GeneratedLearningStage] = Field(min_length=1, max_length=2)
+    # A 0 -> 3 competency has three application-owned learning stages. The LLM
+    # still receives at most two stages per call and three-stage skills are
+    # generated through the per-stage path.
+    stages: list[GeneratedLearningStage] = Field(min_length=1, max_length=3)
 
 
 class GeneratedRoadmapContent(RoadmapModel):

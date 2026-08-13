@@ -30,9 +30,9 @@ const Milestone = ({ item, onToggle, busy }) => {
     <div className={styles.milestoneSide}><span className={complete ? styles.done : styles.doing}>{labels[item.status === 'COMPLETED' ? 'COMPLETED_MILESTONE' : item.status] || item.status}</span><small>예상시간 <strong>{fmtHours(item.estimatedMinutes)}</strong></small></div>
     {!!item.learningResources?.length && <div className={styles.resources}>
         <button className={styles.resourceHeading} type="button" aria-expanded={resourcesOpen} onClick={() => setResourcesOpen(value => !value)}><span><strong>추천 학습자료</strong><b>{item.learningResources.length}개</b></span><i aria-hidden="true">{resourcesOpen ? '⌃' : '⌄'}</i></button>
-        {resourcesOpen && <div className={styles.resourceList}>{item.learningResources.map((resource, index) => <article className={styles.resourceCard} key={resource.resourceId}>
+        {resourcesOpen && <div className={styles.resourceList}>{item.learningResources.map((resource) => <article className={styles.resourceCard} key={resource.resourceId}>
           <div className={styles.resourceInfo}>
-            <div><span className={styles.resourceType}>{resource.resourceType || '학습자료'}</span>{index === 0 && <span className={styles.recommended}>추천</span>}</div>
+            <div><span className={styles.resourceType}>{resource.resourceType || '학습자료'}</span></div>
             <h5>{resource.title}</h5>
             {resource.provider && <p>{resource.provider}</p>}
           </div>

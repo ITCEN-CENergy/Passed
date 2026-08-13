@@ -22,7 +22,7 @@ const Milestone = ({ item, onToggle, busy }) => {
   return <article className={styles.milestone}>
     <button className={`${styles.check} ${complete ? styles.checked : ''}`} type="button" disabled={busy} onClick={() => onToggle(item, !complete)} aria-label={`${item.title} ${complete ? '완료 취소' : '완료 처리'}`}>{complete && <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>}</button>
     <div className={styles.milestoneBody}>
-      <div className={styles.meta}>{labels[item.milestoneType] || item.milestoneType}<i />{labels[item.difficulty] || item.difficulty}<i /><b>{item.required ? '필수' : '선택'}</b></div>
+      <div className={styles.meta}>{labels[item.milestoneType] || item.milestoneType}<i />{labels[item.difficulty] || item.difficulty}<i /><b className={item.required ? styles.requiredMilestone : styles.optionalMilestone}>{item.required ? '필수' : '선택'}</b></div>
       <h4>{item.title}</h4><p>{item.description}</p>
       {item.learningObjective && <p className={styles.detail}>학습 목표 · {item.learningObjective}</p>}
       {item.completionCriteria && <p className={styles.detail}>완료 기준 · {item.completionCriteria}</p>}

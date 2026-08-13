@@ -21,3 +21,5 @@
 .milestone>.resources{grid-column:2/-1;width:100%;margin-top:6px}
 
 .summaryTitle .roadmapStatusCOMPLETED{color:#31a148;background:#e8f8e9}
+
+.meta .requiredMilestone{color:#1377e8;background:#e6f2ff}.meta .optionalMilestone{color:#d97706;background:#fff1dc}

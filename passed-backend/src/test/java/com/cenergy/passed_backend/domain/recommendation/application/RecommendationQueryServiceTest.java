@@ -10,6 +10,8 @@ import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationDetail
 import com.cenergy.passed_backend.domain.recommendation.entity.JobRecommendation;
 import com.cenergy.passed_backend.domain.recommendation.entity.JobRecommendationSkillDetail;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRun;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationSkillDetailRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +31,52 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RecommendationQueryServiceTest {
+
+    @Test
+    void restoresLatestPreferenceResultAndLatestJobPostingReportForCurrentUser() {
+        RecommendationRunRepository runRepository = mock(RecommendationRunRepository.class);
+        JobRecommendationRepository recommendationRepository = mock(JobRecommendationRepository.class);
+        JobRecommendationSkillDetailRepository detailRepository =
+                mock(JobRecommendationSkillDetailRepository.class);
+        SkillRepository skillRepository = mock(SkillRepository.class);
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(2L);
+        RecommendationRun run = mock(RecommendationRun.class);
+        when(run.getId()).thenReturn(10L);
+        when(run.getStatus()).thenReturn(RecommendationRunStatus.COMPLETED);
+        when(run.getUserSkillSnapshot()).thenReturn(Map.of("skills", List.of()));
+        when(run.getPreferenceSnapshot()).thenReturn(Map.of(
+                "industryId", 8L,
+                "industryName", "AI·개발·데이터",
+                "jobRoles", List.of(Map.of("jobRoleId", 227L, "jobRoleName", "AI/ML엔지니어"))
+        ));
+        JobRecommendation recommendation = recommendation(posting());
+        when(recommendation.getRecommendationRun()).thenReturn(run);
+        when(runRepository.findLatestCompletedPreferenceRun(2L)).thenReturn(Optional.of(run));
+        when(recommendationRepository.findAllByRecommendationRunIdOrderByRankOrderAsc(10L))
+                .thenReturn(List.of(recommendation));
+        when(recommendationRepository
+                .findFirstByJobPostingIdAndRecommendationRunUserIdOrderByRecommendationRunStartedAtDescIdDesc(
+                        200L,
+                        2L
+                )).thenReturn(Optional.of(recommendation));
+        when(detailRepository.findAllByJobRecommendationIdOrderByIdAsc(100L))
+                .thenReturn(List.of());
+        RecommendationQueryService service = new RecommendationQueryService(
+                currentUserIdProvider,
+                runRepository, recommendationRepository, detailRepository, skillRepository,
+                new RecommendationSkillHighlightSelector()
+        );
+
+        var latestResult = service.getLatestPreferenceResult().orElseThrow();
+        var latestDetail = service.getLatestDetailForJobPosting(200L).orElseThrow();
+
+        assertEquals(10L, latestResult.run().runId());
+        assertEquals(8L, latestResult.run().preference().industryId());
+        assertEquals(1, latestResult.recommendations().size());
+        assertEquals(10L, latestDetail.runId());
+        assertEquals(100L, latestDetail.jobRecommendationId());
+    }
 
     @Test
     void returnsEverySkillTypeAsASeparateGroupIncludingEmptyGroups() {

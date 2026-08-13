@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,6 +77,28 @@ class UserJobPreferenceServiceTest {
     }
 
     @Test
+    void returnsCurrentUsersSavedIndustryAndJobRoles() {
+        Industry industry = industry(8L, "AI·개발·데이터");
+        JobRole second = jobRole(239L, "AI서비스개발자", industry);
+        JobRole first = jobRole(227L, "AI/ML엔지니어", industry);
+        User user = mock(User.class);
+        OffsetDateTime updatedAt = OffsetDateTime.parse("2026-08-11T12:00:00+09:00");
+        when(userRepository.findById(257L)).thenReturn(Optional.of(user));
+        when(user.getId()).thenReturn(257L);
+        when(user.getDesiredIndustry()).thenReturn(industry);
+        when(user.getDesiredJobRoles()).thenReturn(Set.of(second, first));
+        when(user.getUpdatedAt()).thenReturn(updatedAt);
+
+        var response = service.findCurrent();
+
+        assertEquals(8L, response.industry().id());
+        assertEquals(List.of(227L, 239L), response.desiredJobs().stream()
+                .map(jobRole -> jobRole.id())
+                .toList());
+        assertEquals(updatedAt, response.updatedAt());
+    }
+
+    @Test
     void rejectsJobRoleFromAnotherIndustry() {
         Industry selectedIndustry = industry(8L, "AI·개발·데이터");
         Industry otherIndustry = industry(7L, "IT·정보통신");
@@ -113,9 +136,10 @@ class UserJobPreferenceServiceTest {
     void returnsIndustryAndJobRoleCatalogsInRepositoryOrder() {
         Industry firstIndustry = industry(1L, "기획·전략");
         Industry secondIndustry = industry(8L, "AI·개발·데이터");
+        Industry leakedTestIndustry = industry(99L, "concurrency-industry-123456");
         JobRole role = jobRole(227L, "AI/ML엔지니어", secondIndustry);
         when(industryRepository.findAllByOrderByIdAsc())
-                .thenReturn(List.of(firstIndustry, secondIndustry));
+                .thenReturn(List.of(firstIndustry, secondIndustry, leakedTestIndustry));
         when(industryRepository.findById(8L)).thenReturn(Optional.of(secondIndustry));
         when(jobRoleRepository.findAllByIndustryIdOrderByIdAsc(8L)).thenReturn(List.of(role));
 

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,13 +59,19 @@ class RecommendationControllerTest {
                 queryService
         );
         RecommendationHistoryRequest historyRequest = new RecommendationHistoryRequest(0, 10);
+        when(queryService.getLatestPreferenceResult()).thenReturn(Optional.empty());
+        when(queryService.getLatestDetailForJobPosting(200L)).thenReturn(Optional.empty());
 
         controller.getHistory(historyRequest);
+        controller.getLatestPreferenceResult();
+        controller.getLatestJobPostingDetail(200L);
         controller.getResult(10L);
         controller.getDetail(10L, 100L);
         controller.getUserSkills(10L);
 
         verify(queryService).getHistory(historyRequest);
+        verify(queryService).getLatestPreferenceResult();
+        verify(queryService).getLatestDetailForJobPosting(200L);
         verify(queryService).getResult(10L);
         verify(queryService).getDetail(10L, 100L);
         verify(queryService).getUserSkills(10L);

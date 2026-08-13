@@ -62,7 +62,10 @@ function Invoke-PsqlScalar {
 }
 
 function Invoke-Flyway {
-    param([string]$Target)
+    param(
+        [string]$Target,
+        [switch]$OutOfOrder
+    )
 
     $arguments = @(
         "run", "--rm",
@@ -77,6 +80,9 @@ function Invoke-Flyway {
     )
     if ($Target) {
         $arguments += "-target=$Target"
+    }
+    if ($OutOfOrder) {
+        $arguments += "-outOfOrder=true"
     }
     $arguments += "migrate"
 
@@ -164,7 +170,9 @@ try {
         Write-Host "Reference data and job postings are already initialized."
     }
 
-    Invoke-Flyway
+    # Feature migrations can reach production after a newer version was applied.
+    # Apply those pending migrations here; normal application startup stays strict.
+    Invoke-Flyway -OutOfOrder
 
     $referenceCounts = Invoke-PsqlScalar (
         "SELECT " +

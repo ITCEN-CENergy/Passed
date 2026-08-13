@@ -5,6 +5,7 @@ DB/OpenAI API 없이 실행 가능한 결정적 로직만 검증한다.
 
 from __future__ import annotations
 
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -43,11 +44,23 @@ class _FakeEnc:
 
 import job_posting_pipeline.chunker as _chunker_mod  # noqa: E402
 import job_posting_pipeline.chunk_sync as _chunk_sync_mod  # noqa: E402
+import job_posting_pipeline.config as _config_mod  # noqa: E402
 import job_posting_pipeline.csv_loader as _csv_loader_mod  # noqa: E402
 import job_posting_pipeline.embedding_worker as _embedding_worker_mod  # noqa: E402
 import job_posting_pipeline.queries as _queries_mod  # noqa: E402
 
 _chunker_mod._enc = _FakeEnc()  # type: ignore[attr-defined]
+
+
+def test_project_root_falls_back_to_working_directory_for_loader_image(
+    tmp_path, monkeypatch
+):
+    app_directory = tmp_path / "app"
+    module_file = app_directory / "job_posting_pipeline" / "config.py"
+    app_directory.mkdir()
+    monkeypatch.chdir(app_directory)
+
+    assert _config_mod._resolve_project_root(module_file) == app_directory
 
 
 # --- 임베딩 API/작업자 ---

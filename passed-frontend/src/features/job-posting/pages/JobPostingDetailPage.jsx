@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { PageLoading } from '../../../common/components/index.js'
 import { getJobPosting } from '../api/index.js'
 import { getJobPostingImage } from '../utils/jobPostingImages.js'
 import { JobPostingDetailContent, PageState } from '../components/index.js'
@@ -62,12 +63,12 @@ const JobPostingDetailPage = () => {
     }
   }
 
-  if ((!jobPosting || checkingHistory) && !error) return <div className={styles.detailShell}><PageState loading title="공고 정보를 불러오고 있어요" /></div>
+  if ((!jobPosting || checkingHistory) && !error) return <div className={styles.detailShell}><PageLoading title="공고 정보를 불러오고 있어요" description="공고 내용과 매칭 이력을 확인하고 있어요." /></div>
   if (!jobPosting) return <div className={styles.detailShell}><PageState title="공고를 불러오지 못했습니다" description={error} /></div>
+  if (matching) return <div className={styles.detailShell}><PageLoading title="공고와 내 스킬을 매칭하고 있어요" description="보유 역량과 공고의 요구 스킬을 분석하고 있어요." /></div>
 
   return (
     <div className={styles.detailShell}>
-      <button className={styles.backButton} type="button" onClick={() => navigate(-1)}>← 공고 목록으로</button>
       {error && <p className={styles.inlineError} role="alert">{error}</p>}
       <JobPostingDetailContent
         jobPosting={jobPosting}

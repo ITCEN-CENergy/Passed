@@ -26,3 +26,9 @@ export const getJobPostingImage = (jobPostingId, listIndex = 0) => {
   const fileIndex = Math.abs(seed + folderIndex * 5) % COMPANY_IMAGES[folderIndex].length
   return `/company_img${folderIndex + 1}/${COMPANY_IMAGES[folderIndex][fileIndex]}`
 }
+
+export const getUniqueJobPostingImages = (jobPostings = []) => jobPostings.map((jobPosting, index) => {
+  const folderIndex = index % COMPANY_IMAGES.length
+  const fileIndex = numericSeed(jobPosting.jobPostingId) % COMPANY_IMAGES[folderIndex].length
+  return `/company_img${folderIndex + 1}/${COMPANY_IMAGES[folderIndex][fileIndex]}`
+})

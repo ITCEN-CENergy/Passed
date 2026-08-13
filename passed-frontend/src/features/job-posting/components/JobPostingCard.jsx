@@ -6,8 +6,9 @@ const JobPostingCard = ({ jobPosting, image, to, recommendation }) => (
     <div className={styles.imageWrap}>
       <img src={image} alt="" />
       {recommendation?.rankOrder && (
-        <span className={styles.rank}>추천 {recommendation.rankOrder}위</span>
+        <span className={styles.rank}>{recommendation.rankOrder}위</span>
       )}
+      {!recommendation && jobPosting.matched && <span className={styles.matchedBadge}>✓ 매칭 완료</span>}
     </div>
     <div className={styles.content}>
       <p className={styles.company}>{jobPosting.companyName}</p>
@@ -19,8 +20,8 @@ const JobPostingCard = ({ jobPosting, image, to, recommendation }) => (
       <span className={styles.industry}>{jobPosting.industryName || '산업 정보 없음'}</span>
       {recommendation && (
         <div className={styles.scoreRow}>
-          <strong>{Math.round(Number(recommendation.totalScore ?? 0) * 100) / 100}점</strong>
-          <span>{recommendation.gradeLabel}</span>
+          <strong>{recommendation.gradeLabel}</strong>
+          <span>통합 점수 <b>{Math.round(Number(recommendation.totalScore ?? 0))}점</b></span>
         </div>
       )}
     </div>

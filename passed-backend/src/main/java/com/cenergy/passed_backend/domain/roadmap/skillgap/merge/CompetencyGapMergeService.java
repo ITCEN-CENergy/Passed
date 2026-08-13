@@ -82,7 +82,14 @@ public class CompetencyGapMergeService {
         }
 
         int currentLevel = sources.stream().mapToInt(CompetencyGapSource::currentLevel).max().orElseThrow();
-        int targetLevel = sources.stream().mapToInt(CompetencyGapSource::targetLevel).max().orElseThrow();
+        int requestedTargetLevel = sources.stream()
+                .mapToInt(CompetencyGapSource::targetLevel)
+                .max()
+                .orElseThrow();
+        // A user can already exceed a posting's required level. Roadmap generation
+        // represents that case as reinforcement at the user's current level, while
+        // the AI contract requires currentLevel <= targetLevel.
+        int targetLevel = Math.max(requestedTargetLevel, currentLevel);
         Set<Integer> currentLevels = sources.stream()
                 .map(CompetencyGapSource::currentLevel).collect(Collectors.toSet());
         if (currentLevels.size() > 1) {

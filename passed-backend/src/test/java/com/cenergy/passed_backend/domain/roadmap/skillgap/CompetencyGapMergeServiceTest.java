@@ -117,6 +117,9 @@ class CompetencyGapMergeServiceTest {
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting("gapLevel").containsOnly(0);
+        assertThat(byId(result, 2L).targetLevel()).isEqualTo(4);
+        assertThat(byId(result, 2L).sources()).singleElement()
+                .extracting("targetLevel").isEqualTo(2);
         assertThat(result).extracting("standardCompetencyName").containsExactly("Docker", "AWS");
         assertThatThrownBy(() -> result.add(null)).isInstanceOf(UnsupportedOperationException.class);
         assertThat(service.merge(List.of())).isEmpty();

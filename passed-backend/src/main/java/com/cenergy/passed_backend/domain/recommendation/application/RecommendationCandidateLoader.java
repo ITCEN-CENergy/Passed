@@ -74,6 +74,21 @@ public class RecommendationCandidateLoader {
         return Collections.unmodifiableMap(result);
     }
 
+    public PostingSkillBundle loadByJobPostingId(Long jobPostingId) {
+
+        // 후보 공고 id로 공고와 공고의 전체 스킬을 묶음
+        Map<Long, Map<Long, NormalizedPostingSkill>> skillsByPosting = new LinkedHashMap<>();
+        skillsByPosting.put(jobPostingId, new LinkedHashMap<>());
+
+
+        // 공고의 스킬별로 NormalizedPostingSkill로 가공해서 Map<Long, NormalizedPostingSkill> 생성
+        List<JobPostingSkill> batch = jobPostingSkillRepository.findAllByJobPostingId(jobPostingId);
+        // JobPostingSkill별로 NormalizedPostingSkill로 처리함
+        mergeBatch(skillsByPosting, batch);
+
+        return toBundle(skillsByPosting.get(jobPostingId).values());
+    }
+
     private List<Long> normalizeJobRoleIds(Collection<Long> jobRoleIds) {
         if (jobRoleIds == null) {
             throw new IllegalArgumentException("jobRoleIds must not be null");

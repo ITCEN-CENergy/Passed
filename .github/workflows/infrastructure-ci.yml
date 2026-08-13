@@ -1,0 +1,45 @@
+name: Infrastructure CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+    paths:
+      - "compose.yaml"
+      - "passed-frontend/Dockerfile*"
+      - "passed-backend/Dockerfile*"
+      - "passed-ai/Dockerfile*"
+      - "infra/**"
+      - ".github/workflows/infrastructure-ci.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-compose:
+    name: Validate Compose configurations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      JWT_SECRET: ci-only-development-secret-that-is-long-enough
+      IMAGE_TAG: ci-validation
+      TAILSCALE_IP: 127.0.0.1
+      POSTGRES_DB: passed_ci
+      POSTGRES_USER: passed_ci
+      POSTGRES_PASSWORD: ci-only-password
+      OPENAI_API_KEY: ci-only-placeholder
+      GRAFANA_ADMIN_USER: admin
+      GRAFANA_ADMIN_PASSWORD: ci-only-password
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate development Compose
+        run: docker compose -f compose.yaml config --quiet
+
+      - name: Validate production Compose
+        run: docker compose -f infra/prod/compose.prod.yml config --quiet

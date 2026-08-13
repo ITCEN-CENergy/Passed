@@ -1,4 +1,5 @@
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+import { csrfRequest, httpClient } from '../../../common/api/index.js'
+
 const recommendationPath = '/api/v1/users/recommendations'
 
 export class RecommendationApiError extends Error {
@@ -10,24 +11,7 @@ export class RecommendationApiError extends Error {
   }
 }
 
-async function request(path, options = {}) {
-  const { headers, ...requestOptions } = options
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    ...requestOptions,
-    headers: { Accept: 'application/json', ...headers },
-  })
-  const body = response.status === 204
-    ? undefined
-    : await response.json().catch(() => undefined)
-
-  if (!response.ok) {
-    throw new RecommendationApiError(
-      body?.message ?? '추천 요청을 처리하지 못했습니다.',
-      { code: body?.code, status: response.status },
-    )
-  }
-  return body
-}
+const request = (path, options = {}) => httpClient(path, options)
 
 function query(params) {
   const values = new URLSearchParams()
@@ -54,11 +38,18 @@ function query(params) {
  * @returns {Promise<{runId:number, status:RecommendationRunStatus, candidatePostingCount:number, requiredQualifiedPostingCount:number, industryId:number, jobRoleIds:number[], startedAt:string}>}
  */
 export const createRecommendationRun = (payload, { signal } = {}) =>
-  request(`${recommendationPath}/runs`, {
+  csrfRequest(`${recommendationPath}/runs`, {
     method: 'POST',
     signal,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: payload,
+  })
+
+/** @param {number} jobPostingId @param {{signal?:AbortSignal}} options */
+export const createSingleRecommendation = (jobPostingId, { signal } = {}) =>
+  csrfRequest(`${recommendationPath}/run`, {
+    method: 'POST',
+    signal,
+    body: { jobPostingId },
   })
 
 /**
@@ -75,6 +66,31 @@ export const getRecommendationResult = (
   `${recommendationPath}/${encodeURIComponent(recommendationRunId)}`,
   { signal },
 )
+
+export const getLatestRecommendationResult = ({ signal } = {}) =>
+  request(`${recommendationPath}/latest`, { signal })
+
+export const getLatestJobPostingRecommendation = (jobPostingId, { signal } = {}) =>
+  request(
+    `${recommendationPath}/job-postings/${encodeURIComponent(jobPostingId)}/latest`,
+    { signal },
+  )
+
+export const getIndustries = ({ signal } = {}) =>
+  request('/api/v1/users/preferences/industries', { signal })
+
+export const getJobRoles = (industryId, { signal } = {}) =>
+  request(`/api/v1/users/preferences/industries/${encodeURIComponent(industryId)}/job-roles`, { signal })
+
+export const getUserJobPreference = ({ signal } = {}) =>
+  request('/api/v1/users/preferences/jobs', { signal })
+
+export const updateUserJobPreference = (payload, { signal } = {}) =>
+  csrfRequest('/api/v1/users/preferences/jobs', {
+    method: 'POST',
+    signal,
+    body: payload,
+  })
 
 /**
  * report.skillGroups는 REQUIRED, PREFERRED, RELATED 세 타입을 항상 모두 포함한다.

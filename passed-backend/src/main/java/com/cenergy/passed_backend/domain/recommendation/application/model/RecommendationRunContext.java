@@ -15,8 +15,6 @@ public record RecommendationRunContext(
         List<UserSkillData> userSkills,
         int importantSkillCount,
         String userSkillSnapshotHash,
-        Long industryId,
-        List<Long> jobRoleIds,
         OffsetDateTime startedAt
 ) {
     public RecommendationRunContext {
@@ -25,8 +23,6 @@ public record RecommendationRunContext(
         gradeRules = List.copyOf(Objects.requireNonNull(gradeRules, "gradeRules must not be null"));
         userSkills = List.copyOf(Objects.requireNonNull(userSkills, "userSkills must not be null"));
         Objects.requireNonNull(userSkillSnapshotHash, "userSkillSnapshotHash must not be null");
-        Objects.requireNonNull(industryId, "industryId must not be null");
-        jobRoleIds = List.copyOf(Objects.requireNonNull(jobRoleIds, "jobRoleIds must not be null"));
         Objects.requireNonNull(startedAt, "startedAt must not be null");
     }
 }

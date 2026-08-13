@@ -50,9 +50,17 @@ class UserJobPreferenceControllerTest {
         );
         when(service.findIndustries()).thenReturn(industries);
         when(service.findJobRoles(8L)).thenReturn(jobRoles);
+        UserJobPreferenceResponse preference = new UserJobPreferenceResponse(
+                257L,
+                new IndustryResponse(8L, "AI·개발·데이터"),
+                List.of(new JobRoleResponse(227L, "AI/ML엔지니어")),
+                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
+        );
+        when(service.findCurrent()).thenReturn(preference);
         UserJobPreferenceController controller = new UserJobPreferenceController(service);
 
         assertEquals(industries, controller.findIndustries().getBody());
         assertEquals(jobRoles, controller.findJobRoles(8L).getBody());
+        assertEquals(preference, controller.findCurrent().getBody());
     }
 }

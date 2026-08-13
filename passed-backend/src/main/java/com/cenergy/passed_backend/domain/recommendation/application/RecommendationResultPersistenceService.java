@@ -52,6 +52,45 @@ public class RecommendationResultPersistenceService {
     ) {
         Objects.requireNonNull(rankedRecommendations, "rankedRecommendations must not be null");
         Objects.requireNonNull(explanations, "explanations must not be null");
+        completeInternal(
+                recommendationRunId,
+                rankedRecommendations,
+                explanations,
+                candidatePostingCount,
+                requiredQualifiedPostingCount
+        );
+    }
+
+    @Transactional
+    public void complete(
+            Long recommendationRunId,
+            GradedRecommendation recommendation,
+            RecommendationExplanation explanation
+    ) {
+        Objects.requireNonNull(recommendation, "recommendation must not be null");
+        Objects.requireNonNull(explanation, "explanation must not be null");
+        Long jobPostingId = recommendation.score().jobPostingId();
+        if (!jobPostingId.equals(explanation.jobPostingId())) {
+            throw new IllegalArgumentException(
+                    "Recommendation and explanation must reference the same job posting"
+            );
+        }
+        completeInternal(
+                recommendationRunId,
+                List.of(new RankedRecommendation(recommendation, 1)),
+                Map.of(jobPostingId, explanation),
+                1,
+                1
+        );
+    }
+
+    private void completeInternal(
+            Long recommendationRunId,
+            List<RankedRecommendation> rankedRecommendations,
+            Map<Long, RecommendationExplanation> explanations,
+            int candidatePostingCount,
+            int requiredQualifiedPostingCount
+    ) {
         // 추천 실행 이력을 비관적 락으로 조회하여 동일 추천 실행에 대한 동시 완료 처리를 방지
         RecommendationRun run = runRepository.findByIdForUpdate(recommendationRunId)
                 .orElseThrow(() -> new IllegalStateException("Recommendation run not found"));

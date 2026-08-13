@@ -96,6 +96,7 @@ class Milestone(RoadmapModel):
     difficulty: Difficulty
     estimatedMinutes: int = Field(gt=0)
     learningOrder: int = Field(gt=0)
+    required: bool = True
     learningResources: list["LearningResource"] = Field(default_factory=list)
 
 
@@ -139,6 +140,7 @@ class GeneratedMilestoneContent(RoadmapModel):
     milestoneType: MilestoneType
     difficulty: Difficulty
     estimatedMinutes: int = Field(ge=30, le=2400)
+    required: bool = True
     resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
 
 
@@ -214,7 +216,7 @@ class ReplanGroup(RoadmapModel):
     standardCompetencyId: int = Field(gt=0)
     skillName: str = Field(min_length=1)
     category: CompetencyCategory
-    currentLevel: int = Field(ge=1, le=3)
+    currentLevel: int = Field(ge=0, le=3)
     targetLevel: int = Field(ge=1, le=3)
     assignedEstimatedMinutes: int = Field(ge=30)
     sourceMilestones: list[ReplanSourceMilestone] = Field(min_length=1)

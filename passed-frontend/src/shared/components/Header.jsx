@@ -27,7 +27,8 @@ const Header = () => {
 
         <nav className={styles.navigation} aria-label="주요 메뉴">
           <div className={styles.serviceLinks}>
-            <Link to="/roadmap">학습로드맵</Link>
+            <NavLink to="/job-postings">채용공고</NavLink>
+            <NavLink className={({ isActive }) => isActive ? styles.activeServiceLink : undefined} to="/roadmap">학습로드맵</NavLink>
             <Link to="/cover-letter-list">자소서 첨삭</Link>
           </div>
           <div className={styles.authLinks}>

@@ -37,6 +37,15 @@ public class RecommendationSnapshotFactory {
                 preferenceSnapshot
         );
     }
+    public UserSkillSnapshotResult createUserSkillSnapshot(
+            List<UserSkillData> sortedUserSkills
+    ) {
+        Map<String, Object> userSkillSnapshot = userSkillSnapshot(sortedUserSkills);
+        return new UserSkillSnapshotResult(
+                userSkillSnapshot,
+                sha256(userSkillSnapshot)
+        );
+    }
 
     private Map<String, Object> userSkillSnapshot(List<UserSkillData> sortedUserSkills) {
         List<Map<String, Object>> skills = sortedUserSkills.stream()
@@ -103,6 +112,11 @@ public class RecommendationSnapshotFactory {
             Map<String, Object> userSkillSnapshot,
             String userSkillSnapshotHash,
             Map<String, Object> preferenceSnapshot
+    ) {
+    }
+    public record UserSkillSnapshotResult(
+            Map<String, Object> userSkillSnapshot,
+            String userSkillSnapshotHash
     ) {
     }
 }

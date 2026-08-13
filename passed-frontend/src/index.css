@@ -1,13 +1,13 @@
 :root {
-  --color-page: #f5f6f8;
+  --color-page: #f7f9fc;
   --color-surface: #ffffff;
-  --color-text: #171b24;
-  --color-muted: #667085;
-  --color-border: #e2e6eb;
-  --color-primary: #1d6fe9;
-  --color-primary-hover: #165ec9;
-  --color-dark: #172033;
-  --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.06);
+  --color-text: #182238;
+  --color-muted: #6b7890;
+  --color-border: #dce4ef;
+  --color-primary: #146bff;
+  --color-primary-hover: #0f5ce0;
+  --color-dark: #07183d;
+  --shadow-card: 0 4px 16px rgba(7, 24, 61, 0.06);
   --font-sans: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
 
   font-family: var(--font-sans);

@@ -60,6 +60,42 @@
   color: #0867f2;
 }
 
+.serviceLinks a {
+  position: relative;
+  display: inline-flex;
+  min-height: 88px;
+  align-items: center;
+}
+
+.serviceLinks a[aria-current='page'] {
+  color: #146bff;
+}
+
+.serviceLinks a[aria-current='page']::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #146bff;
+}
+
+.navigation .activeServiceLink {
+  position: relative;
+  color: #0867f2;
+}
+
+.navigation .activeServiceLink::after {
+  position: absolute;
+  right: 0;
+  bottom: -31px;
+  left: 0;
+  height: 3px;
+  background: #0867f2;
+  border-radius: 3px 3px 0 0;
+  content: '';
+}
+
 .navigation .loginLink,
 .navigation .signupLink,
 .logoutButton {

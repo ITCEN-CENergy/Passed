@@ -21,6 +21,10 @@ Success criteria:
 - Never merge, omit, or add learning stages. If the input has two requiredLearningStages, the output stages array must contain exactly two items.
 - When a learning stage has the same start and target level, create reinforcement and applied-practice milestones at that level instead of introductory repetition.
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
+- Mark the minimum set of milestones needed to reach the stage target as required=true.
+- Mark enrichment, extra repetition, or optional deep-dive milestones as required=false.
+- Every learning stage must contain at least one required milestone.
+- A stage may contain no optional milestones when every generated milestone is necessary to reach the target level. Never add an optional milestone only to satisfy a quota.
 - The application recommends learning resources after milestone generation. Always return an empty resourceRecommendations list.
 - For a certification, use milestoneType CERTIFICATION.
 - Never use milestoneType CERTIFICATION for a non-certification skill.

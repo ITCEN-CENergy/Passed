@@ -73,15 +73,25 @@ public record RoadmapGenerationResult(String title, List<Skill> skills) {
                             String completionCriteria, int startLevel, int targetLevel,
                             MilestoneType milestoneType, Difficulty difficulty,
                             int estimatedMinutes, int learningOrder,
+                            boolean required,
                             List<LearningResource> learningResources) {
         public Milestone {
             learningResources = List.copyOf(learningResources);
         }
 
+        public Milestone(String title, String description, String learningObjective,
+                         String completionCriteria, int startLevel, int targetLevel,
+                         MilestoneType milestoneType, Difficulty difficulty,
+                         int estimatedMinutes, int learningOrder,
+                         List<LearningResource> learningResources) {
+            this(title, description, learningObjective, completionCriteria, startLevel, targetLevel,
+                    milestoneType, difficulty, estimatedMinutes, learningOrder, true, learningResources);
+        }
+
         private static Milestone from(ValidatedRoadmapMilestone value) {
             return new Milestone(value.title(), value.description(), value.learningObjective(),
                     value.completionCriteria(), value.startLevel(), value.targetLevel(), value.milestoneType(),
-                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(),
+                    value.difficulty(), value.estimatedMinutes(), value.learningOrder(), value.required(),
                     value.learningResources().stream().map(LearningResource::from).toList());
         }
     }

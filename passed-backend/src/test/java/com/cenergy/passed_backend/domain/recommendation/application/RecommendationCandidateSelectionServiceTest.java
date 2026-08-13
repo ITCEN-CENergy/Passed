@@ -20,14 +20,20 @@ import static org.mockito.Mockito.when;
 
 class RecommendationCandidateSelectionServiceTest {
     private RecommendationCandidateLoader candidateLoader;
+    private RequiredSkillEvaluator requiredSkillEvaluator;
     private RequiredSkillFilter requiredSkillFilter;
     private RecommendationCandidateSelectionService service;
 
     @BeforeEach
     void setUp() {
         candidateLoader = mock(RecommendationCandidateLoader.class);
+        requiredSkillEvaluator = mock(RequiredSkillEvaluator.class);
         requiredSkillFilter = mock(RequiredSkillFilter.class);
-        service = new RecommendationCandidateSelectionService(candidateLoader, requiredSkillFilter);
+        service = new RecommendationCandidateSelectionService(
+                candidateLoader,
+                requiredSkillEvaluator,
+                requiredSkillFilter
+        );
     }
 
     @Test
@@ -43,7 +49,12 @@ class RecommendationCandidateSelectionServiceTest {
                 100L, mock(RequiredSkillEvaluation.class)
         );
         when(candidateLoader.loadByJobRoleIds(jobRoleIds)).thenReturn(candidates);
-        when(requiredSkillFilter.filter(candidates, userSkills, policy)).thenReturn(qualified);
+        Map<Long, RequiredSkillEvaluation> evaluations = Map.of(
+                100L, mock(RequiredSkillEvaluation.class),
+                200L, mock(RequiredSkillEvaluation.class)
+        );
+        when(requiredSkillEvaluator.evaluateAll(candidates, userSkills)).thenReturn(evaluations);
+        when(requiredSkillFilter.filter(evaluations, policy)).thenReturn(qualified);
 
         RecommendationCandidateSelectionResult result = service.select(
                 jobRoleIds,
@@ -53,9 +64,15 @@ class RecommendationCandidateSelectionServiceTest {
 
         assertEquals(2, result.candidatePostingCount());
         assertEquals(1, result.requiredQualifiedPostingCount());
-        InOrder executionOrder = inOrder(candidateLoader, requiredSkillFilter);
+        InOrder executionOrder = inOrder(
+                candidateLoader,
+                requiredSkillEvaluator,
+                requiredSkillFilter
+        );
         executionOrder.verify(candidateLoader).loadByJobRoleIds(jobRoleIds);
+        executionOrder.verify(requiredSkillEvaluator)
+                .evaluateAll(same(candidates), same(userSkills));
         executionOrder.verify(requiredSkillFilter)
-                .filter(same(candidates), same(userSkills), same(policy));
+                .filter(same(evaluations), same(policy));
     }
 }

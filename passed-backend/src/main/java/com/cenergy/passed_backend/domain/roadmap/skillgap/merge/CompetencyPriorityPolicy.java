@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class CompetencyPriorityPolicy {
@@ -15,12 +18,16 @@ public class CompetencyPriorityPolicy {
         return weightOf(requirementType) * 100 + gapLevel * 10 + frequency;
     }
 
-    public RequirementType strongestOf(Collection<RequirementType> requirementTypes) {
+    public RequirementType majorityOf(Collection<RequirementType> requirementTypes) {
         if (requirementTypes == null || requirementTypes.isEmpty()) {
             throw invalid("requirementTypes must not be empty");
         }
-        return requirementTypes.stream()
-                .max(Comparator.comparingInt(this::weightOf))
+        Map<RequirementType, Long> counts = requirementTypes.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        return counts.entrySet().stream()
+                .max(Comparator.<Map.Entry<RequirementType, Long>>comparingLong(Map.Entry::getValue)
+                        .thenComparingInt(entry -> weightOf(entry.getKey())))
+                .map(Map.Entry::getKey)
                 .orElseThrow(() -> invalid("requirementTypes must not be empty"));
     }
 

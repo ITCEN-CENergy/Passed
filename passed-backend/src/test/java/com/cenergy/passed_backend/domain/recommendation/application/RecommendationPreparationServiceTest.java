@@ -71,19 +71,21 @@ class RecommendationPreparationServiceTest {
         RecommendationScoringPolicy policy = mock(RecommendationScoringPolicy.class);
         when(policy.getPolicyCode()).thenReturn("SKILL_MATCH");
         when(policy.getVersion()).thenReturn("v1");
-        RecommendationRunContext context = new RecommendationRunContext(
-                10L,
-                policy,
-                List.of(
-                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class),
-                        mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class)
+        PreferenceRecommendationRunContext context = new PreferenceRecommendationRunContext(
+                new RecommendationRunContext(
+                        10L,
+                        policy,
+                        List.of(
+                                mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class),
+                                mock(RecommendationGradeRule.class), mock(RecommendationGradeRule.class)
+                        ),
+                        List.of(new UserSkillData(12L, (short) 3, true)),
+                        1,
+                        "a".repeat(64),
+                        OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
                 ),
-                List.of(new UserSkillData(12L, (short) 3, true)),
-                1,
-                "a".repeat(64),
                 8L,
-                List.of(239L),
-                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
+                List.of(239L)
         );
         RecommendationCandidateSelectionResult selection = new RecommendationCandidateSelectionResult(
                 Map.of(100L, PostingSkillBundle.empty()),
@@ -93,14 +95,14 @@ class RecommendationPreparationServiceTest {
         List<GradedRecommendation> graded = List.of();
         List<RankedRecommendation> ranked = List.of();
         Map<Long, RecommendationExplanation> explanations = Map.of();
-        when(runStartService.start(2L, request)).thenReturn(context);
-        when(candidateSelectionService.select(context.jobRoleIds(), context.userSkills(), policy))
+        when(runStartService.startForPreference(2L, request)).thenReturn(context);
+        when(candidateSelectionService.select(context.jobRoleIds(), context.run().userSkills(), policy))
                 .thenReturn(selection);
-        when(detailedEvaluationService.evaluate(selection, context.userSkills(), policy))
+        when(detailedEvaluationService.evaluateAll(selection, context.run().userSkills(), policy))
                 .thenReturn(scores);
-        when(gradeResolver.resolveAll(scores, context.gradeRules())).thenReturn(graded);
+        when(gradeResolver.resolveAll(scores, context.run().gradeRules())).thenReturn(graded);
         when(topKSelector.select(graded)).thenReturn(ranked);
-        when(explanationService.generate(ranked)).thenReturn(explanations);
+        when(explanationService.generateAll(ranked)).thenReturn(explanations);
 
         var response = service.prepare(request);
 
@@ -116,12 +118,12 @@ class RecommendationPreparationServiceTest {
                 explanationService,
                 persistenceService
         );
-        order.verify(runStartService).start(2L, request);
-        order.verify(candidateSelectionService).select(context.jobRoleIds(), context.userSkills(), policy);
-        order.verify(detailedEvaluationService).evaluate(selection, context.userSkills(), policy);
-        order.verify(gradeResolver).resolveAll(scores, context.gradeRules());
+        order.verify(runStartService).startForPreference(2L, request);
+        order.verify(candidateSelectionService).select(context.jobRoleIds(), context.run().userSkills(), policy);
+        order.verify(detailedEvaluationService).evaluateAll(selection, context.run().userSkills(), policy);
+        order.verify(gradeResolver).resolveAll(scores, context.run().gradeRules());
         order.verify(topKSelector).select(graded);
-        order.verify(explanationService).generate(ranked);
+        order.verify(explanationService).generateAll(ranked);
         order.verify(persistenceService).complete(10L, ranked, explanations, 1, 0);
     }
 
@@ -129,19 +131,21 @@ class RecommendationPreparationServiceTest {
     void marksStartedRunFailedWhenCalculationThrows() {
         RecommendationCreateRequest request = new RecommendationCreateRequest(8L, List.of());
         RecommendationScoringPolicy policy = mock(RecommendationScoringPolicy.class);
-        RecommendationRunContext context = new RecommendationRunContext(
-                10L,
-                policy,
-                List.of(),
-                List.of(new UserSkillData(12L, (short) 3, false)),
-                0,
-                "a".repeat(64),
+        PreferenceRecommendationRunContext context = new PreferenceRecommendationRunContext(
+                new RecommendationRunContext(
+                        10L,
+                        policy,
+                        List.of(),
+                        List.of(new UserSkillData(12L, (short) 3, false)),
+                        0,
+                        "a".repeat(64),
+                        OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
+                ),
                 8L,
-                List.of(),
-                OffsetDateTime.parse("2026-08-11T12:00:00+09:00")
+                List.of()
         );
         RuntimeException failure = new RuntimeException("calculation failed");
-        when(runStartService.start(2L, request)).thenReturn(context);
+        when(runStartService.startForPreference(2L, request)).thenReturn(context);
         when(candidateSelectionService.select(any(), any(), same(policy))).thenThrow(failure);
 
         RuntimeException actual = assertThrows(

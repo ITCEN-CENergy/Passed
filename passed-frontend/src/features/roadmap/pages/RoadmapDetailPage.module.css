@@ -19,3 +19,5 @@
 .check{padding:0}.check svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
 
 .milestone>.resources{grid-column:2/-1;width:100%;margin-top:6px}
+
+.summaryTitle .roadmapStatusCOMPLETED{color:#31a148;background:#e8f8e9}

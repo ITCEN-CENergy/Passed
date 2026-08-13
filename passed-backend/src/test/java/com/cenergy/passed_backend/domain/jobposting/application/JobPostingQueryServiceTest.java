@@ -7,6 +7,8 @@ import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
+import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationRepository;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -18,20 +20,36 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class JobPostingQueryServiceTest {
     private final JobPostingRepository repository = mock(JobPostingRepository.class);
-    private final JobPostingQueryService service = new JobPostingQueryService(repository);
+    private final JobRecommendationRepository recommendationRepository =
+            mock(JobRecommendationRepository.class);
+    private final CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+    private final JobPostingQueryService service = new JobPostingQueryService(
+            repository,
+            recommendationRepository,
+            currentUserIdProvider
+    );
 
     @Test
     void mapsPagedJobPostingsToListResponse() {
         JobPosting posting = posting();
-        when(repository.findAll(any(Pageable.class))).thenAnswer(invocation -> {
-            Pageable pageable = invocation.getArgument(0);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(2L);
+        when(repository.findFiltered(
+                nullable(String.class), nullable(String.class), anyLong(), anyLong(), anyBoolean(),
+                nullable(CompanySize.class), anyBoolean(), anyLong(), any(Pageable.class)
+        )).thenAnswer(invocation -> {
+            Pageable pageable = invocation.getArgument(8);
             return new PageImpl<>(List.of(posting), pageable, 1);
         });
+        when(recommendationRepository.findMatchedJobPostingIds(2L, List.of(100L)))
+                .thenReturn(List.of(100L));
 
         var result = service.findAll(new JobPostingListRequest(0, 10));
 
@@ -41,6 +59,7 @@ class JobPostingQueryServiceTest {
         assertEquals("테스트 회사", result.content().getFirst().companyName());
         assertEquals("서버 개발", result.content().getFirst().jobRoleName());
         assertEquals("IT", result.content().getFirst().industryName());
+        assertEquals(true, result.content().getFirst().matched());
     }
 
     @Test

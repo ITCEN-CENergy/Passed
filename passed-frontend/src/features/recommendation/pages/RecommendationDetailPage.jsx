@@ -4,12 +4,14 @@ import { JobPostingDetailContent, PageState } from '../../job-posting/components
 import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
 import { getRecommendationDetail } from '../api/index.js'
 import { RecommendationReport } from '../components/index.js'
+import useRoadmapBasketStore from '../../roadmap/model/useRoadmapBasketStore.js'
 import jobStyles from '../../job-posting/pages/JobPostingPages.module.css'
 
 const RecommendationDetailPage = () => {
   const { recommendationRunId, jobRecommendationId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+  const addRoadmapItem = useRoadmapBasketStore((state) => state.addItem)
   const [detail, setDetail] = useState(null)
   const [error, setError] = useState('')
 
@@ -28,11 +30,7 @@ const RecommendationDetailPage = () => {
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
   const createRoadmap = () => {
-    console.log('학습 로드맵 생성 공고', {
-      jobPostingId: detail.jobPosting.jobPostingId,
-      companyName: detail.jobPosting.companyName,
-      jobPostingTitle: detail.jobPosting.title,
-    })
+    addRoadmapItem(detail.jobPosting)
   }
   const reviewCoverLetter = () => {
     navigate('/cover-letter-write', {

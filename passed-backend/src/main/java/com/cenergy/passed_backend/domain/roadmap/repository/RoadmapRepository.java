@@ -15,6 +15,9 @@ import jakarta.persistence.LockModeType;
 public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
     List<Roadmap> findAllByUserIdOrderByCreatedAtDescIdDesc(Long userId);
 
+    List<Roadmap> findAllByUserIdAndStatusNotOrderByCreatedAtDescIdDesc(
+            Long userId, RoadmapStatus excludedStatus);
+
     Optional<Roadmap> findByIdAndUserId(Long roadmapId, Long userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

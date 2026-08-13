@@ -28,7 +28,6 @@ class CoverLetterAiResponseValidatorTest {
     @Test
     void rejectsBlankRequiredText() {
         CoverLetterAiResponse response = new CoverLetterAiResponse(
-                "교정 답변",
                 80,
                 " ",
                 "직무 피드백",
@@ -41,7 +40,6 @@ class CoverLetterAiResponseValidatorTest {
 
     private CoverLetterAiResponse response(int score) {
         return new CoverLetterAiResponse(
-                "교정 답변",
                 score,
                 "문항 피드백",
                 "직무 피드백",

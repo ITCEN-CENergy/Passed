@@ -81,4 +81,12 @@ public class CoverLetterCompanyItem extends BaseTimeEntity {
         this.characterLimit = characterLimit;
         this.displayOrder = displayOrder;
     }
+
+    /** 일괄 편집 중 순서 교환이 DB 유일 제약과 충돌하지 않도록 양수 임시 순서를 부여한다. */
+    public void prepareDisplayOrder(int temporaryDisplayOrder) {
+        if (temporaryDisplayOrder < 1) {
+            throw new IllegalArgumentException("temporaryDisplayOrder must be positive");
+        }
+        this.displayOrder = temporaryDisplayOrder;
+    }
 }

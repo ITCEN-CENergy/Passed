@@ -38,6 +38,7 @@ public class CoverLetterExceptionHandler {
             case COVER_LETTER_NOT_FOUND,
                     COVER_LETTER_ITEM_NOT_FOUND,
                     COVER_LETTER_ITEM_FEEDBACK_NOT_FOUND,
+                    COVER_LETTER_FEEDBACK_NOT_FOUND,
                     COVER_LETTER_USER_NOT_FOUND,
                     COVER_LETTER_JOB_POSTING_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case COVER_LETTER_ITEM_ANSWER_REQUIRED -> HttpStatus.UNPROCESSABLE_CONTENT;

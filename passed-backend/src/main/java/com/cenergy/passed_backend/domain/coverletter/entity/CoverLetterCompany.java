@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 /**
  * 인증 사용자가 특정 채용공고를 위해 작성하는 자기소개서의 루트 엔티티다.
  * 데이터베이스의 (user_id, job_posting_id) 유일 제약으로 사용자당 공고별 한 건만 유지한다.
@@ -36,9 +38,13 @@ public class CoverLetterCompany extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "job_posting_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_posting_id")
     private JobPosting jobPosting;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "manual_job_posting_id", unique = true)
+    private CoverLetterManualJobPosting manualJobPosting;
 
     @Column(name = "title", length = 255, nullable = false)
     private String title;
@@ -55,12 +61,53 @@ public class CoverLetterCompany extends BaseTimeEntity {
         return value;
     }
 
+    /** 자기소개서 목록에서 직접 입력한 공고와 자기소개서를 함께 생성한다. */
+    public static CoverLetterCompany createManual(
+            User user,
+            CoverLetterManualJobPosting manualJobPosting,
+            String title
+    ) {
+        CoverLetterCompany value = new CoverLetterCompany();
+        value.user = Objects.requireNonNull(user, "user must not be null");
+        value.manualJobPosting = Objects.requireNonNull(manualJobPosting, "manualJobPosting must not be null");
+        value.updateTitle(title);
+        return value;
+    }
+
+    public boolean isManual() {
+        return manualJobPosting != null;
+    }
+
+    /** 직접 입력형 자기소개서의 공고 스냅샷만 수정할 수 있다. */
+    public boolean updateManualJobPosting(
+            String postingTitle,
+            String companyName,
+            String jobRoleName,
+            String positionDetail,
+            String careerType,
+            String hireType,
+            String mainDuty,
+            String qualification,
+            String preference
+    ) {
+        if (!isManual()) {
+            throw new IllegalStateException("linked cover letter cannot update manual job posting");
+        }
+        return manualJobPosting.update(postingTitle, companyName, jobRoleName, positionDetail,
+                careerType, hireType, mainDuty, qualification, preference);
+    }
+
     /**
      * 자기소개서 제목을 변경한다.
      * 공백 제목은 유효한 도메인 값이 아니므로 즉시 거부한다.
      */
     public void updateTitle(String title) {
         this.title = requireText(title, "title");
+    }
+
+    /** 문항 추가·수정·삭제를 자기소개서 전체의 최종 수정 시각에 반영한다. */
+    public void markItemsChanged() {
+        touchUpdatedAt();
     }
 
     /**

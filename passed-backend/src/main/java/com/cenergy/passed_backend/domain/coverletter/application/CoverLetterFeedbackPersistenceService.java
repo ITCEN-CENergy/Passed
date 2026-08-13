@@ -16,13 +16,16 @@ import java.util.Objects;
 public class CoverLetterFeedbackPersistenceService {
     private final CoverLetterCompanyItemRepository itemRepository;
     private final CoverLetterItemFeedbackRepository feedbackRepository;
+    private final JobPostingDescriptionBuilder jobPostingDescriptionBuilder;
 
     public CoverLetterFeedbackPersistenceService(
             CoverLetterCompanyItemRepository itemRepository,
-            CoverLetterItemFeedbackRepository feedbackRepository
+            CoverLetterItemFeedbackRepository feedbackRepository,
+            JobPostingDescriptionBuilder jobPostingDescriptionBuilder
     ) {
         this.itemRepository = itemRepository;
         this.feedbackRepository = feedbackRepository;
+        this.jobPostingDescriptionBuilder = jobPostingDescriptionBuilder;
     }
 
     @Transactional
@@ -38,7 +41,11 @@ public class CoverLetterFeedbackPersistenceService {
                         "Cover letter item not found"
                 ));
         if (!Objects.equals(item.getQuestionText(), input.question())
-                || !Objects.equals(item.getAnswer(), input.answer())) {
+                || !Objects.equals(item.getAnswer(), input.answer())
+                || !Objects.equals(
+                        jobPostingDescriptionBuilder.build(item.getCoverLetterCompany()),
+                        input.jobDescription()
+                )) {
             throw new CoverLetterException(
                     ErrorCode.COVER_LETTER_ITEM_CHANGED,
                     "Cover letter item changed while feedback was generated"

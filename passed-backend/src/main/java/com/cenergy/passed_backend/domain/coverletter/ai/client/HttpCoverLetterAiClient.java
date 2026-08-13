@@ -2,6 +2,8 @@ package com.cenergy.passed_backend.domain.coverletter.ai.client;
 
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiResponse;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiRequest;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiResponse;
 import com.cenergy.passed_backend.domain.coverletter.ai.model.ValidatedCoverLetterAiResult;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;
@@ -23,6 +25,7 @@ import java.net.http.HttpTimeoutException;
  */
 public final class HttpCoverLetterAiClient implements CoverLetterAiClient {
     private static final String EDIT_PATH = "/coverletter/edit";
+    private static final String REVIEW_PATH = "/coverletter/review";
 
     private final RestClient restClient;
     private final CoverLetterAiResponseValidator validator;
@@ -54,6 +57,39 @@ public final class HttpCoverLetterAiClient implements CoverLetterAiClient {
             throw new CoverLetterAiException(
                     ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE,
                     "cover letter AI response could not be decoded",
+                    exception
+            );
+        }
+    }
+
+    @Override
+    public CoverLetterReviewAiResponse review(CoverLetterReviewAiRequest request) {
+        try {
+            CoverLetterReviewAiResponse response = restClient.post()
+                    .uri(REVIEW_PATH)
+                    .body(request)
+                    .retrieve()
+                    .body(CoverLetterReviewAiResponse.class);
+            if (response == null || response.overallFeedback() == null || response.items() == null) {
+                throw new CoverLetterAiException(
+                        ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE,
+                        "cover letter review response is incomplete"
+                );
+            }
+            return response;
+        } catch (CoverLetterAiException exception) {
+            throw exception;
+        } catch (ResourceAccessException exception) {
+            throw resourceAccessException(exception);
+        } catch (RestClientResponseException exception) {
+            ErrorCode code = exception.getStatusCode().is5xxServerError()
+                    ? ErrorCode.COVER_LETTER_AI_UNAVAILABLE
+                    : ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE;
+            throw new CoverLetterAiException(code, "cover letter AI review failed", exception);
+        } catch (HttpMessageConversionException | RestClientException exception) {
+            throw new CoverLetterAiException(
+                    ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE,
+                    "cover letter AI review response could not be decoded",
                     exception
             );
         }

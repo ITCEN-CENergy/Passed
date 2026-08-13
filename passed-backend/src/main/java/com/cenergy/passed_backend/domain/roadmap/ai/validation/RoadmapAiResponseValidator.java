@@ -86,7 +86,18 @@ public class RoadmapAiResponseValidator {
         } else {
             validateLevelPath(competency, milestones);
         }
+        validateRequiredMilestones(milestones);
         return new ValidatedRoadmapSkill(skill.roadmapSkillKey(), milestones);
+    }
+
+    private void validateRequiredMilestones(List<ValidatedRoadmapMilestone> milestones) {
+        Map<String, Boolean> requiredByStage = new HashMap<>();
+        for (ValidatedRoadmapMilestone milestone : milestones) {
+            String stage = milestone.startLevel() + ":" + milestone.targetLevel();
+            requiredByStage.merge(stage, milestone.required(), Boolean::logicalOr);
+        }
+        invalidIf(requiredByStage.values().stream().anyMatch(required -> !required),
+                "each learning stage must contain a required milestone");
     }
 
     private void validateMilestone(RoadmapAiResponse.Milestone milestone, int expectedOrder) {
@@ -100,6 +111,7 @@ public class RoadmapAiResponseValidator {
                 "estimatedMinutes must be positive");
         invalidIf(milestone.learningOrder() == null || milestone.learningOrder() != expectedOrder,
                 "learningOrder must start at 1 and be continuous");
+        invalidIf(milestone.required() == null, "required must not be null");
         invalidIf(milestone.startLevel() == null || milestone.startLevel() < 0,
                 "startLevel must be non-negative");
         invalidIf(milestone.targetLevel() == null || milestone.targetLevel() > 3,
@@ -195,7 +207,7 @@ public class RoadmapAiResponseValidator {
                 milestone.title(), milestone.description(), milestone.learningObjective(),
                 milestone.completionCriteria(), milestone.startLevel(), milestone.targetLevel(),
                 milestone.milestoneType(), milestone.difficulty(), milestone.estimatedMinutes(),
-                milestone.learningOrder(), resources
+                milestone.learningOrder(), milestone.required(), resources
         );
     }
 

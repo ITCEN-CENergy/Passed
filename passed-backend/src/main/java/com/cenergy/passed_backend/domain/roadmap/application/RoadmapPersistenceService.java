@@ -109,7 +109,8 @@ public class RoadmapPersistenceService {
                             generatedMilestone.difficulty(), generatedMilestone.estimatedMinutes()));
                 }
                 RoadmapMilestone roadmapMilestone = roadmapMilestoneRepository.save(RoadmapMilestone.create(
-                        skill, milestone, generatedMilestone.learningOrder(), reuse.reuseType(), reuse.reason()));
+                        skill, milestone, generatedMilestone.learningOrder(), reuse.reuseType(), reuse.reason(),
+                        generatedMilestone.required()));
                 savedRoadmapMilestones.add(roadmapMilestone);
 
                 if (reuse.reuseType() == ReuseType.NEW) {

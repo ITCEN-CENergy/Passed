@@ -1,12 +1,12 @@
 import styles from './JobPostingDetailContent.module.css'
 
 const SECTION_FIELDS = [
-  ['positionDetail', '포지션 상세'],
+  ['positionDetail', '포지션 소개'],
   ['mainDuty', '주요 업무'],
   ['qualification', '자격 요건'],
   ['preference', '우대 사항'],
   ['disqualification', '지원 제한'],
-  ['process', '채용 절차'],
+  ['process', '전형 절차'],
   ['benefit', '복지 및 혜택'],
 ]
 
@@ -18,9 +18,11 @@ const META_FIELDS = [
 ]
 
 const splitSentences = (value) => String(value ?? '')
-  .split(/[?？]+|\r?\n+/)
-  .map((sentence) => sentence.trim())
+  .split(/[?？]+|\r?\n+|[•●○◦▪︎■◆]+/)
+  .map((sentence) => sentence.trim().replace(/^[•·●○◦▪︎■◆\-–—]+\s*/, ''))
   .filter(Boolean)
+
+const paragraphText = (value) => splitSentences(value).join(' ')
 
 const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
   <article className={styles.detail}>
@@ -30,11 +32,11 @@ const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
 
     <header className={styles.header}>
       <div>
-        <p>{jobPosting.companyName} · {jobPosting.industryName}</p>
+        <p>{jobPosting.companyName}</p>
         <h1>{jobPosting.title}</h1>
         <div className={styles.location}>
           <span>⌖ {jobPosting.region || '지역 협의'}</span>
-          <span>{jobPosting.jobRoleName}</span>
+          <span>{jobPosting.industryName} <b>›</b> {jobPosting.jobRoleName}</span>
         </div>
       </div>
       {action}
@@ -58,9 +60,13 @@ const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
         return (
           <section key={field}>
             <h2>{label}</h2>
-            <ul>
-              {sentences.map((sentence, index) => <li key={`${field}-${index}`}>{sentence}</li>)}
-            </ul>
+            {field === 'positionDetail' ? (
+              <p className={styles.paragraph}>{paragraphText(jobPosting[field])}</p>
+            ) : (
+              <ul>
+                {sentences.map((sentence, index) => <li key={`${field}-${index}`}>{sentence}</li>)}
+              </ul>
+            )}
           </section>
         )
       })}

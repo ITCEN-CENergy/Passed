@@ -6,29 +6,37 @@
   height: clamp(260px, 34vw, 410px);
   place-items: center;
   overflow: hidden;
-  background: #17243b;
+  background: #1a2230;
   border-radius: 20px;
 }
 
 .hero::before {
   position: absolute;
-  inset: -28px;
-  background-image: linear-gradient(rgba(7, 24, 61, 0.48), rgba(7, 24, 61, 0.48)), var(--hero-image);
-  background-position: center;
+  inset: -44px;
+  background-image: var(--hero-image);
+  background-position: center top;
   background-size: cover;
   content: '';
-  filter: blur(18px);
-  opacity: 0.72;
-  transform: scale(1.1);
+  filter: blur(32px) brightness(.72) saturate(.86);
+  transform: scale(1.16);
+}
+
+.hero::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: rgba(7, 18, 36, .12);
+  content: '';
 }
 
 .hero img {
   position: relative;
   z-index: 1;
-  width: min(78%, 760px);
-  height: calc(100% - 48px);
+  width: min(64%, 760px);
+  height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.2));
+  object-position: center top;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, .24));
 }
 
 .header {
@@ -36,8 +44,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  padding: 38px 4px 30px;
-  border-bottom: 1px solid #dce4ef;
+  padding: 38px 4px 22px;
 }
 
 .header p {
@@ -54,6 +61,7 @@
 }
 
 .location { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 15px; color: #6b7890; }
+.location b { margin-inline: 3px; color: #a2adbe; }
 .header button { flex: 0 0 auto; }
 
 .metaGrid {
@@ -78,10 +86,11 @@
 .sections ul { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
 .sections li { position: relative; padding-left: 20px; line-height: 1.7; }
 .sections li::before { position: absolute; top: 11px; left: 1px; width: 6px; height: 6px; background: #146bff; border-radius: 50%; content: ''; }
+.paragraph { color: #334158; line-height: 1.85; white-space: pre-line; }
 
 @media (max-width: 760px) {
   .hero { height: 260px; border-radius: 14px; }
-  .hero img { width: calc(100% - 32px); }
+  .hero img { width: min(78%, 620px); }
   .header { align-items: stretch; flex-direction: column; }
   .header button { width: 100%; }
   .metaGrid { grid-template-columns: repeat(2, 1fr); }

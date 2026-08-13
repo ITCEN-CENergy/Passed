@@ -208,6 +208,7 @@ jobs:
           }
 
       - name: Log in to GHCR
+        uses: docker/login-action@v3
         shell: powershell
         run: |
           "${{ secrets.GITHUB_TOKEN }}" |

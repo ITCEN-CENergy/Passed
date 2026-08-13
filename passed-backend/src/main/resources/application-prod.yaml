@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: passed-backend
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    out-of-order: false
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
+
+  endpoint:
+    health:
+      show-details: never
+
+external:
+  recommendation-ai:
+    base-url: ${RECOMMENDATION_AI_BASE_URL}
+    connect-timeout-millis: ${RECOMMENDATION_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${RECOMMENDATION_AI_READ_TIMEOUT_MILLIS:300000}
+
+  roadmap-ai:
+    base-url: ${ROADMAP_AI_BASE_URL}
+    connect-timeout-millis: ${ROADMAP_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${ROADMAP_AI_READ_TIMEOUT_MILLIS:420000}
+
+  cover-letter-ai:
+    base-url: ${COVER_LETTER_AI_BASE_URL}
+    connect-timeout-millis: ${COVER_LETTER_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${COVER_LETTER_AI_READ_TIMEOUT_MILLIS:420000}
+
+  user-skill-ai:
+    base-url: ${USER_SKILL_AI_BASE_URL}
+    connect-timeout-millis: ${USER_SKILL_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${USER_SKILL_AI_READ_TIMEOUT_MILLIS:600000}
+
+  learning-competency-ai:
+    base-url: ${LEARNING_COMPETENCY_AI_BASE_URL}
+    connect-timeout-millis: ${LEARNING_COMPETENCY_AI_CONNECT_TIMEOUT_MILLIS:3000}
+    read-timeout-millis: ${LEARNING_COMPETENCY_AI_READ_TIMEOUT_MILLIS:600000}

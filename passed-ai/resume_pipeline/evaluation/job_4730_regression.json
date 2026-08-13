@@ -1,0 +1,46 @@
+{
+  "job_posting_id": 4730,
+  "user_id": 56,
+  "baseline": {
+    "processed_chunk_count": 19,
+    "candidate_count": 71,
+    "mapped_skill_count": 20,
+    "unmapped_evidence_count": 47,
+    "required_skill_count": 15,
+    "required_owned_skill_ids": [96, 108, 158, 191, 1335, 1343],
+    "required_coverage_rate": 0.4
+  },
+  "missing_skills": [
+    {"skill_id": 498, "name": "클라우드", "skill_type": "PREFERRED", "group": "B", "cause": "RELATED_DIFFERENT_ID", "similar_user_skills": ["AWS"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 13, "name": "API", "skill_type": "RELATED", "group": "B", "cause": "PARENT_CHILD_DIFFERENT_ID", "similar_user_skills": ["LLM API"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 554, "name": "API 연동", "skill_type": "RELATED", "group": "B", "cause": "TECHNOLOGY_EXPERIENCE_DIFFERENT_ID", "similar_user_skills": ["LLM API"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 575, "name": "LLM API 연동", "skill_type": "RELATED", "group": "B", "cause": "TECHNOLOGY_EXPERIENCE_DIFFERENT_ID", "similar_user_skills": ["LLM API"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 339, "name": "보안", "skill_type": "REQUIRED", "group": "B", "cause": "RELATED_DIFFERENT_ID", "similar_user_skills": ["개인정보 보호", "보안 필터 적용"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 1339, "name": "정보보호 의식", "skill_type": "REQUIRED", "group": "B", "cause": "CATEGORY_AND_ID_DIFFERENT", "similar_user_skills": ["개인정보 보호", "보안 필터 적용"], "resolution": "RELATION_REVIEW"},
+    {"skill_id": 1146, "name": "장애 원인 분석", "skill_type": "REQUIRED", "group": "B", "cause": "LEXICAL_VARIANT_AND_OVERLAPPING_MASTER", "similar_user_skills": ["장애 분석"], "resolution": "SAFE_ALIAS_FOR_CAUSE_SPECIFIC_EXPRESSION"},
+    {"skill_id": 107, "name": "LLM", "skill_type": "REQUIRED", "group": "B", "cause": "PARENT_CHILD_DIFFERENT_ID", "similar_user_skills": ["LLM API"], "resolution": "RELATION_REVIEW"},
+
+    {"skill_id": 336, "name": "벡터 데이터베이스", "skill_type": "PREFERRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "Vector DB", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 27, "name": "Azure", "skill_type": "PREFERRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "Microsoft Azure", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 1409, "name": "Microsoft Azure AI Engineer Associate", "skill_type": "PREFERRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "Azure AI Engineer Associate", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 916, "name": "서비스 모니터링", "skill_type": "RELATED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "서비스 배포 및 모니터링", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 883, "name": "사용자 피드백 반영", "skill_type": "RELATED", "group": "A", "cause": "CATEGORY_ERROR", "observed_candidate": "사용자 피드백 반영", "resolution": "EXTRACTION_CATEGORY_GUIDANCE"},
+    {"skill_id": 695, "name": "기능 설계", "skill_type": "RELATED", "group": "A", "cause": "EXTRACTION_MISSING", "resolution": "EXTRACTION_GUIDANCE"},
+    {"skill_id": 1262, "name": "평가 로직 개발", "skill_type": "RELATED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "골든셋 기반 평가", "resolution": "EXTRACTION_NAME_GUIDANCE"},
+    {"skill_id": 548, "name": "AI 기능 설계", "skill_type": "RELATED", "group": "A", "cause": "EXTRACTION_MISSING", "resolution": "EXTRACTION_GUIDANCE"},
+    {"skill_id": 490, "name": "콘텐츠 생성", "skill_type": "REQUIRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "콘텐츠 생성 서비스 구현", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 1225, "name": "콘텐츠 생성 프로젝트", "skill_type": "REQUIRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "AI 기반 콘텐츠 생성 플랫폼 개발", "resolution": "SAFE_ALIAS"},
+    {"skill_id": 700, "name": "기술 부채 개선", "skill_type": "REQUIRED", "group": "A", "cause": "EXTRACTED_UNMAPPED", "observed_candidate": "기술 부채 정의", "resolution": "SAFE_ALIAS_WITH_EVIDENCE_REVIEW"},
+    {"skill_id": 1147, "name": "장애 재발 방지", "skill_type": "REQUIRED", "group": "A", "cause": "EXTRACTION_MISSING", "resolution": "EXTRACTION_GUIDANCE"},
+
+    {"skill_id": 282, "name": "데이터 분석", "skill_type": "PREFERRED", "group": "C", "cause": "EVIDENCE_SCOPE_AMBIGUOUS", "resolution": "DO_NOT_FORCE_MAP"},
+    {"skill_id": 1344, "name": "학습 민첩성", "skill_type": "REQUIRED", "group": "C", "cause": "INFERRED_TRAIT_ONLY", "resolution": "DO_NOT_FORCE_MAP"}
+  ],
+  "expected_recovered_required_skill_ids": [490, 700, 1146, 1225],
+  "acceptance": {
+    "minimum_required_coverage_rate": 0.5,
+    "minimum_expected_required_owned_count": 8,
+    "maximum_false_positive_count": 0,
+    "require_evidence_for_every_skill": true
+  }
+}

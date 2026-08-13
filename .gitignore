@@ -1,37 +1,293 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+# =========================
+# OS & IDE
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+.idea/
 .vscode/
+*.swp
+*.swo
+
+# =========================
+# Docker & Environment
+# =========================
+# 로컬 개발용 도커 설정 및 데이터 (필요에 따라 주석 해제)
+docker-compose.override.yml
+.docker/
+data/
+db-data/
+postgres-data/
+mongo-data/
+
+# 환경 변수 파일 (보안상 절대 커밋하지 마세요)
+.env
+.env.*
+
+# =========================
+# Node.js & Package Managers
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Yarn v2+ (Berry) - Zero Install 사용 시 설정이 다를 수 있음
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# =========================
+# Monorepo Tools (Turbo, Nx 등)
+# =========================
+.turbo/
+.nx/cache/
+
+# =========================
+# Build, Test & Logs
+# =========================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+coverage/
+.nyc_output/
+logs/
+*.log
+
+# =========================
+# Temporary Files
+# =========================
+.temp/
+.tmp/
+tmp/
+################################################################################
+# OS
+################################################################################
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+################################################################################
+# IDE
+################################################################################
+
+.idea/
+.vscode/
+*.iml
+
+################################################################################
+# Logs
+################################################################################
+
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+################################################################################
+# Environment
+################################################################################
+
+.env
+.env.*
+.env.example
+**/.env.example
+
+################################################################################
+# Docker
+################################################################################
+
+docker-data/
+volumes/
+
+################################################################################
+# Temporary
+################################################################################
+
+tmp/
+temp/
+.cache/
+
+################################################################################
+# Archives
+################################################################################
+
+*.zip
+*.tar
+*.gz
+*.7z
+
+################################################################################
+# Certificates
+################################################################################
+
+*.pem
+*.key
+*.crt
+
+################################################################################
+# Secrets
+################################################################################
+
+secrets/
+secret/
+
+################################################################################
+# React
+################################################################################
+
+passed-frontend/node_modules/
+
+passed-frontend/build/
+passed-frontend/dist/
+
+passed-frontend/.next/
+
+passed-frontend/.vite/
+
+passed-frontend/coverage/
+
+passed-frontend/.eslintcache
+
+################################################################################
+# Spring
+################################################################################
+
+passed-backend/build/
+passed-backend/out/
+passed-backend/bin/
+
+passed-backend/.gradle/
+
+passed-backend/.classpath
+passed-backend/.project
+passed-backend/.settings/
+
+passed-backend/logs/
+
+passed-backend/src/main/resources/application-local.yml
+passed-backend/src/main/resources/application-prod.yml
+
+################################################################################
+# Python
+################################################################################
+
+passed-ai/.venv/
+passed-ai/venv/
+
+passed-ai/__pycache__/
+
+passed-ai/.pytest_cache/
+
+passed-ai/.mypy_cache/
+
+passed-ai/.ruff_cache/
+
+passed-ai/.coverage
+
+passed-ai/htmlcov/
+
+passed-ai/*.pyc
+passed-ai/*.pyo
+
+################################################################################
+# Models
+################################################################################
+
+models/
+
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+################################################################################
+# Upload Files
+################################################################################
+
+uploads/
+
+storage/
+
+media/
+
+################################################################################
+# Database
+################################################################################
+
+*.db
+*.sqlite
+*.sqlite3
+
+postgres-data/
+
+mysql-data/
+
+################################################################################
+# Terraform
+################################################################################
+
+.terraform/
+
+*.tfstate
+*.tfstate.*
+
+################################################################################
+# OCI / SSH
+################################################################################
+
+*.pem
+*.ppk
+id_rsa
+id_ed25519
+
+################################################################################
+# Github Actions
+################################################################################
+
+GHCR_TOKEN
+OCI_HOST
+OCI_USER
+OCI_SSH_KEY
+TAILSCALE_AUTHKEY
+OPENAI_API_KEY
+
+################################################################################
+# AI Cache
+################################################################################
+
+.cache/
+
+.huggingface/
+
+transformers_cache/
+
+datasets/
+
+wandb/
+
+mlruns/
+
+################################################################################
+# Generated infrastructure state
+################################################################################
+
+infra/checksums/
+infra/fileChanges/
+infra/grafana/provisioning/fileHashes.bin

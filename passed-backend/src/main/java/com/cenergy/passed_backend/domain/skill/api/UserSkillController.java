@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users/me/skills")
+@RequestMapping("/api/v1/users/skills")
 public class UserSkillController {
     private final UserSkillQueryService queryService;
     private final UserSkillPreferenceService preferenceService;

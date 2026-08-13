@@ -15,6 +15,7 @@ import sys
 
 from .db import connection
 from .skill_extraction_worker import (
+    _EXPLICIT_COMPLETED_SKILL_RULES,
     SKILL_EXTRACTION_MODEL,
     extract_user_skill_candidates,
     load_extractable_chunks,
@@ -42,11 +43,32 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="결과 JSON 파일 경로. 생략하면 표준 출력으로 내보냄",
     )
+    parser.add_argument(
+        "--disable-recovery-rule",
+        action="append",
+        default=[],
+        metavar="SKILL_NAME",
+        help="실험에서 제외할 deterministic recovery 스킬명. 여러 번 지정 가능",
+    )
+    parser.add_argument(
+        "--disable-all-recovery-rules",
+        action="store_true",
+        help="Pass 2 대체 실험을 위해 모든 deterministic recovery 규칙을 제외",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
+    available_rules = {
+        name for name, _category, _pattern in _EXPLICIT_COMPLETED_SKILL_RULES
+    }
+    disabled_rules = frozenset(
+        available_rules if args.disable_all_recovery_rules else args.disable_recovery_rule
+    )
+    unknown_rules = disabled_rules - available_rules
+    if unknown_rules:
+        raise SystemExit(f"존재하지 않는 recovery 규칙입니다: {sorted(unknown_rules)}")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
@@ -86,7 +108,11 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 return 2
 
-            report = extract_user_skill_candidates(conn, user_id)
+            report = extract_user_skill_candidates(
+                conn,
+                user_id,
+                disabled_recovery_rules=disabled_rules,
+            )
     except UserNotFoundError as exc:
         logger.error("스킬 후보 추출 중단: %s", exc)
         return 2

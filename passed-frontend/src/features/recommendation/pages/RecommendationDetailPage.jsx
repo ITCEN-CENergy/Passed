@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { PageLoading } from '../../../common/components/index.js'
 import { JobPostingDetailContent, PageState } from '../../job-posting/components/index.js'
 import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
 import { getRecommendationDetail } from '../api/index.js'
@@ -23,7 +24,7 @@ const RecommendationDetailPage = () => {
     return () => controller.abort()
   }, [recommendationRunId, jobRecommendationId])
 
-  if (!detail && !error) return <div className={jobStyles.detailShell}><PageState loading title="매칭 리포트를 불러오고 있어요" /></div>
+  if (!detail && !error) return <div className={jobStyles.detailShell}><PageLoading title="매칭 리포트를 불러오고 있어요" description="공고와 내 역량의 적합도를 확인하고 있어요." /></div>
   if (!detail) return <div className={jobStyles.detailShell}><PageState title="매칭 리포트를 불러오지 못했습니다" description={error} /></div>
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
@@ -42,7 +43,6 @@ const RecommendationDetailPage = () => {
 
   return (
     <div className={jobStyles.detailShell}>
-      <button className={jobStyles.backButton} type="button" onClick={() => navigate(-1)}>← 추천 결과로</button>
       <JobPostingDetailContent jobPosting={detail.jobPosting} image={image}>
         <RecommendationReport
           report={detail.report}

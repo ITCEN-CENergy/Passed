@@ -21,3 +21,23 @@
 .milestone>.resources{grid-column:2/-1;width:100%;margin-top:6px}
 
 .summaryTitle .roadmapStatusCOMPLETED{color:#31a148;background:#e8f8e9}
+
+.meta .requiredMilestone{color:#1377e8;background:#e6f2ff}.meta .optionalMilestone{color:#d97706;background:#fff1dc}
+
+/* 데스크톱 로드맵 탐색 */
+.page{width:min(100% - 40px,1360px)}
+.contentLayout{display:grid;grid-template-columns:minmax(0,1fr) 286px;align-items:start;gap:24px}
+.mainContent{min-width:0}
+.skillNavigation{position:sticky;top:24px;max-height:calc(100vh - 48px);overflow:hidden;background:#fff;border:1px solid #dfe6ef;border-radius:13px;box-shadow:0 2px 8px #1c365c0d}
+.skillNavigationHeader{display:flex;align-items:center;gap:9px;padding:22px 20px 16px;border-bottom:1px solid #edf1f5}
+.skillNavigationHeader h2{font-size:18px;letter-spacing:-.035em}
+.skillNavigationHeader span{display:inline-grid;min-width:25px;height:25px;padding:0 7px;place-items:center;color:#0877ed;background:#e8f3ff;border-radius:13px;font-size:12px;font-weight:800}
+.skillNavigation nav{display:grid;max-height:calc(100vh - 112px);overflow-y:auto;padding:10px}
+.skillNavigation nav button{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:6px;width:100%;padding:11px 10px;color:#657795;background:transparent;border:0;border-radius:8px;text-align:left;cursor:pointer;transition:color .18s,background .18s}
+.skillNavigation nav button:hover{color:#1e385e;background:#f3f7fc}
+.skillNavigation nav button:focus-visible{outline:3px solid #9bc7fb;outline-offset:-2px}
+.skillNavigation nav button>span{font-size:11px;font-weight:800}
+.skillNavigation nav button>strong{overflow:hidden;font-size:13px;line-height:1.45;text-overflow:ellipsis;white-space:nowrap}
+.skillNavigation nav .activeSkillLink{color:#0877ed;background:#eaf4ff}
+.skill{scroll-margin-top:24px}
+.skill:focus{outline:none}

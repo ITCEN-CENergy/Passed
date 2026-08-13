@@ -28,7 +28,8 @@ public class CompetencyGapMergeService {
             .thenComparing(CompetencyGapSource::reportId,
                     Comparator.nullsFirst(Comparator.naturalOrder()));
     private static final Comparator<MergedCandidate> RESULT_ORDER = Comparator
-            .comparingInt(MergedCandidate::priorityScore).reversed()
+            .comparingInt((MergedCandidate candidate) -> candidate.gapLevel() > 0 ? 1 : 0).reversed()
+            .thenComparing(Comparator.comparingInt(MergedCandidate::priorityScore).reversed())
             .thenComparing(Comparator.comparingInt(MergedCandidate::targetLevel).reversed())
             .thenComparing(MergedCandidate::standardCompetencyId);
 
@@ -60,6 +61,7 @@ public class CompetencyGapMergeService {
 
         List<MergedCandidate> candidates = sourcesByCompetency.values().stream()
                 .map(this::mergeGroup)
+                .filter(candidate -> candidate.currentLevel() <= candidate.targetLevel())
                 .sorted(RESULT_ORDER)
                 .toList();
 
@@ -82,14 +84,7 @@ public class CompetencyGapMergeService {
         }
 
         int currentLevel = sources.stream().mapToInt(CompetencyGapSource::currentLevel).max().orElseThrow();
-        int requestedTargetLevel = sources.stream()
-                .mapToInt(CompetencyGapSource::targetLevel)
-                .max()
-                .orElseThrow();
-        // A user can already exceed a posting's required level. Roadmap generation
-        // represents that case as reinforcement at the user's current level, while
-        // the AI contract requires currentLevel <= targetLevel.
-        int targetLevel = Math.max(requestedTargetLevel, currentLevel);
+        int targetLevel = sources.stream().mapToInt(CompetencyGapSource::targetLevel).max().orElseThrow();
         Set<Integer> currentLevels = sources.stream()
                 .map(CompetencyGapSource::currentLevel).collect(Collectors.toSet());
         if (currentLevels.size() > 1) {

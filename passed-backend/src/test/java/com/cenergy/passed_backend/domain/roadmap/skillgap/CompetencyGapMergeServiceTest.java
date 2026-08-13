@@ -110,19 +110,27 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void keepsCompetenciesWithNoGapAndReturnsImmutableList() {
+    void keepsEqualLevelForReinforcementAndExcludesOverqualifiedCompetencies() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 3, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(2L, "AWS", 4, 2, RequirementType.PREFERRED))));
 
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(1);
         assertThat(result).extracting("gapLevel").containsOnly(0);
-        assertThat(byId(result, 2L).targetLevel()).isEqualTo(4);
-        assertThat(byId(result, 2L).sources()).singleElement()
-                .extracting("targetLevel").isEqualTo(2);
-        assertThat(result).extracting("standardCompetencyName").containsExactly("Docker", "AWS");
+        assertThat(result).extracting("standardCompetencyName").containsExactly("Docker");
         assertThatThrownBy(() -> result.add(null)).isInstanceOf(UnsupportedOperationException.class);
         assertThat(service.merge(List.of())).isEmpty();
+    }
+
+    @Test
+    void prioritizesLearningGapsBeforeEqualLevelReinforcement() {
+        List<MergedCompetencyGap> result = service.merge(List.of(
+                input(101L, null, gap(1L, "Reinforcement", 3, 3, RequirementType.REQUIRED)),
+                input(102L, null, gap(2L, "Learning gap", 1, 2, RequirementType.PREFERRED))));
+
+        assertThat(result).extracting("standardCompetencyName")
+                .containsExactly("Learning gap", "Reinforcement");
+        assertThat(result).extracting("priority").containsExactly(1, 2);
     }
 
     @Test

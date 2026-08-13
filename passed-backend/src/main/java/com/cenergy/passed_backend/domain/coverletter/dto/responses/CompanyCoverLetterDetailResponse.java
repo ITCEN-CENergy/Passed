@@ -18,22 +18,42 @@ public record CompanyCoverLetterDetailResponse(
         String title,
         List<CompanyCoverLetterItemResponse> items,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        boolean manual,
+        CompanyCoverLetterJobPostingResponse jobPosting
 ) {
+    /** 기존 호출부와의 소스 호환성을 유지하는 연결형 상세 응답 생성자다. */
+    public CompanyCoverLetterDetailResponse(
+            Long id,
+            Long jobPostingId,
+            String companyName,
+            String jobPostingTitle,
+            String title,
+            List<CompanyCoverLetterItemResponse> items,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt
+    ) {
+        this(id, jobPostingId, companyName, jobPostingTitle, title, items, createdAt, updatedAt,
+                false, null);
+    }
+
     /** 부모 엔티티와 정렬된 문항 목록을 편집 화면용 응답으로 변환한다. */
     public static CompanyCoverLetterDetailResponse from(
             CoverLetterCompany coverLetter,
             List<CoverLetterCompanyItem> items
     ) {
+        CompanyCoverLetterJobPostingResponse posting = CompanyCoverLetterJobPostingResponse.from(coverLetter);
         return new CompanyCoverLetterDetailResponse(
                 coverLetter.getId(),
-                coverLetter.getJobPosting().getId(),
-                coverLetter.getJobPosting().getCompany().getCompanyName(),
-                coverLetter.getJobPosting().getTitle(),
+                posting.id(),
+                posting.companyName(),
+                posting.postingTitle(),
                 coverLetter.getTitle(),
                 items.stream().map(CompanyCoverLetterItemResponse::from).toList(),
                 coverLetter.getCreatedAt(),
-                coverLetter.getUpdatedAt()
+                coverLetter.getUpdatedAt(),
+                coverLetter.isManual(),
+                posting
         );
     }
 }

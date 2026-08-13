@@ -42,7 +42,7 @@ public class CoverLetterFeedbackQueryService {
                 item.getQuestionText(),
                 item.getAnswer(),
                 item.getCharacterLimit(),
-                jobPostingDescriptionBuilder.build(item.getCoverLetterCompany().getJobPosting())
+                jobPostingDescriptionBuilder.build(item.getCoverLetterCompany())
         );
     }
 

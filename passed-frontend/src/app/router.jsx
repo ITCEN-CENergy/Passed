@@ -73,6 +73,10 @@ const router = createBrowserRouter([
         element: <CompanyCoverLetterWrite />,
       },
       {
+        path: 'cover-letter-write/:coverLetterId',
+        element: <CompanyCoverLetterWrite />,
+      },
+      {
         path: '*',
         element: <NotFoundPage />,
       },

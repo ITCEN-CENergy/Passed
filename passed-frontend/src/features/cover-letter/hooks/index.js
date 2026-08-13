@@ -17,19 +17,20 @@ function isAbortError(error) {
 
 export function useCompanyCoverLetters() {
   const [state, setState] = useState(initialState)
+  const [page, setPage] = useState(0)
 
   const reload = useCallback(async ({ signal } = {}) => {
     setState((current) => ({ ...current, error: null, isLoading: true }))
 
     try {
-      const data = await getCompanyCoverLetters({ signal })
+      const data = await getCompanyCoverLetters({ page, signal })
       setState({ data, error: null, isLoading: false })
     } catch (error) {
       if (!isAbortError(error)) {
         setState((current) => ({ ...current, error, isLoading: false }))
       }
     }
-  }, [])
+  }, [page])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -41,14 +42,26 @@ export function useCompanyCoverLetters() {
     await deleteCompanyCoverLetter(coverLetterId)
     setState((current) => ({
       ...current,
-      data: current.data?.filter((coverLetter) => coverLetter.id !== coverLetterId) ?? [],
+      data: current.data
+        ? {
+            ...current.data,
+            content: current.data.content?.filter((coverLetter) => coverLetter.id !== coverLetterId) ?? [],
+            totalElements: Math.max(0, (current.data.totalElements ?? 1) - 1),
+          }
+        : null,
     }))
   }, [])
 
   return {
-    coverLetters: state.data ?? [],
+    coverLetters: state.data?.content ?? (Array.isArray(state.data) ? state.data : []),
     error: state.error,
     isLoading: state.isLoading,
+    page,
+    totalPages: state.data?.totalPages ?? 1,
+    goToPreviousPage: () => setPage((current) => Math.max(0, current - 1)),
+    goToNextPage: () => setPage((current) => (
+      current + 1 < (state.data?.totalPages ?? 1) ? current + 1 : current
+    )),
     reload,
     remove,
   }

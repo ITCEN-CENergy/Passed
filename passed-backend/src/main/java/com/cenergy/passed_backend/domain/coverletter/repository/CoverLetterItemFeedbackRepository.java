@@ -4,10 +4,14 @@ import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterItemFeedb
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface CoverLetterItemFeedbackRepository extends JpaRepository<CoverLetterItemFeedback, Long> {
     /** 특정 문항의 기존 첨삭 결과를 삭제해 답변 변경 후 오래된 피드백을 막는다. */
     long deleteByCoverLetterCompanyItemId(Long itemId);
+
+    /** 직접 입력 공고가 바뀌면 해당 자기소개서의 모든 문항 첨삭을 무효화한다. */
+    long deleteByCoverLetterCompanyItemCoverLetterCompanyId(Long coverLetterId);
 
     /** 문항 ID로 첨삭 결과를 찾는다. */
     Optional<CoverLetterItemFeedback> findByCoverLetterCompanyItemId(Long itemId);
@@ -16,5 +20,9 @@ public interface CoverLetterItemFeedbackRepository extends JpaRepository<CoverLe
     Optional<CoverLetterItemFeedback> findByCoverLetterCompanyItemIdAndCoverLetterCompanyItemCoverLetterCompanyUserId(
             Long itemId,
             Long userId
+    );
+
+    List<CoverLetterItemFeedback> findAllByCoverLetterCompanyItemCoverLetterCompanyIdOrderByCoverLetterCompanyItemDisplayOrderAsc(
+            Long coverLetterId
     );
 }

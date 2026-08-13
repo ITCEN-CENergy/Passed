@@ -1,8 +1,14 @@
 package com.cenergy.passed_backend.domain.coverletter.application;
 
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemUpdateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemReplaceRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterReplaceRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompany;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompanyItem;
+import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterManualJobPosting;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyItemRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemFeedbackRepository;
@@ -12,15 +18,70 @@ import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 /**
  * Verifies command-side business rules that do not require a database.
  */
 class CompanyCoverLetterCommandServiceTest {
+
+    @Test
+    void rejectsMoreThanThirtyItemsBeforeWriting() {
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        JobPostingRepository jobPostingRepository = mock(JobPostingRepository.class);
+        CoverLetterCompanyRepository coverLetterRepository = mock(CoverLetterCompanyRepository.class);
+        CoverLetterCompanyItemRepository itemRepository = mock(CoverLetterCompanyItemRepository.class);
+        CoverLetterItemFeedbackRepository feedbackRepository = mock(CoverLetterItemFeedbackRepository.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CompanyCoverLetterCommandService service = new CompanyCoverLetterCommandService(
+                currentUserIdProvider, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        List<CompanyCoverLetterItemCreateRequest> items = IntStream.rangeClosed(1, 31)
+                .mapToObj(order -> new CompanyCoverLetterItemCreateRequest(
+                        "질문 " + order, "", 1000, order
+                ))
+                .toList();
+
+        assertThatThrownBy(() -> service.create(new CompanyCoverLetterCreateRequest(1L, "제목", items)))
+                .isInstanceOf(CoverLetterException.class)
+                .hasMessageContaining("at most 30 items");
+    }
+
+    @Test
+    void rejectsAddingAThirtyFirstItem() {
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        JobPostingRepository jobPostingRepository = mock(JobPostingRepository.class);
+        CoverLetterCompanyRepository coverLetterRepository = mock(CoverLetterCompanyRepository.class);
+        CoverLetterCompanyItemRepository itemRepository = mock(CoverLetterCompanyItemRepository.class);
+        CoverLetterItemFeedbackRepository feedbackRepository = mock(CoverLetterItemFeedbackRepository.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CoverLetterCompany coverLetter = mock(CoverLetterCompany.class);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        when(coverLetterRepository.findOwnedForUpdate(3L, 257L)).thenReturn(Optional.of(coverLetter));
+        when(itemRepository.countByCoverLetterCompanyId(3L)).thenReturn(30L);
+        CompanyCoverLetterCommandService service = new CompanyCoverLetterCommandService(
+                currentUserIdProvider, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+
+        assertThatThrownBy(() -> service.addItem(
+                3L,
+                new CompanyCoverLetterItemCreateRequest("31번째 질문", "", 1000, 31)
+        )).isInstanceOf(CoverLetterException.class)
+                .hasMessageContaining("at most 30 items");
+    }
 
     /**
      * A changed answer invalidates the feedback generated from the older answer.
@@ -64,6 +125,58 @@ class CompanyCoverLetterCommandServiceTest {
         service.updateItem(10L, request);
 
         verify(item).update("updated question", "updated answer", 1000, 1);
+        verify(coverLetter).markItemsChanged();
         verify(feedbackRepository).deleteByCoverLetterCompanyItemId(10L);
+    }
+
+    @Test
+    void replacesManualPostingAndItemsAndInvalidatesAffectedFeedback() {
+        CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        JobPostingRepository jobPostingRepository = mock(JobPostingRepository.class);
+        CoverLetterCompanyRepository coverLetterRepository = mock(CoverLetterCompanyRepository.class);
+        CoverLetterCompanyItemRepository itemRepository = mock(CoverLetterCompanyItemRepository.class);
+        CoverLetterItemFeedbackRepository feedbackRepository = mock(CoverLetterItemFeedbackRepository.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CoverLetterCompany coverLetter = CoverLetterCompany.createManual(
+                mock(com.cenergy.passed_backend.domain.user.entity.User.class),
+                CoverLetterManualJobPosting.create(
+                        "이전 공고", "기업", "개발자", null, null, null,
+                        "이전 업무", "이전 자격", null
+                ),
+                "이전 자기소개서"
+        );
+        CoverLetterCompanyItem item = mock(CoverLetterCompanyItem.class);
+        when(item.getId()).thenReturn(10L);
+        when(item.getQuestionText()).thenReturn("이전 질문");
+        when(item.getAnswer()).thenReturn("이전 답변");
+        when(item.getCharacterLimit()).thenReturn(1000);
+        when(item.getDisplayOrder()).thenReturn(1);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        when(coverLetterRepository.findOwnedForUpdate(3L, 257L)).thenReturn(Optional.of(coverLetter));
+        when(itemRepository.findAllByCoverLetterCompanyIdOrderByDisplayOrderAscIdAsc(3L))
+                .thenReturn(List.of(item));
+        CompanyCoverLetterCommandService service = new CompanyCoverLetterCommandService(
+                currentUserIdProvider, userRepository, jobPostingRepository, coverLetterRepository,
+                itemRepository, feedbackRepository, queryService
+        );
+        CompanyCoverLetterReplaceRequest request = new CompanyCoverLetterReplaceRequest(
+                "수정 자기소개서",
+                new ManualJobPostingRequest(
+                        "수정 공고", "기업", "개발자", null, "신입", "정규직",
+                        "수정 업무", "수정 자격", "우대"
+                ),
+                List.of(new CompanyCoverLetterItemReplaceRequest(
+                        10L, "수정 질문", "수정 답변", 1000, 1
+                ))
+        );
+
+        service.replace(3L, request);
+
+        verify(item).prepareDisplayOrder(1_000_000);
+        verify(item).update("수정 질문", "수정 답변", 1000, 1);
+        verify(feedbackRepository).deleteByCoverLetterCompanyItemId(10L);
+        verify(feedbackRepository).deleteByCoverLetterCompanyItemCoverLetterCompanyId(3L);
+        verify(itemRepository, times(2)).flush();
     }
 }

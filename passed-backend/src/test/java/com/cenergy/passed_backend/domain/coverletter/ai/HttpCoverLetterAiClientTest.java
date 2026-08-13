@@ -115,7 +115,6 @@ class HttpCoverLetterAiClientTest {
     private String validJson() {
         return """
                 {
-                  "spell_checked_content": "교정 답변",
                   "qa_alignment_score": 84,
                   "qa_alignment_feedback": "문항 피드백",
                   "jd_fit_feedback": "직무 피드백",

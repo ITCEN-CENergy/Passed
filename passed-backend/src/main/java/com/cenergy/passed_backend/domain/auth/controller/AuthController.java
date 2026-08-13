@@ -36,7 +36,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private static final String ACCESS_COOKIE = "accessToken";
@@ -142,12 +142,12 @@ public class AuthController {
 
     private void setAuthenticationCookies(HttpServletResponse response, JwtTokenResponse tokens) {
         addCookie(response, ACCESS_COOKIE, tokens.getAccessToken(), "/", jwtProvider.accessTokenDuration());
-        addCookie(response, REFRESH_COOKIE, tokens.getRefreshToken(), "/api/auth", jwtProvider.refreshTokenDuration());
+        addCookie(response, REFRESH_COOKIE, tokens.getRefreshToken(), "/api/v1/auth", jwtProvider.refreshTokenDuration());
     }
 
     private void clearAuthenticationCookies(HttpServletResponse response) {
         addCookie(response, ACCESS_COOKIE, "", "/", Duration.ZERO);
-        addCookie(response, REFRESH_COOKIE, "", "/api/auth", Duration.ZERO);
+        addCookie(response, REFRESH_COOKIE, "", "/api/v1/auth", Duration.ZERO);
     }
 
     private void addCookie(

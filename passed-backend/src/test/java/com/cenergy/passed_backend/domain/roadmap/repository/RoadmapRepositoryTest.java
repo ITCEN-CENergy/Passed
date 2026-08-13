@@ -55,6 +55,21 @@ class RoadmapRepositoryTest {
     }
 
     @Test
+    void findsUserRoadmapsExcludingFailedStatus() {
+        long userId = insertUser();
+        long active = insertRoadmap(userId, "ACTIVE", "2026-01-01T00:00:00Z");
+        long completed = insertRoadmap(userId, "COMPLETED", "2026-01-02T00:00:00Z");
+        insertRoadmap(userId, "FAILED", "2026-01-03T00:00:00Z");
+        insertRoadmap(insertUser(), "ACTIVE", "2026-01-04T00:00:00Z");
+
+        assertThat(roadmapRepository
+                .findAllByUserIdAndStatusNotOrderByCreatedAtDescIdDesc(
+                        userId, RoadmapStatus.FAILED))
+                .extracting(Roadmap::getId)
+                .containsExactly(completed, active);
+    }
+
+    @Test
     void findsRoadmapOnlyWhenBothRoadmapAndUserMatch() {
         long ownerId = insertUser();
         long otherUserId = insertUser();

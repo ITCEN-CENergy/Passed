@@ -58,7 +58,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
       </div>
       <div className={styles.reportActions}>
         <button className={styles.roadmapButton} type="button" onClick={onCreateRoadmap}>
-          학습 로드맵 생성
+          학습 로드맵 담기
         </button>
         <button className={styles.coverLetterButton} type="button" onClick={onReviewCoverLetter}>
           자소서 첨삭

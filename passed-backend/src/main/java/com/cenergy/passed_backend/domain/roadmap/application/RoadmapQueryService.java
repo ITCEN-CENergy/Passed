@@ -46,7 +46,8 @@ public class RoadmapQueryService {
 
     public RoadmapListResponse findAll() {
         List<Roadmap> roadmaps = roadmapRepository
-                .findAllByUserIdOrderByCreatedAtDescIdDesc(currentUserId());
+                .findAllByUserIdAndStatusNotOrderByCreatedAtDescIdDesc(
+                        currentUserId(), RoadmapStatus.FAILED);
         List<Long> ids = roadmaps.stream().map(Roadmap::getId).toList();
         Map<Long, Long> postingCounts = counts(ids, jobPostingRepository::countByRoadmapIds);
         Map<Long, Long> skillCounts = counts(ids, skillRepository::countByRoadmapIds);

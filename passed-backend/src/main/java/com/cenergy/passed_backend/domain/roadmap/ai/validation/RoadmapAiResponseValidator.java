@@ -62,11 +62,15 @@ public class RoadmapAiResponseValidator {
     }
 
     private ValidatedRoadmapSkill validateSkill(
-            RoadmapAiRequest.Competency competency,
+        RoadmapAiRequest.Competency competency,
             RoadmapAiResponse.Skill skill
     ) {
         invalidIf(skill.milestones() == null || skill.milestones().isEmpty(), "milestones must not be empty");
-        int maximumMilestones = competency.category() == CompetencyCategory.CERTIFICATION ? 4 : 8;
+        int stageCount = competency.category() == CompetencyCategory.CERTIFICATION
+                || competency.currentLevel().equals(competency.targetLevel())
+                ? 1
+                : competency.targetLevel() - competency.currentLevel();
+        int maximumMilestones = stageCount * 4;
         invalidIf(skill.milestones().size() > maximumMilestones, "too many milestones");
         List<RoadmapAiResponse.Milestone> sorted = new ArrayList<>(skill.milestones());
         invalidIf(sorted.stream().anyMatch(item -> item == null || item.learningOrder() == null),

@@ -137,9 +137,32 @@ Remove-Variable escapedDbPassword, dbPassword -ErrorAction SilentlyContinue
 
 기대값은 `industries=21`, `job_roles=239`, `companies=160`, `job_postings=4730`입니다. 이후 `docker compose logs backend`에서 Flyway 성공과 JPA 검증 완료를 확인합니다.
 
+### CI/CD 자동 초기화
+
+GitHub Actions도 위와 같은 순서를 사용합니다.
+
+- Backend CI는 깨끗한 PostgreSQL 서비스 DB에 기준 Flyway → 개발/CI 기준 데이터 →
+  채용공고 CSV → 나머지 Flyway를 적용한 다음 테스트와 빌드를 실행합니다.
+- 운영 배포는 먼저 PostgreSQL만 시작하고
+  `V20260804154936000__seed_job_posting_skills.sql`의 적용 여부를 확인합니다.
+  신규 또는 중간 상태 DB일 때만 운영 기준 데이터와 채용공고 CSV를 적재하며,
+  이미 초기화된 DB에는 미적용 Flyway만 실행합니다.
+- 개발용 임시 회사 시드는 CI에만 사용하며 운영 DB에는 실행하지 않습니다.
+- OpenAI 임베딩은 DB 초기화와 일반 CI에는 포함하지 않습니다. 운영 배포에서는
+  `dev` 브랜치의 PR이 `main`에 실제 병합된 경우에만 배포 성공 후 실행합니다.
+  직접 `main` push, 다른 브랜치의 병합, 닫기만 한 PR, 수동 workflow 실행에서는
+  임베딩을 건너뜁니다.
+- 운영 임베딩은 최대 100개 청크 canary를 먼저 실행하고, 성공한 경우에만 나머지를
+  처리한 뒤 `remaining=0`을 검증합니다.
+
+관련 자동화는 `infra/ci/initialize-test-database.sh`와
+`infra/prod/initialize-database.ps1`에서 관리합니다.
+
 ### 6. 임베딩 적재는 별도 선택 작업
 
-임베딩은 OpenAI API를 호출해 비용이 발생하므로 자동 Compose 시작 과정에 포함하지 않습니다. API 키와 비용 승인이 준비된 경우에만 작은 배치로 먼저 확인한 뒤 전체 작업을 실행합니다.
+임베딩은 OpenAI API를 호출해 비용이 발생하므로 자동 Compose 시작 과정과 일반
+CI에는 포함하지 않습니다. 운영에서는 `dev → main` PR 병합 배포에만 자동 실행하며,
+로컬 수동 실행은 API 키와 비용 승인이 준비된 경우에만 수행합니다.
 
 ```powershell
 Set-Location .\passed-ai\embedding-data\job-posting

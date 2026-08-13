@@ -8,5 +8,12 @@ __pycache__/
 .ruff_cache/
 .idea/
 tests/
-embedding-data/
+embedding-data/*
+!embedding-data/job-posting/
+embedding-data/job-posting/*
+!embedding-data/job-posting/job_posting_pipeline/
+!embedding-data/job-posting/job_posting_pipeline/**
+!embedding-data/job-posting/data/
+embedding-data/job-posting/data/*
+!embedding-data/job-posting/data/job_postings.csv
 resume_pipeline/evaluation/

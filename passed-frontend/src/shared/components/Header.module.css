@@ -60,6 +60,22 @@
   color: #0867f2;
 }
 
+.navigation .activeServiceLink {
+  position: relative;
+  color: #0867f2;
+}
+
+.navigation .activeServiceLink::after {
+  position: absolute;
+  right: 0;
+  bottom: -31px;
+  left: 0;
+  height: 3px;
+  background: #0867f2;
+  border-radius: 3px 3px 0 0;
+  content: '';
+}
+
 .navigation .loginLink,
 .navigation .signupLink,
 .logoutButton {

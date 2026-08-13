@@ -53,6 +53,16 @@ def test_replan_returns_content_for_backend_defined_group() -> None:
     assert body["groups"][0]["title"]
 
 
+def test_replan_accepts_zero_current_level() -> None:
+    request = payload()
+    request["groups"][0]["currentLevel"] = 0
+    request["groups"][0]["sourceMilestones"][0]["startLevel"] = 0
+
+    response = client.post("/api/v1/roadmaps/replan", json=request)
+
+    assert response.status_code == 200
+
+
 def test_replan_rejects_duplicate_group_keys() -> None:
     request = payload()
     request["groups"].append(dict(request["groups"][0]))

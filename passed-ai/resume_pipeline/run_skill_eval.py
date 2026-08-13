@@ -18,6 +18,7 @@ from .skill_extraction_eval import (
 )
 from .skill_extraction_prompt import SYSTEM_PROMPT
 from .skill_extraction_worker import (
+    _EXPLICIT_COMPLETED_SKILL_RULES,
     SKILL_EXTRACTION_MODEL,
     create_skill_extraction_client,
 )
@@ -47,7 +48,32 @@ def main(argv: list[str] | None = None) -> int:
         "--model-label",
         help="기존 --predictions를 평가할 때 메타데이터에 기록할 모델명",
     )
+    parser.add_argument(
+        "--disable-recovery-rule",
+        action="append",
+        default=[],
+        metavar="SKILL_NAME",
+        help=(
+            "평가에서 제외할 deterministic recovery 스킬명. 여러 번 지정할 수 "
+            "있으며 운영 API 기본 동작에는 영향을 주지 않습니다."
+        ),
+    )
+    parser.add_argument(
+        "--disable-all-recovery-rules",
+        action="store_true",
+        help="모든 deterministic recovery 규칙을 끈 counterfactual 평가",
+    )
     args = parser.parse_args(argv)
+
+    available_rules = {
+        name for name, _category, _pattern in _EXPLICIT_COMPLETED_SKILL_RULES
+    }
+    disabled_rules = frozenset(
+        available_rules if args.disable_all_recovery_rules else args.disable_recovery_rule
+    )
+    unknown_rules = disabled_rules - available_rules
+    if unknown_rules:
+        parser.error(f"존재하지 않는 recovery 규칙입니다: {sorted(unknown_rules)}")
 
     golden = load_golden_set(args.golden)
     if args.generate:
@@ -56,6 +82,7 @@ def main(argv: list[str] | None = None) -> int:
         predictions = generate_golden_predictions(
             golden,
             client=create_skill_extraction_client(),
+            disabled_recovery_rules=disabled_rules,
         )
         if args.save_predictions:
             args.save_predictions.parent.mkdir(parents=True, exist_ok=True)
@@ -70,6 +97,27 @@ def main(argv: list[str] | None = None) -> int:
     print(report.model_dump_json(indent=2))
     if args.save_report:
         args.save_report.parent.mkdir(parents=True, exist_ok=True)
+        # Q. prompt hash 외에 규칙 hash도 기록하는 이유는 무엇인가요?
+        # A. 현재 후처리 규칙도 최종 예측을 바꾸므로 프롬프트만 같다고 같은
+        #    파이프라인이 아닙니다. 두 계약을 함께 고정해야 회귀 결과를 재현할 수 있습니다.
+        rule_contract = [
+            {
+                "name": name,
+                "category": category.value,
+                "pattern": pattern.pattern,
+                "flags": pattern.flags,
+                "enabled": name not in disabled_rules,
+            }
+            for name, category, pattern in _EXPLICIT_COMPLETED_SKILL_RULES
+        ]
+        rules_json = json.dumps(
+            rule_contract,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        prompt_hash = hashlib.sha256(SYSTEM_PROMPT.encode("utf-8")).hexdigest()
+        rules_hash = hashlib.sha256(rules_json.encode("utf-8")).hexdigest()
         artifact = {
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "model": (
@@ -77,9 +125,12 @@ def main(argv: list[str] | None = None) -> int:
             ),
             "golden_file": str(args.golden),
             "golden_sha256": hashlib.sha256(args.golden.read_bytes()).hexdigest(),
-            "prompt_sha256": hashlib.sha256(
-                SYSTEM_PROMPT.encode("utf-8")
+            "prompt_sha256": prompt_hash,
+            "recovery_rules_sha256": rules_hash,
+            "pipeline_sha256": hashlib.sha256(
+                f"{prompt_hash}:{rules_hash}".encode("utf-8")
             ).hexdigest(),
+            "disabled_recovery_rules": sorted(disabled_rules),
             "metrics": report.model_dump(mode="json"),
         }
         args.save_report.write_text(

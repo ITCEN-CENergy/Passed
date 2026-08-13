@@ -112,6 +112,7 @@ class FakeRoadmapContentGenerator:
                     milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.INTERMEDIATE,
                     estimatedMinutes=60,
+                    required=False,
                     resourceRecommendations=recommendations,
                 ),
                 GeneratedMilestoneContent(
@@ -148,6 +149,7 @@ class FakeRoadmapContentGenerator:
                 milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=False,
                 resourceRecommendations=recommendations,
             ),
             GeneratedMilestoneContent(
@@ -254,6 +256,15 @@ async def _generate_content_in_batches(
     async def generate_skill(competency: Competency) -> GeneratedSkillContent:
         key = competency.roadmapSkillKey
         stages = stages_by_key[key]
+        if len(stages) > 2:
+            generated_stages = await asyncio.gather(*(
+                generate_stage(competency, stage) for stage in stages
+            ))
+            skill = GeneratedSkillContent(
+                roadmapSkillKey=key, stages=generated_stages
+            )
+            validate_skill(competency, skill)
+            return skill
         try:
             skill = bind_skill(
                 competency, stages, await request_content(competency, stages)

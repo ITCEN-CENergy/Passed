@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.global.error;
 
 public enum ErrorCode {
+    MY_PAGE_USER_NOT_FOUND,
     JOB_POSTING_INVALID_REQUEST,
     JOB_POSTING_NOT_FOUND,
     JOB_POSTING_COMPANY_NOT_FOUND,
@@ -84,5 +85,5 @@ public enum ErrorCode {
     /** Indicates an unavailable external cover-letter AI service. */
     COVER_LETTER_AI_UNAVAILABLE,
     /** Indicates that the external cover-letter AI returned data outside the expected contract. */
-    COVER_LETTER_AI_INVALID_RESPONSE
+    COVER_LETTER_AI_INVALID_RESPONSE,
 }

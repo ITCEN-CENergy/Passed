@@ -21,5 +21,16 @@ public interface RecommendationRunRepository extends JpaRepository<Recommendatio
 
     Page<RecommendationRun> findAllByUserIdOrderByStartedAtDescIdDesc(Long userId, Pageable pageable);
 
+    @Query(value = """
+            select *
+            from recommendation_runs
+            where user_id = :userId
+              and status = 'COMPLETED'
+              and jsonb_exists(preference_snapshot, 'industryId')
+            order by started_at desc, id desc
+            limit 1
+            """, nativeQuery = true)
+    Optional<RecommendationRun> findLatestCompletedPreferenceRun(@Param("userId") Long userId);
+
     Optional<RecommendationRun> findByIdAndUserId(Long id, Long userId);
 }

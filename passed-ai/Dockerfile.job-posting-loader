@@ -1,0 +1,20 @@
+FROM python:3.14-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+    "openai==2.50.0" \
+    "psycopg[binary]==3.3.4" \
+    "pydantic==2.13.4" \
+    "pydantic-settings==2.14.2" \
+    "python-dotenv==1.2.2" \
+    "tenacity==9.1.4" \
+    "tiktoken==0.13.0"
+
+COPY embedding-data/job-posting/job_posting_pipeline ./job_posting_pipeline
+COPY embedding-data/job-posting/data/job_postings.csv ./data/job_postings.csv
+
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["python", "-m", "job_posting_pipeline.run_loader"]
+CMD ["data/job_postings.csv"]

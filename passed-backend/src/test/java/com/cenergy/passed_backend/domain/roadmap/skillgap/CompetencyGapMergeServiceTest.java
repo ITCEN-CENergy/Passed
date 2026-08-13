@@ -98,6 +98,18 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
+    void selectsMostFrequentRequirementTypeInsteadOfStrongestType() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
+                input(103L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.PREFERRED);
+        assertThat(result.priorityScore()).isEqualTo(223);
+    }
+
+    @Test
     void keepsCompetenciesWithNoGapAndReturnsImmutableList() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 3, 3, RequirementType.REQUIRED)),

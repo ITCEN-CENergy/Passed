@@ -62,6 +62,26 @@
   background: var(--color-primary-hover);
 }
 
+.homeActions {
+  display: grid;
+  gap: 10px;
+  min-width: 220px;
+  margin-top: 8px;
+}
+
+.homeActions .button { margin-top: 0; }
+
+.buttonOutline {
+  color: var(--color-primary);
+  background: #fff;
+  border: 1px solid var(--color-primary);
+}
+
+.buttonOutline:hover,
+.buttonOutline:focus-visible {
+  color: #fff;
+}
+
 .button:focus-visible {
   outline: 2px solid #0e4fab;
   outline-offset: 3px;

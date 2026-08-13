@@ -53,6 +53,22 @@ public class RecommendationController {
                 .body(queryService.getHistory(request));
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<RecommendationResultResponse> getLatestPreferenceResult() {
+        return queryService.getLatestPreferenceResult()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @GetMapping("/job-postings/{jobPostingId}/latest")
+    public ResponseEntity<RecommendationDetailResponse> getLatestJobPostingDetail(
+            @PathVariable Long jobPostingId
+    ) {
+        return queryService.getLatestDetailForJobPosting(jobPostingId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
     @GetMapping("/{recommendationRunId}")
     public ResponseEntity<RecommendationResultResponse> getResult(
             @PathVariable Long recommendationRunId

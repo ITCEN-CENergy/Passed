@@ -194,7 +194,7 @@ jobs:
       name: production
     env:
       IMAGE_TAG: ${{ github.sha }}
-      PROD_ENV_FILE: 'C:\srv\passed\prod.env'
+      PROD_ENV_FILE: 'C:\srv\passed\infra\prod\.env.prod'
 
     steps:
       - name: Checkout
@@ -478,7 +478,7 @@ jobs:
       name: production
     env:
       IMAGE_TAG: ${{ github.sha }}
-      PROD_ENV_FILE: 'C:\srv\passed\prod.env'
+      PROD_ENV_FILE: 'C:\srv\passed\infra\prod\.env.prod'
 
     steps:
       - name: Checkout

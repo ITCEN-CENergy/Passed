@@ -1,9 +1,10 @@
 import { httpClient } from './httpClient.js'
 
-export const getCsrfToken = () => httpClient('/api/auth/csrf')
+export const getCsrfToken = ({ signal } = {}) =>
+  httpClient('/api/auth/csrf', { signal })
 
 export const csrfRequest = async (path, options = {}) => {
-  const csrf = await getCsrfToken()
+  const csrf = await getCsrfToken({ signal: options.signal })
   return httpClient(path, {
     ...options,
     headers: {

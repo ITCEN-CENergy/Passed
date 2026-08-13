@@ -7,6 +7,12 @@ on:
 
     paths:
       - "passed-backend/**"
+      - "passed-ai/Dockerfile.job-posting-loader"
+      - "passed-ai/.dockerignore"
+      - "passed-ai/embedding-data/job-posting/data/job_postings.csv"
+      - "passed-ai/embedding-data/job-posting/job_posting_pipeline/**"
+      - "passed-ai/embedding-data/job-posting/schema/**"
+      - "infra/ci/initialize-test-database.sh"
       - ".github/workflows/backend-ci.yml"
 
   pull_request:
@@ -16,6 +22,12 @@ on:
 
     paths:
       - "passed-backend/**"
+      - "passed-ai/Dockerfile.job-posting-loader"
+      - "passed-ai/.dockerignore"
+      - "passed-ai/embedding-data/job-posting/data/job_postings.csv"
+      - "passed-ai/embedding-data/job-posting/job_posting_pipeline/**"
+      - "passed-ai/embedding-data/job-posting/schema/**"
+      - "infra/ci/initialize-test-database.sh"
       - ".github/workflows/backend-ci.yml"
 
 permissions:
@@ -24,12 +36,13 @@ permissions:
 jobs:
   backend-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
 
     env:
       DB_URL: jdbc:postgresql://localhost:5433/passed
       DB_USERNAME: passed
       DB_PASSWORD: passed
+      JWT_SECRET: ci-only-backend-secret-that-is-long-enough
 
     defaults:
       run:
@@ -69,6 +82,15 @@ jobs:
 
       - name: Grant execute permission
         run: chmod +x gradlew
+
+      - name: Initialize test database with Flyway and job-posting data
+        working-directory: .
+        env:
+          POSTGRES_DB: passed
+          POSTGRES_USER: passed
+          POSTGRES_PASSWORD: passed
+          POSTGRES_PORT: "5433"
+        run: bash infra/ci/initialize-test-database.sh
 
       - name: Run tests
         run: ./gradlew test

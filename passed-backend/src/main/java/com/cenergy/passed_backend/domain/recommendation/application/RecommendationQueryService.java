@@ -225,8 +225,11 @@ public class RecommendationQueryService {
                 value.getTotalScore(), value.getReason(),
                 new JobPostingSummaryResponse(
                         posting.getId(), posting.getTitle(), posting.getRegion(),
-                        posting.getCompany().getCompanyName(), posting.getJobRole().getJobRoleName(),
-                        posting.getJobRole().getIndustry().getIndustryName()
+                        posting.getCompany().getCompanyName(),
+                        posting.getCompany().getCompanySize().getLabel(),
+                        posting.getJobRole().getJobRoleName(),
+                        posting.getJobRole().getIndustry().getIndustryName(),
+                        true
                 )
         );
     }

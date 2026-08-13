@@ -1,6 +1,7 @@
 package com.cenergy.passed_backend.global.error;
 
 public enum ErrorCode {
+    MY_PAGE_USER_NOT_FOUND,
     SKILL_GAP_INVALID_RESPONSE,
     SKILL_GAP_NOT_FOUND,
     SKILL_GAP_AI_TIMEOUT,

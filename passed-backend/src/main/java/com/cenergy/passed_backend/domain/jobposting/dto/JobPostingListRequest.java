@@ -9,6 +9,6 @@ public record JobPostingListRequest(
 ) {
     public JobPostingListRequest {
         page = page == null ? 0 : page;
-        size = size == null ? 10 : size;
+        size = size == null ? 12 : size;
     }
 }

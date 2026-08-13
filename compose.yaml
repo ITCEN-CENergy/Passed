@@ -1,22 +1,144 @@
-name: passed-backend 
+name: passed-dev
+
 services:
+  frontend:
+    build:
+      context: ./passed-frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+      VITE_AI_BASE_URL: http://localhost:8000
+    volumes:
+      - ./passed-frontend:/app
+      - frontend-node-modules:/app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ./passed-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev,fixed-dev-user
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-edu}
+      DB_USERNAME: ${POSTGRES_USER:-edu}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-1234}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      CORS_ALLOWED_ORIGINS: http://localhost:5173
+      RECOMMENDATION_AI_BASE_URL: http://ai:8000
+      ROADMAP_AI_BASE_URL: http://ai:8000
+      COVER_LETTER_AI_BASE_URL: http://ai:8000
+      USER_SKILL_AI_BASE_URL: http://ai:8000
+      LEARNING_COMPETENCY_AI_BASE_URL: http://ai:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  ai:
+    build:
+      context: ./passed-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: development
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: DEBUG
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-edu}:${POSTGRES_PASSWORD:-1234}@postgres:5432/${POSTGRES_DB:-edu}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: passed-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: edu
-      POSTGRES_USER: edu
-      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: ${POSTGRES_DB:-edu}
+      POSTGRES_USER: ${POSTGRES_USER:-edu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1234}
     ports:
       - "5433:5432"
     volumes:
-      - passed-postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U edu -d edu"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-edu} -d ${POSTGRES_DB:-edu}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
     restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: >-
+        postgresql://${POSTGRES_USER:-edu}:${POSTGRES_PASSWORD:-1234}@postgres:5432/${POSTGRES_DB:-edu}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.dev.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+    depends_on:
+      backend:
+        condition: service_healthy
+      ai:
+        condition: service_healthy
+      postgres-exporter:
+        condition: service_started
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./infra/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      prometheus:
+        condition: service_started
 
 volumes:
-  passed-postgres-data:
+  frontend-node-modules:
+  postgres-data:
+  prometheus-data:
+  grafana-data:

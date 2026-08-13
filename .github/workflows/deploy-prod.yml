@@ -11,6 +11,7 @@ on:
       - "infra/prod/**"
       - "infra/prometheus/**"
       - "infra/grafana/provisioning/**"
+      - "infra/grafana/dashboards/**"
       - "infra/oracle/nginx.conf"
       - ".github/workflows/deploy-prod.yml"
 
@@ -25,6 +26,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate-compose:
+    name: Validate Production Compose
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      TAILSCALE_IP: 127.0.0.1
+      POSTGRES_DB: passed_validation
+      POSTGRES_USER: passed_validation
+      POSTGRES_PASSWORD: validation-only-password
+      JWT_SECRET: validation-only-secret-that-is-long-enough
+      OPENAI_API_KEY: validation-only-placeholder
+      GRAFANA_ADMIN_USER: admin
+      GRAFANA_ADMIN_PASSWORD: validation-only-password
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate production Compose
+        run: docker compose -f infra/prod/compose.prod.yml config --quiet
+
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
@@ -110,7 +133,9 @@ jobs:
 
   deploy-home-server:
     name: Deploy Home Server
-    needs: build-images
+    needs:
+      - validate-compose
+      - build-images
     runs-on:
       - self-hosted
       - windows

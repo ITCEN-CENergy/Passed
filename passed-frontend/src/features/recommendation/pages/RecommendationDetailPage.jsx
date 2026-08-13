@@ -4,12 +4,14 @@ import { JobPostingDetailContent, PageState } from '../../job-posting/components
 import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
 import { getRecommendationDetail } from '../api/index.js'
 import { RecommendationReport } from '../components/index.js'
+import useRoadmapBasketStore from '../../roadmap/model/useRoadmapBasketStore.js'
 import jobStyles from '../../job-posting/pages/JobPostingPages.module.css'
 
 const RecommendationDetailPage = () => {
   const { recommendationRunId, jobRecommendationId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+  const addRoadmapItem = useRoadmapBasketStore((state) => state.addItem)
   const [detail, setDetail] = useState(null)
   const [error, setError] = useState('')
 
@@ -27,11 +29,24 @@ const RecommendationDetailPage = () => {
   if (!detail) return <div className={jobStyles.detailShell}><PageState title="매칭 리포트를 불러오지 못했습니다" description={error} /></div>
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
+  const createRoadmap = () => {
+    addRoadmapItem(detail.jobPosting)
+  }
+  const reviewCoverLetter = () => {
+    navigate('/cover-letter-write', {
+      state: { jobPosting: detail.jobPosting },
+    })
+  }
+
   return (
     <div className={jobStyles.detailShell}>
       <button className={jobStyles.backButton} type="button" onClick={() => navigate(-1)}>← 추천 결과로</button>
       <JobPostingDetailContent jobPosting={detail.jobPosting} image={image}>
-        <RecommendationReport report={detail.report} />
+        <RecommendationReport
+          report={detail.report}
+          onCreateRoadmap={createRoadmap}
+          onReviewCoverLetter={reviewCoverLetter}
+        />
       </JobPostingDetailContent>
     </div>
   )

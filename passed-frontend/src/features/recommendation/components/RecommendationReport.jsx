@@ -49,14 +49,21 @@ const HighlightColumn = ({ title, description, skills, emptyMessage, strength })
   </section>
 )
 
-const RecommendationReport = ({ report }) => (
+const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) => (
   <section className={styles.report} aria-labelledby="report-title">
     <div className={styles.reportTitle}>
       <div>
         <p>MY SKILL MATCH REPORT</p>
         <h2 id="report-title">나의 공고 매칭 리포트</h2>
       </div>
-      <span>스킬 분석 완료</span>
+      <div className={styles.reportActions}>
+        <button className={styles.roadmapButton} type="button" onClick={onCreateRoadmap}>
+          학습 로드맵 담기
+        </button>
+        <button className={styles.coverLetterButton} type="button" onClick={onReviewCoverLetter}>
+          자소서 첨삭
+        </button>
+      </div>
     </div>
 
     <div className={styles.summary}>

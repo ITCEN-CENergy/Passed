@@ -12,6 +12,8 @@ import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyItem;
 import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ import java.util.Map;
 @Primary
 @Transactional(readOnly = true)
 public class JpaLearningCompetencyService implements LearningCompetencyService {
+
+    private static final Logger log = LoggerFactory.getLogger(JpaLearningCompetencyService.class);
 
     private final JobRecommendationRepository jobRecommendationRepository;
     private final JobRecommendationSkillDetailRepository skillDetailRepository;
@@ -59,6 +63,21 @@ public class JpaLearningCompetencyService implements LearningCompetencyService {
         List<LearningCompetencyItem> competencies = details.stream()
                 .map(detail -> toItem(detail, evidenceBySkillId.get(detail.getSkill().getId())))
                 .toList();
+
+        log.info("Learning competencies loaded: userId={}, jobPostingId={}, recommendationId={}, count={}",
+                userId, jobPostingId, recommendation.getId(), competencies.size());
+        competencies.forEach(item -> log.info(
+                "Learning competency: jobPostingId={}, competencyId={}, name='{}', category={}, "
+                        + "requirementType={}, currentLevel={}, targetLevel={}, hasEvidence={}",
+                jobPostingId,
+                item.standardCompetencyId(),
+                item.standardCompetencyName(),
+                item.category(),
+                item.requirementType(),
+                item.currentLevel(),
+                item.targetLevel(),
+                item.currentLevelEvidence() != null && !item.currentLevelEvidence().isBlank()
+        ));
 
         return new LearningCompetencyResponse(userId, jobPostingId, competencies);
     }

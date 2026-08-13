@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { JobPostingBasket } from '../../features/roadmap/components/index.js'
 
 function HomePage() {
   return (
@@ -11,7 +10,6 @@ function HomePage() {
         <Link className="button" to="/cover-letter-list">자기소개서 확인하기</Link>
         <Link className="button buttonOutline" to="/recommendations">채용공고 추천받기</Link>
       </div>
-      <JobPostingBasket />
     </section>
   )
 }

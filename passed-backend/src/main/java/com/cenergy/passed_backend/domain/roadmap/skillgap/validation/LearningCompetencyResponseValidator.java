@@ -7,6 +7,8 @@ import com.cenergy.passed_backend.domain.roadmap.skillgap.model.ValidatedSkillGa
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.error.SkillGapException;
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -15,6 +17,8 @@ import java.util.Set;
 
 @Component
 public class LearningCompetencyResponseValidator {
+
+    private static final Logger log = LoggerFactory.getLogger(LearningCompetencyResponseValidator.class);
 
     public ValidatedSkillGapResult validate(Long requestedUserId, Long requestedJobPostingId,
                                             LearningCompetencyResponse response) {
@@ -27,11 +31,41 @@ public class LearningCompetencyResponseValidator {
         invalidIf(!requestedJobPostingId.equals(response.jobPostingId()), "response jobPostingId does not match request");
         invalidIf(response.competencies() == null, "competencies must not be null");
 
+        log.info("Validating learning competencies: requestedUserId={}, requestedJobPostingId={}, "
+                        + "responseUserId={}, responseJobPostingId={}, count={}",
+                requestedUserId, requestedJobPostingId, response.userId(), response.jobPostingId(),
+                response.competencies().size());
+
         Set<Long> competencyIds = new HashSet<>();
-        List<ValidatedCompetencyGap> validatedCompetencies = response.competencies().stream()
-                .map(gap -> validateCompetency(gap, competencyIds))
-                .toList();
+        List<ValidatedCompetencyGap> validatedCompetencies = response.competencies().stream().map(gap -> {
+            try {
+                ValidatedCompetencyGap validated = validateCompetency(gap, competencyIds);
+                log.info("Learning competency validation passed: jobPostingId={}, competencyId={}, "
+                                + "category={}, currentLevel={}, targetLevel={}, calculatedGapLevel={}",
+                        requestedJobPostingId, validated.standardCompetencyId(), validated.category(),
+                        validated.currentLevel(), validated.targetLevel(), validated.gapLevel());
+                return validated;
+            } catch (SkillGapException exception) {
+                log.error("Learning competency validation failed: jobPostingId={}, item={}, reason={}",
+                        requestedJobPostingId, summarize(gap), exception.getMessage());
+                throw exception;
+            }
+        }).toList();
         return new ValidatedSkillGapResult(response.userId(), response.jobPostingId(), validatedCompetencies);
+    }
+
+    private String summarize(LearningCompetencyItem item) {
+        if (item == null) {
+            return "null";
+        }
+        return "competencyId=" + item.standardCompetencyId()
+                + ", name='" + item.standardCompetencyName() + '\''
+                + ", category=" + item.category()
+                + ", requirementType=" + item.requirementType()
+                + ", currentLevel=" + item.currentLevel()
+                + ", targetLevel=" + item.targetLevel()
+                + ", hasEvidence=" + (item.currentLevelEvidence() != null
+                && !item.currentLevelEvidence().isBlank());
     }
 
     private ValidatedCompetencyGap validateCompetency(

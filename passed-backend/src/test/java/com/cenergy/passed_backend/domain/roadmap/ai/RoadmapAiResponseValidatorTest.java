@@ -115,6 +115,15 @@ class RoadmapAiResponseValidatorTest {
                 milestone(1, 0, 1), milestone(2, 0, 1), milestone(3, 0, 1))))
                 .skills()).hasSize(1);
     }
+
+    @Test
+    void validatesThreeStagesFromZeroToThree() {
+        assertThat(validator.validate(request(technical("docker", 0, 3)), response(skill("docker",
+                milestone(1, 0, 1), milestone(2, 0, 1), milestone(3, 0, 1),
+                milestone(4, 1, 2), milestone(5, 1, 2), milestone(6, 1, 2),
+                milestone(7, 2, 3), milestone(8, 2, 3), milestone(9, 2, 3))))
+                .skills().getFirst().milestones()).hasSize(9);
+    }
     @Test void rejectsLevelAboveThree() { assertInvalid(request(technical("docker", 2, 4)), response(skill("docker", milestone(1, 2, 4)))); }
     @Test void rejectsCertificationMilestoneForGeneralSkill() {
         RoadmapAiResponse.Milestone value = new RoadmapAiResponse.Milestone(

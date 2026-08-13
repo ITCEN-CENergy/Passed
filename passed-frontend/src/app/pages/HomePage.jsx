@@ -11,7 +11,6 @@ function HomePage() {
         <Link className="button" to="/cover-letter-list">자기소개서 확인하기</Link>
         <Link className="button buttonOutline" to="/recommendations">채용공고 추천받기</Link>
       </div>
-      <Link className="button" to="/cover-letter-list">자기소개서 확인하기</Link>
       <JobPostingBasket />
     </section>
   )

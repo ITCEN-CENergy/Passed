@@ -78,6 +78,8 @@
   left: 0;
   height: 2px;
   background: #146bff;
+}
+
 .navigation .activeServiceLink {
   position: relative;
   color: #0867f2;

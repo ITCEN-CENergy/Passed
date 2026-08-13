@@ -42,6 +42,8 @@ const router = createBrowserRouter([
       {
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
+      },
+      {
         path: 'roadmap',
         element: <RoadmapListPage />,
       },

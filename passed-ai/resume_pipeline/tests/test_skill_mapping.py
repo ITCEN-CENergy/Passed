@@ -16,7 +16,9 @@ from resume_pipeline.skill_mapping_worker import (
     SkillMaster,
     apply_mapping_thresholds,
     normalize_skill_name,
+    normalize_skill_name_conservative,
     normalize_alias_candidate,
+    normalize_alias_candidate_conservative,
     resolve_alias,
     resolve_exact_or_normalized,
 )
@@ -59,6 +61,12 @@ def test_normalization_changes_only_surface_format():
     assert normalize_skill_name("스프링부트") != normalize_skill_name("Spring Boot")
 
 
+def test_conservative_normalization_keeps_meaningful_separators_and_collapses_spaces():
+    assert normalize_skill_name_conservative(" Ｖｅｃｔｏｒ   DB ") == "vector db"
+    assert normalize_skill_name_conservative("Spring-Boot") == "spring-boot"
+    assert normalize_skill_name_conservative("Spring Boot") == "spring boot"
+
+
 def test_certification_alias_normalization_removes_only_score_suffix():
     assert (
         normalize_alias_candidate("TOEIC 850점", SkillCategory.CERTIFICATION)
@@ -67,6 +75,12 @@ def test_certification_alias_normalization_removes_only_score_suffix():
     assert (
         normalize_alias_candidate("AWS S3", SkillCategory.TECHNICAL_SKILL)
         == "awss3"
+    )
+    assert (
+        normalize_alias_candidate_conservative(
+            "TOEIC 850점", SkillCategory.CERTIFICATION
+        )
+        == "toeic"
     )
 
 

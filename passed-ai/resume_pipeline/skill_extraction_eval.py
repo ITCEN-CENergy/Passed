@@ -228,6 +228,7 @@ def generate_golden_predictions(
     golden: list[GoldenExample],
     *,
     client: Any,
+    disabled_recovery_rules: frozenset[str] = frozenset(),
 ) -> list[PredictedExample]:
     """골든셋 본문을 실제 추출기와 같은 프롬프트 경로로 실행한다."""
     predictions: list[PredictedExample] = []
@@ -239,7 +240,11 @@ def generate_golden_predictions(
             chunk_content=example.content,
             content_hash=hashlib.sha256(example.content.encode("utf-8")).hexdigest(),
         )
-        candidates = extract_chunk_candidates(chunk, client=client)
+        candidates = extract_chunk_candidates(
+            chunk,
+            client=client,
+            disabled_recovery_rules=disabled_recovery_rules,
+        )
         predictions.append(
             PredictedExample(
                 example_id=example.example_id,

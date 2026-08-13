@@ -18,16 +18,27 @@ const ProgressRing = ({ value }) => <div className={styles.ring} style={{ '--pro
 
 const Milestone = ({ item, onToggle, busy }) => {
   const complete = item.status === 'COMPLETED'
+  const [resourcesOpen, setResourcesOpen] = useState(true)
   return <article className={styles.milestone}>
-    <button className={`${styles.check} ${complete ? styles.checked : ''}`} type="button" disabled={busy} onClick={() => onToggle(item, !complete)} aria-label={`${item.title} ${complete ? '완료 취소' : '완료 처리'}`}>{complete ? '✓' : ''}</button>
+    <button className={`${styles.check} ${complete ? styles.checked : ''}`} type="button" disabled={busy} onClick={() => onToggle(item, !complete)} aria-label={`${item.title} ${complete ? '완료 취소' : '완료 처리'}`}>{complete && <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>}</button>
     <div className={styles.milestoneBody}>
       <div className={styles.meta}>{labels[item.milestoneType] || item.milestoneType}<i />{labels[item.difficulty] || item.difficulty}<i /><b>{item.required ? '필수' : '선택'}</b></div>
       <h4>{item.title}</h4><p>{item.description}</p>
       {item.learningObjective && <p className={styles.detail}>학습 목표 · {item.learningObjective}</p>}
       {item.completionCriteria && <p className={styles.detail}>완료 기준 · {item.completionCriteria}</p>}
-      {!!item.learningResources?.length && <div className={styles.resources}><span>추천 학습자료</span>{item.learningResources.map(resource => <a key={resource.resourceId} href={resource.url} target="_blank" rel="noreferrer">{resource.title}<em>{resource.provider ? ` · ${resource.provider}` : ''}</em> <b>학습자료 열기 ↗</b></a>)}</div>}
     </div>
     <div className={styles.milestoneSide}><span className={complete ? styles.done : styles.doing}>{labels[item.status === 'COMPLETED' ? 'COMPLETED_MILESTONE' : item.status] || item.status}</span><small>예상시간 <strong>{fmtHours(item.estimatedMinutes)}</strong></small></div>
+    {!!item.learningResources?.length && <div className={styles.resources}>
+        <button className={styles.resourceHeading} type="button" aria-expanded={resourcesOpen} onClick={() => setResourcesOpen(value => !value)}><span><strong>추천 학습자료</strong><b>{item.learningResources.length}개</b></span><i aria-hidden="true">{resourcesOpen ? '⌃' : '⌄'}</i></button>
+        {resourcesOpen && <div className={styles.resourceList}>{item.learningResources.map((resource, index) => <article className={styles.resourceCard} key={resource.resourceId}>
+          <div className={styles.resourceInfo}>
+            <div><span className={styles.resourceType}>{resource.resourceType || '학습자료'}</span>{index === 0 && <span className={styles.recommended}>추천</span>}</div>
+            <h5>{resource.title}</h5>
+            {resource.provider && <p>{resource.provider}</p>}
+          </div>
+          <a className={styles.resourceButton} href={resource.url} target="_blank" rel="noopener noreferrer">학습하기</a>
+        </article>)}</div>}
+    </div>}
   </article>
 }
 
@@ -36,8 +47,10 @@ const SkillCard = ({ skill, index, onToggle, busyId }) => {
   return <section className={styles.skill}>
     <header><span className={styles.order}>{index + 1}</span><div className={styles.skillTitle}><div className={styles.meta}>순위 <i /> {labels[skill.category] || skill.category} <b className={styles[skill.requirementType?.toLowerCase()]}>{labels[skill.requirementType] || skill.requirementType}</b></div><h3>{skill.standardCompetencyName}</h3></div></header>
     <div className={styles.skillStats}><span>{skill.frequency}개 공고에서 요구</span><span>예상 학습시간<strong>{fmtHours(skill.estimatedMinutes)}</strong></span><span>진행률<strong>{progress(skill.progressRate).toFixed(0)}%</strong><i><b style={{ width: `${progress(skill.progressRate)}%` }} /></i></span></div>
-    <button className={styles.fold} type="button" onClick={() => setOpen(value => !value)}><strong>학습 단계 {skill.milestones?.length || 0}개</strong><span>{open ? '⌃' : '⌄'}</span></button>
-    {open && <div className={styles.milestones}>{skill.milestones?.map(item => <Milestone key={item.milestoneId} item={item} onToggle={onToggle} busy={busyId === item.milestoneId} />)}</div>}
+    <div className={styles.learningStages}>
+      <button className={styles.fold} type="button" onClick={() => setOpen(value => !value)}><strong>학습 단계 {skill.milestones?.length || 0}개</strong><span>{open ? '⌃' : '⌄'}</span></button>
+      {open && <div className={styles.milestones}>{skill.milestones?.map(item => <Milestone key={item.milestoneId} item={item} onToggle={onToggle} busy={busyId === item.milestoneId} />)}</div>}
+    </div>
   </section>
 }
 

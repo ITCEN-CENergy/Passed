@@ -27,11 +27,28 @@ const RecommendationDetailPage = () => {
   if (!detail) return <div className={jobStyles.detailShell}><PageState title="매칭 리포트를 불러오지 못했습니다" description={error} /></div>
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
+  const createRoadmap = () => {
+    console.log('학습 로드맵 생성 공고', {
+      jobPostingId: detail.jobPosting.jobPostingId,
+      companyName: detail.jobPosting.companyName,
+      jobPostingTitle: detail.jobPosting.title,
+    })
+  }
+  const reviewCoverLetter = () => {
+    navigate('/cover-letter-write', {
+      state: { jobPosting: detail.jobPosting },
+    })
+  }
+
   return (
     <div className={jobStyles.detailShell}>
       <button className={jobStyles.backButton} type="button" onClick={() => navigate(-1)}>← 추천 결과로</button>
       <JobPostingDetailContent jobPosting={detail.jobPosting} image={image}>
-        <RecommendationReport report={detail.report} />
+        <RecommendationReport
+          report={detail.report}
+          onCreateRoadmap={createRoadmap}
+          onReviewCoverLetter={reviewCoverLetter}
+        />
       </JobPostingDetailContent>
     </div>
   )

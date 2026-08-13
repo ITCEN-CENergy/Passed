@@ -3,7 +3,7 @@ package com.cenergy.passed_backend.domain.recommendation.application;
 import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
-import com.cenergy.passed_backend.domain.recommendation.application.model.RecommendationRunContext;
+import com.cenergy.passed_backend.domain.recommendation.application.model.PreferenceRecommendationRunContext;
 import com.cenergy.passed_backend.domain.recommendation.dto.RecommendationCreateRequest;
 import com.cenergy.passed_backend.domain.recommendation.dto.UserSkillData;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGradeRule;
@@ -93,18 +93,18 @@ class RecommendationRunStartServiceTest {
                 new RecommendationSnapshotFactory(new ObjectMapper())
         );
 
-        RecommendationRunContext result = service.start(2L, new RecommendationCreateRequest(
+        PreferenceRecommendationRunContext result = service.startForPreference(2L, new RecommendationCreateRequest(
                 8L,
                 List.of(239L, 227L, 239L)
         ));
 
-        assertEquals(10L, result.recommendationRunId());
+        assertEquals(10L, result.run().recommendationRunId());
         assertEquals(List.of(227L, 239L), result.jobRoleIds());
-        assertEquals(List.of(10L, 20L), result.userSkills().stream()
+        assertEquals(List.of(10L, 20L), result.run().userSkills().stream()
                 .map(UserSkillData::skillId)
                 .toList());
-        assertEquals(1, result.importantSkillCount());
-        assertTrue(result.userSkillSnapshotHash().matches("^[0-9a-f]{64}$"));
+        assertEquals(1, result.run().importantSkillCount());
+        assertTrue(result.run().userSkillSnapshotHash().matches("^[0-9a-f]{64}$"));
     }
 
     private JobRole role(Long id) {

@@ -20,6 +20,49 @@ import static org.mockito.Mockito.when;
 
 class RecommendationExplanationServiceTest {
     @Test
+    void generatesExplanationForSingleRecommendation() {
+        RecommendationExplanationClient client = mock(RecommendationExplanationClient.class);
+        RecommendationPostingSummaryLoader summaryLoader = mock(
+                RecommendationPostingSummaryLoader.class
+        );
+        when(summaryLoader.load(List.of(100L))).thenReturn(Map.of(100L, summary()));
+        when(client.generate(anyList())).thenAnswer(invocation -> {
+            List<RecommendationExplanationInput> inputs = invocation.getArgument(0);
+            assertEquals(1, inputs.size());
+            assertEquals(100L, inputs.getFirst().jobPostingId());
+            return List.of(new RecommendationExplanation(100L, "단일 공고 추천 설명"));
+        });
+
+        RecommendationExplanation result = new RecommendationExplanationService(
+                client,
+                summaryLoader,
+                new RecommendationSkillHighlightSelector()
+        ).generate(graded(score(List.of())));
+
+        assertEquals(new RecommendationExplanation(100L, "단일 공고 추천 설명"), result);
+    }
+
+    @Test
+    void retriesSingleRecommendationThenUsesFallback() {
+        RecommendationExplanationClient client = mock(RecommendationExplanationClient.class);
+        RecommendationPostingSummaryLoader summaryLoader = mock(
+                RecommendationPostingSummaryLoader.class
+        );
+        when(summaryLoader.load(List.of(100L))).thenReturn(Map.of(100L, summary()));
+        when(client.generate(anyList())).thenThrow(new RuntimeException("OpenAI unavailable"));
+
+        RecommendationExplanation result = new RecommendationExplanationService(
+                client,
+                summaryLoader,
+                new RecommendationSkillHighlightSelector()
+        ).generate(graded(score(List.of())));
+
+        verify(client, times(2)).generate(anyList());
+        assertEquals(100L, result.jobPostingId());
+        assertTrue(result.reason().contains("테스트 회사"));
+    }
+
+    @Test
     void retriesTwiceThenUsesCalculationBasedFallback() {
         RecommendationExplanationClient client = mock(RecommendationExplanationClient.class);
         RecommendationPostingSummaryLoader summaryLoader = mock(
@@ -55,7 +98,7 @@ class RecommendationExplanationServiceTest {
                 client,
                 summaryLoader,
                 new RecommendationSkillHighlightSelector()
-        ).generate(List.of(ranked));
+        ).generateAll(List.of(ranked));
 
         verify(client, times(2)).generate(any());
         assertTrue(result.get(100L).reason().contains("테스트 회사"));
@@ -113,7 +156,7 @@ class RecommendationExplanationServiceTest {
                 client,
                 summaryLoader,
                 new RecommendationSkillHighlightSelector()
-        ).generate(List.of(ranked));
+        ).generateAll(List.of(ranked));
 
         assertTrue(result.get(100L).reason().contains("TypeScript"));
     }
@@ -128,6 +171,29 @@ class RecommendationExplanationServiceTest {
                 "TypeScript 서비스 개발 역량",
                 "Docker 기반 배포 경험",
                 "주도적으로 문제를 해결하는 인재"
+        );
+    }
+
+    private GradedRecommendation graded(RecommendationScoreResult score) {
+        return new GradedRecommendation(score, RecommendationGrade.RECOMMENDED, 30);
+    }
+
+    private RecommendationScoreResult score(List<EvaluatedSkillDetail> skillDetails) {
+        return new RecommendationScoreResult(
+                100L,
+                new BigDecimal("70.0000"),
+                new BigDecimal("40.0000"),
+                new BigDecimal("20.0000"),
+                new BigDecimal("10.0000"),
+                BigDecimal.ZERO.setScale(4),
+                2,
+                1,
+                new BigDecimal("0.5000"),
+                new BigDecimal("0.5000"),
+                0,
+                0,
+                RecommendationCandidateTier.FALLBACK,
+                skillDetails
         );
     }
 

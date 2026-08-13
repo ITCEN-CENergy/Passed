@@ -13,13 +13,16 @@ import java.util.Map;
 @Service
 public class RecommendationCandidateSelectionService {
     private final RecommendationCandidateLoader candidateLoader;
+    private final RequiredSkillEvaluator requiredSkillEvaluator;
     private final RequiredSkillFilter requiredSkillFilter;
 
     public RecommendationCandidateSelectionService(
             RecommendationCandidateLoader candidateLoader,
+            RequiredSkillEvaluator requiredSkillEvaluator,
             RequiredSkillFilter requiredSkillFilter
     ) {
         this.candidateLoader = candidateLoader;
+        this.requiredSkillEvaluator = requiredSkillEvaluator;
         this.requiredSkillFilter = requiredSkillFilter;
     }
 
@@ -28,15 +31,17 @@ public class RecommendationCandidateSelectionService {
             Collection<UserSkillData> userSkills,
             RecommendationScoringPolicy policy
     ) {
-        Map<Long, PostingSkillBundle> candidates = candidateLoader.loadByJobRoleIds(jobRoleIds);
-        Map<Long, RequiredSkillEvaluation> requiredQualifiedCandidates = requiredSkillFilter.filter(
-                candidates,
-                userSkills,
-                policy
-        );
+        Map<Long, PostingSkillBundle> candidates =
+                candidateLoader.loadByJobRoleIds(jobRoleIds);
+
+        Map<Long, RequiredSkillEvaluation> evaluations =
+                requiredSkillEvaluator.evaluateAll(candidates, userSkills);
+
+        Map<Long, RequiredSkillEvaluation> qualified =
+                requiredSkillFilter.filter(evaluations, policy);
         return new RecommendationCandidateSelectionResult(
                 candidates,
-                requiredQualifiedCandidates
+                qualified
         );
     }
 }

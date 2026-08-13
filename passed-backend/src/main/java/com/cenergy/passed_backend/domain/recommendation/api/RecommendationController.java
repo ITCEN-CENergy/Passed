@@ -1,5 +1,6 @@
 package com.cenergy.passed_backend.domain.recommendation.api;
 
+import com.cenergy.passed_backend.domain.recommendation.application.RecommendationOneService;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationPreparationService;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationQueryService;
 import com.cenergy.passed_backend.domain.recommendation.dto.*;
@@ -12,13 +13,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users/recommendations")
 public class RecommendationController {
     private final RecommendationPreparationService preparationService;
+    private final RecommendationOneService oneService;
     private final RecommendationQueryService queryService;
 
     public RecommendationController(
             RecommendationPreparationService preparationService,
+            RecommendationOneService oneService,
             RecommendationQueryService queryService
     ) {
         this.preparationService = preparationService;
+        this.oneService = oneService;
         this.queryService = queryService;
     }
 
@@ -30,6 +34,15 @@ public class RecommendationController {
                 .status(HttpStatus.CREATED)
                 .body(preparationService.prepare(request));
     }
+    @PostMapping("/run")
+    public ResponseEntity<RecommendationCreateOneResponse> createOne(
+            @Valid @RequestBody RecommendationCreateOneRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(oneService.start(request));
+    }
+
 
     @GetMapping
     public ResponseEntity<RecommendationHistoryResponse> getHistory(

@@ -44,25 +44,41 @@ docker compose up -d postgres
 docker compose ps
 ```
 
-기본 연결 정보는 `edu` / `edu` / `1234`이며, 호스트에서는 `localhost:5433`, Compose 네트워크 안에서는 `postgres:5432`를 사용합니다.
+DB 이름·사용자·비밀번호는 루트 `.env`의 `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`를 사용합니다.
 
 ### 2. 기준 스키마만 먼저 마이그레이션
 
-아래 명령은 마운트한 백엔드 마이그레이션만 사용해 `V20260804151714560`까지 적용합니다. `passed-dev_default` 네트워크는 `compose.yaml`의 프로젝트 이름(`passed-dev`)을 기준으로 생성됩니다.
+먼저 실행 중인 PostgreSQL 컨테이너에서 실제 접속 정보를 읽고 연결 상태를 확인합니다. 비밀번호는 화면에 출력하지 않습니다.
+
+```powershell
+$postgresContainerId = docker compose ps -q postgres
+if (-not $postgresContainerId) { throw 'postgres 컨테이너를 찾지 못했습니다. docker compose up -d postgres를 먼저 실행하세요.' }
+
+$dbName = docker compose exec -T postgres sh -c 'printf %s "$POSTGRES_DB"'
+$dbUser = docker compose exec -T postgres sh -c 'printf %s "$POSTGRES_USER"'
+$dbPassword = docker compose exec -T postgres sh -c 'printf %s "$POSTGRES_PASSWORD"'
+if (-not $dbName -or -not $dbUser -or -not $dbPassword) { throw 'PostgreSQL 접속 환경 변수를 읽지 못했습니다.' }
+
+docker compose exec -T postgres pg_isready -U $dbUser -d $dbName
+docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U $dbUser -d $dbName `
+  -c 'SELECT current_user, current_database();'
+```
+
+아래 명령은 실행 중인 PostgreSQL 컨테이너의 네트워크 네임스페이스를 직접 공유해 `V20260804151714560`까지 적용합니다. 따라서 Compose 네트워크 이름이나 호스트 포트 공개 상태에 의존하지 않습니다.
 
 ```powershell
 docker run --rm `
-  --network passed-dev_default `
+  --network "container:$postgresContainerId" `
   -v "${PWD}\passed-backend\src\main\resources\db\migration:/flyway/sql:ro" `
   flyway/flyway:11 `
   -locations="filesystem:/flyway/sql" `
-  -url="jdbc:postgresql://postgres:5432/edu" `
-  -user=edu -password=1234 `
+  "-url=jdbc:postgresql://127.0.0.1:5432/$dbName" `
+  "-user=$dbUser" "-password=$dbPassword" `
   -target=20260804151714560 `
   -connectRetries=60 migrate
 ```
 
-환경 변수로 `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`를 변경했다면 위 명령의 URL, 사용자, 비밀번호도 같은 값으로 바꿉니다.
+명령이 끝난 뒤 현재 PowerShell 세션에 남은 비밀번호는 전체 초기화가 끝나면 `Remove-Variable dbPassword`로 제거합니다.
 
 ### 3. CSV가 참조하는 기준 데이터 적재
 
@@ -70,10 +86,10 @@ docker run --rm `
 
 ```powershell
 Get-Content -Raw .\passed-ai\embedding-data\job-posting\schema\seed_industries_job_roles_from_excel.sql |
-  docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U edu -d edu
+  docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U $dbUser -d $dbName
 
 Get-Content -Raw .\passed-ai\embedding-data\job-posting\schema\dev_seed_companies_0_159.sql |
-  docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U edu -d edu
+  docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U $dbUser -d $dbName
 ```
 
 ### 4. 채용공고 CSV와 청크 적재
@@ -85,7 +101,8 @@ Set-Location .\passed-ai
 uv sync
 
 Set-Location .\embedding-data\job-posting
-$env:DATABASE_URL = 'postgresql://edu:1234@localhost:5433/edu'
+$escapedDbPassword = [Uri]::EscapeDataString($dbPassword)
+$env:DATABASE_URL = "postgresql://${dbUser}:${escapedDbPassword}@localhost:5433/${dbName}"
 uv run --project ..\.. python -m job_posting_pipeline.run_loader .\data\job_postings.csv
 
 Set-Location ..\..\..
@@ -97,15 +114,15 @@ Set-Location ..\..\..
 
 ```powershell
 docker run --rm `
-  --network passed-dev_default `
+  --network "container:$postgresContainerId" `
   -v "${PWD}\passed-backend\src\main\resources\db\migration:/flyway/sql:ro" `
   flyway/flyway:11 `
   -locations="filesystem:/flyway/sql" `
-  -url="jdbc:postgresql://postgres:5432/edu" `
-  -user=edu -password=1234 `
+  "-url=jdbc:postgresql://127.0.0.1:5432/$dbName" `
+  "-user=$dbUser" "-password=$dbPassword" `
   -connectRetries=60 migrate
 
-docker compose exec -T postgres psql -U edu -d edu -c "
+docker compose exec -T postgres psql -U $dbUser -d $dbName -c "
   SELECT
     (SELECT COUNT(*) FROM industries) AS industries,
     (SELECT COUNT(*) FROM job_roles) AS job_roles,
@@ -113,6 +130,9 @@ docker compose exec -T postgres psql -U edu -d edu -c "
     (SELECT COUNT(*) FROM job_postings) AS job_postings,
     (SELECT COUNT(*) FROM flyway_schema_history WHERE success) AS applied_migrations;
 "
+
+Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
+Remove-Variable escapedDbPassword, dbPassword -ErrorAction SilentlyContinue
 ```
 
 기대값은 `industries=21`, `job_roles=239`, `companies=160`, `job_postings=4730`입니다. 이후 `docker compose logs backend`에서 Flyway 성공과 JPA 검증 완료를 확인합니다.
@@ -123,7 +143,9 @@ docker compose exec -T postgres psql -U edu -d edu -c "
 
 ```powershell
 Set-Location .\passed-ai\embedding-data\job-posting
-$env:DATABASE_URL = 'postgresql://edu:1234@localhost:5433/edu'
+$dbPassword = docker compose exec -T postgres sh -c 'printf %s "$POSTGRES_PASSWORD"'
+$escapedDbPassword = [Uri]::EscapeDataString($dbPassword)
+$env:DATABASE_URL = "postgresql://${dbUser}:${escapedDbPassword}@localhost:5433/${dbName}"
 $env:OPENAI_API_KEY = 'your-api-key'
 
 # 소규모 확인 후 로그의 failed=0, remaining 값을 점검합니다.
@@ -132,6 +154,9 @@ uv run --project ..\.. python -m job_posting_pipeline.run_embedding --max-iterat
 # 전체 적재는 비용과 결과를 확인한 뒤에만 실행합니다.
 uv run --project ..\.. python -m job_posting_pipeline.run_embedding --batch-size 100
 Set-Location ..\..\..
+
+Remove-Item Env:DATABASE_URL, Env:OPENAI_API_KEY -ErrorAction SilentlyContinue
+Remove-Variable escapedDbPassword, dbPassword -ErrorAction SilentlyContinue
 ```
 
 ---
@@ -167,7 +192,7 @@ Set-Location ..\..\..
 - **AI 서비스 API (FastAPI)**: [http://localhost:8000](http://localhost:8000)
   - Swagger API 문서: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **데이터베이스 (PostgreSQL)**: `localhost:5433` (컨테이너 내부 5432)
-  - DB명: `edu` / 계정: `edu` / 비밀번호: `1234`
+  - DB명·계정·비밀번호: 루트 `.env`의 `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` 사용
 - **모니터링 대시보드 (Grafana)**: [http://localhost:3000](http://localhost:3000)
   - 기본 계정: `admin` / 비밀번호: `admin`
 - **모니터링 메트릭 (Prometheus)**: [http://localhost:9090](http://localhost:9090)

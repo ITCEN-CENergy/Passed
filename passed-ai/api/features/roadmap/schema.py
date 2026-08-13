@@ -96,6 +96,7 @@ class Milestone(RoadmapModel):
     difficulty: Difficulty
     estimatedMinutes: int = Field(gt=0)
     learningOrder: int = Field(gt=0)
+    required: bool = True
     learningResources: list["LearningResource"] = Field(default_factory=list)
 
 
@@ -139,6 +140,7 @@ class GeneratedMilestoneContent(RoadmapModel):
     milestoneType: MilestoneType
     difficulty: Difficulty
     estimatedMinutes: int = Field(ge=30, le=2400)
+    required: bool = True
     resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
 
 

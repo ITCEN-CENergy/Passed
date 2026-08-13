@@ -209,12 +209,10 @@ jobs:
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
-        shell: powershell
-        run: |
-          "${{ secrets.GITHUB_TOKEN }}" |
-            docker login ghcr.io `
-              --username "${{ github.actor }}" `
-              --password-stdin
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Compose configuration
         shell: powershell
@@ -493,12 +491,11 @@ jobs:
           }
 
       - name: Log in to GHCR
-        shell: powershell
-        run: |
-          "${{ secrets.GITHUB_TOKEN }}" |
-            docker login ghcr.io `
-              --username "${{ github.actor }}" `
-              --password-stdin
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run job-posting embeddings
         shell: powershell

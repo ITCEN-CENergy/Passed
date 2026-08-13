@@ -5,7 +5,9 @@ public record JobPostingSummaryResponse(
         String title,
         String region,
         String companyName,
+        String companySize,
         String jobRoleName,
-        String industryName
+        String industryName,
+        boolean matched
 ) {
 }

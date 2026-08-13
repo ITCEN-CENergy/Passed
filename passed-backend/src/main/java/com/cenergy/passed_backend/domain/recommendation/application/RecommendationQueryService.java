@@ -29,6 +29,7 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,12 +73,13 @@ public class RecommendationQueryService {
     public RecommendationResultResponse getResult(Long runId) {
         Long userId = currentUserIdProvider.getCurrentUserId();
         RecommendationRun run = ownedRun(runId, userId);
-        List<RecommendationItemResponse> items = recommendationRepository
-                .findAllByRecommendationRunIdOrderByRankOrderAsc(runId)
-                .stream()
-                .map(this::recommendationItem)
-                .toList();
-        return new RecommendationResultResponse(runResponse(run), items);
+        return resultResponse(run);
+    }
+
+    public Optional<RecommendationResultResponse> getLatestPreferenceResult() {
+        Long userId = currentUserIdProvider.getCurrentUserId();
+        return runRepository.findLatestCompletedPreferenceRun(userId)
+                .map(this::resultResponse);
     }
 
     public RecommendationDetailResponse getDetail(Long runId, Long jobRecommendationId) {
@@ -90,8 +92,39 @@ public class RecommendationQueryService {
                         ErrorCode.RECOMMENDATION_RESULT_NOT_FOUND,
                         "Recommendation result not found"
                 ));
+        return recommendationDetail(recommendation, runId);
+    }
+
+    public Optional<RecommendationDetailResponse> getLatestDetailForJobPosting(
+            Long jobPostingId
+    ) {
+        Long userId = currentUserIdProvider.getCurrentUserId();
+        return recommendationRepository
+                .findFirstByJobPostingIdAndRecommendationRunUserIdOrderByRecommendationRunStartedAtDescIdDesc(
+                        jobPostingId,
+                        userId
+                )
+                .map(recommendation -> recommendationDetail(
+                        recommendation,
+                        recommendation.getRecommendationRun().getId()
+                ));
+    }
+
+    private RecommendationResultResponse resultResponse(RecommendationRun run) {
+        List<RecommendationItemResponse> items = recommendationRepository
+                .findAllByRecommendationRunIdOrderByRankOrderAsc(run.getId())
+                .stream()
+                .map(this::recommendationItem)
+                .toList();
+        return new RecommendationResultResponse(runResponse(run), items);
+    }
+
+    private RecommendationDetailResponse recommendationDetail(
+            JobRecommendation recommendation,
+            Long runId
+    ) {
         List<JobRecommendationSkillDetail> details = skillDetailRepository
-                .findAllByJobRecommendationIdOrderByIdAsc(jobRecommendationId);
+                .findAllByJobRecommendationIdOrderByIdAsc(recommendation.getId());
         RecommendationSkillHighlightSelector.Selection highlights =
                 highlightSelector.selectPersisted(details);
         RecommendationReportResponse report = new RecommendationReportResponse(

@@ -30,6 +30,14 @@ public class UserJobPreferenceController {
         return ResponseEntity.ok(service.update(request));
     }
 
+    @GetMapping("/jobs")
+    public ResponseEntity<UserJobPreferenceResponse> findCurrent() {
+        UserJobPreferenceResponse preference = service.findCurrent();
+        return preference == null
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(preference);
+    }
+
     @GetMapping("/industries")
     public ResponseEntity<IndustryListResponse> findIndustries() {
         return ResponseEntity.ok(service.findIndustries());

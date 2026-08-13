@@ -48,11 +48,17 @@ class RoadmapGenerationConcurrencyIntegrationTest {
 
     private final List<Long> userIds = new ArrayList<>();
     private final List<Long> jobPostingIds = new ArrayList<>();
+    private final List<Long> jobRoleIds = new ArrayList<>();
+    private final List<Long> companyIds = new ArrayList<>();
+    private final List<Long> industryIds = new ArrayList<>();
 
     @AfterEach
     void cleanUp() {
         userIds.forEach(id -> jdbc.update("delete from users where id = ?", id));
         jobPostingIds.forEach(id -> jdbc.update("delete from job_postings where id = ?", id));
+        jobRoleIds.forEach(id -> jdbc.update("delete from job_roles where id = ?", id));
+        companyIds.forEach(id -> jdbc.update("delete from companies where id = ?", id));
+        industryIds.forEach(id -> jdbc.update("delete from industries where id = ?", id));
     }
 
     @Test
@@ -276,12 +282,15 @@ class RoadmapGenerationConcurrencyIntegrationTest {
         long industryId = jdbc.queryForObject(
                 "insert into industries(industry_name) values (?) returning id",
                 Long.class, "concurrency-industry-" + unique);
+        industryIds.add(industryId);
         long roleId = jdbc.queryForObject(
                 "insert into job_roles(industry_id, job_role_name) values (?, 'role') returning id",
                 Long.class, industryId);
+        jobRoleIds.add(roleId);
         long companyId = jdbc.queryForObject(
                 "insert into companies(company_name) values (?) returning id",
                 Long.class, "concurrency-company-" + unique);
+        companyIds.add(companyId);
         Long postingId = jdbc.queryForObject(
                 "insert into job_postings(title, company_id, job_role_id) values ('posting', ?, ?) returning id",
                 Long.class, companyId, roleId);

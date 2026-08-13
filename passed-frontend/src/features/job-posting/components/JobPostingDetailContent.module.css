@@ -1,0 +1,92 @@
+.detail { color: #182238; }
+
+.hero {
+  position: relative;
+  display: grid;
+  height: clamp(260px, 34vw, 410px);
+  place-items: center;
+  overflow: hidden;
+  background: #17243b;
+  border-radius: 20px;
+}
+
+.hero::before {
+  position: absolute;
+  inset: -28px;
+  background-image: linear-gradient(rgba(7, 24, 61, 0.48), rgba(7, 24, 61, 0.48)), var(--hero-image);
+  background-position: center;
+  background-size: cover;
+  content: '';
+  filter: blur(18px);
+  opacity: 0.72;
+  transform: scale(1.1);
+}
+
+.hero img {
+  position: relative;
+  z-index: 1;
+  width: min(78%, 760px);
+  height: calc(100% - 48px);
+  object-fit: contain;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.2));
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 38px 4px 30px;
+  border-bottom: 1px solid #dce4ef;
+}
+
+.header p {
+  margin-bottom: 8px;
+  color: #146bff;
+  font-weight: 700;
+}
+
+.header h1 {
+  color: #07183d;
+  font-size: clamp(27px, 3.3vw, 38px);
+  line-height: 1.28;
+  letter-spacing: -0.045em;
+}
+
+.location { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 15px; color: #6b7890; }
+.header button { flex: 0 0 auto; }
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  margin: 28px 0 44px;
+  background: #dce4ef;
+  border: 1px solid #dce4ef;
+  border-radius: 14px;
+}
+
+.metaGrid > div { padding: 20px; background: #f7f9fc; }
+.metaGrid dt { margin-bottom: 7px; color: #6b7890; font-size: 13px; }
+.metaGrid dd { margin: 0; color: #07183d; font-weight: 700; }
+
+.sections { display: grid; gap: 42px; }
+.sections section { padding-bottom: 40px; border-bottom: 1px solid #e5eaf1; }
+.sections section:last-child { border-bottom: 0; }
+.sections h2 { margin-bottom: 20px; color: #07183d; font-size: 22px; }
+.sections ul { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.sections li { position: relative; padding-left: 20px; line-height: 1.7; }
+.sections li::before { position: absolute; top: 11px; left: 1px; width: 6px; height: 6px; background: #146bff; border-radius: 50%; content: ''; }
+
+@media (max-width: 760px) {
+  .hero { height: 260px; border-radius: 14px; }
+  .hero img { width: calc(100% - 32px); }
+  .header { align-items: stretch; flex-direction: column; }
+  .header button { width: 100%; }
+  .metaGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 460px) {
+  .metaGrid { grid-template-columns: 1fr; }
+}

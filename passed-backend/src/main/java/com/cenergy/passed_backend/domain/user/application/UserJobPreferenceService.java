@@ -39,7 +39,28 @@ public class UserJobPreferenceService {
     public IndustryListResponse findIndustries() {
         return new IndustryListResponse(
                 industryRepository.findAllByOrderByIdAsc().stream()
+                        .filter(industry -> containsHangul(industry.getIndustryName()))
                         .map(IndustryResponse::from)
+                        .toList()
+        );
+    }
+
+    public UserJobPreferenceResponse findCurrent() {
+        User user = userRepository.findById(currentUserId())
+                .orElseThrow(() -> new UserPreferenceException(
+                        ErrorCode.USER_PREFERENCE_USER_NOT_FOUND,
+                        "Current user not found"
+                ));
+        if (user.getDesiredIndustry() == null
+                || !containsHangul(user.getDesiredIndustry().getIndustryName())
+                || user.getDesiredJobRoles().isEmpty()) {
+            return null;
+        }
+        return toResponse(
+                user,
+                user.getDesiredIndustry(),
+                user.getDesiredJobRoles().stream()
+                        .sorted((left, right) -> left.getId().compareTo(right.getId()))
                         .toList()
         );
     }
@@ -71,12 +92,25 @@ public class UserJobPreferenceService {
         user.updateJobPreferences(industry, jobRoles);
         User saved = userRepository.saveAndFlush(user);
 
+        return toResponse(saved, industry, jobRoles);
+    }
+
+    private UserJobPreferenceResponse toResponse(
+            User user,
+            Industry industry,
+            List<JobRole> jobRoles
+    ) {
         return new UserJobPreferenceResponse(
-                saved.getId(),
+                user.getId(),
                 IndustryResponse.from(industry),
                 jobRoles.stream().map(JobRoleResponse::from).toList(),
-                saved.getUpdatedAt()
+                user.getUpdatedAt()
         );
+    }
+
+    private boolean containsHangul(String value) {
+        return value != null && value.codePoints()
+                .anyMatch(codePoint -> codePoint >= '가' && codePoint <= '힣');
     }
 
     private Industry findIndustry(Long industryId) {

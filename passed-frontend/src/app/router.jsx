@@ -13,6 +13,7 @@ import SignupPage from '../pages/signup/SignupPage.jsx'
 import { JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
 import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
 import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
+import { MyPage } from '../features/user/pages/index.js'
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: 'roadmap/:roadmapId',
         element: <RoadmapDetailPage />,
+      },
+      {
+        path: 'mypage',
+        element: <MyPage />,
       },
       {
         path: 'cover-letter-result',

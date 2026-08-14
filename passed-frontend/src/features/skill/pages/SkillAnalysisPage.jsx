@@ -57,7 +57,7 @@ const SkillAnalysisPage = () => {
         {error ? (
           <><h1>분석을 완료하지 못했습니다</h1><p className={styles.error}>{error}</p><button type="button" onClick={() => setRetryCount((value) => value + 1)}>다시 시도</button></>
         ) : (
-          <><h1>데이터를 분석하고 있어요</h1><p>{stages[stage]}</p><div className={styles.steps}>{stages.map((label, index) => <span className={index <= stage ? styles.active : ''} key={label}>{index < stage ? '✓' : index + 1}<b>{label}</b></span>)}</div></>
+          <><h1>데이터를 분석하고 있어요</h1><p>{stages[stage]}</p></>
         )}
       </section>
     </main>

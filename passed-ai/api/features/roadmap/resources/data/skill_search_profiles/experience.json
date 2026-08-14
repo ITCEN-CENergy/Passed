@@ -5262,12 +5262,26 @@
     "skillName": "업무 자동화 프로젝트",
     "queries": {
       "ko": [
-        "업무 자동화 프로젝트 rpa로 수작업을 스크립트 업무의 구현하여 흐름을"
+        "Python 업무 자동화 RPA 브라우저 자동화 스케줄링 워크플로 실습"
       ],
-      "en": []
+      "en": [
+        "Python workflow automation RPA Selenium Playwright task scheduling tutorial"
+      ]
     },
-    "excludeTerms": [],
-    "reviewed": false
+    "distinctiveTerms": [
+      "python",
+      "rpa",
+      "selenium",
+      "playwright",
+      "workflow",
+      "scheduling",
+      "browser automation"
+    ],
+    "excludeTerms": [
+      "education technology",
+      "에듀테크"
+    ],
+    "reviewed": true
   },
   "1017": {
     "skillName": "업무 절차 개선",
@@ -7747,12 +7761,26 @@
     "skillName": "테스트 자동화",
     "queries": {
       "ko": [
-        "테스트 자동화 테스트의 수작업과 예외를 워크플로로 자동화에서는 구현하여"
+        "소프트웨어 테스트 자동화 pytest Selenium Playwright 테스트 케이스 리포트 CI 실습"
       ],
-      "en": []
+      "en": [
+        "automated software testing pytest Selenium Playwright test cases reports CI tutorial"
+      ]
     },
-    "excludeTerms": [],
-    "reviewed": false
+    "distinctiveTerms": [
+      "pytest",
+      "selenium",
+      "playwright",
+      "test case",
+      "test report",
+      "automated testing",
+      "continuous integration"
+    ],
+    "excludeTerms": [
+      "manufacturing test",
+      "hardware test"
+    ],
+    "reviewed": true
   },
   "1242": {
     "skillName": "테스트넷 배포",
@@ -8077,12 +8105,27 @@
     "skillName": "품질 기준 수립",
     "queries": {
       "ko": [
-        "품질 기준 수립 공정의 수립에서는 제품과 수립 성과기준을 제약을"
+        "소프트웨어 품질 기준 ISO 25010 품질 속성 인수 기준 QA 체크리스트"
       ],
-      "en": []
+      "en": [
+        "software quality standards ISO 25010 quality attributes acceptance criteria QA checklist"
+      ]
     },
-    "excludeTerms": [],
-    "reviewed": false
+    "distinctiveTerms": [
+      "iso 25010",
+      "quality standard",
+      "quality attribute",
+      "acceptance criteria",
+      "quality assurance",
+      "qa checklist"
+    ],
+    "excludeTerms": [
+      "manufacturing",
+      "factory",
+      "공정",
+      "제조"
+    ],
+    "reviewed": true
   },
   "1272": {
     "skillName": "품질 기준 점검",
@@ -8099,12 +8142,27 @@
     "skillName": "품질 지표 개선",
     "queries": {
       "ko": [
-        "품질 지표 개선 공정의 제품과 개선에서는 변경안을 적용한 지표"
+        "소프트웨어 품질 지표 결함률 테스트 커버리지 코드 품질 DORA SonarQube 개선"
       ],
-      "en": []
+      "en": [
+        "software quality metrics defect rate test coverage code quality DORA metrics SonarQube"
+      ]
     },
-    "excludeTerms": [],
-    "reviewed": false
+    "distinctiveTerms": [
+      "quality metrics",
+      "defect rate",
+      "test coverage",
+      "code quality",
+      "dora metrics",
+      "sonarqube"
+    ],
+    "excludeTerms": [
+      "manufacturing",
+      "factory",
+      "공정",
+      "제조"
+    ],
+    "reviewed": true
   },
   "1274": {
     "skillName": "품질 지표 분석",

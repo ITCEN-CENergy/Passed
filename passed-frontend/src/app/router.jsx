@@ -11,7 +11,12 @@ import {
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
-import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
+import {
+  RecommendationDetailPage,
+  RecommendationHistoryPage,
+  RecommendationPage,
+  RecommendationRunResultPage,
+} from '../features/recommendation/pages/index.js'
 import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
 import { JobPreferenceOnboardingPage, MyPage } from '../features/user/pages/index.js'
 import { ResumeEditorPage } from '../features/resume/pages/index.js'
@@ -50,14 +55,14 @@ const router = createBrowserRouter([
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
       },
-      {
-        path: 'mypage/recommendations',
-        element: <RecommendationHistoryPage />,
-      },
-      {
-        path: 'mypage/recommendations/:recommendationRunId',
-        element: <RecommendationRunResultPage />,
-      },
+      // {
+      //   path: 'mypage/recommendations',
+      //   element: <RecommendationHistoryPage />,
+      // },
+      // {
+      //   path: 'mypage/recommendations/:recommendationRunId',
+      //   element: <RecommendationRunResultPage />,
+      // },
       {
         path: 'roadmap',
         element: <RoadmapListPage />,

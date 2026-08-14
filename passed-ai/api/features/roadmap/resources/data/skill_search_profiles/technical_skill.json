@@ -4500,12 +4500,32 @@
     "skillName": "업무 자동화",
     "queries": {
       "ko": [
-        "업무 자동화 rpa로 수작업을 스크립트 업무의 구현하여 흐름을"
+        "Python 업무 자동화 RPA 매크로 Excel VBA 브라우저 자동화 반복 작업 실습"
       ],
-      "en": []
+      "en": [
+        "Python office automation RPA Excel VBA Power Automate Selenium Playwright tutorial"
+      ]
     },
-    "excludeTerms": [],
-    "reviewed": false
+    "distinctiveTerms": [
+      "python",
+      "rpa",
+      "selenium",
+      "playwright",
+      "pyautogui",
+      "openpyxl",
+      "excel",
+      "vba",
+      "macro",
+      "workflow"
+    ],
+    "excludeTerms": [
+      "education technology",
+      "edtech",
+      "에듀테크",
+      "교실 혁신",
+      "자기계발"
+    ],
+    "reviewed": true
   },
   "404": {
     "skillName": "업무 혁신",

@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from .schema import Competency
+from api.features.roadmap.schema import Competency
 
 
 @dataclass(frozen=True)
@@ -74,9 +74,17 @@ async def build_competency_search_profiles(
             for term in stored.get("excludeTerms", [])
             if str(term).strip()
         )
+        curated_distinctive_terms = tuple(
+            str(term).casefold().strip()
+            for term in stored.get("distinctiveTerms", [])
+            if str(term).strip()
+        )
         result[competency.roadmapSkillKey] = CompetencySearchProfile(
             context=context,
-            distinctive_terms=tuple(sorted(_profile_tokens(context)))[:12],
+            distinctive_terms=(
+                curated_distinctive_terms
+                or tuple(sorted(_profile_tokens(context)))[:12]
+            ),
             excluded_terms=excluded_terms,
         )
     return result

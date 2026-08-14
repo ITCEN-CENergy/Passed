@@ -98,7 +98,7 @@ const RoadmapDetailPage = () => {
     skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
   })).filter(group => group.skills.length)
   return <main className={styles.page}>
-    <div className={styles.toolbar}><Link to="/roadmap">← <span>로드맵 목록</span></Link><button type="button" disabled={actionBusy} onClick={() => setDialog('delete')}>⌫ 로드맵 삭제</button></div>
+    <div className={styles.toolbar}><Link to="/roadmap">로드맵 목록 보기</Link><button type="button" disabled={actionBusy} onClick={() => setDialog('delete')}>⌫ 로드맵 삭제</button></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
     <div className={styles.contentLayout} ref={contentRef}>
       <div className={styles.mainContent}>

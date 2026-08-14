@@ -42,3 +42,5 @@
 .skillNavigation nav .activeSkillLink{color:#0877ed;background:#eaf4ff}
 .skill{scroll-margin-top:24px}
 .skill:focus{outline:none}
+.ring{background:conic-gradient(from 0deg,#0877ed 0deg var(--progress),#e7e9ec var(--progress) 360deg);transform:none}
+.ring>div{transform:none}

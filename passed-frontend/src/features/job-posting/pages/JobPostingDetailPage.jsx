@@ -69,7 +69,10 @@ const JobPostingDetailPage = () => {
       const result = await getRecommendationResult(run.runId)
       const recommendation = result.recommendations?.[0]
       if (!recommendation) throw new Error('추천 결과를 찾을 수 없습니다.')
-      navigate(`/recommendations/${run.runId}/${recommendation.jobRecommendationId}`, { state: { image } })
+      navigate(
+        `/recommendations/${run.runId}/${recommendation.jobRecommendationId}`,
+        { replace: true, state: { image } },
+      )
     } catch (requestError) {
       setError(requestError.message)
       setMatching(false)

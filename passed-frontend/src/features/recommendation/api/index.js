@@ -53,10 +53,10 @@ export const createSingleRecommendation = (jobPostingId, { signal } = {}) =>
   })
 
 /**
- * @param {{page?:number, size?:number, signal?:AbortSignal}} params
+ * @param {{page?:number, size?:number, type?:'MULTIPLE_POSTINGS'|'SINGLE_POSTING', status?:RecommendationRunStatus, signal?:AbortSignal}} params
  */
-export const getRecommendationHistory = ({ page = 0, size = 10, signal } = {}) =>
-  request(`${recommendationPath}?${query({ page, size })}`, { signal })
+export const getRecommendationHistory = ({ page = 0, size = 10, type, status, signal } = {}) =>
+  request(`${recommendationPath}?${query({ page, size, type, status })}`, { signal })
 
 /** @param {number} recommendationRunId @param {{signal?:AbortSignal}} options */
 export const getRecommendationResult = (

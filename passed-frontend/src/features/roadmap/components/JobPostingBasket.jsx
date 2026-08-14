@@ -46,19 +46,9 @@ const JobPostingBasket = () => {
     return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape) }
   }, [open])
 
-  useEffect(() => {
-    if (!isGenerating) return undefined
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-    }
-  }, [isGenerating])
-
   const generate = async () => {
     if (!items.length) return
+    window.scrollTo({ top: 0, left: 0 })
     setIsGenerating(true); setError('')
     try {
       const result = await generateRoadmap(items.map(item => item.jobPostingId))
@@ -82,7 +72,7 @@ const JobPostingBasket = () => {
       />,
       document.body,
     )}
-    <div className={styles.wrapper} ref={panelRef}>
+    {!isGenerating && <div className={styles.wrapper} ref={panelRef}>
     {open && <section className={styles.panel} aria-label="학습 로드맵 공고함">
       <header><h2>학습 로드맵 공고함 <span>{items.length}</span></h2><button type="button" onClick={() => setOpen(false)} aria-label="공고함 닫기">×</button></header>
       <div className={styles.listHeader}><strong>선택한 공고 {items.length}개</strong><button type="button" disabled={!items.length} onClick={clearItems}>전체 삭제</button></div>
@@ -93,7 +83,7 @@ const JobPostingBasket = () => {
     </section>}
     {showAddedFeedback && <span className={styles.addedFeedback} role="status">공고가 추가됐어요</span>}
     <button className={`${styles.trigger} ${showAddedFeedback ? styles.triggerAdded : ''}`} type="button" aria-expanded={open} onClick={() => setOpen(value => !value)}><span className={styles.bag} aria-hidden="true" />공고함 <b>{items.length}</b></button>
-    </div>
+    </div>}
   </>
 }
 export default JobPostingBasket

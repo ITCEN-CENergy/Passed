@@ -19,7 +19,7 @@
 
 .pageLoading {
   position: fixed;
-  z-index: 900;
+  z-index: 9;
   min-height: calc(100vh - 88px);
   min-height: calc(100dvh - 88px);
   background: #f5f6f8;

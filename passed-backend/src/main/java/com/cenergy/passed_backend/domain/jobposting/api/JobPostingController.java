@@ -28,7 +28,6 @@ public class JobPostingController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('GENERAL_USER', 'RECRUITER')")
     public ResponseEntity<JobPostingListResponse> getJobPostings(
             @Valid @ModelAttribute JobPostingListRequest jobPostingListRequest
     ) {
@@ -36,7 +35,6 @@ public class JobPostingController {
     }
 
     @GetMapping("/{jobPostingId}")
-    @PreAuthorize("hasAnyRole('GENERAL_USER', 'RECRUITER')")
     public ResponseEntity<JobPostingDetailResponse> getJobPosting(
             @PathVariable Long jobPostingId
     ) {

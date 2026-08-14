@@ -143,6 +143,6 @@ class RoadmapCommandServiceTest {
                                           RoadmapMilestoneRepository linkRepository,
                                           MilestoneRepository milestoneRepository) {
         return new RoadmapCommandService(provider, generation, claimService, persistence, roadmapRepository,
-                linkRepository, milestoneRepository);
+                linkRepository, milestoneRepository, new RoadmapEtaCalculator(60));
     }
 }

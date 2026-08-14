@@ -23,6 +23,7 @@ public class RoadmapCommandService {
     private final RoadmapRepository roadmapRepository;
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
     private final MilestoneRepository milestoneRepository;
+    private final RoadmapEtaCalculator etaCalculator;
 
     public RoadmapCommandService(CurrentUserIdProvider currentUserIdProvider,
                                  RoadmapGenerationService generationService,
@@ -30,7 +31,8 @@ public class RoadmapCommandService {
                                  RoadmapPersistenceService persistenceService,
                                  RoadmapRepository roadmapRepository,
                                  RoadmapMilestoneRepository roadmapMilestoneRepository,
-                                 MilestoneRepository milestoneRepository) {
+                                 MilestoneRepository milestoneRepository,
+                                 RoadmapEtaCalculator etaCalculator) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.generationService = generationService;
         this.claimService = claimService;
@@ -38,6 +40,7 @@ public class RoadmapCommandService {
         this.roadmapRepository = roadmapRepository;
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
         this.milestoneRepository = milestoneRepository;
+        this.etaCalculator = etaCalculator;
     }
 
     public RoadmapGenerateResponse generate(RoadmapGenerateRequest request) {
@@ -81,6 +84,24 @@ public class RoadmapCommandService {
         if (!milestoneIds.isEmpty()) {
             milestoneRepository.deleteUnreferencedByIdsAndUserId(milestoneIds, userId);
         }
+    }
+
+    @Transactional
+    public void updateStudyTime(Long roadmapId, int dailyStudyMinutes) {
+        if (roadmapId == null || roadmapId <= 0) {
+            throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST, "Invalid roadmapId");
+        }
+        if (dailyStudyMinutes < 30 || dailyStudyMinutes > 480 || dailyStudyMinutes % 30 != 0) {
+            throw new RoadmapException(ErrorCode.ROADMAP_INVALID_REQUEST,
+                    "dailyStudyMinutes must be between 30 and 480 in 30-minute increments");
+        }
+        Roadmap roadmap = roadmapRepository.findByIdAndUserId(roadmapId, currentUserId())
+                .orElseThrow(() -> new RoadmapException(ErrorCode.ROADMAP_NOT_FOUND, "Roadmap not found"));
+        List<com.cenergy.passed_backend.domain.roadmap.entity.RoadmapMilestone> links =
+                roadmapMilestoneRepository.findAllByRoadmapId(roadmapId);
+        roadmap.updateStudyPlan(
+                dailyStudyMinutes,
+                etaCalculator.calculate(links, dailyStudyMinutes));
     }
 
     private Long currentUserId() {

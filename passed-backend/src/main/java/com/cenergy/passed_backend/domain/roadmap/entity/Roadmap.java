@@ -34,6 +34,8 @@ public class Roadmap extends BaseTimeEntity {
     private LocalDate estimatedEndDate;
     @Column(name = "baseline_end_date")
     private LocalDate baselineEndDate;
+    @Column(name = "daily_study_minutes", nullable = false)
+    private Integer dailyStudyMinutes = 60;
     @Column(name = "failure_reason", columnDefinition = "text")
     private String failureReason;
 
@@ -72,6 +74,17 @@ public class Roadmap extends BaseTimeEntity {
         if (estimatedEndDate == null) {
             throw new IllegalArgumentException("estimatedEndDate는 null일 수 없습니다.");
         }
+        this.estimatedEndDate = estimatedEndDate;
+    }
+
+    public void updateStudyPlan(int dailyStudyMinutes, LocalDate estimatedEndDate) {
+        if (dailyStudyMinutes < 30 || dailyStudyMinutes > 480 || dailyStudyMinutes % 30 != 0) {
+            throw new IllegalArgumentException("dailyStudyMinutes는 30~480분 범위의 30분 단위여야 합니다.");
+        }
+        if (estimatedEndDate == null) {
+            throw new IllegalArgumentException("완료 예정일은 null일 수 없습니다.");
+        }
+        this.dailyStudyMinutes = dailyStudyMinutes;
         this.estimatedEndDate = estimatedEndDate;
     }
 

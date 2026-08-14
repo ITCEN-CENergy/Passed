@@ -66,6 +66,15 @@ def build_web_search_query(target: RecommendationTarget) -> str:
     )))[:240]
 
 
+def build_inflearn_search_query(target: RecommendationTarget) -> str:
+    return " ".join(filter(None, (
+        target.competency_name,
+        target.title,
+        target.learning_objective,
+        "한국어 한글 인프런 실습 강의",
+    )))[:240]
+
+
 def build_competency_search_query(target: RecommendationTarget) -> str:
     return " ".join(filter(None, (
         f'"{target.competency_name}"',
@@ -204,10 +213,12 @@ class LearningResourceRecommender:
             seen_urls: set[str] = set()
             seen_book_titles: set[str] = set()
             book_count = 0
+            inflearn_count = 0
             ranked_resources = sorted(
                 resources,
                 key=lambda resource: (
                     classify_resource_relevance(target, resource),
+                    resource.provider == "인프런",
                     -competency_url_usage.get(
                         resource.url.rstrip("/").casefold(), 0
                     ),
@@ -238,6 +249,8 @@ class LearningResourceRecommender:
                     normalized_title = _normalized_book_title(resource.title)
                     if normalized_title in seen_book_titles:
                         continue
+                if resource.provider == "인프런" and inflearn_count >= 2:
+                    continue
                 if resource.resourceId in unique or normalized_url in seen_urls:
                     continue
                 seen_urls.add(normalized_url)
@@ -250,6 +263,8 @@ class LearningResourceRecommender:
                 if resource.resourceType.value == "BOOK":
                     seen_book_titles.add(normalized_title)
                     book_count += 1
+                if resource.provider == "인프런":
+                    inflearn_count += 1
                 if len(unique) >= self._settings.resource_recommendation_limit:
                     break
             recommendations[target.key] = list(unique.values())

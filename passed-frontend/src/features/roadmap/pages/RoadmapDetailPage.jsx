@@ -1,23 +1,72 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmDialog, PageLoading } from '../../../common/components/index.js'
-import { applyRoadmapReplan, changeMilestoneCompletion, deleteRoadmap, getRoadmap, previewRoadmapReplan } from '../api/index.js'
+import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
+import { applyRoadmapReplan, changeMilestoneCompletion, deleteRoadmap, getRoadmap, previewRoadmapReplan, updateRoadmapStudyTime } from '../api/index.js'
 import styles from './RoadmapDetailPage.module.css'
 
 const labels = {
   ACTIVE: '진행 중', COMPLETED: '완료', CREATING: '생성 중', FAILED: '생성 실패',
   TECHNICAL_SKILL: '기술 역량', EXPERIENCE: '경험', BEHAVIORAL_TRAIT: '행동 특성', CERTIFICATION: '자격',
-  REQUIRED: '공통 필수', PREFERRED: '선택', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
+  REQUIRED: '공통', PREFERRED: '선택', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
   BEGINNER: '초급', INTERMEDIATE: '중급', ADVANCED: '고급', NOT_STARTED: '시작 전', IN_PROGRESS: '진행 중', COMPLETED_MILESTONE: '완료',
 }
 const fmtDate = (value) => value ? String(value).slice(0, 10).replaceAll('-', '.') : '-'
 const fmtHours = (minutes) => `${Number.isInteger((minutes || 0) / 60) ? (minutes || 0) / 60 : ((minutes || 0) / 60).toFixed(1)}시간`
+const fmtRemainingWeeks = (endDate) => {
+  if (!endDate) return null
+  const end = new Date(`${String(endDate).slice(0, 10)}T00:00:00`)
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  return Math.max(0, Math.ceil((end - today) / 86400000 / 7))
+}
+const fmtDailyStudyTime = (minutes) => Number(minutes) % 60
+  ? `${Math.floor(Number(minutes) / 60) ? `${Math.floor(Number(minutes) / 60)}시간 ` : ''}${Number(minutes) % 60}분`
+  : `${Number(minutes) / 60}시간`
+const dailyStudyTimeOptions = Array.from({ length: 16 }, (_, index) => (index + 1) * 30)
 const progress = (value) => Math.min(100, Math.max(0, Number(value) || 0))
+const resourceTypeLabels = {
+  WEB_RESOURCE: '웹 자료',
+  BOOK: '책',
+  KMOOC_COURSE: '강의',
+}
+const resourceTypeLabel = (resource) => resource.provider === '인프런'
+  ? '강의'
+  : resourceTypeLabels[resource.resourceType] || '학습자료'
 const skillGroups = [
-  { type: 'REQUIRED', title: '공통 필수 역량', description: '선택한 모든 공고에서 필수로 요구하는 역량' },
+  { type: 'REQUIRED', title: '공통 역량', description: '선택한 모든 공고에서 필수 또는 우대하는 역량' },
   { type: 'PREFERRED', title: '선택 역량', description: '일부 공고에서 필수 또는 우대하는 역량' },
   { type: 'RELATED', title: '관련 역량', description: '직무 수행에 도움이 되는 보완 역량' },
 ]
+
+const dateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+const activityLevel = (count) => count === 0 ? 0 : count === 1 ? 1 : count === 2 ? 2 : count === 3 ? 3 : 4
+const activityTooltip = (key, count) => {
+  const [, month, day] = key.split('-').map(Number)
+  return count > 0
+    ? `${month}월 ${day}일에 마일스톤 ${count}개 완료`
+    : `${month}월 ${day}일에는 완료한 마일스톤이 없어요`
+}
+
+const LearningActivity = ({ activities = [] }) => {
+  const counts = new Map(activities.map(activity => [String(activity.date).slice(0, 10), Number(activity.completedMilestoneCount) || 0]))
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const firstDay = new Date(today); firstDay.setDate(today.getDate() - today.getDay() - (52 * 7))
+  const days = Array.from({ length: 53 * 7 }, (_, index) => {
+    const date = new Date(firstDay); date.setDate(firstDay.getDate() + index)
+    const key = dateKey(date)
+    return { key, count: date > today ? null : (counts.get(key) || 0) }
+  })
+  const activeDays = activities.filter(activity => Number(activity.completedMilestoneCount) > 0).length
+  const completedCount = activities.reduce((sum, activity) => sum + (Number(activity.completedMilestoneCount) || 0), 0)
+  return <section className={styles.activity} aria-labelledby="learning-activity-title">
+    <header><div><h2 id="learning-activity-title">학습 기록</h2><p>마일스톤을 완료한 날이 진할수록 더 많이 학습한 날이에요.</p></div><strong>{activeDays}일 학습 · {completedCount}개 완료</strong></header>
+    <div className={styles.activityChart}>
+      <div className={styles.weekdayLabels} aria-hidden="true"><span>월</span><span>수</span><span>금</span></div>
+      <div className={styles.activityGrid}>{days.map(day => <span className={`${styles.activityCell} ${day.count === null ? styles.activityFuture : styles[`activityLevel${activityLevel(day.count)}`]}`} data-tooltip={day.count === null ? undefined : activityTooltip(day.key, day.count)} aria-label={day.count === null ? undefined : activityTooltip(day.key, day.count)} tabIndex={day.count === null ? undefined : 0} key={day.key} />)}</div>
+    </div>
+    <footer aria-label="학습량 색상 범례"><span>적음</span>{[0, 1, 2, 3, 4].map(level => <i className={`${styles.activityCell} ${styles[`activityLevel${level}`]}`} key={level} />)}<span>많음</span></footer>
+  </section>
+}
 
 const ProgressRing = ({ value }) => <div className={styles.ring} style={{ '--progress': `${progress(value) * 3.6}deg` }}><div><strong>{progress(value).toFixed(progress(value) % 1 ? 1 : 0)}%</strong><span>전체 진행률</span></div></div>
 
@@ -37,7 +86,7 @@ const Milestone = ({ item, onToggle, busy }) => {
         <button className={styles.resourceHeading} type="button" aria-expanded={resourcesOpen} onClick={() => setResourcesOpen(value => !value)}><span><strong>추천 학습자료</strong><b>{item.learningResources.length}개</b></span><i aria-hidden="true">{resourcesOpen ? '⌃' : '⌄'}</i></button>
         {resourcesOpen && <div className={styles.resourceList}>{item.learningResources.map((resource) => <article className={styles.resourceCard} key={resource.resourceId}>
           <div className={styles.resourceInfo}>
-            <div><span className={styles.resourceType}>{resource.resourceType || '학습자료'}</span></div>
+            <div><span className={styles.resourceType}>{resourceTypeLabel(resource)}</span></div>
             <h5>{resource.title}</h5>
             {resource.provider && <p>{resource.provider}</p>}
           </div>
@@ -68,6 +117,7 @@ const RoadmapDetailPage = () => {
   const [activeSkillId, setActiveSkillId] = useState(null); const contentRef = useRef(null)
   const [openSkillRequest, setOpenSkillRequest] = useState(null)
   const [dialog, setDialog] = useState(null); const [replanPreview, setReplanPreview] = useState(null)
+  const [studyTimeBusy, setStudyTimeBusy] = useState(false)
   const load = useCallback(async (signal) => { try { setRoadmap(await getRoadmap(roadmapId, { signal })); setError('') } catch (e) { if (e?.name !== 'AbortError') setError(e.message) } }, [roadmapId])
   useEffect(() => { const controller = new AbortController(); void load(controller.signal); return () => controller.abort() }, [load])
   useEffect(() => {
@@ -90,6 +140,14 @@ const RoadmapDetailPage = () => {
   const remove = async () => { setActionBusy(true); try { await deleteRoadmap(roadmapId); navigate('/roadmap') } catch (e) { setError(e.message); setActionBusy(false); setDialog(null) } }
   const prepareReplan = async () => { setDialog(null); setActionBusy(true); setIsReplanning(true); setError(''); try { const preview = await previewRoadmapReplan(roadmapId); setReplanPreview(preview); setDialog('replan-result') } catch (e) { setError(e.message) } finally { setIsReplanning(false); setActionBusy(false) } }
   const applyReplan = async () => { setDialog(null); setActionBusy(true); setIsReplanning(true); try { await applyRoadmapReplan(roadmapId, replanPreview.replanToken); await load(); setReplanPreview(null) } catch (e) { setError(e.message) } finally { setIsReplanning(false); setActionBusy(false) } }
+  const changeStudyTime = async (event) => {
+    const previousMinutes = roadmap.dailyStudyMinutes || 60
+    const dailyStudyMinutes = Number(event.target.value)
+    setRoadmap(current => ({ ...current, dailyStudyMinutes })); setStudyTimeBusy(true); setError('')
+    try { setRoadmap(await updateRoadmapStudyTime(roadmapId, dailyStudyMinutes)) }
+    catch (e) { setRoadmap(current => ({ ...current, dailyStudyMinutes: previousMinutes })); setError(e.message) }
+    finally { setStudyTimeBusy(false) }
+  }
   if (error && !roadmap) return <main className={styles.page}><div className={styles.state}><p>{error}</p><Link to="/roadmap">로드맵 목록</Link></div></main>
   if (!roadmap) return <main className={styles.page}><div className={styles.state} role="status">로드맵을 불러오고 있어요.</div></main>
   if (isReplanning) return <main className={styles.page}><PageLoading title="학습 일정을 재계획하고 있어요" description="남은 학습 단계를 분석해 현재 일정에 맞게 다시 구성합니다." ariaLabel="학습 일정 재계획 중" /></main>
@@ -97,22 +155,24 @@ const RoadmapDetailPage = () => {
     ...group,
     skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
   })).filter(group => group.skills.length)
+  const orderedSkills = groupedSkills.flatMap(group => group.skills)
   return <main className={styles.page}>
     <div className={styles.toolbar}><Link to="/roadmap">로드맵 목록 보기</Link><button type="button" disabled={actionBusy} onClick={() => setDialog('delete')}>⌫ 로드맵 삭제</button></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
     <div className={styles.contentLayout} ref={contentRef}>
       <div className={styles.mainContent}>
-        <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostingIds?.length || 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p><div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong></span><span>최초 완료 예정일<strong>{fmtDate(roadmap.baselineEndDate)}</strong></span><span>현재 완료 예정일<strong>{fmtDate(roadmap.estimatedEndDate)}</strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
+        <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostings?.length ?? roadmap.jobPostingIds?.length ?? 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p>{!!roadmap.jobPostings?.length && <div className={styles.linkedPostings}>{roadmap.jobPostings.map(posting => <Link className={styles.linkedPosting} to={`/job-postings/${posting.jobPostingId}`} state={{ image: getJobPostingImage(posting.jobPostingId) }} key={posting.jobPostingId}><img src={getJobPostingImage(posting.jobPostingId)} alt="" /><span><small>{posting.companyName}</small><strong>{posting.title}</strong></span></Link>)}</div>}<div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong><label className={styles.studyTimeControl}>하루 학습 <select value={roadmap.dailyStudyMinutes || 60} disabled={studyTimeBusy} onChange={changeStudyTime}>{dailyStudyTimeOptions.map(minutes => <option value={minutes} key={minutes}>{fmtDailyStudyTime(minutes)}</option>)}</select></label></span><span className={styles.studyPeriod} aria-label="시작일부터 완료 예정일까지의 학습 기간"><strong>{fmtDate(roadmap.createdAt)} ~ {fmtDate(roadmap.estimatedEndDate)} <small>({fmtRemainingWeeks(roadmap.estimatedEndDate)}주 남음)</small></strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
-        <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통 필수·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
+        <LearningActivity activities={roadmap.learningActivities} />
+        <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
         <div className={styles.skillGroups}>{groupedSkills.map(group => <section className={`${styles.skillGroup} ${styles[`${group.type.toLowerCase()}Group`]}`} key={group.type}>
           <header className={styles.skillGroupHeader}><div><span>{labels[group.type]}</span><h2>{group.title}</h2></div><strong>{group.skills.length}개</strong><p>{group.description}</p></header>
           <div className={styles.skills}>{group.skills.map((skill, index) => <SkillCard key={skill.roadmapSkillId} skill={skill} groupOrder={index + 1} anchorId={`roadmap-skill-${skill.roadmapSkillId}`} openRequest={openSkillRequest} onToggle={toggle} busyId={busyId} />)}</div>
         </section>)}</div>
       </div>
-      {!!roadmap.skills?.length && <aside className={styles.skillNavigation} aria-label="스킬 바로가기">
-        <div className={styles.skillNavigationHeader}><h2>스킬 바로가기</h2><span>{roadmap.skills.length}</span></div>
-        <nav>{roadmap.skills.map((skill) => {
+      {!!orderedSkills.length && <aside className={styles.skillNavigation} aria-label="스킬 바로가기">
+        <div className={styles.skillNavigationHeader}><h2>스킬 바로가기</h2><span>{orderedSkills.length}</span></div>
+        <nav>{orderedSkills.map((skill) => {
           const anchorId = `roadmap-skill-${skill.roadmapSkillId}`
           const active = activeSkillId === anchorId
           return <button key={skill.roadmapSkillId} className={active ? styles.activeSkillLink : ''} type="button" title={skill.standardCompetencyName} aria-current={active ? 'location' : undefined} onClick={() => moveToSkill(anchorId)}><span className={styles[`nav${skill.requirementType}`]}>{labels[skill.requirementType]}</span><strong>{skill.standardCompetencyName}</strong></button>

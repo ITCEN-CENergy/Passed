@@ -3,18 +3,18 @@ import App from './App.jsx'
 import AuthLayout from './AuthLayout.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
-import CoverLetterResultPage from '../features/cover-letter/pages/CoverLetterResultPage';
-// import CoverLetterReviewPage from '../features/cover-letter/pages/CoverLetterReviewPage';
-import CompanyCoverLetterWrite from '../features/cover-letter/pages/CompanyCoverLetterWrite';
-import CompanyCoverLetterList from '../features/cover-letter/pages/CompanyCoverLetterList';
-import LoginPage from '../pages/login/LoginPage.jsx'
-import SignupPage from '../pages/signup/SignupPage.jsx'
+import {
+  CommonCoverLetterPage,
+  CompanyCoverLetterList,
+  CompanyCoverLetterWrite,
+  CoverLetterResultPage,
+} from '../features/cover-letter/pages/index.js'
+import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
 import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
 import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
 import { JobPreferenceOnboardingPage, MyPage } from '../features/user/pages/index.js'
 import { ResumeEditorPage } from '../features/resume/pages/index.js'
-import CommonCoverLetterPage from '../features/cover-letter/pages/CommonCoverLetterPage.jsx'
 import { SkillAnalysisPage, SkillReviewPage } from '../features/skill/pages/index.js'
 
 const router = createBrowserRouter([

@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiResponse;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiResponse;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.model.ValidatedCoverLetterAiResult;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;

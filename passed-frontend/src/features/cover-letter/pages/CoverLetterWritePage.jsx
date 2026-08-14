@@ -1,4 +1,5 @@
-import { CoverLetterFooter, CoverLetterHeader } from '../../features/cover-letter/index.js'
+import CoverLetterFooter from '../components/Footer.jsx'
+import CoverLetterHeader from '../components/Header.jsx'
 
 const CoverLetterWritePage = () => {
     return (

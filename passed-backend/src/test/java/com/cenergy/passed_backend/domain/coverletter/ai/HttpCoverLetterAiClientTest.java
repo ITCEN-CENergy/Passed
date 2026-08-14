@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.coverletter.ai;
 
-import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiException;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.client.HttpCoverLetterAiClient;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;

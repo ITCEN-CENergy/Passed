@@ -43,6 +43,10 @@ public class RecommendationRun {
     @Column(name = "status", length = 20, nullable = false)
     private RecommendationRunStatus status = RecommendationRunStatus.PENDING;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recommendation_type", length = 32, nullable = false)
+    private RecommendationRunType recommendationType;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "scoring_policy_id", nullable = false)
     private RecommendationScoringPolicy scoringPolicy;
@@ -92,7 +96,8 @@ public class RecommendationRun {
                 scoringPolicy,
                 userSkillSnapshotHash,
                 userSkillSnapshot,
-                preferenceSnapshot
+                preferenceSnapshot,
+                RecommendationRunType.MULTIPLE_POSTINGS
         );
     }
 
@@ -107,7 +112,8 @@ public class RecommendationRun {
                 scoringPolicy,
                 userSkillSnapshotHash,
                 userSkillSnapshot,
-                Map.of()
+                Map.of(),
+                RecommendationRunType.SINGLE_POSTING
         );
     }
 
@@ -116,7 +122,8 @@ public class RecommendationRun {
             RecommendationScoringPolicy scoringPolicy,
             String userSkillSnapshotHash,
             Map<String, Object> userSkillSnapshot,
-            Map<String, Object> preferenceSnapshot
+            Map<String, Object> preferenceSnapshot,
+            RecommendationRunType recommendationType
     ) {
         RecommendationRun run = new RecommendationRun();
         run.user = Objects.requireNonNull(user, "user must not be null");
@@ -127,6 +134,10 @@ public class RecommendationRun {
         );
         run.preferenceSnapshot = new LinkedHashMap<>(
                 Objects.requireNonNull(preferenceSnapshot, "preferenceSnapshot must not be null")
+        );
+        run.recommendationType = Objects.requireNonNull(
+                recommendationType,
+                "recommendationType must not be null"
         );
         run.status = RecommendationRunStatus.PROCESSING;
         return run;

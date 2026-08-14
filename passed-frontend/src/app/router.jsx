@@ -51,6 +51,14 @@ const router = createBrowserRouter([
         element: <RecommendationDetailPage />,
       },
       {
+        path: 'mypage/recommendations',
+        element: <RecommendationHistoryPage />,
+      },
+      {
+        path: 'mypage/recommendations/:recommendationRunId',
+        element: <RecommendationRunResultPage />,
+      },
+      {
         path: 'roadmap',
         element: <RoadmapListPage />,
       },

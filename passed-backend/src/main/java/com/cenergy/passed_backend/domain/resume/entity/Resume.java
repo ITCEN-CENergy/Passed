@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.OffsetDateTime;
 
 @Getter
 @Entity
@@ -21,9 +24,17 @@ public class Resume extends CreatedAtEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
+
     public static Resume create(User user) {
         Resume resume = new Resume();
         resume.user = user;
         return resume;
+    }
+
+    public void touch() {
+        updatedAt = OffsetDateTime.now();
     }
 }

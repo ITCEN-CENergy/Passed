@@ -24,6 +24,7 @@ public class MyPageQueryService {
     private final PersonalInfoRepository personalInfoRepository;
     private final CoverLetterRepository coverLetterRepository;
     private final CoverLetterItemRepository coverLetterItemRepository;
+    private final RecommendationRefreshStatusService refreshStatusService;
 
     public MyPageQueryService(
             CurrentUserIdProvider currentUserIdProvider,
@@ -31,7 +32,8 @@ public class MyPageQueryService {
             ResumeRepository resumeRepository,
             PersonalInfoRepository personalInfoRepository,
             CoverLetterRepository coverLetterRepository,
-            CoverLetterItemRepository coverLetterItemRepository
+            CoverLetterItemRepository coverLetterItemRepository,
+            RecommendationRefreshStatusService refreshStatusService
     ) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.userRepository = userRepository;
@@ -39,6 +41,7 @@ public class MyPageQueryService {
         this.personalInfoRepository = personalInfoRepository;
         this.coverLetterRepository = coverLetterRepository;
         this.coverLetterItemRepository = coverLetterItemRepository;
+        this.refreshStatusService = refreshStatusService;
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +59,7 @@ public class MyPageQueryService {
                         .map(personalInfo -> personalInfo.getPhotoUrl())
                         .orElse(null);
 
-        OffsetDateTime resumeUpdatedAt = resume == null ? null : resume.getCreatedAt();
+        OffsetDateTime resumeUpdatedAt = resume == null ? null : resume.getUpdatedAt();
 
         CoverLetter coverLetter = coverLetterRepository.findByUserId(userId).orElse(null);
         OffsetDateTime coverLetterUpdatedAt = coverLetter == null ? null
@@ -68,7 +71,8 @@ public class MyPageQueryService {
                 user.getEmail(),
                 profileImageUrl,
                 resumeUpdatedAt,
-                coverLetterUpdatedAt
+                coverLetterUpdatedAt,
+                refreshStatusService.isRefreshRequired(userId, resumeUpdatedAt, coverLetterUpdatedAt)
         );
     }
 }

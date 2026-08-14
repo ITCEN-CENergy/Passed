@@ -30,6 +30,7 @@ class MyPageQueryServiceTest {
     private PersonalInfoRepository personalInfoRepository;
     private CoverLetterRepository coverLetterRepository;
     private CoverLetterItemRepository coverLetterItemRepository;
+    private RecommendationRefreshStatusService refreshStatusService;
     private MyPageQueryService service;
 
     @BeforeEach
@@ -40,6 +41,7 @@ class MyPageQueryServiceTest {
         personalInfoRepository = mock(PersonalInfoRepository.class);
         coverLetterRepository = mock(CoverLetterRepository.class);
         coverLetterItemRepository = mock(CoverLetterItemRepository.class);
+        refreshStatusService = mock(RecommendationRefreshStatusService.class);
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(56L);
         service = new MyPageQueryService(
                 currentUserIdProvider,
@@ -47,7 +49,8 @@ class MyPageQueryServiceTest {
                 resumeRepository,
                 personalInfoRepository,
                 coverLetterRepository,
-                coverLetterItemRepository
+                coverLetterItemRepository,
+                refreshStatusService
         );
     }
 
@@ -65,7 +68,7 @@ class MyPageQueryServiceTest {
         when(userRepository.findById(56L)).thenReturn(Optional.of(user));
         when(resumeRepository.findByUserId(56L)).thenReturn(Optional.of(resume));
         when(resume.getId()).thenReturn(3L);
-        when(resume.getCreatedAt()).thenReturn(resumeDate);
+        when(resume.getUpdatedAt()).thenReturn(resumeDate);
         when(personalInfoRepository.findByResumeId(3L)).thenReturn(Optional.of(personalInfo));
         when(personalInfo.getPhotoUrl()).thenReturn("/uploads/resume-photos/profile.png");
         when(coverLetterRepository.findByUserId(56L)).thenReturn(Optional.of(coverLetter));

@@ -107,6 +107,7 @@ public class ResumeService {
         validateBusinessRules(request);
         Resume resume = resumeRepository.findByUserIdForUpdate(currentUserId())
                 .orElseThrow(() -> error(ErrorCode.RESUME_NOT_FOUND, "Resume not found"));
+        ResumeResponse beforeUpdate = loadResponse(resume);
 
         PersonalInfo personalInfo = personalInfoRepository.findByResumeId(resume.getId())
                 .orElseGet(() -> PersonalInfo.create(resume));
@@ -121,7 +122,11 @@ public class ResumeService {
         syncAwards(resume, request.awards());
         syncOverseasExperiences(resume, request.overseasExperiences());
         syncLanguages(resume, request.languageProficiencies());
-        return loadResponse(resume);
+        ResumeResponse updated = loadResponse(resume);
+        if (!beforeUpdate.equals(updated)) {
+            resume.touch();
+        }
+        return updated;
     }
 
     @Transactional

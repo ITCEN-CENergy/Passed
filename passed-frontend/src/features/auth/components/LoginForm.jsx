@@ -50,7 +50,8 @@ const LoginForm = () => {
     try {
       await login({ email: form.email.trim(), password: form.password })
       await refreshUser()
-      navigate('/')
+      const returnTo = location.state?.returnTo
+      navigate(typeof returnTo === 'string' && returnTo.startsWith('/') ? returnTo : '/')
     } catch (error) {
       setMessageType('error')
       setFormMessage(error.message)

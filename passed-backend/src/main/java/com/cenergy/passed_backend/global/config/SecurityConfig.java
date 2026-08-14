@@ -64,7 +64,6 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/jobPostings", "/api/v1/jobPostings/**").hasAnyRole("GENERAL_USER", "RECRUITER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/jobPostings").hasRole("RECRUITER")
                         .anyRequest().hasRole("GENERAL_USER"))
                 .authenticationProvider(authenticationProvider)

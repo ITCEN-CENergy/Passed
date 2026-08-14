@@ -1,6 +1,6 @@
 import pytest
 
-from api.features.roadmap.resource_query import (
+from api.features.roadmap.resources.query import (
     build_competency_search_profiles,
     load_curated_search_profiles,
 )

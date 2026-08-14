@@ -1,7 +1,7 @@
 import pytest
 
 from api.features.roadmap.config import RoadmapSettings
-from api.features.roadmap.resource_recommender import (
+from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,

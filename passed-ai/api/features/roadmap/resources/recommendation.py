@@ -5,9 +5,9 @@ from time import perf_counter
 import httpx
 
 from api.features.roadmap.config import RoadmapSettings
-from api.features.roadmap.resource_provider import create_resource_providers
-from api.features.roadmap.resource_query import build_competency_search_profiles
-from api.features.roadmap.resource_recommender import (
+from api.features.roadmap.resources.provider import create_resource_providers
+from api.features.roadmap.resources.query import build_competency_search_profiles
+from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
@@ -18,7 +18,7 @@ from api.features.roadmap.resource_recommender import (
     build_web_search_query,
     classify_resource_relevance,
 )
-from api.features.roadmap.resource_search import LearningResourceSearchService
+from api.features.roadmap.resources.search import LearningResourceSearchService
 from api.features.roadmap.schema import (
     Competency,
     GeneratedResourceRecommendation,
@@ -171,6 +171,5 @@ async def recommend_learning_resources(
         },
     )
     return resources_by_key
-
 
 

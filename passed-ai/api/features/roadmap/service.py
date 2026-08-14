@@ -14,7 +14,7 @@ from api.features.roadmap.content_generation import (
     generate_content,
 )
 from api.features.roadmap.planner import create_learning_stages
-from api.features.roadmap.resource_recommendation import recommend_learning_resources
+from api.features.roadmap.resources.recommendation import recommend_learning_resources
 from api.features.roadmap.schema import (
     Competency,
     LearningStage,

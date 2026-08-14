@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from .schema import Competency
+from api.features.roadmap.schema import Competency
 
 
 @dataclass(frozen=True)

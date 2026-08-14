@@ -88,7 +88,7 @@ async def test_generation_deadline_cancels_pending_search(
         lambda: _settings(search_enabled=True),
     )
     monkeypatch.setattr(
-        "api.features.roadmap.resource_recommendation.create_resource_providers",
+        "api.features.roadmap.resources.recommendation.create_resource_providers",
         lambda client, settings: (provider,),
     )
 

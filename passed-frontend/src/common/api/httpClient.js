@@ -48,14 +48,30 @@ const refreshAccessToken = async () => {
   return refreshResponse.ok ? csrf : null
 }
 
+const refreshExcludedPaths = new Set([
+  '/api/v1/auth/csrf',
+  '/api/v1/auth/refresh',
+  '/api/v1/auth/login',
+  '/api/v1/auth/signup',
+  '/api/v1/auth/logout',
+  '/api/v1/auth/check-email',
+])
+
+const shouldRefreshAccessToken = (path, status) => {
+  if (status !== 401) return false
+
+  // 사용자 조회처럼 인증이 필요한 auth API는 자동 재발급 대상에 포함한다.
+  const pathname = path.split('?')[0]
+  return !refreshExcludedPaths.has(pathname)
+}
+
 export const httpClient = async (path, options = {}) => {
   let response
 
   try {
     response = await sendRequest(path, options)
 
-    const isAuthenticationRequest = path.startsWith('/api/v1/auth/')
-    if (response.status === 401 && !isAuthenticationRequest) {
+    if (shouldRefreshAccessToken(path, response.status)) {
       const csrf = await refreshAccessToken()
       if (csrf) {
         response = await sendRequest(path, {

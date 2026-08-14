@@ -32,7 +32,7 @@ export const replaceCompanyCoverLetter = (coverLetterId, payload) =>
   })
 
 export const deleteCompanyCoverLetter = (coverLetterId) =>
-  request(`/api/v1/company-cover-letters/${coverLetterId}`, { method: 'DELETE' })
+  csrfRequest(`/api/v1/company-cover-letters/${coverLetterId}`, { method: 'DELETE' })
 
 export const getCommonCoverLetterQuestions = ({ signal } = {}) =>
   httpClient('/api/v1/cover-letter-questions', { signal })
@@ -45,4 +45,3 @@ export const createCommonCoverLetter = (body) =>
 
 export const updateCommonCoverLetter = (body) =>
   csrfRequest('/api/v1/cover-letters', { method: 'PUT', body })
-  csrfRequest(`/api/v1/company-cover-letters/${coverLetterId}`, { method: 'DELETE' })

@@ -15,7 +15,7 @@ public record CommonCoverLetterUpsertRequest(
 ) {
     public record Item(
             @NotNull @Positive Long questionId,
-            @NotBlank @Size(max = 5000) String answer
+            @NotBlank @Size(min = 500, max = 1000) String answer
     ) {
     }
 }

@@ -9,7 +9,7 @@ import {
 } from '../api/index.js'
 import styles from './styles/CommonCoverLetterPage.module.css'
 
-const MIN_LENGTH = 800
+const MIN_LENGTH = 500
 const MAX_LENGTH = 1000
 
 const CommonCoverLetterPage = ({ onboarding = false }) => {

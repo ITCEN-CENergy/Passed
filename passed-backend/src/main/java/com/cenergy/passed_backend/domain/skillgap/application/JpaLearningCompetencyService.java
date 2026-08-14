@@ -7,6 +7,7 @@ import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommenda
 import com.cenergy.passed_backend.domain.roadmap.entity.CompetencyCategory;
 import com.cenergy.passed_backend.domain.roadmap.entity.RequirementType;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import com.cenergy.passed_backend.domain.skill.repository.UserSkillEvidenceRepository;
 import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyItem;
 import com.cenergy.passed_backend.domain.skillgap.dto.LearningCompetencyResponse;
@@ -56,8 +57,10 @@ public class JpaLearningCompetencyService implements LearningCompetencyService {
                                 + ", userId=" + userId
                 ));
 
-        List<JobRecommendationSkillDetail> details =
-                skillDetailRepository.findAllByJobRecommendationIdOrderByIdAsc(recommendation.getId());
+        List<JobRecommendationSkillDetail> details = skillDetailRepository
+                .findAllByJobRecommendationIdOrderByIdAsc(recommendation.getId()).stream()
+                .filter(detail -> detail.getSkill().getCategory() != SkillCategory.BEHAVIORAL_TRAIT)
+                .toList();
         Map<Long, String> evidenceBySkillId = findLatestEvidenceBySkillId(details, userId);
 
         List<LearningCompetencyItem> competencies = details.stream()

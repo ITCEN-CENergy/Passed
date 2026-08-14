@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class RoadmapQueryService {
+    private static final ZoneId LEARNING_ACTIVITY_ZONE = ZoneId.of("Asia/Seoul");
     private final CurrentUserIdProvider currentUserIdProvider;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapJobPostingRepository jobPostingRepository;
@@ -93,14 +95,14 @@ public class RoadmapQueryService {
 
         LocalDate currentEstimatedEndDate = roadmap.getBaselineEndDate() == null
                 ? roadmap.getEstimatedEndDate()
-                : etaCalculator.calculate(roadmapMilestones);
+                : etaCalculator.calculate(roadmapMilestones, roadmap.getDailyStudyMinutes());
         RoadmapScheduleAssessment schedule = RoadmapScheduleAssessment.assess(
                 roadmap.getBaselineEndDate(), currentEstimatedEndDate);
         boolean replanRecommended = roadmap.getStatus() == RoadmapStatus.ACTIVE
                 && schedule.replanRecommended();
 
         return new RoadmapDetailResponse(roadmap.getId(), roadmap.getTitle(), roadmap.getStatus(),
-                roadmap.getTotalEstimatedMinutes(), roadmap.getProgressRate(), roadmap.getBaselineEndDate(),
+                roadmap.getTotalEstimatedMinutes(), roadmap.getDailyStudyMinutes(), roadmap.getProgressRate(), roadmap.getBaselineEndDate(),
                 currentEstimatedEndDate, schedule.status(), schedule.delayDays(), replanRecommended,
                 roadmap.getFailureReason(), postingIds,
                 postingIds.stream().map(sourcePostings::get).filter(Objects::nonNull)
@@ -108,7 +110,32 @@ public class RoadmapQueryService {
                                 posting.getCompany().getCompanyName(), posting.getTitle())).toList(),
                 skills.stream().map(skill -> toSkill(skill, sourcesBySkill.getOrDefault(skill.getId(), List.of()),
                         milestonesBySkill.getOrDefault(skill.getId(), List.of()), resourcesByMilestone)).toList(),
+                learningActivities(roadmapMilestones),
                 roadmap.getCreatedAt(), roadmap.getUpdatedAt());
+    }
+
+    private List<RoadmapDetailResponse.LearningActivity> learningActivities(
+            List<RoadmapMilestone> roadmapMilestones) {
+        Map<Long, Milestone> uniqueMilestones = roadmapMilestones.stream()
+                .map(RoadmapMilestone::getMilestone)
+                .collect(Collectors.toMap(Milestone::getId, Function.identity(), (first, ignored) -> first));
+        Map<LocalDate, Long> countsByDate = uniqueMilestones.values().stream()
+                .filter(milestone -> milestone.getStatus() == MilestoneStatus.COMPLETED)
+                .collect(Collectors.groupingBy(
+                        milestone -> completionRecordedAt(milestone)
+                                .atZoneSameInstant(LEARNING_ACTIVITY_ZONE).toLocalDate(),
+                        TreeMap::new,
+                        Collectors.counting()));
+        return countsByDate.entrySet().stream()
+                .map(entry -> new RoadmapDetailResponse.LearningActivity(
+                        entry.getKey(), Math.toIntExact(entry.getValue())))
+                .toList();
+    }
+
+    private java.time.OffsetDateTime completionRecordedAt(Milestone milestone) {
+        // 완료 시각 컬럼 도입 전에 생성되었거나 재사용된 완료 마일스톤도
+        // 학습 기록에서 빠지지 않도록 마지막 변경 시각을 사용한다.
+        return milestone.getCompletedAt() != null ? milestone.getCompletedAt() : milestone.getUpdatedAt();
     }
 
     private RoadmapDetailResponse.Skill toSkill(RoadmapSkill skill, List<RoadmapSkillSource> sources,

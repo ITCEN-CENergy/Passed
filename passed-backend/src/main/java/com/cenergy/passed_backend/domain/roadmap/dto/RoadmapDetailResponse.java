@@ -9,19 +9,25 @@ import java.util.List;
 
 public record RoadmapDetailResponse(
         Long roadmapId, String title, RoadmapStatus status, int totalEstimatedMinutes,
+        int dailyStudyMinutes,
         BigDecimal progressRate, LocalDate baselineEndDate, LocalDate estimatedEndDate,
         RoadmapScheduleStatus scheduleStatus, long delayDays, boolean replanRecommended,
         String failureReason,
         List<Long> jobPostingIds, List<JobPostingSummary> jobPostings, List<Skill> skills,
+        List<LearningActivity> learningActivities,
         OffsetDateTime createdAt, OffsetDateTime updatedAt
 ) {
     public RoadmapDetailResponse {
         jobPostingIds = List.copyOf(jobPostingIds);
         jobPostings = List.copyOf(jobPostings);
         skills = List.copyOf(skills);
+        learningActivities = List.copyOf(learningActivities);
     }
 
     public record JobPostingSummary(Long jobPostingId, String companyName, String title) {
+    }
+
+    public record LearningActivity(LocalDate date, int completedMilestoneCount) {
     }
 
     public record Skill(Long roadmapSkillId, Long standardCompetencyId, String standardCompetencyName,

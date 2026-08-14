@@ -13,7 +13,10 @@ import SignupPage from '../pages/signup/SignupPage.jsx'
 import { JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
 import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
 import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
-import { MyPage } from '../features/user/pages/index.js'
+import { JobPreferenceOnboardingPage, MyPage } from '../features/user/pages/index.js'
+import { ResumeEditorPage } from '../features/resume/pages/index.js'
+import CommonCoverLetterPage from '../features/cover-letter/pages/CommonCoverLetterPage.jsx'
+import { SkillAnalysisPage, SkillReviewPage } from '../features/skill/pages/index.js'
 
 const router = createBrowserRouter([
   {
@@ -55,6 +58,34 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         element: <MyPage />,
+      },
+      {
+        path: 'onboarding/preferences',
+        element: <JobPreferenceOnboardingPage />,
+      },
+      {
+        path: 'onboarding/resume',
+        element: <ResumeEditorPage onboarding />,
+      },
+      {
+        path: 'resume',
+        element: <ResumeEditorPage />,
+      },
+      {
+        path: 'onboarding/cover-letter',
+        element: <CommonCoverLetterPage onboarding />,
+      },
+      {
+        path: 'cover-letter',
+        element: <CommonCoverLetterPage />,
+      },
+      {
+        path: 'onboarding/analysis',
+        element: <SkillAnalysisPage />,
+      },
+      {
+        path: 'onboarding/skills',
+        element: <SkillReviewPage />,
       },
       {
         path: 'cover-letter-result',

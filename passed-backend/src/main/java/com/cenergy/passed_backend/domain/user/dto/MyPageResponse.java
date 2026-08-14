@@ -8,6 +8,7 @@ public record MyPageResponse(
         String email,
         String profileImageUrl,
         OffsetDateTime resumeUpdatedAt,
-        OffsetDateTime coverLetterUpdatedAt
+        OffsetDateTime coverLetterUpdatedAt,
+        boolean recommendationRefreshRequired
 ) {
 }

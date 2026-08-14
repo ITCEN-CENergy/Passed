@@ -1,3 +1,5 @@
+import { csrfRequest, httpClient } from '../../../common/api/index.js'
+
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 
 export class CoverLetterApiError extends Error {
@@ -43,3 +45,15 @@ export const getCompanyCoverLetter = (coverLetterId, { signal } = {}) =>
 
 export const deleteCompanyCoverLetter = (coverLetterId) =>
   request(`/api/v1/company-cover-letters/${coverLetterId}`, { method: 'DELETE' })
+
+export const getCommonCoverLetterQuestions = ({ signal } = {}) =>
+  httpClient('/api/v1/cover-letter-questions', { signal })
+
+export const getCommonCoverLetter = ({ signal } = {}) =>
+  httpClient('/api/v1/cover-letters', { signal })
+
+export const createCommonCoverLetter = (body) =>
+  csrfRequest('/api/v1/cover-letters', { method: 'POST', body })
+
+export const updateCommonCoverLetter = (body) =>
+  csrfRequest('/api/v1/cover-letters', { method: 'PUT', body })

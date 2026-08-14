@@ -1,142 +1,82 @@
 from __future__ import annotations
 
-import asyncio
+import json
 import re
-
-from resume_pipeline.db import connection
+from dataclasses import dataclass
+from pathlib import Path
 
 from .schema import Competency
 
 
-def _normalize(value: object, maximum_length: int) -> str:
-    text = re.sub(r"\s+", " ", str(value or "")).strip()
-    return text[:maximum_length].rstrip()
+@dataclass(frozen=True)
+class CompetencySearchProfile:
+    context: str
+    distinctive_terms: tuple[str, ...]
+    excluded_terms: tuple[str, ...] = ()
 
 
-def _load_search_context(
-    skill_ids: list[int], job_posting_ids: list[int]
-) -> tuple[dict[int, str], dict[int, str]]:
-    with connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT id, description FROM skills WHERE id = ANY(%s)",
-                (skill_ids,),
-            )
-            skill_descriptions = {
-                int(row["id"]): _normalize(row["description"], 180)
-                for row in cur.fetchall()
-            }
-            cur.execute(
-                """
-                SELECT id, title, position_detail, main_duty
-                FROM job_postings
-                WHERE id = ANY(%s)
-                """,
-                (job_posting_ids,),
-            )
-            posting_contexts = {
-                int(row["id"]): _normalize(
-                    " ".join(filter(None, (
-                        row["title"], row["position_detail"], row["main_duty"]
-                    ))),
-                    260,
-                )
-                for row in cur.fetchall()
-            }
-    return skill_descriptions, posting_contexts
+_SEARCH_PROFILE_DIRECTORY = Path(__file__).with_name("data") / "skill_search_profiles"
+_PROFILE_STOP_WORDS = {
+    "개발", "관리", "관련", "결과", "기능", "기술", "데이터", "문서", "사용",
+    "서비스", "실무", "역량", "정보", "학습", "활용", "application", "development",
+}
 
 
-def _build_queries_sync(competencies: list[Competency]) -> dict[str, str]:
-    job_posting_ids = sorted({
-        source.jobPostingId
-        for competency in competencies
-        for source in competency.sources
-    })
-    skill_descriptions, posting_contexts = _load_search_context(
-        [competency.standardCompetencyId for competency in competencies],
-        job_posting_ids,
-    )
-    queries: dict[str, str] = {}
+def _profile_tokens(value: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[가-힣A-Za-z0-9+#.]+", value.casefold())
+        if len(token) >= 2 and token not in _PROFILE_STOP_WORDS
+    }
+
+
+def load_curated_search_profiles() -> dict[int, dict[str, object]]:
+    profiles: dict[int, dict[str, object]] = {}
+    for path in sorted(_SEARCH_PROFILE_DIRECTORY.glob("*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError(f"search profile file must contain an object: {path}")
+        for raw_skill_id, item in payload.items():
+            skill_id = int(raw_skill_id)
+            if skill_id in profiles:
+                raise ValueError(f"duplicate search profile skill id: {skill_id}")
+            if not isinstance(item, dict) or not item.get("skillName"):
+                raise ValueError(f"invalid search profile: {skill_id}")
+            queries = item.get("queries")
+            if not isinstance(queries, dict):
+                raise ValueError(f"invalid search profile queries: {skill_id}")
+            profiles[skill_id] = item
+    return profiles
+
+
+async def build_competency_search_profiles(
+    competencies: list[Competency],
+) -> dict[str, CompetencySearchProfile]:
+    stored_profiles = load_curated_search_profiles()
+    result: dict[str, CompetencySearchProfile] = {}
     for competency in competencies:
-        posting_context = " ".join(
-            posting_contexts.get(source.jobPostingId, "")
-            for source in competency.sources
+        skill_id = competency.standardCompetencyId
+        stored = stored_profiles.get(skill_id)
+        if stored is None:
+            raise ValueError(f"missing JSON search profile for skill id: {skill_id}")
+        queries = stored["queries"]
+        search_terms = tuple(
+            str(term).strip()
+            for language in ("ko", "en")
+            for term in queries.get(language, [])
+            if str(term).strip()
         )
-        queries[competency.roadmapSkillKey] = _normalize(" ".join(filter(None, (
-            competency.standardCompetencyName,
-            competency.category.value.replace("_", " "),
-            skill_descriptions.get(competency.standardCompetencyId, ""),
-            posting_context,
-            "학습 가이드 실무 실습",
-        ))), 500)
-    return queries
-
-
-async def build_contextual_search_queries(
-    competencies: list[Competency],
-) -> dict[str, str]:
-    try:
-        return await asyncio.to_thread(_build_queries_sync, competencies)
-    except Exception:
-        return {
-            competency.roadmapSkillKey: (
-                f"{competency.standardCompetencyName} "
-                f"{competency.category.value.replace('_', ' ')} 학습 가이드 실무 실습"
-            )
-            for competency in competencies
-        }
-
-
-def _fallback_context(
-    competency: Competency, roadmap_context: str = ""
-) -> str:
-    evidence = " ".join(
-        source.currentEvidence or "" for source in competency.sources
-    )
-    return _normalize(" ".join(filter(None, (
-        competency.standardCompetencyName,
-        competency.category.value.replace("_", " "),
-        evidence,
-        roadmap_context,
-    ))), 700)
-
-
-async def build_competency_ranking_contexts(
-    competencies: list[Competency],
-) -> dict[str, str]:
-    """Build semantic context for disambiguating resource search and ranking."""
-    roadmap_context = _normalize(
-        "연관 역량 " + " ".join(
-            competency.standardCompetencyName for competency in competencies
-        ),
-        300,
-    )
-    try:
-        job_posting_ids = sorted({
-            source.jobPostingId
-            for competency in competencies
-            for source in competency.sources
-        })
-        skill_descriptions, posting_contexts = await asyncio.to_thread(
-            _load_search_context,
-            [competency.standardCompetencyId for competency in competencies],
-            job_posting_ids,
+        if not search_terms:
+            raise ValueError(f"empty JSON search profile for skill id: {skill_id}")
+        context = " ".join(search_terms)
+        excluded_terms = tuple(
+            str(term).casefold().strip()
+            for term in stored.get("excludeTerms", [])
+            if str(term).strip()
         )
-        return {
-            competency.roadmapSkillKey: _normalize(" ".join(filter(None, (
-                _fallback_context(competency, roadmap_context),
-                skill_descriptions.get(competency.standardCompetencyId, ""),
-                " ".join(
-                    posting_contexts.get(source.jobPostingId, "")
-                    for source in competency.sources
-                ),
-            ))), 700)
-            for competency in competencies
-        }
-    except Exception:
-        return {
-            competency.roadmapSkillKey: _fallback_context(
-                competency, roadmap_context
-            )
-            for competency in competencies
-        }
+        result[competency.roadmapSkillKey] = CompetencySearchProfile(
+            context=context,
+            distinctive_terms=tuple(sorted(_profile_tokens(context)))[:12],
+            excluded_terms=excluded_terms,
+        )
+    return result

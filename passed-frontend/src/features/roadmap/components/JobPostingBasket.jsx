@@ -25,6 +25,17 @@ const JobPostingBasket = () => {
     return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape) }
   }, [open])
 
+  useEffect(() => {
+    if (!isGenerating) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isGenerating])
+
   const generate = async () => {
     if (!items.length) return
     setIsGenerating(true); setError('')

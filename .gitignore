@@ -20,6 +20,9 @@ $RECYCLE.BIN/
 docker-compose.override.yml
 .docker/
 data/
+!passed-ai/api/features/roadmap/data/
+!passed-ai/api/features/roadmap/data/skill_search_profiles/
+!passed-ai/api/features/roadmap/data/skill_search_profiles/*
 db-data/
 postgres-data/
 mongo-data/

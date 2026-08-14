@@ -7,7 +7,7 @@ import styles from './RoadmapDetailPage.module.css'
 const labels = {
   ACTIVE: '진행 중', COMPLETED: '완료', CREATING: '생성 중', FAILED: '생성 실패',
   TECHNICAL_SKILL: '기술 역량', EXPERIENCE: '경험', BEHAVIORAL_TRAIT: '행동 특성', CERTIFICATION: '자격',
-  REQUIRED: '필수', PREFERRED: '우대', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
+  REQUIRED: '공통 필수', PREFERRED: '주요', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
   BEGINNER: '초급', INTERMEDIATE: '중급', ADVANCED: '고급', NOT_STARTED: '시작 전', IN_PROGRESS: '진행 중', COMPLETED_MILESTONE: '완료',
 }
 const fmtDate = (value) => value ? String(value).slice(0, 10).replaceAll('-', '.') : '-'
@@ -22,7 +22,7 @@ const Milestone = ({ item, onToggle, busy }) => {
   return <article className={styles.milestone}>
     <button className={`${styles.check} ${complete ? styles.checked : ''}`} type="button" disabled={busy} onClick={() => onToggle(item, !complete)} aria-label={`${item.title} ${complete ? '완료 취소' : '완료 처리'}`}>{complete && <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>}</button>
     <div className={styles.milestoneBody}>
-      <div className={styles.meta}>{labels[item.milestoneType] || item.milestoneType}<i />{labels[item.difficulty] || item.difficulty}<i /><b className={item.required ? styles.requiredMilestone : styles.optionalMilestone}>{item.required ? '필수' : '선택'}</b></div>
+      <div className={styles.meta}>{labels[item.milestoneType] || item.milestoneType}<i />{labels[item.difficulty] || item.difficulty}<i /><b className={item.required ? styles.requiredMilestone : styles.optionalMilestone} title={item.required ? '역량 학습에 필요한 핵심 단계' : '필요에 따라 추가하는 보충 단계'}>{item.required ? '핵심' : '보충'}</b></div>
       <h4>{item.title}</h4><p>{item.description}</p>
       {item.learningObjective && <p className={styles.detail}>학습 목표 · {item.learningObjective}</p>}
       {item.completionCriteria && <p className={styles.detail}>완료 기준 · {item.completionCriteria}</p>}

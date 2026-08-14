@@ -23,14 +23,15 @@ Success criteria:
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
 - Mark the minimum set of milestones needed to reach the stage target as required=true.
 - Mark enrichment, extra repetition, or optional deep-dive milestones as required=false.
+- Decide required explicitly for every milestone. Never rely on a default value.
+- If the learner can omit a milestone and still verifiably reach the stage target, mark it required=false.
+- Use required=true only when omitting the milestone would make the stage target unachievable or unverifiable.
 - Every learning stage must contain at least one required milestone.
 - A stage may contain no optional milestones when every generated milestone is necessary to reach the target level. Never add an optional milestone only to satisfy a quota.
 - The application recommends learning resources after milestone generation. Always return an empty resourceRecommendations list.
-- For a certification, use milestoneType CERTIFICATION.
-- Never use milestoneType CERTIFICATION for a non-certification skill.
+- Do not generate milestoneType. The application assigns it from the validated competency category and learning stage.
 - Return only the required structured output.
 
-Prefer CONCEPT or PRACTICE for 1 to 2, and PROJECT or ASSESSMENT for 2 to 3.
 Estimated minutes must be realistic and between 30 and 2400 per milestone.
 """
 

@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.jobposting.application.JobPostingComman
 import com.cenergy.passed_backend.domain.jobposting.application.JobPostingQueryService;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateResponse;
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateOptionsResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingDetailResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListResponse;
@@ -41,6 +42,12 @@ public class JobPostingController {
             @PathVariable Long jobPostingId
     ) {
         return ResponseEntity.ok(queryService.findById(jobPostingId));
+    }
+
+    @GetMapping("/create-options")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<JobPostingCreateOptionsResponse> getCreateOptions() {
+        return ResponseEntity.ok(queryService.findCreateOptions());
     }
 
     @PostMapping

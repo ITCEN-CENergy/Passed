@@ -1,13 +1,17 @@
 package com.cenergy.passed_backend.domain.jobposting.application;
 
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingDetailResponse;
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateOptionsResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListResponse;
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingNamedOptionResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingSummaryResponse;
 import com.cenergy.passed_backend.domain.jobposting.entity.CompanySize;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
+import com.cenergy.passed_backend.domain.jobposting.repository.CompanyRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationRepository;
+import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
 import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.data.domain.Page;
@@ -25,15 +29,35 @@ public class JobPostingQueryService {
     private final JobPostingRepository jobPostingRepository;
     private final JobRecommendationRepository recommendationRepository;
     private final CurrentUserIdProvider currentUserIdProvider;
+    private final CompanyRepository companyRepository;
+    private final SkillRepository skillRepository;
 
     public JobPostingQueryService(
             JobPostingRepository jobPostingRepository,
             JobRecommendationRepository recommendationRepository,
-            CurrentUserIdProvider currentUserIdProvider
+            CurrentUserIdProvider currentUserIdProvider,
+            CompanyRepository companyRepository,
+            SkillRepository skillRepository
     ) {
         this.jobPostingRepository = jobPostingRepository;
         this.recommendationRepository = recommendationRepository;
         this.currentUserIdProvider = currentUserIdProvider;
+        this.companyRepository = companyRepository;
+        this.skillRepository = skillRepository;
+    }
+
+    public JobPostingCreateOptionsResponse findCreateOptions() {
+        var companies = companyRepository.findAllNames().stream()
+                .map(company -> new JobPostingNamedOptionResponse(
+                        company.getId(), company.getName()
+                ))
+                .toList();
+        var skills = skillRepository.findAllNames().stream()
+                .map(skill -> new JobPostingNamedOptionResponse(
+                        skill.getId(), skill.getName()
+                ))
+                .toList();
+        return new JobPostingCreateOptionsResponse(companies, skills);
     }
 
     public JobPostingListResponse findAll(JobPostingListRequest request) {

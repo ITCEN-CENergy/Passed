@@ -21,23 +21,12 @@ const icons = {
   briefcase: <Icon><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" /></Icon>,
   target: <Icon><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /></Icon>,
   layers: <Icon><path d="m12 3 9 5-9 5-9-5 9-5Z" /><path d="m3 12 9 5 9-5M3 16l9 5 9-5" /></Icon>,
-  calendar: <Icon><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18" /></Icon>,
-  edit: <Icon><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" /><path d="m14 7 3 3" /></Icon>,
 }
 
 const formatHours = (minutes, creating) => {
   if (creating && !minutes) return '산정 중'
   const hours = Number(minutes || 0) / 60
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)}시간`
-}
-
-const formatDate = (value) => {
-  if (!value) return '-'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '-'
-  return new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul',
-  }).format(date).replace(/\. /g, '.').replace(/\.$/, '')
 }
 
 const Metric = ({ icon, children }) => (
@@ -73,10 +62,6 @@ const RoadmapCard = ({ roadmap }) => {
           <Metric icon="briefcase">채용공고 {roadmap.jobPostingCount ?? 0}개</Metric>
           <Metric icon="target">학습 역량 {roadmap.skillCount ?? 0}개</Metric>
           <Metric icon="layers">학습 단계 {roadmap.milestoneCount ?? 0}개</Metric>
-        </div>
-        <div className={styles.dates}>
-          <Metric icon="calendar">생성일 {formatDate(roadmap.createdAt)}</Metric>
-          <Metric icon="edit">최근 수정 {formatDate(roadmap.updatedAt)}</Metric>
         </div>
       </div>
       <Progress value={roadmap.progressRate} creating={creating} />

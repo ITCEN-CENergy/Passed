@@ -6,10 +6,6 @@ import com.cenergy.passed_backend.global.error.SkillGapException;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 public class CompetencyPriorityPolicy {
@@ -18,17 +14,29 @@ public class CompetencyPriorityPolicy {
         return weightOf(requirementType) * 100 + gapLevel * 10 + frequency;
     }
 
-    public RequirementType majorityOf(Collection<RequirementType> requirementTypes) {
+    public RequirementType resolveForRoadmap(
+            Collection<RequirementType> requirementTypes,
+            int competencyPostingCount,
+            int selectedPostingCount
+    ) {
         if (requirementTypes == null || requirementTypes.isEmpty()) {
             throw invalid("requirementTypes must not be empty");
         }
-        Map<RequirementType, Long> counts = requirementTypes.stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        return counts.entrySet().stream()
-                .max(Comparator.<Map.Entry<RequirementType, Long>>comparingLong(Map.Entry::getValue)
-                        .thenComparingInt(entry -> weightOf(entry.getKey())))
-                .map(Map.Entry::getKey)
-                .orElseThrow(() -> invalid("requirementTypes must not be empty"));
+        if (requirementTypes.stream().anyMatch(type -> type == null)) {
+            throw invalid("requirementTypes must not contain null");
+        }
+        if (competencyPostingCount <= 0 || selectedPostingCount <= 0
+                || competencyPostingCount > selectedPostingCount) {
+            throw invalid("invalid posting counts");
+        }
+        boolean requiredInEveryPosting = competencyPostingCount == selectedPostingCount
+                && requirementTypes.stream().allMatch(type -> type == RequirementType.REQUIRED);
+        if (requiredInEveryPosting) {
+            return RequirementType.REQUIRED;
+        }
+        boolean hasRequiredOrPreferred = requirementTypes.stream()
+                .anyMatch(type -> type == RequirementType.REQUIRED || type == RequirementType.PREFERRED);
+        return hasRequiredOrPreferred ? RequirementType.PREFERRED : RequirementType.RELATED;
     }
 
     public int weightOf(RequirementType requirementType) {

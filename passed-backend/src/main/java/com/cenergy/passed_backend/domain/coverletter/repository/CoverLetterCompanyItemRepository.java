@@ -19,6 +19,9 @@ public interface CoverLetterCompanyItemRepository extends JpaRepository<CoverLet
     /** 부모 자기소개서의 문항을 화면 표시 순서대로 반환한다. */
     List<CoverLetterCompanyItem> findAllByCoverLetterCompanyIdOrderByDisplayOrderAscIdAsc(Long coverLetterCompanyId);
 
+    /** 단건 추가 시 자기소개서의 문항 상한을 검사한다. */
+    long countByCoverLetterCompanyId(Long coverLetterCompanyId);
+
     /** 새 문항의 displayOrder가 이미 사용 중인지 확인한다. */
     boolean existsByCoverLetterCompanyIdAndDisplayOrder(Long coverLetterCompanyId, int displayOrder);
 
@@ -33,7 +36,10 @@ public interface CoverLetterCompanyItemRepository extends JpaRepository<CoverLet
             select item
             from CoverLetterCompanyItem item
             join fetch item.coverLetterCompany coverLetter
-            join fetch coverLetter.jobPosting
+            left join fetch coverLetter.jobPosting jobPosting
+            left join fetch jobPosting.company
+            left join fetch jobPosting.jobRole
+            left join fetch coverLetter.manualJobPosting
             where item.id = :itemId
               and coverLetter.user.id = :userId
             """)

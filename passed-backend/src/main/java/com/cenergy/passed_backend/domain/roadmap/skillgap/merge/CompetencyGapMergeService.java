@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,20 @@ public class CompetencyGapMergeService {
             .thenComparing(CompetencyGapSource::reportId,
                     Comparator.nullsFirst(Comparator.naturalOrder()));
     private static final Comparator<MergedCandidate> RESULT_ORDER = Comparator
-            .comparingInt(MergedCandidate::priorityScore).reversed()
-            .thenComparing(Comparator.comparingInt(MergedCandidate::targetLevel).reversed())
+            .comparingInt((MergedCandidate candidate) -> candidate.gapLevel() > 0 ? 1 : 0).reversed()
+            .thenComparing(Comparator.comparingInt(
+                    (MergedCandidate candidate) -> requirementRank(candidate.requirementType())).reversed())
+            .thenComparing(Comparator.comparingInt(MergedCandidate::frequency).reversed())
+            .thenComparing(Comparator.comparingInt(MergedCandidate::gapLevel).reversed())
             .thenComparing(MergedCandidate::standardCompetencyId);
+
+    private static int requirementRank(RequirementType requirementType) {
+        return switch (requirementType) {
+            case REQUIRED -> 3;
+            case PREFERRED -> 2;
+            case RELATED -> 1;
+        };
+    }
 
     private final CompetencyPriorityPolicy priorityPolicy;
 
@@ -42,8 +54,10 @@ public class CompetencyGapMergeService {
         invalidIf(inputs == null, "merge inputs must not be null");
 
         Map<SourceKey, CompetencyGapSource> uniqueSources = new LinkedHashMap<>();
+        Set<Long> selectedJobPostingIds = new HashSet<>();
         for (CompetencyGapMergeInput input : inputs) {
             validateInput(input);
+            selectedJobPostingIds.add(input.jobPostingId());
             for (ValidatedCompetencyGap gap : input.competencies()) {
                 validateGap(gap);
                 CompetencyGapSource source = toSource(input, gap);
@@ -59,7 +73,8 @@ public class CompetencyGapMergeService {
                 .collect(Collectors.groupingBy(CompetencyGapSource::standardCompetencyId));
 
         List<MergedCandidate> candidates = sourcesByCompetency.values().stream()
-                .map(this::mergeGroup)
+                .map(sources -> mergeGroup(sources, selectedJobPostingIds.size()))
+                .filter(candidate -> candidate.currentLevel() <= candidate.targetLevel())
                 .sorted(RESULT_ORDER)
                 .toList();
 
@@ -70,7 +85,10 @@ public class CompetencyGapMergeService {
         return List.copyOf(result);
     }
 
-    private MergedCandidate mergeGroup(List<CompetencyGapSource> unorderedSources) {
+    private MergedCandidate mergeGroup(
+            List<CompetencyGapSource> unorderedSources,
+            int selectedPostingCount
+    ) {
         List<CompetencyGapSource> sources = unorderedSources.stream().sorted(SOURCE_ORDER).toList();
         CompetencyGapSource reference = sources.getFirst();
         for (CompetencyGapSource source : sources) {
@@ -90,11 +108,15 @@ public class CompetencyGapMergeService {
                     reference.standardCompetencyId(), currentLevels.stream().sorted().toList(), currentLevel);
         }
 
-        RequirementType requirementType = priorityPolicy.majorityOf(
-                sources.stream().map(CompetencyGapSource::requirementType).toList());
-        int gapLevel = Math.max(targetLevel - currentLevel, 0);
-        int frequency = Math.toIntExact(sources.stream()
+        int competencyPostingCount = Math.toIntExact(sources.stream()
                 .map(CompetencyGapSource::jobPostingId).distinct().count());
+        RequirementType requirementType = priorityPolicy.resolveForRoadmap(
+                sources.stream().map(CompetencyGapSource::requirementType).toList(),
+                competencyPostingCount,
+                selectedPostingCount
+        );
+        int gapLevel = Math.max(targetLevel - currentLevel, 0);
+        int frequency = competencyPostingCount;
         int priorityScore = priorityPolicy.calculateScore(requirementType, gapLevel, frequency);
 
         return new MergedCandidate(reference.standardCompetencyId(), reference.standardCompetencyName(),

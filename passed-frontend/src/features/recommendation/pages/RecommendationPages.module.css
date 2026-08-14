@@ -1,10 +1,11 @@
 .recommendationPage { width: min(100% - 40px, 1120px); margin: 0 auto; padding: 48px 0 80px; }
+.embedded { width: 100%; padding: 0; }
 .pageHeader { margin-bottom: 28px; }
 .pageHeader > p { margin-bottom: 6px; color: #146bff; font-size: 13px; font-weight: 800; letter-spacing: .12em; }
 .pageHeader h1 { color: #07183d; font-size: 36px; letter-spacing: -.05em; }
 .pageHeader span { display: block; margin-top: 8px; color: #6b7890; }
 
-.preferenceBar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) 150px; align-items: end; gap: 16px; padding: 24px; background: #fff; border: 1px solid #dce4ef; border-radius: 16px; box-shadow: 0 4px 16px rgba(7,24,61,.06); }
+.preferenceBar { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) 220px; align-items: end; gap: 16px; padding: 24px; background: #fff; border: 1px solid #dce4ef; border-radius: 16px; box-shadow: 0 4px 16px rgba(7,24,61,.06); }
 .preferenceBar label { display: grid; gap: 8px; }
 .preferenceBar label > span { color: #526178; font-size: 13px; font-weight: 700; }
 .preferenceBar select { width: 100%; height: 52px; padding: 0 42px 0 16px; color: #182238; background: #fff; border: 1px solid #dce4ef; border-radius: 12px; }
@@ -14,6 +15,10 @@
 .preferenceBar button:disabled { opacity: .45; cursor: default; }
 .preferenceBar select:focus, .preferenceBar button:focus-visible { outline: 3px solid rgba(20,107,255,.22); outline-offset: 2px; }
 .error { padding: 12px 16px; margin-top: 16px; color: #b42328; background: #fff0f0; border-radius: 10px; }
+.selectedRoles { display: flex; grid-column: 1 / -1; flex-wrap: wrap; gap: 9px; padding-top: 2px; }
+.selectedRoles > span { display: inline-flex; min-height: 38px; align-items: center; gap: 7px; padding: 6px 8px 6px 12px; color: #23436f; background: #eef5ff; border: 1px solid #c6dbfb; border-radius: 11px; font-size: 13px; font-weight: 700; }
+.selectedRoles b { color: #8ba6ca; }
+.selectedRoles button, .selectedRoles button:hover { display: grid; width: 25px; height: 25px; min-height: 0; padding: 0; place-items: center; color: #526178; background: #eef5ff; border: 0; border-radius: 50%; font-size: 18px; line-height: 1; }
 
 .results { margin-top: 32px; }
 .introState { display: flex; min-height: 330px; align-items: center; justify-content: center; flex-direction: column; padding: 40px; color: #6b7890; background: linear-gradient(145deg, #f8fbff, #eef5ff); border: 1px dashed #b8cef2; border-radius: 18px; text-align: center; }
@@ -21,13 +26,216 @@
 .introState h2 { color: #07183d; font-size: 22px; }
 .introState p { margin-top: 7px; line-height: 1.6; }
 .resultsHeader { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin: 0 0 20px; }
-.resultsHeader p { margin-bottom: 3px; color: #12a05c; font-size: 12px; font-weight: 800; }
 .resultsHeader h2 { color: #07183d; font-size: 24px; }
 .resultsHeader > span { color: #6b7890; font-size: 13px; }
-.recommendationGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-height: 980px; padding: 2px 8px 8px 2px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #b5c5dc #eef2f7; }
+.recommendationGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 2px; }
 .recommendationGrid > a { display: grid; grid-template-columns: 230px minmax(0, 1fr); min-height: 290px; }
 .recommendationGrid > a > div:first-child { height: 100%; }
 
+.home {
+  width: 100%;
+  overflow: hidden;
+  background: #f7f9fc;
+}
+
+.hero {
+  width: 100%;
+  overflow: hidden;
+  background: #0624c8;
+}
+
+.hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1983 / 793;
+  object-fit: cover;
+}
+
+.recommendationSection {
+  width: min(100% - 48px, 1120px);
+  padding: 72px 0 96px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.sectionEyebrow {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: #146bff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+.sectionHeader h2,
+.guestCopy h2 {
+  color: #07183d;
+  letter-spacing: -.045em;
+}
+
+.sectionHeader h2 {
+  font-size: clamp(28px, 3.2vw, 38px);
+}
+
+.sectionHeader p {
+  margin-top: 10px;
+  color: #6b7890;
+  line-height: 1.65;
+}
+
+.sectionHeader > a {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 14px;
+  color: #315072;
+  background: #fff;
+  border: 1px solid #dce4ef;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sectionHeader > a:hover,
+.sectionHeader > a:focus-visible {
+  color: #146bff;
+  border-color: #9ebff5;
+}
+
+.guestPanel {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
+  gap: clamp(42px, 7vw, 88px);
+  padding: clamp(34px, 5vw, 64px);
+  background: #fff;
+  border: 1px solid #dce4ef;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(7, 24, 61, .08);
+}
+
+.guestCopy {
+  align-self: center;
+}
+
+.guestCopy h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.28;
+  word-break: keep-all;
+}
+
+.guestCopy > p {
+  margin-top: 18px;
+  color: #66758c;
+  line-height: 1.75;
+}
+
+.guestActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.guestActions a {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.primaryLink {
+  color: #fff;
+  background: #146bff;
+  box-shadow: 0 8px 18px rgba(20, 107, 255, .2);
+}
+
+.primaryLink:hover,
+.primaryLink:focus-visible {
+  color: #fff;
+  background: #0f5ce0;
+}
+
+.secondaryLink {
+  color: #315072;
+  background: #f7f9fc;
+  border: 1px solid #dce4ef;
+}
+
+.secondaryLink:hover,
+.secondaryLink:focus-visible {
+  color: #146bff;
+  border-color: #9ebff5;
+}
+
+.matchingSteps {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.matchingSteps li {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f7faff;
+  border: 1px solid #dce8fa;
+  border-radius: 15px;
+}
+
+.matchingSteps li > span {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  color: #146bff;
+  background: #fff;
+  border: 1px solid #cfe0fb;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 5px 14px rgba(20, 107, 255, .08);
+}
+
+.matchingSteps h3 {
+  color: #14233f;
+  font-size: 17px;
+}
+
+.matchingSteps p {
+  margin-top: 5px;
+  color: #6b7890;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.guestActions a:focus-visible,
+.sectionHeader > a:focus-visible {
+  outline: 3px solid rgba(20, 107, 255, .22);
+  outline-offset: 3px;
+}
+
 @media (max-width: 980px) { .recommendationGrid > a { display: flex; } }
+@media (max-width: 880px) { .guestPanel { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { .preferenceBar { grid-template-columns: 1fr 1fr; } .preferenceBar button { grid-column: 1 / -1; } .recommendationGrid { grid-template-columns: 1fr; max-height: none; overflow: visible; } .recommendationGrid > a { display: grid; } }
+@media (max-width: 700px) { .hero img { height: 300px; aspect-ratio: auto; object-position: left center; } .recommendationSection { width: min(100% - 28px, 1120px); padding: 48px 0 72px; } .sectionHeader { align-items: flex-start; flex-direction: column; } .guestPanel { min-width: 0; gap: 34px; padding: 28px 20px; border-radius: 18px; } }
 @media (max-width: 540px) { .recommendationPage { width: min(100% - 28px, 1120px); padding-top: 32px; } .preferenceBar { grid-template-columns: 1fr; padding: 18px; } .preferenceBar button { grid-column: auto; } .resultsHeader { align-items: flex-start; flex-direction: column; } .recommendationGrid > a { display: flex; } }
+@media (max-width: 480px) { .hero img { height: 255px; object-position: left center; } .guestActions { display: grid; } .matchingSteps li { grid-template-columns: 44px 1fr; gap: 12px; padding: 16px; } .matchingSteps li > span { width: 44px; height: 44px; border-radius: 12px; } }

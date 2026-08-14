@@ -44,6 +44,12 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private List<String> desiredJobs = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    @Setter(AccessLevel.NONE)
+    private UserRole role = UserRole.GENERAL_USER;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desired_industry_id")
     private Industry desiredIndustry;

@@ -31,7 +31,6 @@ const SkillRow = ({ skill }) => {
         {skill.isImportant && <span className={styles.star} title="중요 스킬" aria-label="중요 스킬">★</span>}
         {skill.skillName}
       </span>
-      <span className={styles.skillRate}>{percent(skill.matchRate)}%</span>
       <span className={`${styles.status} ${styles[status.tone]}`}>{status.text}</span>
     </div>
   )
@@ -53,8 +52,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
   <section className={styles.report} aria-labelledby="report-title">
     <div className={styles.reportTitle}>
       <div>
-        <p>MY SKILL MATCH REPORT</p>
-        <h2 id="report-title">나의 공고 매칭 리포트</h2>
+        <h2 id="report-title">나와 채용공고의 적합도 분석</h2>
       </div>
       <div className={styles.reportActions}>
         <button className={styles.roadmapButton} type="button" onClick={onCreateRoadmap}>
@@ -73,7 +71,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
       </div>
       <div className={styles.totalScore}>
         <span>종합 점수</span>
-        <strong>{Math.round(Number(report.totalScore ?? 0) * 100) / 100}<small>점</small></strong>
+        <strong>{Math.round(Number(report.totalScore ?? 0))}<small>점</small></strong>
       </div>
       <p>{report.reason || '보유 스킬과 공고의 요구 역량을 종합적으로 분석한 결과입니다.'}</p>
     </div>
@@ -104,6 +102,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
       </div>
     </div>
 
+    <p className={styles.importantGuide}><span aria-hidden="true">★</span> 별표는 사용자가 중요 표시한 스킬이에요.</p>
     <div className={styles.highlightGrid}>
       <HighlightColumn title="강점 스킬" description="공고와 잘 맞는 보유 역량이에요." skills={report.topStrengthSkills} emptyMessage="표시할 강점 스킬이 없습니다." strength />
       <HighlightColumn title="보완 스킬" description="지원 전 보완하면 경쟁력이 높아져요." skills={report.topGapSkills} emptyMessage="보완이 필요한 스킬이 없습니다." />

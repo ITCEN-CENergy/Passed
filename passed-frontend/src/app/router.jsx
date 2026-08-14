@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import AuthLayout from './AuthLayout.jsx'
 import AboutPage from './pages/AboutPage.jsx'
-import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import CoverLetterResultPage from '../features/cover-letter/pages/CoverLetterResultPage';
 // import CoverLetterReviewPage from '../features/cover-letter/pages/CoverLetterReviewPage';
@@ -25,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <RecommendationPage home />,
       },
       {
         path: 'about',
@@ -101,6 +100,10 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-write',
+        element: <CompanyCoverLetterWrite />,
+      },
+      {
+        path: 'cover-letter-write/:coverLetterId',
         element: <CompanyCoverLetterWrite />,
       },
       {

@@ -19,13 +19,11 @@ public class CoverLetterAiResponseValidator {
                         || response.qaAlignmentScore() < 0
                         || response.qaAlignmentScore() > 100,
                 "qa_alignment_score must be between 0 and 100");
-        requireText(response.spellCheckedContent(), "spell_checked_content");
         requireText(response.qaAlignmentFeedback(), "qa_alignment_feedback");
         invalidIf(response.jobFitFeedback() == null, "jd_fit_feedback must not be null");
         requireText(response.finalEditedContent(), "final_edited_content");
 
         return new ValidatedCoverLetterAiResult(
-                response.spellCheckedContent(),
                 response.qaAlignmentScore(),
                 response.qaAlignmentFeedback(),
                 response.jobFitFeedback(),

@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useCompanyCoverLetters } from '../hooks'
 import styles from './styles/CompanyCoverLetterList.module.css'
 
@@ -7,42 +6,50 @@ function formatDate(value) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return '-'
 
-  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .format(date)
+    .replace(/\. /g, '. ')
 }
 
 const CompanyCoverLetterList = () => {
-  const navigate = useNavigate()
-  const { coverLetters, error, isLoading, reload, remove } = useCompanyCoverLetters()
-  const [deletingId, setDeletingId] = useState(null)
-  const [actionError, setActionError] = useState(null)
-
-  const removeCoverLetter = async (coverLetter) => {
-    if (!window.confirm(`'${coverLetter.jobPostingTitle}' 자기소개서를 삭제할까요?`)) return
-
-    setActionError(null)
-    setDeletingId(coverLetter.id)
-
-    try {
-      await remove(coverLetter.id)
-    } catch (deleteError) {
-      setActionError(deleteError.message)
-    } finally {
-      setDeletingId(null)
-    }
-  }
+  const {
+    coverLetters,
+    error,
+    isLoading,
+    page,
+    totalPages,
+    goToPreviousPage,
+    goToNextPage,
+    reload,
+  } = useCompanyCoverLetters()
 
   return (
     <div className={styles.page}>
-      <section className={styles.content} aria-labelledby="cover-letter-title">
-        <div className={styles.intro}>
+      <main className={styles.content} aria-labelledby="cover-letter-title">
+        <Link className={styles.backLink} to="/">
+          <span aria-hidden="true">←</span>
+          학습 로드맵
+        </Link>
+
+        <div className={styles.pageHeader}>
           <h1 id="cover-letter-title">자기소개서 목록</h1>
-          <p>작성한 자기소개서를 확인하고 관리하세요.</p>
+          <Link className={styles.writeButton} to="/cover-letter-write">
+            직접 자기소개서 입력하기
+          </Link>
         </div>
 
-        {isLoading && <p className={styles.stateMessage}>자기소개서를 불러오는 중입니다.</p>}
+        {isLoading && (
+          <div className={styles.stateCard} aria-live="polite">
+            자기소개서를 불러오는 중입니다.
+          </div>
+        )}
 
         {!isLoading && error && (
-          <div className={styles.stateMessage} role="alert">
+          <div className={styles.stateCard} role="alert">
             <p>{error.message}</p>
             <button className={styles.retryButton} type="button" onClick={() => reload()}>
               다시 시도
@@ -50,42 +57,41 @@ const CompanyCoverLetterList = () => {
           </div>
         )}
 
-        {actionError && <p className={styles.actionError} role="alert">{actionError}</p>}
-
         {!isLoading && !error && coverLetters.length === 0 && (
-          <p className={styles.empty}>작성한 자기소개서가 없습니다.</p>
+          <div className={styles.emptyState}>
+            <strong>작성한 자기소개서가 없습니다.</strong>
+            <p>지원할 채용공고의 자기소개서를 직접 입력해 보세요.</p>
+          </div>
         )}
 
         {!isLoading && !error && coverLetters.length > 0 && (
           <ul className={styles.list} aria-label="자기소개서 목록">
             {coverLetters.map((coverLetter) => (
               <li className={styles.card} key={coverLetter.id}>
-                <div className={styles.cardInfo}>
-                  <h2>{coverLetter.jobPostingTitle}</h2>
-                  <p>작성일: {formatDate(coverLetter.createdAt)}</p>
-                </div>
-                <div className={styles.cardActions}>
-                  <button
-                    className={styles.checkButton}
-                    type="button"
-                    onClick={() => navigate(`/cover-letter-result?coverLetterId=${coverLetter.id}`)}
-                  >
-                    확인하기
-                  </button>
-                  <button
-                    className={styles.deleteButton}
-                    disabled={deletingId === coverLetter.id}
-                    type="button"
-                    onClick={() => removeCoverLetter(coverLetter)}
-                  >
-                    {deletingId === coverLetter.id ? '삭제 중' : '삭제하기'}
-                  </button>
-                </div>
+                <Link
+                  className={styles.cardContent}
+                  to={`/cover-letter-result?coverLetterId=${coverLetter.id}`}
+                  aria-label={`${coverLetter.title} 자기소개서 확인`}
+                >
+                  <h2>{coverLetter.title}</h2>
+                  <p>최종 수정일: {formatDate(coverLetter.updatedAt)}</p>
+                </Link>
+                <Link className={styles.editButton} to={`/cover-letter-write/${coverLetter.id}`}>
+                  수정하기
+                </Link>
               </li>
             ))}
           </ul>
         )}
-      </section>
+
+        {!isLoading && !error && totalPages > 1 && (
+          <nav className={styles.pagination} aria-label="자기소개서 목록 페이지">
+            <button type="button" disabled={page === 0} onClick={goToPreviousPage}>이전</button>
+            <span>{page + 1} / {totalPages}</span>
+            <button type="button" disabled={page + 1 >= totalPages} onClick={goToNextPage}>다음</button>
+          </nav>
+        )}
+      </main>
     </div>
   )
 }

@@ -23,7 +23,7 @@ class SecurityCurrentUserIdProviderTest {
     @Test
     void returnsAuthenticatedPrincipalId() {
         CustomUserDetails principal =
-                new CustomUserDetails(42L, "user@example.com", "encoded", "사용자");
+                new CustomUserDetails(42L, "user@example.com", "encoded", "사용자", com.cenergy.passed_backend.domain.user.entity.UserRole.GENERAL_USER);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
                         principal,

@@ -18,11 +18,16 @@ public record CompanyCoverLetterSummaryResponse(
 ) {
     /** 공고와 기업이 로딩된 자기소개서 엔티티를 요약 응답으로 변환한다. */
     public static CompanyCoverLetterSummaryResponse from(CoverLetterCompany coverLetter) {
+        boolean manual = coverLetter.isManual();
         return new CompanyCoverLetterSummaryResponse(
                 coverLetter.getId(),
-                coverLetter.getJobPosting().getId(),
-                coverLetter.getJobPosting().getCompany().getCompanyName(),
-                coverLetter.getJobPosting().getTitle(),
+                manual ? null : coverLetter.getJobPosting().getId(),
+                manual
+                        ? coverLetter.getManualJobPosting().getCompanyName()
+                        : coverLetter.getJobPosting().getCompany().getCompanyName(),
+                manual
+                        ? coverLetter.getManualJobPosting().getPostingTitle()
+                        : coverLetter.getJobPosting().getTitle(),
                 coverLetter.getTitle(),
                 coverLetter.getCreatedAt(),
                 coverLetter.getUpdatedAt()

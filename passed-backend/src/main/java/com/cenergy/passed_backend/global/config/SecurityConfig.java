@@ -48,17 +48,25 @@ public class SecurityConfig {
                                 response.sendError(HttpStatus.FORBIDDEN.value())))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/jobPostings", "/api/v1/jobPostings/**").permitAll()
                         .requestMatchers(
-                                "/api/auth/signup",
-                                "/api/auth/login",
-                                "/api/auth/refresh",
-                                "/api/auth/logout",
-                                "/api/auth/check-email",
-                                "/api/auth/csrf",
+                                HttpMethod.GET,
+                                "/api/v1/users/preferences/industries",
+                                "/api/v1/users/preferences/industries/*/job-roles"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/signup",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout",
+                                "/api/v1/auth/check-email",
+                                "/api/v1/auth/csrf",
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/jobPostings", "/api/v1/jobPostings/**").hasAnyRole("GENERAL_USER", "RECRUITER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/jobPostings").hasRole("RECRUITER")
+                        .anyRequest().hasRole("GENERAL_USER"))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

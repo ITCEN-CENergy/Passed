@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { PageLoading } from '../../../common/components/index.js'
+import useAuthStore from '../../auth/model/useAuthStore.js'
 import { getJobPosting } from '../api/index.js'
 import { getJobPostingImage } from '../utils/jobPostingImages.js'
 import { JobPostingDetailContent, PageState } from '../components/index.js'
@@ -14,6 +16,8 @@ const JobPostingDetailPage = () => {
   const { jobPostingId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const isCheckingAuth = useAuthStore((state) => state.isChecking)
   const [jobPosting, setJobPosting] = useState(null)
   const [error, setError] = useState('')
   const [matching, setMatching] = useState(false)
@@ -27,6 +31,16 @@ const JobPostingDetailPage = () => {
       .catch((requestError) => {
         if (requestError.name !== 'AbortError') setError(requestError.message)
       })
+    return () => controller.abort()
+  }, [jobPostingId])
+
+  useEffect(() => {
+    if (isCheckingAuth) return undefined
+    if (!user) {
+      setCheckingHistory(false)
+      return undefined
+    }
+    const controller = new AbortController()
     getLatestJobPostingRecommendation(jobPostingId, { signal: controller.signal })
       .then((latestRecommendation) => {
         if (controller.signal.aborted) return
@@ -45,7 +59,7 @@ const JobPostingDetailPage = () => {
         setCheckingHistory(false)
       })
     return () => controller.abort()
-  }, [image, jobPostingId, navigate])
+  }, [image, isCheckingAuth, jobPostingId, navigate, user])
 
   const runMatching = async () => {
     setMatching(true)
@@ -62,17 +76,19 @@ const JobPostingDetailPage = () => {
     }
   }
 
-  if ((!jobPosting || checkingHistory) && !error) return <div className={styles.detailShell}><PageState loading title="공고 정보를 불러오고 있어요" /></div>
+  if ((!jobPosting || checkingHistory) && !error) return <div className={styles.detailShell}><PageLoading title="공고 정보를 불러오고 있어요" description="공고 내용과 매칭 이력을 확인하고 있어요." /></div>
   if (!jobPosting) return <div className={styles.detailShell}><PageState title="공고를 불러오지 못했습니다" description={error} /></div>
+  if (matching) return <div className={styles.detailShell}><PageLoading title="공고와 내 스킬을 매칭하고 있어요" description="보유 역량과 공고의 요구 스킬을 분석하고 있어요." /></div>
 
   return (
     <div className={styles.detailShell}>
-      <button className={styles.backButton} type="button" onClick={() => navigate(-1)}>← 공고 목록으로</button>
       {error && <p className={styles.inlineError} role="alert">{error}</p>}
       <JobPostingDetailContent
         jobPosting={jobPosting}
         image={image}
-        action={<button className={styles.primaryButton} type="button" onClick={runMatching} disabled={matching}>{matching ? '매칭 분석 중…' : '내 스킬과 매칭하기'}</button>}
+        action={user
+          ? <button className={styles.primaryButton} type="button" onClick={runMatching} disabled={matching}>{matching ? '매칭 분석 중…' : '내 스킬과 매칭하기'}</button>
+          : <Link className={styles.primaryButton} to="/login">로그인 후 매칭하기</Link>}
       />
     </div>
   )

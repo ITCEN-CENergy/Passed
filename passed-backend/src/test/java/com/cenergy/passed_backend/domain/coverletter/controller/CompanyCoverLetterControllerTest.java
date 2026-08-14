@@ -4,10 +4,17 @@ import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLet
 import com.cenergy.passed_backend.domain.coverletter.application.CompanyCoverLetterQueryService;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterCreateRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.requests.CompanyCoverLetterItemCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualCompanyCoverLetterCreateRequest;
+import com.cenergy.passed_backend.domain.coverletter.dto.requests.ManualJobPostingRequest;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterDetailResponse;
+import com.cenergy.passed_backend.domain.coverletter.dto.responses.CompanyCoverLetterSummaryResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +25,33 @@ import static org.mockito.Mockito.when;
  * Verifies the HTTP status contract of the company-cover-letter controller without starting Spring.
  */
 class CompanyCoverLetterControllerTest {
+
+    /** 목록 조회는 현재 사용자의 자기소개서 요약 목록과 HTTP 200을 그대로 반환한다. */
+    @Test
+    void returnsCompanyCoverLetterSummariesWithOkStatus() {
+        CompanyCoverLetterCommandService commandService = mock(CompanyCoverLetterCommandService.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CompanyCoverLetterController controller = new CompanyCoverLetterController(commandService, queryService);
+        OffsetDateTime updatedAt = OffsetDateTime.parse("2026-08-12T09:30:00+09:00");
+        Page<CompanyCoverLetterSummaryResponse> response = new PageImpl<>(List.of(
+                new CompanyCoverLetterSummaryResponse(
+                        1L,
+                        301L,
+                        "카카오",
+                        "프론트엔드 개발자",
+                        "카카오 프론트엔드 지원용 자소서",
+                        updatedAt.minusDays(1),
+                        updatedAt
+                )
+        ));
+        PageRequest pageable = PageRequest.of(0, 20);
+        when(queryService.findAll(pageable)).thenReturn(response);
+
+        var actual = controller.findAll(pageable);
+
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals(response, actual.getBody());
+    }
 
     /** A successful create command returns HTTP 201 and the service response body unchanged. */
     @Test
@@ -36,6 +70,31 @@ class CompanyCoverLetterControllerTest {
         when(commandService.create(request)).thenReturn(response);
 
         var actual = controller.create(request);
+
+        assertEquals(HttpStatus.CREATED, actual.getStatusCode());
+        assertEquals(response, actual.getBody());
+    }
+
+    @Test
+    void createsManualCompanyCoverLetterWithCreatedStatus() {
+        CompanyCoverLetterCommandService commandService = mock(CompanyCoverLetterCommandService.class);
+        CompanyCoverLetterQueryService queryService = mock(CompanyCoverLetterQueryService.class);
+        CompanyCoverLetterController controller = new CompanyCoverLetterController(commandService, queryService);
+        ManualCompanyCoverLetterCreateRequest request = new ManualCompanyCoverLetterCreateRequest(
+                null,
+                new ManualJobPostingRequest(
+                        "직접 입력 공고", "테스트 기업", "백엔드 개발자", null,
+                        "신입", "정규직", "API 개발", "Java 경험", "Spring 경험"
+                ),
+                List.of(new CompanyCoverLetterItemCreateRequest("지원 동기", "답변", 1000, 1))
+        );
+        CompanyCoverLetterDetailResponse response = new CompanyCoverLetterDetailResponse(
+                2L, null, "테스트 기업", "직접 입력 공고", "테스트 기업 백엔드 개발자 지원용 자소서",
+                List.of(), null, null
+        );
+        when(commandService.createManual(request)).thenReturn(response);
+
+        var actual = controller.createManual(request);
 
         assertEquals(HttpStatus.CREATED, actual.getStatusCode());
         assertEquals(response, actual.getBody());

@@ -144,7 +144,7 @@ async def test_three_stage_competency_is_generated_per_stage() -> None:
 
 @pytest.mark.asyncio
 async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> None:
-    state = {"generated": False, "searches": 0}
+    state = {"generated": False, "queries": []}
 
     class TrackingGenerator(FakeRoadmapContentGenerator):
         async def generate(self, competencies, stages_by_key, resources_by_key):
@@ -162,7 +162,7 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
     ):
         assert state["generated"] is True
         assert "Docker" in search_query
-        state["searches"] += 1
+        state["queries"].append(search_query)
         return []
 
     monkeypatch.setattr(
@@ -175,9 +175,9 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
 
     await generate_roadmap(request, generator=TrackingGenerator())
 
-    # 동일 역량의 모든 마일스톤이 검색 결과를 공유한다. 엄격 검색이 비면
-    # 역량 중심 보완 검색을 딱 한 번 더 수행한다.
-    assert state["searches"] == 2
+    # 역량 공통 검색은 한 번만 공유하고, 6개 마일스톤은 각각 검색한다.
+    assert len(state["queries"]) == 7
+    assert sum("입문 실습 학습 가이드" in query for query in state["queries"]) == 1
 
 
 @pytest.mark.asyncio

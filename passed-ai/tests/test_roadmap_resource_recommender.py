@@ -118,6 +118,31 @@ async def test_searches_every_milestone_and_keeps_top_three() -> None:
 
 
 @pytest.mark.asyncio
+async def test_limits_same_url_reuse_within_one_competency() -> None:
+    candidates = [_resource(str(index)) for index in range(4)]
+    targets = [
+        RecommendationTarget(
+            **{
+                **_target(candidates).__dict__,
+                "key": f"javascript:0:1:{index}",
+                "title": f"비동기 오류 처리 {index}",
+            }
+        )
+        for index in range(3)
+    ]
+
+    result = await LearningResourceRecommender(RoadmapSettings()).recommend(targets)
+
+    recommended_urls = [
+        resource.url
+        for target in targets
+        for resource in result[target.key]
+    ]
+    assert len(recommended_urls) == 8
+    assert all(recommended_urls.count(url) <= 2 for url in set(recommended_urls))
+
+
+@pytest.mark.asyncio
 async def test_removes_duplicate_and_invalid_urls_after_relevance_filtering() -> None:
     target = _target([
         _resource("first", "https://example.com/course"),
@@ -169,6 +194,33 @@ def test_relevance_distinguishes_milestone_competency_and_irrelevant() -> None:
     assert classify_resource_relevance(target, direct) == 2
     assert classify_resource_relevance(target, competency_only) == 1
     assert classify_resource_relevance(target, irrelevant) == 0
+
+
+def test_relevance_matches_multiword_distinctive_terms() -> None:
+    target = RecommendationTarget(
+        **{
+            **_target().__dict__,
+            "competency_name": "품질 기준 수립",
+            "title": "품질 기준의 기본 개념 이해",
+            "learning_objective": "품질 기준을 정의한다.",
+            "completion_criteria": "기준 문서를 작성한다.",
+            "distinctive_terms": (
+                "iso 25010",
+                "quality standard",
+                "quality attribute",
+            ),
+        }
+    )
+    resource = LearningResource(
+        resourceId="iso-quality",
+        resourceType="WEB_RESOURCE",
+        title="ISO 25010 Software Quality Standards",
+        description="A guide to software quality attributes and evaluation.",
+        provider="Test",
+        url="https://example.com/iso-25010",
+    )
+
+    assert classify_resource_relevance(target, resource) == 1
 
 
 def test_multiword_competency_does_not_match_one_generic_name_token() -> None:

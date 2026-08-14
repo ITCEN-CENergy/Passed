@@ -16,7 +16,6 @@ from api.features.roadmap.resources.recommender import (
     build_competency_web_query,
     build_milestone_search_query,
     build_web_search_query,
-    classify_resource_relevance,
 )
 from api.features.roadmap.resources.search import LearningResourceSearchService
 from api.features.roadmap.schema import (
@@ -80,11 +79,49 @@ async def recommend_learning_resources(
         for target in targets
     }
 
+    def resource_identity(resource: LearningResource) -> str:
+        normalized_url = resource.url.rstrip("/").casefold()
+        if normalized_url:
+            return f"url:{normalized_url}"
+        return f"id:{resource.resourceId}"
+
+    def deduplicate_resources(
+        resources: list[LearningResource],
+    ) -> list[LearningResource]:
+        unique: dict[str, LearningResource] = {}
+        for resource in resources:
+            unique.setdefault(resource_identity(resource), resource)
+        return list(unique.values())
+
+    def collect_resources(
+        competency_key: str,
+        resources: list[LearningResource],
+    ) -> None:
+        resources_by_key[competency_key] = deduplicate_resources(
+            [
+                *resources_by_key.get(competency_key, []),
+                *resources,
+            ]
+        )
+
     async def search_for_competency(
         target: RecommendationTarget,
     ) -> list[LearningResource]:
         competency = target_competencies[target.key]
-        resources = await search_service.search(
+        return await search_service.search(
+            competency,
+            build_competency_search_query(target),
+            provider_queries={
+                "kakao_book": build_competency_book_query(target),
+                "keenable": build_competency_web_query(target),
+            },
+        )
+
+    async def search_for_milestone(
+        target: RecommendationTarget,
+    ) -> list[LearningResource]:
+        competency = target_competencies[target.key]
+        return await search_service.search(
             competency,
             build_milestone_search_query(target),
             provider_queries={
@@ -92,27 +129,6 @@ async def recommend_learning_resources(
                 "keenable": build_web_search_query(target),
             },
         )
-        if not any(
-            classify_resource_relevance(target, resource) > 0
-            for resource in resources
-        ):
-            fallback = await search_service.search(
-                competency,
-                build_competency_search_query(target),
-                provider_queries={
-                    "kakao_book": build_competency_book_query(target),
-                    "keenable": build_competency_web_query(target),
-                },
-            )
-            resources = [*resources, *fallback]
-        key = competency.roadmapSkillKey
-        merged = {
-            resource.resourceId: resource
-            for resource in resources_by_key.get(key, [])
-        }
-        merged.update({resource.resourceId: resource for resource in resources})
-        resources_by_key[key] = list(merged.values())
-        return resources_by_key[key]
 
     competency_search_tasks: dict[str, asyncio.Task[list[LearningResource]]] = {}
 
@@ -124,7 +140,19 @@ async def recommend_learning_resources(
         if task is None:
             task = asyncio.create_task(search_for_competency(target))
             competency_search_tasks[competency_key] = task
-        return await task
+        competency_resources, milestone_resources = await asyncio.gather(
+            task,
+            search_for_milestone(target),
+        )
+        # 같은 URL이면 구체적인 마일스톤 검색 결과를 우선한다.
+        merged = deduplicate_resources(
+            [
+                *milestone_resources,
+                *competency_resources,
+            ]
+        )
+        collect_resources(competency_key, merged)
+        return merged
 
     recommendations = await LearningResourceRecommender(settings).recommend(
         targets, additional_search=additional_search
@@ -171,5 +199,3 @@ async def recommend_learning_resources(
         },
     )
     return resources_by_key
-
-

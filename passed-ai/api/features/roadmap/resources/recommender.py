@@ -29,6 +29,8 @@ ResourceSearch = Callable[
     [RecommendationTarget], Awaitable[list[LearningResource]]
 ]
 
+_MAX_URL_USES_PER_COMPETENCY = 2
+
 
 def _focus_terms(target: RecommendationTarget) -> str:
     return target.competency_context.strip()
@@ -102,6 +104,20 @@ def _tokens(value: str) -> set[str]:
     }
 
 
+def _matches_distinctive_term(
+    term: str,
+    resource_text: str,
+    resource_tokens: set[str],
+) -> bool:
+    normalized_term = term.casefold().strip()
+    if not normalized_term:
+        return False
+    if normalized_term in resource_text:
+        return True
+    term_tokens = _tokens(normalized_term)
+    return bool(term_tokens) and term_tokens <= resource_tokens
+
+
 def classify_resource_relevance(
     target: RecommendationTarget,
     resource: LearningResource,
@@ -113,13 +129,21 @@ def classify_resource_relevance(
     competency_phrase = target.competency_name.casefold().strip()
     resource_tokens = _tokens(resource_text)
     name_tokens = _tokens(target.competency_name)
-    distinctive_tokens = set(target.distinctive_terms)
+    matched_distinctive_terms = sum(
+        _matches_distinctive_term(term, resource_text, resource_tokens)
+        for term in target.distinctive_terms
+    )
+    distinctive_tokens = {
+        token
+        for term in target.distinctive_terms
+        for token in _tokens(term)
+    }
     matched_name_tokens = name_tokens & resource_tokens
     required_name_matches = 1 if len(name_tokens) <= 1 else 2
     competency_related = (
         bool(competency_phrase and competency_phrase in resource_text)
         or len(matched_name_tokens) >= required_name_matches
-        or len(distinctive_tokens & resource_tokens) >= 2
+        or matched_distinctive_terms >= 2
     )
     if not competency_related:
         return 0
@@ -172,14 +196,22 @@ class LearningResourceRecommender:
                     )
 
         recommendations: dict[str, list[LearningResource]] = {}
+        url_usage_by_competency: defaultdict[str, dict[str, int]] = defaultdict(dict)
         for target, resources in zip(targets, search_results, strict=True):
+            competency_key = target.key.rsplit(":", 3)[0]
+            competency_url_usage = url_usage_by_competency[competency_key]
             unique: dict[str, LearningResource] = {}
             seen_urls: set[str] = set()
             seen_book_titles: set[str] = set()
             book_count = 0
             ranked_resources = sorted(
                 resources,
-                key=lambda resource: classify_resource_relevance(target, resource),
+                key=lambda resource: (
+                    classify_resource_relevance(target, resource),
+                    -competency_url_usage.get(
+                        resource.url.rstrip("/").casefold(), 0
+                    ),
+                ),
                 reverse=True,
             )
             for resource in ranked_resources:
@@ -188,6 +220,12 @@ class LearningResourceRecommender:
                 if not _is_http_url(resource.url):
                     continue
                 normalized_url = resource.url.rstrip("/").casefold()
+                if (
+                    competency_url_usage.get(normalized_url, 0)
+                    >= _MAX_URL_USES_PER_COMPETENCY
+                    and unique
+                ):
+                    continue
                 resource_text = f"{resource.title} {resource.description}".casefold()
                 if (
                     len(url_competencies[normalized_url]) >= 3
@@ -203,6 +241,9 @@ class LearningResourceRecommender:
                 if resource.resourceId in unique or normalized_url in seen_urls:
                     continue
                 seen_urls.add(normalized_url)
+                competency_url_usage[normalized_url] = (
+                    competency_url_usage.get(normalized_url, 0) + 1
+                )
                 unique[resource.resourceId] = resource.model_copy(update={
                     "description": _recommendation_reason(target)
                 })

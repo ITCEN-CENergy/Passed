@@ -7,7 +7,9 @@ import com.cenergy.passed_backend.domain.jobposting.entity.Industry;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.jobposting.entity.JobRole;
 import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository;
+import com.cenergy.passed_backend.domain.jobposting.repository.CompanyRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationRepository;
+import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
 import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -35,11 +37,34 @@ class JobPostingQueryServiceTest {
     private final JobRecommendationRepository recommendationRepository =
             mock(JobRecommendationRepository.class);
     private final CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+    private final CompanyRepository companyRepository = mock(CompanyRepository.class);
+    private final SkillRepository skillRepository = mock(SkillRepository.class);
     private final JobPostingQueryService service = new JobPostingQueryService(
             repository,
             recommendationRepository,
-            currentUserIdProvider
+            currentUserIdProvider,
+            companyRepository,
+            skillRepository
     );
+
+    @Test
+    void mapsCompanyAndSkillCreateOptions() {
+        CompanyRepository.CompanyNameView company = mock(CompanyRepository.CompanyNameView.class);
+        when(company.getId()).thenReturn(3L);
+        when(company.getName()).thenReturn("테스트 회사");
+        SkillRepository.SkillNameView skill = mock(SkillRepository.SkillNameView.class);
+        when(skill.getId()).thenReturn(7L);
+        when(skill.getName()).thenReturn("Spring Boot");
+        when(companyRepository.findAllNames()).thenReturn(List.of(company));
+        when(skillRepository.findAllNames()).thenReturn(List.of(skill));
+
+        var result = service.findCreateOptions();
+
+        assertEquals(1, result.companies().size());
+        assertEquals("테스트 회사", result.companies().getFirst().name());
+        assertEquals(1, result.skills().size());
+        assertEquals("Spring Boot", result.skills().getFirst().name());
+    }
 
     @Test
     void mapsPagedJobPostingsToListResponse() {

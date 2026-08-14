@@ -72,13 +72,19 @@ const JobPreferenceOnboardingPage = () => {
     const value = String(id)
     setError('')
     setJobRoleIds((current) => {
-      if (current.includes(value)) return current.filter((item) => item !== value)
+      if (current.includes(value)) return current
       if (current.length >= MAX_JOB_ROLES) {
         setError(`희망 직무는 최대 ${MAX_JOB_ROLES}개까지 선택할 수 있습니다.`)
         return current
       }
       return [...current, value]
     })
+    setOpenList('')
+  }
+
+  const removeRole = (id) => {
+    setJobRoleIds((current) => current.filter((item) => item !== String(id)))
+    setConfirmed(false)
   }
 
   const save = async () => {
@@ -133,7 +139,7 @@ const JobPreferenceOnboardingPage = () => {
         </section>
         <div className={styles.confirmActions}>
           <button className={styles.outlineButton} type="button" onClick={() => setConfirmed(false)}>이전</button>
-          <button className={styles.primaryButton} type="button" onClick={() => navigate('/onboarding/resume')}>다음 <span aria-hidden="true">→</span></button>
+          <button className={styles.primaryButton} type="button" onClick={() => navigate('/onboarding/resume')}>다음</button>
         </div>
       </main>
     )
@@ -147,29 +153,39 @@ const JobPreferenceOnboardingPage = () => {
       </header>
 
       <section className={styles.selectorCard}>
-        <div className={styles.selectorGroup}>
+        <div className={`${styles.selectorGroup} ${openList === 'industries' ? styles.openGroup : ''}`}>
           <label>희망 산업</label>
           <button className={styles.selectButton} type="button" aria-expanded={openList === 'industries'} onClick={() => setOpenList((value) => value === 'industries' ? '' : 'industries')}>
-            <span className={selectedIndustry ? styles.selectedText : ''}>{selectedIndustry?.name || '산업을 선택해주세요'}</span><b aria-hidden="true">⌄</b>
+            <span className={selectedIndustry ? styles.selectedText : ''}>{selectedIndustry?.name || '산업을 선택해주세요'}</span>
           </button>
           {openList === 'industries' && (
             <div className={styles.optionList} role="listbox" aria-label="산업 목록">
               {industries.map((industry) => (
-                <button key={industry.id} type="button" role="option" aria-selected={industryId === String(industry.id)} onClick={() => selectIndustry(industry.id)}>{industry.name}<span>{industryId === String(industry.id) ? '✓' : ''}</span></button>
+                <button key={industry.id} type="button" role="option" aria-selected={industryId === String(industry.id)} onClick={() => selectIndustry(industry.id)}>{industry.name}</button>
               ))}
             </div>
           )}
         </div>
 
-        <div className={styles.selectorGroup}>
-          <label>희망 직무 <small>{jobRoleIds.length}/{MAX_JOB_ROLES}</small></label>
+        <div className={`${styles.selectorGroup} ${openList === 'jobs' ? styles.openGroup : ''}`}>
+          <div className={styles.jobHeading}>
+            <label>희망 직무</label>
+            {selectedRoles.length > 0 && (
+              <div className={styles.selectedRoles} aria-label="선택한 희망 직무">
+                {selectedRoles.map((role) => (
+                  <span key={role.id}>{role.name}<button type="button" aria-label={`${role.name} 선택 취소`} onClick={() => removeRole(role.id)}>×</button></span>
+                ))}
+              </div>
+            )}
+            <small>{jobRoleIds.length}/{MAX_JOB_ROLES}</small>
+          </div>
           <button className={styles.selectButton} type="button" disabled={!industryId || rolesLoading} aria-expanded={openList === 'jobs'} onClick={() => setOpenList((value) => value === 'jobs' ? '' : 'jobs')}>
-            <span className={selectedRoles.length ? styles.selectedText : ''}>{rolesLoading ? '직무를 불러오는 중…' : selectedRoles.length ? selectedRoles.map((role) => role.name).join(', ') : '산업을 먼저 선택해주세요'}</span><b aria-hidden="true">⌄</b>
+            <span>{rolesLoading ? '직무를 불러오는 중…' : industryId ? '직무를 선택해주세요' : '산업을 먼저 선택해주세요'}</span>
           </button>
           {openList === 'jobs' && industryId && (
             <div className={styles.optionList} role="listbox" aria-label="직무 목록" aria-multiselectable="true">
               {jobRoles.map((role) => (
-                <button key={role.id} type="button" role="option" aria-selected={jobRoleIds.includes(String(role.id))} onClick={() => toggleRole(role.id)}>{role.name}<span>{jobRoleIds.includes(String(role.id)) ? '✓' : ''}</span></button>
+                <button key={role.id} type="button" role="option" aria-selected={jobRoleIds.includes(String(role.id))} disabled={jobRoleIds.includes(String(role.id))} onClick={() => toggleRole(role.id)}>{role.name}</button>
               ))}
             </div>
           )}

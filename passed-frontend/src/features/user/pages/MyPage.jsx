@@ -113,7 +113,7 @@ const MyPage = () => {
       <div className={styles.overview}>
         <section className={styles.greeting} aria-labelledby="mypage-title">
           <p className={styles.eyebrow}><span /> 마이페이지</p>
-          <h1 id="mypage-title">{profile.name}님, 안녕하세요! <span aria-hidden="true">👋</span></h1>
+          <h1 id="mypage-title">{profile.name}님,<br />안녕하세요! <span aria-hidden="true">👋</span></h1>
           <p>이력서와 자기소개서를 관리하고,<br />추천 내역을 확인해보세요.</p>
         </section>
 

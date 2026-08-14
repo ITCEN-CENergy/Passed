@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { checkEmail, login, signup } from '../api/authApi.js'
-import useAuthStore from '../model/useAuthStore.js'
+import { checkEmail, signup } from '../api/authApi.js'
 import AuthField from './AuthField.jsx'
 import { LockIcon, MailIcon, UserIcon } from './AuthIcons.jsx'
 import styles from './AuthForm.module.css'
@@ -11,7 +10,6 @@ const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,72}$/
 
 const SignupForm = () => {
   const navigate = useNavigate()
-  const refreshUser = useAuthStore((state) => state.refreshUser)
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -94,9 +92,13 @@ const SignupForm = () => {
         email: form.email.trim(),
         password: form.password,
       })
-      await login({ email: form.email.trim(), password: form.password })
-      await refreshUser()
-      navigate('/onboarding/preferences', { replace: true })
+      navigate('/login', {
+        replace: true,
+        state: {
+          onboardingAfterLogin: true,
+          message: '회원가입이 완료되었습니다. 로그인 후 희망 산업과 직무를 선택해주세요.',
+        },
+      })
     } catch (error) {
       setFormMessage(error.message)
     } finally {

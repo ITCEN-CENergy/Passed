@@ -40,7 +40,7 @@ class CompetencyGapMergeServiceTest {
         assertThat(docker.targetLevel()).isEqualTo(4);
         assertThat(docker.gapLevel()).isEqualTo(2);
         assertThat(docker.frequency()).isEqualTo(2);
-        assertThat(docker.requirementType()).isEqualTo(RequirementType.PREFERRED);
+        assertThat(docker.requirementType()).isEqualTo(RequirementType.REQUIRED);
         assertThat(docker.sources()).extracting("jobPostingId").containsExactly(101L, 102L);
     }
 
@@ -98,25 +98,36 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void usesPreferredUnlessCompetencyIsRequiredInEverySelectedPosting() {
+    void usesCommonWhenEveryPostingRequiresOrPrefersCompetency() {
         MergedCompetencyGap result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
                 input(103L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED))))
                 .getFirst();
 
-        assertThat(result.requirementType()).isEqualTo(RequirementType.PREFERRED);
-        assertThat(result.priorityScore()).isEqualTo(223);
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+        assertThat(result.priorityScore()).isEqualTo(323);
     }
 
     @Test
-    void keepsRequiredOnlyWhenEverySelectedPostingRequiresCompetency() {
+    void usesCommonWhenEverySelectedPostingRequiresCompetency() {
         MergedCompetencyGap result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED))))
                 .getFirst();
 
         assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+    }
+
+    @Test
+    void usesCommonWhenEverySelectedPostingPrefersCompetency() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+        assertThat(result.priorityScore()).isEqualTo(322);
     }
 
     @Test

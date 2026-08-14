@@ -1,6 +1,6 @@
 import pytest
 
-from api.features.roadmap.resource_query import (
+from api.features.roadmap.resources.query import (
     build_competency_search_profiles,
     load_curated_search_profiles,
 )
@@ -36,6 +36,11 @@ def test_search_profile_files_cover_every_database_skill() -> None:
     assert profiles[12]["reviewed"] is True
     assert profiles[694]["reviewed"] is True
     assert profiles[699]["reviewed"] is True
+    assert profiles[403]["reviewed"] is True
+    assert profiles[1016]["reviewed"] is True
+    assert profiles[1241]["reviewed"] is True
+    assert profiles[1271]["reviewed"] is True
+    assert profiles[1273]["reviewed"] is True
 
 
 @pytest.mark.asyncio
@@ -48,6 +53,31 @@ async def test_search_profile_uses_json_queries_and_exclusions() -> None:
     assert "BM25 information retrieval tutorial" in profile.context
     assert "davinci resolve" in profile.excluded_terms
     assert "bm25" in profile.distinctive_terms
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("skill_id", "name", "context_term", "distinctive_term"),
+    [
+        (403, "업무 자동화", "Power Automate", "openpyxl"),
+        (1016, "업무 자동화 프로젝트", "Playwright", "browser automation"),
+        (1241, "테스트 자동화", "pytest", "automated testing"),
+        (1271, "품질 기준 수립", "ISO 25010", "acceptance criteria"),
+        (1273, "품질 지표 개선", "SonarQube", "test coverage"),
+    ],
+)
+async def test_curated_profiles_keep_search_and_relevance_terms(
+    skill_id: int,
+    name: str,
+    context_term: str,
+    distinctive_term: str,
+) -> None:
+    profile = (await build_competency_search_profiles([
+        _competency(skill_id=skill_id, name=name)
+    ]))["document-search"]
+
+    assert context_term in profile.context
+    assert distinctive_term in profile.distinctive_terms
 
 
 @pytest.mark.asyncio

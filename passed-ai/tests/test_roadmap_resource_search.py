@@ -6,11 +6,12 @@ import httpx
 import pytest
 
 from api.features.roadmap.config import RoadmapSettings
-from api.features.roadmap.resource_provider import (
+from api.features.roadmap.resources.provider import (
+    KeenableInflearnProvider,
     KeenableWebProvider,
     create_resource_providers,
 )
-from api.features.roadmap.resource_search import (
+from api.features.roadmap.resources.search import (
     LearningResourceSearchService,
     _summarize,
 )
@@ -180,6 +181,46 @@ async def test_keenable_web_response_is_normalized_and_cached() -> None:
 
 
 @pytest.mark.asyncio
+async def test_keenable_inflearn_search_keeps_only_inflearn_results() -> None:
+    class FakeMcpClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+        async def call_tool(self, name, arguments):
+            assert name == "search_web_pages"
+            assert arguments["query"].startswith("Docker")
+            assert arguments["site"] == "inflearn.com"
+            return SimpleNamespace(content=[SimpleNamespace(text=(
+                "Title: Docker 실전 강의\n"
+                "URL: https://www.inflearn.com/course/docker-practical\n"
+                "Snippets:\nDocker 컨테이너 실습 강의\n"
+                "---\n"
+                "Title: 외부 Docker 자료\n"
+                "URL: https://example.com/docker\n"
+                "Snippets:\n외부 자료"
+            ))])
+
+    settings = RoadmapSettings(
+        KEENABLE_SEARCH_ENABLED=True,
+        KEENABLE_REQUESTS_PER_SECOND=10,
+    )
+    async with httpx.AsyncClient() as client:
+        resources = await KeenableInflearnProvider(
+            client, settings, FakeMcpClient()
+        ).search(
+            _competency(),
+            "Docker 컨테이너 한국어 인프런 강의",
+        )
+
+    assert len(resources) == 1
+    assert resources[0].provider == "인프런"
+    assert resources[0].url == "https://www.inflearn.com/course/docker-practical"
+
+
+@pytest.mark.asyncio
 async def test_keenable_retries_rate_limit_response() -> None:
     class FlakyMcpClient:
         def __init__(self):
@@ -251,7 +292,7 @@ async def test_provider_failure_does_not_fail_search(caplog) -> None:
     empty_providers = {
         record.provider for record in provider_records if record.status == "EMPTY"
     }
-    assert empty_providers == {"kmooc", "keenable"}
+    assert empty_providers == {"kmooc", "keenable", "keenable_inflearn"}
 
 
 @pytest.mark.asyncio

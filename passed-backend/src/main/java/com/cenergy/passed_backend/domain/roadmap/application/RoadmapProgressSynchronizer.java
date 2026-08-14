@@ -60,7 +60,8 @@ public class RoadmapProgressSynchronizer {
             List<RoadmapMilestone> roadmapLinks = roadmapSkillIds.isEmpty() ? List.of()
                     : roadmapMilestoneRepository.findAllByRoadmapSkillIds(roadmapSkillIds);
             roadmap.updateProgressRate(calculate(roadmapLinks));
-            roadmap.updateEstimatedEndDate(etaCalculator.calculate(roadmapLinks));
+            roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                    roadmapLinks, roadmap.getDailyStudyMinutes()));
         }
     }
 
@@ -85,7 +86,26 @@ public class RoadmapProgressSynchronizer {
                 .filter(RoadmapMilestone::isRequired)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
         roadmap.updateProgressRate(calculate(links));
-        roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                links, roadmap.getDailyStudyMinutes()));
+    }
+
+    public void synchronizeInitialProgress(Long roadmapId) {
+        Roadmap roadmap = roadmapRepository.findById(roadmapId).orElse(null);
+        if (roadmap == null) return;
+        List<RoadmapSkill> skills = roadmapSkillRepository
+                .findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId);
+        List<Long> skillIds = skills.stream().map(RoadmapSkill::getId).toList();
+        List<RoadmapMilestone> links = skillIds.isEmpty() ? List.of()
+                : roadmapMilestoneRepository.findAllByRoadmapSkillIds(skillIds);
+        Map<Long, List<RoadmapMilestone>> bySkill = links.stream()
+                .collect(Collectors.groupingBy(link -> link.getRoadmapSkill().getId()));
+        for (RoadmapSkill skill : skills) {
+            skill.updateProgressRate(calculate(bySkill.getOrDefault(skill.getId(), List.of())));
+        }
+        roadmap.updateProgressRate(calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                links, roadmap.getDailyStudyMinutes()));
     }
 
     private BigDecimal calculate(Collection<RoadmapMilestone> links) {

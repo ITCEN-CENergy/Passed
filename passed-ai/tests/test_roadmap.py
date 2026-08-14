@@ -10,6 +10,7 @@ os.environ["ROADMAP_RESOURCE_SEARCH_ENABLED"] = "false"
 
 from app.main import app
 from api.features.roadmap.planner import create_learning_stages
+from api.features.roadmap.resources.recommendation import _extract_korean_og_title
 from api.features.roadmap.schema import LearningResource
 from api.features.roadmap.schema import (
     MilestoneType,
@@ -25,6 +26,15 @@ from api.features.roadmap.service import (
 
 
 client = TestClient(app)
+
+
+def test_extracts_korean_inflearn_title_from_page_metadata() -> None:
+    title = _extract_korean_og_title(
+        '<meta property="og:title" '
+        'content="토스 개발자를 위한 Kubernetes 운영 | 인프런">'
+    )
+
+    assert title == "토스 개발자를 위한 Kubernetes 운영"
 
 
 def competency(
@@ -144,7 +154,7 @@ async def test_three_stage_competency_is_generated_per_stage() -> None:
 
 @pytest.mark.asyncio
 async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> None:
-    state = {"generated": False, "searches": 0}
+    state = {"generated": False, "queries": []}
 
     class TrackingGenerator(FakeRoadmapContentGenerator):
         async def generate(self, competencies, stages_by_key, resources_by_key):
@@ -162,11 +172,11 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
     ):
         assert state["generated"] is True
         assert "Docker" in search_query
-        state["searches"] += 1
+        state["queries"].append(search_query)
         return []
 
     monkeypatch.setattr(
-        "api.features.roadmap.service.LearningResourceSearchService.search",
+        "api.features.roadmap.resources.recommendation.LearningResourceSearchService.search",
         search_after_generation,
     )
     request = RoadmapGenerateRequest.model_validate(
@@ -175,9 +185,9 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
 
     await generate_roadmap(request, generator=TrackingGenerator())
 
-    # 동일 역량의 모든 마일스톤이 검색 결과를 공유한다. 엄격 검색이 비면
-    # 역량 중심 보완 검색을 딱 한 번 더 수행한다.
-    assert state["searches"] == 2
+    # 역량 공통 검색은 한 번만 공유하고, 6개 마일스톤은 각각 검색한다.
+    assert len(state["queries"]) == 7
+    assert sum("입문 실습 학습 가이드" in query for query in state["queries"]) == 1
 
 
 @pytest.mark.asyncio
@@ -566,7 +576,7 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         return [resource]
 
     monkeypatch.setattr(
-        "api.features.roadmap.service.LearningResourceSearchService.search",
+        "api.features.roadmap.resources.recommendation.LearningResourceSearchService.search",
         search_resources,
     )
 
@@ -581,3 +591,43 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
     ]
     assert all("완료 기준을 점검" in value for value in descriptions)
     assert all(value != "검색 API가 반환한 원문 소개" for value in descriptions)
+
+
+def test_same_url_with_different_resource_ids_remains_valid(monkeypatch) -> None:
+    milestone_search_count = 0
+
+    async def search_resources(
+        self, competency, search_query=None, provider_queries=None
+    ):
+        nonlocal milestone_search_count
+        if "입문 실습 학습 가이드" in search_query:
+            return []
+        milestone_search_count += 1
+        is_inflearn = milestone_search_count > 1
+        return [LearningResource(
+            resourceId="inflearn-course" if is_inflearn else "web-course",
+            resourceType="WEB_RESOURCE",
+            title="Docker 컨테이너 실습 강의",
+            description="Docker 컨테이너 실행과 배포 실습",
+            provider="인프런" if is_inflearn else "Keenable Web Search",
+            url="https://www.inflearn.com/course/docker-practical",
+            isFree=True,
+        )]
+
+    monkeypatch.setattr(
+        "api.features.roadmap.resources.recommendation.LearningResourceSearchService.search",
+        search_resources,
+    )
+
+    response = client.post(
+        "/api/v1/roadmaps/generate",
+        json=request_with(competency(current_level=1, target_level=2)),
+    )
+
+    assert response.status_code == 200
+    providers = {
+        resource["provider"]
+        for milestone in response.json()["skills"][0]["milestones"]
+        for resource in milestone["learningResources"]
+    }
+    assert providers == {"Keenable Web Search", "인프런"}

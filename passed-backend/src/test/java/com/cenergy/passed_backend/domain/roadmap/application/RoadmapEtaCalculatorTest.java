@@ -40,6 +40,17 @@ class RoadmapEtaCalculatorTest {
                 .isEqualTo(baseDate);
     }
 
+    @Test
+    void usesRoadmapSpecificDailyStudyMinutes() {
+        List<RoadmapMilestone> milestones = List.of(
+                link(true, MilestoneStatus.NOT_STARTED, 240));
+
+        assertThat(calculator.calculate(milestones, baseDate, 120))
+                .isEqualTo(LocalDate.of(2026, 8, 9));
+        assertThat(calculator.calculate(milestones, baseDate, 30))
+                .isEqualTo(LocalDate.of(2026, 8, 15));
+    }
+
     private RoadmapMilestone link(boolean required, MilestoneStatus status, int estimatedMinutes) {
         RoadmapMilestone link = mock(RoadmapMilestone.class);
         Milestone milestone = mock(Milestone.class);

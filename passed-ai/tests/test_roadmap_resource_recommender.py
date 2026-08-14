@@ -1,10 +1,11 @@
 import pytest
 
 from api.features.roadmap.config import RoadmapSettings
-from api.features.roadmap.resource_recommender import (
+from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
+    build_inflearn_search_query,
     build_milestone_search_query,
     build_web_search_query,
     classify_resource_relevance,
@@ -30,6 +31,17 @@ def _book(resource_id: str, title: str) -> LearningResource:
         title=title,
         provider="Test",
         url=f"https://example.com/books/{resource_id}",
+    )
+
+
+def _inflearn(resource_id: str) -> LearningResource:
+    return LearningResource(
+        resourceId=resource_id,
+        resourceType="WEB_RESOURCE",
+        title=f"JavaScript 비동기 오류 처리 인프런 강의 {resource_id}",
+        description="Promise 오류 처리 실습 강의",
+        provider="인프런",
+        url=f"https://www.inflearn.com/course/{resource_id}",
     )
 
 
@@ -75,6 +87,15 @@ def test_web_query_focuses_on_milestone_without_broad_context() -> None:
     assert len(query) <= 240
 
 
+def test_inflearn_query_is_restricted_to_course_pages() -> None:
+    query = build_inflearn_search_query(_target())
+
+    assert "JavaScript" in query
+    assert "비동기 오류 처리" in query
+    assert "한국어 한글 인프런 실습 강의" in query
+    assert len(query) <= 240
+
+
 def test_query_uses_dynamic_standard_competency_description() -> None:
     target = RecommendationTarget(
         key="ambiguous",
@@ -115,6 +136,49 @@ async def test_searches_every_milestone_and_keeps_top_three() -> None:
     assert calls == ["javascript", "typescript"]
     assert [item.resourceId for item in result["javascript"]] == ["0", "1", "2"]
     assert [item.resourceId for item in result["typescript"]] == ["0", "1", "2"]
+
+
+@pytest.mark.asyncio
+async def test_limits_same_url_reuse_within_one_competency() -> None:
+    candidates = [_resource(str(index)) for index in range(4)]
+    targets = [
+        RecommendationTarget(
+            **{
+                **_target(candidates).__dict__,
+                "key": f"javascript:0:1:{index}",
+                "title": f"비동기 오류 처리 {index}",
+            }
+        )
+        for index in range(3)
+    ]
+
+    result = await LearningResourceRecommender(RoadmapSettings()).recommend(targets)
+
+    recommended_urls = [
+        resource.url
+        for target in targets
+        for resource in result[target.key]
+    ]
+    assert len(recommended_urls) == 8
+    assert all(recommended_urls.count(url) <= 2 for url in set(recommended_urls))
+
+
+@pytest.mark.asyncio
+async def test_prefers_at_most_two_inflearn_courses_per_milestone() -> None:
+    target = _target([
+        _resource("web-1"),
+        _resource("web-2"),
+        _resource("web-3"),
+        _inflearn("course-1"),
+        _inflearn("course-2"),
+    ])
+
+    result = await LearningResourceRecommender(RoadmapSettings()).recommend([target])
+
+    resources = result[target.key]
+    assert resources[0].provider == "인프런"
+    assert sum(resource.provider == "인프런" for resource in resources) == 2
+    assert len(resources) == 3
 
 
 @pytest.mark.asyncio
@@ -169,6 +233,33 @@ def test_relevance_distinguishes_milestone_competency_and_irrelevant() -> None:
     assert classify_resource_relevance(target, direct) == 2
     assert classify_resource_relevance(target, competency_only) == 1
     assert classify_resource_relevance(target, irrelevant) == 0
+
+
+def test_relevance_matches_multiword_distinctive_terms() -> None:
+    target = RecommendationTarget(
+        **{
+            **_target().__dict__,
+            "competency_name": "품질 기준 수립",
+            "title": "품질 기준의 기본 개념 이해",
+            "learning_objective": "품질 기준을 정의한다.",
+            "completion_criteria": "기준 문서를 작성한다.",
+            "distinctive_terms": (
+                "iso 25010",
+                "quality standard",
+                "quality attribute",
+            ),
+        }
+    )
+    resource = LearningResource(
+        resourceId="iso-quality",
+        resourceType="WEB_RESOURCE",
+        title="ISO 25010 Software Quality Standards",
+        description="A guide to software quality attributes and evaluation.",
+        provider="Test",
+        url="https://example.com/iso-25010",
+    )
+
+    assert classify_resource_relevance(target, resource) == 1
 
 
 def test_multiword_competency_does_not_match_one_generic_name_token() -> None:

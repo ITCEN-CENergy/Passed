@@ -2,7 +2,7 @@ import asyncio
 import logging
 from time import perf_counter
 
-from api.features.roadmap.resource_provider import (
+from api.features.roadmap.resources.provider import (
     LearningResourceProvider,
     _summarize,
 )
@@ -94,6 +94,8 @@ class LearningResourceSearchService:
         competency: Competency,
         search_query: str,
     ) -> list[LearningResource]:
+        if not search_query:
+            return []
         queued_at = perf_counter()
         wait_ms = 0
         try:

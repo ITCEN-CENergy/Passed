@@ -4,7 +4,7 @@ import html
 import re
 from time import monotonic
 from typing import Any, Protocol
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 import httpx
 from fastmcp import Client
@@ -235,12 +235,16 @@ class KakaoBookProvider:
 
 class KeenableWebProvider:
     name = "keenable"
+    provider_label = "Keenable Web Search"
+    resource_id_namespace = "web"
+    required_domain: str | None = None
 
     def __init__(
         self,
         client: httpx.AsyncClient,
         settings: RoadmapSettings,
         mcp_client: Any | None = None,
+        rate_limiter: "_KeenableRateLimiter | None" = None,
     ) -> None:
         self._settings = settings
         self._mcp = mcp_client or Client(
@@ -249,8 +253,9 @@ class KeenableWebProvider:
         )
         self._cache: dict[str, list[LearningResource]] = {}
         self._locks: dict[str, asyncio.Lock] = {}
-        self._rate_lock = asyncio.Lock()
-        self._next_request_at = 0.0
+        self._rate_limiter = rate_limiter or _KeenableRateLimiter(
+            settings.keenable_requests_per_second
+        )
 
     async def search(
         self, competency: Competency, search_query: str
@@ -278,7 +283,7 @@ class KeenableWebProvider:
                 await self._wait_for_rate_limit()
                 async with self._mcp:
                     result = await self._mcp.call_tool(
-                        "search_web_pages", {"query": search_query}
+                        "search_web_pages", self._search_arguments(search_query)
                     )
                 break
             except Exception:
@@ -295,17 +300,27 @@ class KeenableWebProvider:
             title, url = _clean(item.get("title")), _clean(item.get("url"))
             if not title or not url:
                 continue
+            if self.required_domain:
+                hostname = (urlparse(url).hostname or "").casefold()
+                if not (
+                    hostname == self.required_domain
+                    or hostname.endswith(f".{self.required_domain}")
+                ):
+                    continue
             resources.append(LearningResource(
-                resourceId=_resource_id("web", url),
+                resourceId=_resource_id(self.resource_id_namespace, url),
                 resourceType=LearningResourceType.WEB_RESOURCE,
                 title=title,
                 description=_summarize(item.get("snippet")),
-                provider="Keenable Web Search",
+                provider=self.provider_label,
                 url=url,
                 authors=[],
                 isFree=True,
             ))
         return resources
+
+    def _search_arguments(self, search_query: str) -> dict[str, str]:
+        return {"query": search_query}
 
     @staticmethod
     def _parse_results(value: str) -> list[dict[str, str]]:
@@ -325,20 +340,50 @@ class KeenableWebProvider:
         return results
 
     async def _wait_for_rate_limit(self) -> None:
-        interval = 1 / self._settings.keenable_requests_per_second
-        async with self._rate_lock:
+        await self._rate_limiter.wait()
+
+
+class _KeenableRateLimiter:
+    def __init__(self, requests_per_second: float) -> None:
+        self._interval = 1 / requests_per_second
+        self._lock = asyncio.Lock()
+        self._next_request_at = 0.0
+
+    async def wait(self) -> None:
+        async with self._lock:
             now = monotonic()
             if self._next_request_at > now:
                 await asyncio.sleep(self._next_request_at - now)
-            self._next_request_at = monotonic() + interval
+            self._next_request_at = monotonic() + self._interval
+
+
+class KeenableInflearnProvider(KeenableWebProvider):
+    name = "keenable_inflearn"
+    provider_label = "인프런"
+    resource_id_namespace = "inflearn"
+    required_domain = "inflearn.com"
+
+    def _search_arguments(self, search_query: str) -> dict[str, str]:
+        return {
+            "query": search_query,
+            "site": self.required_domain,
+        }
 
 
 def create_resource_providers(
     client: httpx.AsyncClient,
     settings: RoadmapSettings,
 ) -> tuple[LearningResourceProvider, ...]:
+    keenable_rate_limiter = _KeenableRateLimiter(
+        settings.keenable_requests_per_second
+    )
     return (
         KmoocProvider(client, settings),
         KakaoBookProvider(client, settings),
-        KeenableWebProvider(client, settings),
+        KeenableWebProvider(
+            client, settings, rate_limiter=keenable_rate_limiter
+        ),
+        KeenableInflearnProvider(
+            client, settings, rate_limiter=keenable_rate_limiter
+        ),
     )

@@ -3,9 +3,10 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
-from .schema import Competency
+from api.features.roadmap.schema import Competency
 
 
 @dataclass(frozen=True)
@@ -30,6 +31,7 @@ def _profile_tokens(value: str) -> set[str]:
     }
 
 
+@lru_cache(maxsize=1)
 def load_curated_search_profiles() -> dict[int, dict[str, object]]:
     profiles: dict[int, dict[str, object]] = {}
     for path in sorted(_SEARCH_PROFILE_DIRECTORY.glob("*.json")):
@@ -74,9 +76,17 @@ async def build_competency_search_profiles(
             for term in stored.get("excludeTerms", [])
             if str(term).strip()
         )
+        curated_distinctive_terms = tuple(
+            str(term).casefold().strip()
+            for term in stored.get("distinctiveTerms", [])
+            if str(term).strip()
+        )
         result[competency.roadmapSkillKey] = CompetencySearchProfile(
             context=context,
-            distinctive_terms=tuple(sorted(_profile_tokens(context)))[:12],
+            distinctive_terms=(
+                curated_distinctive_terms
+                or tuple(sorted(_profile_tokens(context)))[:12]
+            ),
             excluded_terms=excluded_terms,
         )
     return result

@@ -6,12 +6,13 @@ from openai import AsyncOpenAI
 
 from api.features.roadmap.config import get_roadmap_settings
 from api.features.roadmap.exceptions import RoadmapConfigurationError, RoadmapGenerationError
-from api.features.roadmap.resource_provider import create_resource_providers
-from api.features.roadmap.resource_search import LearningResourceSearchService
-from api.features.roadmap.resource_recommender import (
+from api.features.roadmap.resources.provider import create_resource_providers
+from api.features.roadmap.resources.search import LearningResourceSearchService
+from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
+    build_inflearn_search_query,
     build_milestone_search_query,
     build_web_search_query,
 )
@@ -152,6 +153,7 @@ async def replan_roadmap(
             provider_queries={
                 "kakao_book": build_book_search_query(target),
                 "keenable": build_web_search_query(target),
+                "keenable_inflearn": build_inflearn_search_query(target),
             },
         )
 

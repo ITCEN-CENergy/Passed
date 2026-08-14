@@ -61,8 +61,11 @@ public class RecommendationQueryService {
 
     public RecommendationHistoryResponse getHistory(RecommendationHistoryRequest request) {
         Long userId = currentUserIdProvider.getCurrentUserId();
-        Page<RecommendationRun> page = runRepository.findAllByUserIdOrderByStartedAtDescIdDesc(
-                userId, PageRequest.of(request.page(), request.size())
+        Page<RecommendationRun> page = runRepository.findHistoryByUserIdOrderByCompletedAtDesc(
+                userId,
+                request.type(),
+                request.status(),
+                PageRequest.of(request.page(), request.size())
         );
         return new RecommendationHistoryResponse(
                 page.getContent().stream().map(this::historyItem).toList(),
@@ -182,7 +185,8 @@ public class RecommendationQueryService {
 
     private RecommendationHistoryItemResponse historyItem(RecommendationRun run) {
         return new RecommendationHistoryItemResponse(
-                run.getId(), run.getStatus(), preference(run), run.getStartedAt()
+                run.getId(), run.getRecommendationType(), run.getStatus(), preference(run),
+                run.getStartedAt(), run.getCompletedAt()
         );
     }
 
@@ -193,6 +197,7 @@ public class RecommendationQueryService {
                 .count();
         return new RecommendationRunResponse(
                 run.getId(),
+                run.getRecommendationType(),
                 run.getStatus(),
                 preference(run),
                 new RecommendationMetricsResponse(

@@ -243,7 +243,8 @@ class RoadmapGenerationConcurrencyIntegrationTest {
 
     private RoadmapCommandService command(long userId, RoadmapGenerationService generation) {
         return new RoadmapCommandService(() -> userId, generation, claimService, persistenceService,
-                roadmapRepository, roadmapMilestoneRepository, milestoneRepository);
+                roadmapRepository, roadmapMilestoneRepository, milestoneRepository,
+                new RoadmapEtaCalculator(60));
     }
 
     private RoadmapGenerationResult result() {

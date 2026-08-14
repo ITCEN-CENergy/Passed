@@ -4,6 +4,7 @@ import com.cenergy.passed_backend.domain.jobposting.application.JobPostingComman
 import com.cenergy.passed_backend.domain.jobposting.application.JobPostingQueryService;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateResponse;
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateOptionsResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingDetailResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListResponse;
@@ -43,6 +44,21 @@ class JobPostingControllerTest {
         assertEquals(detailResponse, detail.getBody());
         verify(queryService).findAll(request);
         verify(queryService).findById(100L);
+    }
+
+    @Test
+    void delegatesCreateOptionQuery() {
+        JobPostingCreateOptionsResponse response = new JobPostingCreateOptionsResponse(
+                List.of(),
+                List.of()
+        );
+        when(queryService.findCreateOptions()).thenReturn(response);
+
+        var actual = controller.getCreateOptions();
+
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals(response, actual.getBody());
+        verify(queryService).findCreateOptions();
     }
 
     @Test

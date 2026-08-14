@@ -101,6 +101,12 @@ const MyPage = () => {
 
   const profileImage = resolveProfileImage(profile.profileImageUrl)
   const initial = profile.name?.trim()?.charAt(0) || 'P'
+  const documentsUpdated = profile.recommendationRefreshRequired === true
+  const updatedDocumentLabel = location.state?.updatedDocument === 'resume'
+    ? '이력서'
+    : location.state?.updatedDocument === 'coverLetter'
+      ? '자기소개서'
+      : '이력서 또는 자기소개서'
 
   return (
     <main className={styles.page}>
@@ -143,13 +149,13 @@ const MyPage = () => {
           title="이력서 수정"
           description="이력서를 최신 정보로 관리하고 업데이트하세요."
           icon={<ResumeIcon />}
-          to="/resume"
+          to="/resume?returnTo=mypage"
         />
         <MyPageActionCard
           title="자기소개서 수정"
           description="자기소개서를 수정하고 완성도를 높여보세요."
           icon={<CoverLetterIcon />}
-          to="/cover-letter-write"
+          to="/cover-letter?returnTo=mypage"
           tone="green"
         />
         <MyPageActionCard
@@ -160,6 +166,17 @@ const MyPage = () => {
           tone="purple"
         />
       </nav>
+
+      {documentsUpdated && (
+        <section className={styles.recommendationNotice} aria-labelledby="recommendation-notice-title">
+          <div className={styles.recommendationIcon} aria-hidden="true">✦</div>
+          <div>
+            <h2 id="recommendation-notice-title">변경한 내용으로 추천을 새로 받아보세요</h2>
+            <p>{updatedDocumentLabel} 수정 내용이 저장되었습니다. 최신 정보를 분석해 맞춤 채용공고를 다시 추천해드릴게요.</p>
+          </div>
+          <button type="button" onClick={() => navigate('/onboarding/analysis')}>재추천 받기 <span aria-hidden="true">→</span></button>
+        </section>
+      )}
     </main>
   )
 }

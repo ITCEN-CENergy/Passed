@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { checkEmail, signup } from '../api/authApi.js'
+import { checkEmail, login, signup } from '../api/authApi.js'
+import useAuthStore from '../model/useAuthStore.js'
 import AuthField from './AuthField.jsx'
 import { LockIcon, MailIcon, UserIcon } from './AuthIcons.jsx'
 import styles from './AuthForm.module.css'
@@ -10,6 +11,7 @@ const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,72}$/
 
 const SignupForm = () => {
   const navigate = useNavigate()
+  const refreshUser = useAuthStore((state) => state.refreshUser)
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -92,10 +94,9 @@ const SignupForm = () => {
         email: form.email.trim(),
         password: form.password,
       })
-      navigate('/login', {
-        replace: true,
-        state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' },
-      })
+      await login({ email: form.email.trim(), password: form.password })
+      await refreshUser()
+      navigate('/onboarding/preferences', { replace: true })
     } catch (error) {
       setFormMessage(error.message)
     } finally {

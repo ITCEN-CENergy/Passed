@@ -1,4 +1,5 @@
 import { httpClient } from '../../../common/api/httpClient.js'
+import { csrfRequest } from '../../../common/api/csrf.js'
 
 const jobPostingPath = '/api/v1/jobPostings'
 
@@ -29,3 +30,13 @@ export const getJobPostingIndustries = ({ signal } = {}) =>
 
 export const getJobPostingRoles = (industryId, { signal } = {}) =>
   httpClient(`/api/v1/users/preferences/industries/${encodeURIComponent(industryId)}/job-roles`, { signal })
+
+export const getJobPostingCreateOptions = ({ signal } = {}) =>
+  httpClient(`${jobPostingPath}/create-options`, { signal })
+
+export const createJobPosting = (body, { signal } = {}) =>
+  csrfRequest(jobPostingPath, {
+    method: 'POST',
+    body,
+    signal,
+  })

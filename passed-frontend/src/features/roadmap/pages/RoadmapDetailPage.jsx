@@ -7,12 +7,17 @@ import styles from './RoadmapDetailPage.module.css'
 const labels = {
   ACTIVE: '진행 중', COMPLETED: '완료', CREATING: '생성 중', FAILED: '생성 실패',
   TECHNICAL_SKILL: '기술 역량', EXPERIENCE: '경험', BEHAVIORAL_TRAIT: '행동 특성', CERTIFICATION: '자격',
-  REQUIRED: '공통 필수', PREFERRED: '주요', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
+  REQUIRED: '공통 필수', PREFERRED: '선택', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
   BEGINNER: '초급', INTERMEDIATE: '중급', ADVANCED: '고급', NOT_STARTED: '시작 전', IN_PROGRESS: '진행 중', COMPLETED_MILESTONE: '완료',
 }
 const fmtDate = (value) => value ? String(value).slice(0, 10).replaceAll('-', '.') : '-'
 const fmtHours = (minutes) => `${Number.isInteger((minutes || 0) / 60) ? (minutes || 0) / 60 : ((minutes || 0) / 60).toFixed(1)}시간`
 const progress = (value) => Math.min(100, Math.max(0, Number(value) || 0))
+const skillGroups = [
+  { type: 'REQUIRED', title: '공통 필수 역량', description: '선택한 모든 공고에서 필수로 요구하는 역량' },
+  { type: 'PREFERRED', title: '선택 역량', description: '일부 공고에서 필수 또는 우대하는 역량' },
+  { type: 'RELATED', title: '관련 역량', description: '직무 수행에 도움이 되는 보완 역량' },
+]
 
 const ProgressRing = ({ value }) => <div className={styles.ring} style={{ '--progress': `${progress(value) * 3.6}deg` }}><div><strong>{progress(value).toFixed(progress(value) % 1 ? 1 : 0)}%</strong><span>전체 진행률</span></div></div>
 
@@ -42,13 +47,13 @@ const Milestone = ({ item, onToggle, busy }) => {
   </article>
 }
 
-const SkillCard = ({ skill, index, onToggle, busyId, anchorId, openRequest }) => {
+const SkillCard = ({ skill, groupOrder, onToggle, busyId, anchorId, openRequest }) => {
   const [open, setOpen] = useState(false)
   useEffect(() => {
     if (openRequest?.anchorId === anchorId) setOpen(true)
   }, [anchorId, openRequest])
   return <section className={styles.skill} id={anchorId} data-skill-anchor tabIndex="-1">
-    <header><span className={styles.order}>{index + 1}</span><div className={styles.skillTitle}><div className={styles.meta}>순위 <i /> {labels[skill.category] || skill.category} <b className={styles[skill.requirementType?.toLowerCase()]}>{labels[skill.requirementType] || skill.requirementType}</b></div><h3>{skill.standardCompetencyName}</h3></div></header>
+    <header><span className={`${styles.order} ${styles[skill.requirementType?.toLowerCase()]}`}>{groupOrder}</span><div className={styles.skillTitle}><div className={styles.meta}>그룹 내 추천 순서 <i /> {labels[skill.category] || skill.category}</div><h3>{skill.standardCompetencyName}</h3></div></header>
     <div className={styles.skillStats}><span>{skill.frequency}개 공고에서 요구</span><span>예상 학습시간<strong>{fmtHours(skill.estimatedMinutes)}</strong></span><span>진행률<strong>{progress(skill.progressRate).toFixed(0)}%</strong><i><b style={{ width: `${progress(skill.progressRate)}%` }} /></i></span></div>
     <div className={styles.learningStages}>
       <button className={styles.fold} type="button" onClick={() => setOpen(value => !value)}><strong>학습 단계 {skill.milestones?.length || 0}개</strong><span>{open ? '⌃' : '⌄'}</span></button>
@@ -88,6 +93,10 @@ const RoadmapDetailPage = () => {
   if (error && !roadmap) return <main className={styles.page}><div className={styles.state}><p>{error}</p><Link to="/roadmap">로드맵 목록</Link></div></main>
   if (!roadmap) return <main className={styles.page}><div className={styles.state} role="status">로드맵을 불러오고 있어요.</div></main>
   if (isReplanning) return <main className={styles.page}><PageLoading title="학습 일정을 재계획하고 있어요" description="남은 학습 단계를 분석해 현재 일정에 맞게 다시 구성합니다." ariaLabel="학습 일정 재계획 중" /></main>
+  const groupedSkills = skillGroups.map(group => ({
+    ...group,
+    skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
+  })).filter(group => group.skills.length)
   return <main className={styles.page}>
     <div className={styles.toolbar}><Link to="/roadmap">← <span>로드맵 목록</span></Link><button type="button" disabled={actionBusy} onClick={() => setDialog('delete')}>⌫ 로드맵 삭제</button></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
@@ -95,14 +104,18 @@ const RoadmapDetailPage = () => {
       <div className={styles.mainContent}>
         <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostingIds?.length || 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p><div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong></span><span>최초 완료 예정일<strong>{fmtDate(roadmap.baselineEndDate)}</strong></span><span>현재 완료 예정일<strong>{fmtDate(roadmap.estimatedEndDate)}</strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
-        <div className={styles.skills}>{roadmap.skills?.map((skill, index) => <SkillCard key={skill.roadmapSkillId} skill={skill} index={index} anchorId={`roadmap-skill-${skill.roadmapSkillId}`} openRequest={openSkillRequest} onToggle={toggle} busyId={busyId} />)}</div>
+        <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통 필수·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
+        <div className={styles.skillGroups}>{groupedSkills.map(group => <section className={`${styles.skillGroup} ${styles[`${group.type.toLowerCase()}Group`]}`} key={group.type}>
+          <header className={styles.skillGroupHeader}><div><span>{labels[group.type]}</span><h2>{group.title}</h2></div><strong>{group.skills.length}개</strong><p>{group.description}</p></header>
+          <div className={styles.skills}>{group.skills.map((skill, index) => <SkillCard key={skill.roadmapSkillId} skill={skill} groupOrder={index + 1} anchorId={`roadmap-skill-${skill.roadmapSkillId}`} openRequest={openSkillRequest} onToggle={toggle} busyId={busyId} />)}</div>
+        </section>)}</div>
       </div>
       {!!roadmap.skills?.length && <aside className={styles.skillNavigation} aria-label="스킬 바로가기">
         <div className={styles.skillNavigationHeader}><h2>스킬 바로가기</h2><span>{roadmap.skills.length}</span></div>
-        <nav>{roadmap.skills.map((skill, index) => {
+        <nav>{roadmap.skills.map((skill) => {
           const anchorId = `roadmap-skill-${skill.roadmapSkillId}`
           const active = activeSkillId === anchorId
-          return <button key={skill.roadmapSkillId} className={active ? styles.activeSkillLink : ''} type="button" title={skill.standardCompetencyName} aria-current={active ? 'location' : undefined} onClick={() => moveToSkill(anchorId)}><span>{String(index + 1).padStart(2, '0')}</span><strong>{skill.standardCompetencyName}</strong></button>
+          return <button key={skill.roadmapSkillId} className={active ? styles.activeSkillLink : ''} type="button" title={skill.standardCompetencyName} aria-current={active ? 'location' : undefined} onClick={() => moveToSkill(anchorId)}><span className={styles[`nav${skill.requirementType}`]}>{labels[skill.requirementType]}</span><strong>{skill.standardCompetencyName}</strong></button>
         })}</nav>
       </aside>}
     </div>

@@ -14,7 +14,11 @@ import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingSkillRe
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.user.entity.UserRole;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,24 +39,39 @@ public class JobPostingCommandService {
     private final CompanyRepository companyRepository;
     private final JobRoleRepository jobRoleRepository;
     private final SkillRepository skillRepository;
+    private final CurrentUserIdProvider currentUserIdProvider;
+    private final UserRepository userRepository;
 
     public JobPostingCommandService(
             JobPostingRepository jobPostingRepository,
             JobPostingSkillRepository jobPostingSkillRepository,
             CompanyRepository companyRepository,
             JobRoleRepository jobRoleRepository,
-            SkillRepository skillRepository
+            SkillRepository skillRepository,
+            CurrentUserIdProvider currentUserIdProvider,
+            UserRepository userRepository
     ) {
         this.jobPostingRepository = jobPostingRepository;
         this.jobPostingSkillRepository = jobPostingSkillRepository;
         this.companyRepository = companyRepository;
         this.jobRoleRepository = jobRoleRepository;
         this.skillRepository = skillRepository;
+        this.currentUserIdProvider = currentUserIdProvider;
+        this.userRepository = userRepository;
     }
 
     @Transactional
     public JobPostingCreateResponse create(JobPostingCreateRequest request) {
         validateRequest(request);
+
+        Long currentUserId = currentUserIdProvider.getCurrentUserId();
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> invalid("User not found"));
+        
+        if (currentUser.getRole() != UserRole.RECRUITER) {
+            throw invalid("User is not a recruiter");
+        }
+
         Company company = companyRepository.findById(request.companyId())
                 .orElseThrow(() -> notFound(
                         ErrorCode.JOB_POSTING_COMPANY_NOT_FOUND,
@@ -81,7 +100,8 @@ public class JobPostingCommandService {
                 request.qualification(),
                 request.preference(),
                 request.disqualification(),
-                request.process()
+                request.process(),
+                currentUser
         ));
 
         List<JobPostingSkill> postingSkills = new ArrayList<>();

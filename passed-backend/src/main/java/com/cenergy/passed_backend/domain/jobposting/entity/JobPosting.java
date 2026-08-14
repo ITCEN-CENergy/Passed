@@ -72,6 +72,10 @@ public class JobPosting extends BaseTimeEntity {
     @Column(name = "process", columnDefinition = "text")
     private String process;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private com.cenergy.passed_backend.domain.user.entity.User createdBy;
+
     public static JobPosting create(
             String title,
             Company company,
@@ -88,7 +92,8 @@ public class JobPosting extends BaseTimeEntity {
             String qualification,
             String preference,
             String disqualifyReason,
-            String process
+            String process,
+            com.cenergy.passed_backend.domain.user.entity.User createdBy
     ) {
         JobPosting posting = new JobPosting();
         posting.title = requireText(title, "title");
@@ -107,6 +112,7 @@ public class JobPosting extends BaseTimeEntity {
         posting.preference = preference;
         posting.disqualifyReason = disqualifyReason;
         posting.process = process;
+        posting.createdBy = createdBy;
         return posting;
     }
 

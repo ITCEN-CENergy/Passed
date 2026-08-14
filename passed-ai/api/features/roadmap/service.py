@@ -102,6 +102,7 @@ class FakeRoadmapContentGenerator:
                     milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.BEGINNER,
                     estimatedMinutes=60,
+                    required=True,
                     resourceRecommendations=recommendations,
                 ),
                 GeneratedMilestoneContent(
@@ -123,6 +124,7 @@ class FakeRoadmapContentGenerator:
                     milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.INTERMEDIATE,
                     estimatedMinutes=60,
+                    required=True,
                     resourceRecommendations=recommendations,
                 ),
             ]
@@ -139,6 +141,7 @@ class FakeRoadmapContentGenerator:
                 milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=True,
                 resourceRecommendations=recommendations,
             ),
             GeneratedMilestoneContent(
@@ -160,6 +163,7 @@ class FakeRoadmapContentGenerator:
                 milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=True,
                 resourceRecommendations=recommendations,
             ),
         ]

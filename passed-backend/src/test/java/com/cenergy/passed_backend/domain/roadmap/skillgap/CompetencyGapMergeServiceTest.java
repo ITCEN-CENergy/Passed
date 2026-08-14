@@ -174,12 +174,12 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void usesTargetLevelAsSecondSortKey() {
+    void usesCompetencyIdAsFinalTieBreaker() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Low target", 0, 2, RequirementType.PREFERRED)),
                 input(102L, null, gap(2L, "High target", 2, 4, RequirementType.PREFERRED))));
 
-        assertThat(result).extracting("standardCompetencyId").containsExactly(2L, 1L);
+        assertThat(result).extracting("standardCompetencyId").containsExactly(1L, 2L);
     }
 
     @Test

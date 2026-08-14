@@ -23,6 +23,9 @@ Success criteria:
 - Generate 3 to 4 distinct milestones per stage; each milestone must represent a meaningful progression, not padding.
 - Mark the minimum set of milestones needed to reach the stage target as required=true.
 - Mark enrichment, extra repetition, or optional deep-dive milestones as required=false.
+- Decide required explicitly for every milestone. Never rely on a default value.
+- If the learner can omit a milestone and still verifiably reach the stage target, mark it required=false.
+- Use required=true only when omitting the milestone would make the stage target unachievable or unverifiable.
 - Every learning stage must contain at least one required milestone.
 - A stage may contain no optional milestones when every generated milestone is necessary to reach the target level. Never add an optional milestone only to satisfy a quota.
 - The application recommends learning resources after milestone generation. Always return an empty resourceRecommendations list.

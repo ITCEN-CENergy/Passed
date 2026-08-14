@@ -30,9 +30,19 @@ public class CompetencyGapMergeService {
                     Comparator.nullsFirst(Comparator.naturalOrder()));
     private static final Comparator<MergedCandidate> RESULT_ORDER = Comparator
             .comparingInt((MergedCandidate candidate) -> candidate.gapLevel() > 0 ? 1 : 0).reversed()
-            .thenComparing(Comparator.comparingInt(MergedCandidate::priorityScore).reversed())
-            .thenComparing(Comparator.comparingInt(MergedCandidate::targetLevel).reversed())
+            .thenComparing(Comparator.comparingInt(
+                    (MergedCandidate candidate) -> requirementRank(candidate.requirementType())).reversed())
+            .thenComparing(Comparator.comparingInt(MergedCandidate::frequency).reversed())
+            .thenComparing(Comparator.comparingInt(MergedCandidate::gapLevel).reversed())
             .thenComparing(MergedCandidate::standardCompetencyId);
+
+    private static int requirementRank(RequirementType requirementType) {
+        return switch (requirementType) {
+            case REQUIRED -> 3;
+            case PREFERRED -> 2;
+            case RELATED -> 1;
+        };
+    }
 
     private final CompetencyPriorityPolicy priorityPolicy;
 

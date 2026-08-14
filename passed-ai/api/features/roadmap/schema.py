@@ -140,7 +140,7 @@ class GeneratedMilestoneContent(RoadmapModel):
     milestoneType: MilestoneType
     difficulty: Difficulty
     estimatedMinutes: int = Field(ge=30, le=2400)
-    required: bool = True
+    required: bool
     resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
 
 

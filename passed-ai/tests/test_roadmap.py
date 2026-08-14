@@ -244,6 +244,22 @@ async def test_model_schema_excludes_key_and_business_logic_binds_it() -> None:
     assert response.skills[0].roadmapSkillKey == "expected-key"
 
 
+def test_generated_milestone_requires_explicit_required_decision() -> None:
+    from api.features.roadmap.schema import GeneratedMilestoneContent
+
+    with pytest.raises(ValueError):
+        GeneratedMilestoneContent.model_validate({
+            "title": "Docker 실습",
+            "description": "Docker 이미지를 빌드합니다.",
+            "learningObjective": "이미지를 직접 빌드할 수 있습니다.",
+            "completionCriteria": "실행 가능한 이미지를 제출합니다.",
+            "milestoneType": "PRACTICE",
+            "difficulty": "BEGINNER",
+            "estimatedMinutes": 60,
+            "resourceRecommendations": [],
+        })
+
+
 @pytest.mark.asyncio
 async def test_two_stage_model_schema_rejects_a_missing_stage() -> None:
     generator = FakeRoadmapContentGenerator()

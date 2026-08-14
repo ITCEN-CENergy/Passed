@@ -1,0 +1,8703 @@
+{
+  "546": {
+    "skillName": "24시간 서비스 운영 프로젝트",
+    "queries": {
+      "ko": [
+        "24시간 서비스 운영 프로젝트 24시간 제공되는 중단 상시 가용성을 없이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "547": {
+    "skillName": "AI 교육과정 도입 컨설팅",
+    "queries": {
+      "ko": [
+        "AI 교육과정 도입 컨설팅 생성을 컨설팅 컨설팅에서는 교육과정 도입 학습해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "548": {
+    "skillName": "AI 기능 설계",
+    "queries": {
+      "ko": [
+        "AI 기능 설계 ai의 출력 흐름과 문제를 입력 기준으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "549": {
+    "skillName": "AI 레드팀 프로젝트",
+    "queries": {
+      "ko": [
+        "AI 레드팀 프로젝트 출력을 오용 레드팀 발견하는 시험하여 공격자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "550": {
+    "skillName": "AI 위협 모델링",
+    "queries": {
+      "ko": [
+        "AI 위협 모델링 통제와 신뢰 공격자 항목을 경계 위협"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "551": {
+    "skillName": "AI 챗봇 프로젝트",
+    "queries": {
+      "ko": [
+        "LLM AI 챗봇 프로젝트 구현",
+        "RAG 챗봇 API 대화 기록 프로젝트"
+      ],
+      "en": [
+        "build LLM chatbot project tutorial",
+        "RAG chatbot application project"
+      ]
+    },
+    "excludeTerms": [
+      "complete guide to artificial intelligence",
+      "modern ai guide",
+      "start ai engineering",
+      "game tutorial",
+      "video editing"
+    ],
+    "reviewed": true
+  },
+  "552": {
+    "skillName": "AI·디지털 교육도구 활용",
+    "queries": {
+      "ko": [
+        "AI·디지털 교육도구 활용 교육도구 수준에 튜터 선택하고 학습자 수업"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "553": {
+    "skillName": "API 설계",
+    "queries": {
+      "ko": [
+        "API 설계 명세로 합의 규격 인터페이스 정의하는 규칙을"
+      ],
+      "en": [
+        "API"
+      ]
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "554": {
+    "skillName": "API 연동",
+    "queries": {
+      "ko": [
+        "API 연동 재시도를 형식을 api의 호출하고 인증과 연동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "555": {
+    "skillName": "B2C 웹 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "B2C 웹 서비스 프로젝트 b2c 소비자가 이용하도록 일반 브라우저에서 온라인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "556": {
+    "skillName": "BOM 관리",
+    "queries": {
+      "ko": [
+        "BOM 관리 bom 대체품과 부품의 제품을 품목 수량"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "557": {
+    "skillName": "CCTV 모니터링",
+    "queries": {
+      "ko": [
+        "CCTV 모니터링 cctv 대응하는 영상과 상시 이상을 발견하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "558": {
+    "skillName": "CI/CD 구성",
+    "queries": {
+      "ko": [
+        "CI/CD 구성 배포되도록 변경이 자동으로 파이프라인과 cd ci"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "559": {
+    "skillName": "CRF·CTMS 데이터 점검",
+    "queries": {
+      "ko": [
+        "CRF·CTMS 데이터 점검 crf ctms 관리시스템 증례기록서와 질의를 임상시험"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "560": {
+    "skillName": "DApp 연동",
+    "queries": {
+      "ko": [
+        "DApp 연동 dapp 노드 호출하고 애플리케이션에서 컨트랙트를 지갑"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "561": {
+    "skillName": "DB 설치·구성",
+    "queries": {
+      "ko": [
+        "DB 설치·구성 설치하고 엔진을 인스턴스 저장소 접속 db"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "562": {
+    "skillName": "DB 연동",
+    "queries": {
+      "ko": [
+        "DB 연동 드라이버 접속 애플리케이션과 db 트랜잭션 데이터베이스의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "563": {
+    "skillName": "DB 통합 프로젝트",
+    "queries": {
+      "ko": [
+        "DB 통합 프로젝트 이관하여 분산된 db 데이터베이스의 구조와 일관된"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "564": {
+    "skillName": "DR 구축 프로젝트",
+    "queries": {
+      "ko": [
+        "DR 구축 프로젝트 dr 복구하도록 재해나 대체 재해복구 체계를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "565": {
+    "skillName": "DW 고도화 프로젝트",
+    "queries": {
+      "ko": [
+        "DW 고도화 프로젝트 dw 성능과 웨어하우스의 고도화 개선하여 품질을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "566": {
+    "skillName": "DeFi 프로젝트",
+    "queries": {
+      "ko": [
+        "DeFi 프로젝트 defi 예치 중개기관 컨트랙트로 대출 블록체인의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "567": {
+    "skillName": "E2E 테스트",
+    "queries": {
+      "ko": [
+        "E2E 테스트 e2e 거쳐 시작부터 동작하는지 전체 흐름이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "568": {
+    "skillName": "EMC·전기안전 시험 대응",
+    "queries": {
+      "ko": [
+        "EMC·전기안전 시험 대응 감전 과열 부적합 적합성과 전기안전 emc"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "569": {
+    "skillName": "ERP 구축 프로젝트",
+    "queries": {
+      "ko": [
+        "ERP 구축 프로젝트 모듈과 erp 인사 구조로 조직의 생산"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "570": {
+    "skillName": "ETL·ELT 개발",
+    "queries": {
+      "ko": [
+        "ETL·ELT 개발 elt etl 데이터셋으로 적재하여 로직을 원천의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "571": {
+    "skillName": "FinOps 프로젝트",
+    "queries": {
+      "ko": [
+        "FinOps 프로젝트 finops 효율을 사용량과 관점에서 비용을 최적화하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "572": {
+    "skillName": "ISMS 대응 프로젝트",
+    "queries": {
+      "ko": [
+        "ISMS 대응 프로젝트 관리체계의 증적 isms 정보보호 준비하고 정책"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "573": {
+    "skillName": "IaC 개발",
+    "queries": {
+      "ko": [
+        "IaC 개발 구성을 iac 선언형 작성하고 코드로 인프라"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "574": {
+    "skillName": "IoT 디바이스 프로젝트",
+    "queries": {
+      "ko": [
+        "IoT 디바이스 프로젝트 iot 디바이스 모듈로 사물인터넷 센서와 네트워크를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "575": {
+    "skillName": "LLM API 연동",
+    "queries": {
+      "ko": [
+        "LLM API 연동 api에 문맥을 프롬프트와 llm 언어모델 전달하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "576": {
+    "skillName": "LLMOps 프로젝트",
+    "queries": {
+      "ko": [
+        "LLMOps 프로젝트 llmops 모니터링과 언어모델 애플리케이션의 프롬프트 품질을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "577": {
+    "skillName": "LMS 운영",
+    "queries": {
+      "ko": [
+        "LMS 운영 lms 문의와 수강자 진도 과정 설정을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "578": {
+    "skillName": "ML 플랫폼 구축 프로젝트",
+    "queries": {
+      "ko": [
+        "ML 플랫폼 구축 프로젝트 모니터링까지 준비부터 ml 반복 환경을 머신러닝"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "579": {
+    "skillName": "MSA 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "MSA 전환 프로젝트 msa 단일 독립 확장성과 분리하여 단위로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "580": {
+    "skillName": "NFT 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "NFT 서비스 프로젝트 nft 고유 소유 블록체인에서 토큰의 발행"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "581": {
+    "skillName": "NLP 프로젝트",
+    "queries": {
+      "ko": [
+        "NLP 프로젝트 nlp 모델링하는 분석하거나 음성의 자연어처리 컴퓨터가"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "582": {
+    "skillName": "O2O 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "O2O 서비스 프로젝트 o2o 결제한 고객을 오프라인 온라인에서 상품이나"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "583": {
+    "skillName": "PCB 검토",
+    "queries": {
+      "ko": [
+        "PCB 검토 간격 배선 pcb 양산 회로 확인하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "584": {
+    "skillName": "PMO 지원",
+    "queries": {
+      "ko": [
+        "PMO 지원 보고와 취합하고 pmo 의사결정을 프로젝트의 현황을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "585": {
+    "skillName": "QA 대응",
+    "queries": {
+      "ko": [
+        "QA 대응 결함의 관계자와 문의와 qa 재현 수정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "586": {
+    "skillName": "RAG 시나리오 개발",
+    "queries": {
+      "ko": [
+        "RAG 시나리오 개발 제시까지의 질문부터 출처 rag 답변 선택"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "587": {
+    "skillName": "RAG 파이프라인 개발",
+    "queries": {
+      "ko": [
+        "RAG 파이프라인 개발 결합 분할 임베딩 rag 벡터 자동화하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "588": {
+    "skillName": "RF 회로 성능 검증",
+    "queries": {
+      "ko": [
+        "RF 회로 성능 검증 rf 선형성 이득 잡음 주파수 충족"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "589": {
+    "skillName": "SCM 전공",
+    "queries": {
+      "ko": [
+        "SCM 전공 scm 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "590": {
+    "skillName": "SD-WAN 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "SD-WAN 전환 프로젝트 전용회선 지점망을 sd wan 중심의 기반으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "591": {
+    "skillName": "SOC 운영 프로젝트",
+    "queries": {
+      "ko": [
+        "SOC 운영 프로젝트 soc 관제 대응하여 모니터링하고 정보시스템을 경보를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "592": {
+    "skillName": "SQL 튜닝",
+    "queries": {
+      "ko": [
+        "SQL 튜닝 sql의 사용량을 응답시간과 조인 인덱스 전체"
+      ],
+      "en": [
+        "SQL"
+      ]
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "593": {
+    "skillName": "SaaS 백오피스 프로젝트",
+    "queries": {
+      "ko": [
+        "SaaS 백오피스 프로젝트 saas의 관리자가 백오피스 saas 내부 화면"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "594": {
+    "skillName": "SaaS 프로젝트",
+    "queries": {
+      "ko": [
+        "SaaS 프로젝트 아닌 파일이 구독 제공하고 saas 서비스로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "595": {
+    "skillName": "UI 컴포넌트 개발",
+    "queries": {
+      "ko": [
+        "UI 컴포넌트 개발 목록 버튼 요소를 재사용 ui 컴포넌트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "596": {
+    "skillName": "VOC 관리",
+    "queries": {
+      "ko": [
+        "VOC 관리 voc 불만을 의견과 처리기한 담당자 방지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "597": {
+    "skillName": "WMS 운영",
+    "queries": {
+      "ko": [
+        "WMS 운영 wms 입고 적치 정확도를 피킹 관리하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "598": {
+    "skillName": "가격 최적화 프로젝트",
+    "queries": {
+      "ko": [
+        "가격 최적화 프로젝트 매출이나 수익을 반응 가격을 경쟁 산정하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "599": {
+    "skillName": "가드레일 정의",
+    "queries": {
+      "ko": [
+        "가드레일 정의 가드레일의 가드레일 정의에서는 조건으로 용어 이해관계자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "600": {
+    "skillName": "가상화 운영",
+    "queries": {
+      "ko": [
+        "가상화 운영 인프라의 가상화 서버와 환경을 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "601": {
+    "skillName": "가상화 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "가상화 전환 프로젝트 가상머신 이전하여 활용도와 물리 유연성을 가상화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "602": {
+    "skillName": "가설 검증",
+    "queries": {
+      "ko": [
+        "가설 검증 가설과 가설의 분석으로 채택 가설 실험"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "603": {
+    "skillName": "가스 최적화",
+    "queries": {
+      "ko": [
+        "가스 최적화 가스 컨트랙트의 개선하여 비용을 연산 블록체인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "604": {
+    "skillName": "가치 분석",
+    "queries": {
+      "ko": [
+        "가치 분석 대안의 타당성을 편익과 관점의 가치 우선순위와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "605": {
+    "skillName": "간호 기록",
+    "queries": {
+      "ko": [
+        "간호 기록 근거해 기록으로 사실에 처치 투약 반응을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "606": {
+    "skillName": "간호 인수인계",
+    "queries": {
+      "ko": [
+        "간호 인수인계 근무자에게 예정 인수인계 주의사항 빠짐없이 다음"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "607": {
+    "skillName": "감리 보고",
+    "queries": {
+      "ko": [
+        "감리 보고 시정 기준의 보고서로 감리 차이 작성하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "608": {
+    "skillName": "감사 대응",
+    "queries": {
+      "ko": [
+        "감사 대응 개선조치의 지적사항 질의 진행을 감사 준비하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "609": {
+    "skillName": "감사 자료 분석",
+    "queries": {
+      "ko": [
+        "감사 자료 분석 미비의 징후와 로그를 계정 감사 증빙"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "610": {
+    "skillName": "감사조서 작성",
+    "queries": {
+      "ko": [
+        "감사조서 작성 감사조서 결론이 수행한 추적되도록 구조화하는 감사"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "611": {
+    "skillName": "감염 관리",
+    "queries": {
+      "ko": [
+        "감염 관리 격리 보호구 손위생 전파를 감시 감염"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "612": {
+    "skillName": "감정평가서 검토",
+    "queries": {
+      "ko": [
+        "감정평가서 검토 비교사례 적정성과 감정평가서 권리관계 근거의 산정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "613": {
+    "skillName": "감정평가서 작성",
+    "queries": {
+      "ko": [
+        "감정평가서 작성 문서화하는 감정평가서 근거로 부동산 의견을 현황"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "614": {
+    "skillName": "강제집행 업무",
+    "queries": {
+      "ko": [
+        "강제집행 업무 강제집행 경매 압류 재산을 집행권원과 채무자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "615": {
+    "skillName": "강화학습 프로젝트",
+    "queries": {
+      "ko": [
+        "강화학습 프로젝트 강화학습 보상을 상호작용하며 얻는 최대화하도록 환경과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "616": {
+    "skillName": "개별화교육계획 수립",
+    "queries": {
+      "ko": [
+        "개별화교육계획 수립 개별 개별화교육계획 필요를 계획하는 현재 학습자의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "617": {
+    "skillName": "개선 회고",
+    "queries": {
+      "ko": [
+        "개선 회고 되짚어 시행착오를 유지할 주간 회고 합의하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "618": {
+    "skillName": "개선안 제안",
+    "queries": {
+      "ko": [
+        "개선안 제안 개선안 문제의 정리하고 포함한 방법 제안"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "619": {
+    "skillName": "개인정보 보호 기준 준수",
+    "queries": {
+      "ko": [
+        "개인정보 보호 기준 준수 통제에 보호 준수에서는 개인정보 적용되는 준수"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "620": {
+    "skillName": "개인정보 보호 프로젝트",
+    "queries": {
+      "ko": [
+        "개인정보 보호 프로젝트 유출과 적법하게 파기 개인정보를 보호 예방하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "621": {
+    "skillName": "개인정보 암호화 프로젝트",
+    "queries": {
+      "ko": [
+        "개인정보 암호화 프로젝트 구간에 암호 없는 없도록 해독할 개인정보를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "622": {
+    "skillName": "객실 점검",
+    "queries": {
+      "ko": [
+        "객실 점검 객실의 기준표에 비품 청결 객실 이상을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "623": {
+    "skillName": "건설·시설관리 현장 업무",
+    "queries": {
+      "ko": [
+        "건설·시설관리 현장 업무 건설 시설관리 작업자 자재 조율하는 설비의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "624": {
+    "skillName": "검사 결과 판독",
+    "queries": {
+      "ko": [
+        "검사 결과 판독 소견을 의미와 범위와 수치 판독 해석하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "625": {
+    "skillName": "검사 성적서 작성",
+    "queries": {
+      "ko": [
+        "검사 성적서 작성 성적서 측정값 판정 추적 형식으로 시험"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "626": {
+    "skillName": "검사 업무",
+    "queries": {
+      "ko": [
+        "검사 업무 적합 대상과 판정 기록하여 여부를 판단하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "627": {
+    "skillName": "검색형 챗봇 프로젝트",
+    "queries": {
+      "ko": [
+        "검색형 챗봇 프로젝트 검색해 검색형 답변을 문서나 지식베이스에서 질문에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "628": {
+    "skillName": "검토 이력 관리",
+    "queries": {
+      "ko": [
+        "검토 이력 관리 가능하게 검토자 수정사항 버전을 문서와 이력"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "629": {
+    "skillName": "게임 QA 프로젝트",
+    "queries": {
+      "ko": [
+        "게임 QA 프로젝트 밸런스 qa 게임의 품질보증 호환성 시험하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "630": {
+    "skillName": "게임플레이 구현",
+    "queries": {
+      "ko": [
+        "게임플레이 구현 개발하는 게임플레이 보상과 플레이 전투 규칙"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "631": {
+    "skillName": "견적 비교",
+    "queries": {
+      "ko": [
+        "견적 비교 견적 공급처별 동일 보증과 비교하는 납기"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "632": {
+    "skillName": "견적서 관리",
+    "queries": {
+      "ko": [
+        "견적서 관리 견적서 견적의 유효기간 단가 품목 정확하게"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "633": {
+    "skillName": "결과 데이터 정리",
+    "queries": {
+      "ko": [
+        "결과 데이터 정리 결과값의 누락을 보고에 통일하고 단위 정리하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "634": {
+    "skillName": "결과 해석",
+    "queries": {
+      "ko": [
+        "결과 해석 업무적 의미하는 한계와 결과가 시사점을 해석"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "635": {
+    "skillName": "결제 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "결제 시스템 프로젝트 결제기관과 금액의 환불 연동하는 정산을 취소"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "636": {
+    "skillName": "결함 관리",
+    "queries": {
+      "ko": [
+        "결함 관리 수명주기별로 심각도 재검증 결함의 결함 재현"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "637": {
+    "skillName": "경영진 보고",
+    "queries": {
+      "ko": [
+        "경영진 보고 경영진 대안 메시지로 관점의 간결한 요청을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "638": {
+    "skillName": "경영학 전공",
+    "queries": {
+      "ko": [
+        "경영학 전공 경영학 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "639": {
+    "skillName": "계량",
+    "queries": {
+      "ko": [
+        "계량 도구와 수량을 계량 대상의 무게 부피"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "640": {
+    "skillName": "계약 갱신",
+    "queries": {
+      "ko": [
+        "계약 갱신 만료 연장하는 협의하여 계약을 계약의 갱신"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "641": {
+    "skillName": "계약 자문",
+    "queries": {
+      "ko": [
+        "계약 자문 의미 조건의 의사결정을 검토하여 법적 자문"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "642": {
+    "skillName": "계약 체결",
+    "queries": {
+      "ko": [
+        "계약 체결 날인 성립시키는 협의된 계약을 유효한 체결"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "643": {
+    "skillName": "계약서 관리",
+    "queries": {
+      "ko": [
+        "계약서 관리 상대방 갱신 계약서 보관하는 의무 기간"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "644": {
+    "skillName": "계정 및 권한 관리",
+    "queries": {
+      "ko": [
+        "계정 및 권한 관리 계정의 역할별 회수와 원칙에 접근권한을 최소"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "645": {
+    "skillName": "계측",
+    "queries": {
+      "ko": [
+        "계측 계측 계측기로 물리량과 오차 교정 측정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "646": {
+    "skillName": "고객 관리",
+    "queries": {
+      "ko": [
+        "고객 관리 이력의 제안 문의 계약 처리 고객"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "647": {
+    "skillName": "고객 발굴",
+    "queries": {
+      "ko": [
+        "고객 발굴 잠재고객을 접촉 발굴 채널에서 정의하고 기회를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "648": {
+    "skillName": "고객 상담",
+    "queries": {
+      "ko": [
+        "고객 상담 활동과 상담에서는 문의 영업 요구와 선택지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "649": {
+    "skillName": "고객 상담 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "고객 상담 AI 프로젝트 문의의 요약을 답변 의도와 응대 추천"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "650": {
+    "skillName": "고객 세분화 프로젝트",
+    "queries": {
+      "ko": [
+        "고객 세분화 프로젝트 고객군을 맞춤 세분화 유사한 전략에 나누어"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "651": {
+    "skillName": "고객 안내",
+    "queries": {
+      "ko": [
+        "고객 안내 안내에서는 행동할 상대방이 안내 주의사항을 활동에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "652": {
+    "skillName": "고객 자료 관리",
+    "queries": {
+      "ko": [
+        "고객 자료 관리 이력의 제안 문의 계약 자료 처리"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "653": {
+    "skillName": "고객 확인",
+    "queries": {
+      "ko": [
+        "고객 확인 상태가 확인에서는 일치하는지 활동의 영업 요구와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "654": {
+    "skillName": "고객센터 운영",
+    "queries": {
+      "ko": [
+        "고객센터 운영 강화를 고객센터 해결과 관계 활동의 영업"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "655": {
+    "skillName": "공간 장식",
+    "queries": {
+      "ko": [
+        "공간 장식 분위기에 설치하는 장식 현장에 공간의 소품"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "656": {
+    "skillName": "공공 ISP 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 ISP 프로젝트 공공기관의 로드맵을 isp 중장기 수립하는 전략과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "657": {
+    "skillName": "공공 데이터 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 데이터 프로젝트 개방한 공공기관이 정제하여 수집하고 행정 통계"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "658": {
+    "skillName": "공공 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 서비스 프로젝트 시민과 편리하게 이용하도록 기관 행정 공공"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "659": {
+    "skillName": "공공 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 시스템 프로젝트 반영한 대국민 처리하도록 연계 업무와 행정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "660": {
+    "skillName": "공공 웹사이트 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 웹사이트 프로젝트 지침에 민원 웹사이트 웹서비스 접근성 공공"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "661": {
+    "skillName": "공공 웹서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "공공 웹서비스 프로젝트 시스템이 인터페이스로 대국민 웹서비스 기관 데이터와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "662": {
+    "skillName": "공공·대형 프로젝트",
+    "queries": {
+      "ko": [
+        "공공·대형 프로젝트 대형의 끝까지 범위와 요구조건을 대형 정의하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "663": {
+    "skillName": "공급망 추적 프로젝트",
+    "queries": {
+      "ko": [
+        "공급망 추적 프로젝트 원재료부터 판매까지 연결해 공급망 위치와 추적"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "664": {
+    "skillName": "공정 관리",
+    "queries": {
+      "ko": [
+        "공정 관리 변경의 불량 설비 부품 공정 검사"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "665": {
+    "skillName": "공정 품질 확인",
+    "queries": {
+      "ko": [
+        "공정 품질 확인 공정의 상태가 확인에서는 일치하는지 제품과 확인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "666": {
+    "skillName": "공차 검토",
+    "queries": {
+      "ko": [
+        "공차 검토 공차에 공차 검토에서는 수정사항을 근거와 사양"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "667": {
+    "skillName": "공학계열 전공",
+    "queries": {
+      "ko": [
+        "공학계열 전공 공학계열 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "668": {
+    "skillName": "관능평가",
+    "queries": {
+      "ko": [
+        "관능평가 관능을 관능평가 관능평가에서는 근거에 판단하고 명확한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "669": {
+    "skillName": "관리자 콘솔 프로젝트",
+    "queries": {
+      "ko": [
+        "관리자 콘솔 프로젝트 콘솔 운영자가 관리자 조회하고 제어하는 화면"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "670": {
+    "skillName": "관리자 페이지 개발",
+    "queries": {
+      "ko": [
+        "관리자 페이지 개발 페이지에 페이지 관리자 개발에서는 결과물로 코드와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "671": {
+    "skillName": "관세 자문",
+    "queries": {
+      "ko": [
+        "관세 자문 관세과 관세 자문에서는 자문 선택지 상대방의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "672": {
+    "skillName": "교육 콘텐츠 기획",
+    "queries": {
+      "ko": [
+        "교육 콘텐츠 기획 기획에서는 사용자에게 콘텐츠의 기획 독자와 성과기준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "673": {
+    "skillName": "교육 콘텐츠 제작",
+    "queries": {
+      "ko": [
+        "교육 콘텐츠 제작 가공하여 제작에서는 게시를 규격에 산출물로 주제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "674": {
+    "skillName": "교육 플랫폼 프로젝트",
+    "queries": {
+      "ko": [
+        "교육 플랫폼 프로젝트 수강 과제 온라인으로 진도 교육 평가"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "675": {
+    "skillName": "교육계획 수립",
+    "queries": {
+      "ko": [
+        "교육계획 수립 교육계획 활동의 수립에서는 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "676": {
+    "skillName": "교육과정 개선",
+    "queries": {
+      "ko": [
+        "교육과정 개선 교육과정 활동의 개선에서는 변경안을 적용한 현행"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "677": {
+    "skillName": "구매 계획",
+    "queries": {
+      "ko": [
+        "구매 계획 자재와 일정의 계획에서는 공급 계획 성과기준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "678": {
+    "skillName": "구성 백업",
+    "queries": {
+      "ko": [
+        "구성 백업 백업에서는 보관주기 사본으로 설정과 구성의 복원"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "679": {
+    "skillName": "구조 해석",
+    "queries": {
+      "ko": [
+        "구조 해석 구조의 해석에서는 업무적 의미하는 한계와 결과가"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "680": {
+    "skillName": "구직 상담",
+    "queries": {
+      "ko": [
+        "구직 상담 구직과 구직 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "681": {
+    "skillName": "국제통상학 전공",
+    "queries": {
+      "ko": [
+        "국제통상학 전공 국제통상학 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "682": {
+    "skillName": "권리관계 확인",
+    "queries": {
+      "ko": [
+        "권리관계 확인 권리관계의 권리관계 상태가 확인에서는 일치하는지 확인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "683": {
+    "skillName": "권한 관리",
+    "queries": {
+      "ko": [
+        "권한 관리 권한에 권한 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "684": {
+    "skillName": "근무표 관리",
+    "queries": {
+      "ko": [
+        "근무표 관리 근무표 근무표에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "685": {
+    "skillName": "글로벌 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "글로벌 서비스 프로젝트 국가별 시간대를 지역에 문화 글로벌 동일한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "686": {
+    "skillName": "글로벌 인프라 프로젝트",
+    "queries": {
+      "ko": [
+        "글로벌 인프라 프로젝트 국가와 리전에 연결하고 글로벌 분산된 안정적으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "687": {
+    "skillName": "금융 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "금융 시스템 프로젝트 정확성과 심사 계좌 정산 정보시스템 결제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "688": {
+    "skillName": "금융 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "금융 앱 프로젝트 가입을 이체 수행하도록 계좌 모바일에서 조회"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "689": {
+    "skillName": "금융 웹 프로젝트",
+    "queries": {
+      "ko": [
+        "금융 웹 프로젝트 인증과 브라우저에서 조회 금융 거래 기준에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "690": {
+    "skillName": "급여 관리",
+    "queries": {
+      "ko": [
+        "급여 관리 급여에 급여 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "691": {
+    "skillName": "기구 설계",
+    "queries": {
+      "ko": [
+        "기구 설계 기구에 기구의 기구 설계에서는 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "692": {
+    "skillName": "기내 서비스",
+    "queries": {
+      "ko": [
+        "기내 서비스 기내 기내를 서비스에서는 품질과 전달하고 절차에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "693": {
+    "skillName": "기능 검증",
+    "queries": {
+      "ko": [
+        "기능 검증 기능이 검증에서는 충족하는지 판정하는 필요사항을 비교하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "694": {
+    "skillName": "기능 배포",
+    "queries": {
+      "ko": [
+        "애플리케이션 기능 배포 CI CD 롤백",
+        "프로덕션 릴리스 배포 검증"
+      ],
+      "en": [
+        "application deployment CI CD rollback tutorial",
+        "production release deployment verification"
+      ]
+    },
+    "excludeTerms": [
+      "claude code tutorial",
+      "game tutorial",
+      "video editing",
+      "ci/cd for ai agents",
+      "release intelligence"
+    ],
+    "reviewed": true
+  },
+  "695": {
+    "skillName": "기능 설계",
+    "queries": {
+      "ko": [
+        "기능 설계 기능에 기능의 설계에서는 흐름 규칙과 예외"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "696": {
+    "skillName": "기사 작성",
+    "queries": {
+      "ko": [
+        "기사 작성 기사에 기사 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "697": {
+    "skillName": "기술 검토",
+    "queries": {
+      "ko": [
+        "기술 검토 기술에 검토에서는 수정사항을 근거와 사양 누락"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "698": {
+    "skillName": "기술 문서 작성",
+    "queries": {
+      "ko": [
+        "기술 문서 작성 게시를 주제 검수 매체 표현 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "699": {
+    "skillName": "기술 발표",
+    "queries": {
+      "ko": [
+        "IT 기술 발표 프레젠테이션 구성 실습",
+        "개발자 기술 발표 자료 스피치 피드백"
+      ],
+      "en": [
+        "technical presentation for software engineers",
+        "developer conference talk presentation skills"
+      ]
+    },
+    "excludeTerms": [
+      "game tutorial",
+      "video editing",
+      "powerpoint template",
+      "product sales presentation"
+    ],
+    "reviewed": true
+  },
+  "700": {
+    "skillName": "기술 부채 개선",
+    "queries": {
+      "ko": [
+        "기술 부채 개선 부채 부채의 정의 개선에서는 변경안을 적용한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "701": {
+    "skillName": "기술 상담",
+    "queries": {
+      "ko": [
+        "기술 상담 기술과 상담에서는 선택지 상대방의 상황과 정확한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "702": {
+    "skillName": "기술 요구사항 분석",
+    "queries": {
+      "ko": [
+        "기술 요구사항 분석 요구사항에서 요구사항 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "703": {
+    "skillName": "기업 리서치",
+    "queries": {
+      "ko": [
+        "기업 리서치 기업에 리서치 리서치에서는 질문 기업 정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "704": {
+    "skillName": "기업 탐방",
+    "queries": {
+      "ko": [
+        "기업 탐방 탐방 탐방에서는 살피고 주기에 기업의 중심으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "705": {
+    "skillName": "기업 홈페이지 프로젝트",
+    "queries": {
+      "ko": [
+        "기업 홈페이지 프로젝트 홈페이지 공식 웹사이트 채용 사용자에게 문의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "706": {
+    "skillName": "기획 협업",
+    "queries": {
+      "ko": [
+        "기획 협업 기획의 협업에서는 공유하고 역할과 해결하는 공동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "707": {
+    "skillName": "긴급 대응",
+    "queries": {
+      "ko": [
+        "긴급 대응 긴급 긴급에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "708": {
+    "skillName": "꽃 손질",
+    "queries": {
+      "ko": [
+        "꽃 손질 꽃의 부분을 손질에서는 용도에 절단 제거하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "709": {
+    "skillName": "꽃다발 제작",
+    "queries": {
+      "ko": [
+        "꽃다발 제작 꽃다발 꽃다발에 가공하여 제작에서는 규격에 산출물로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "710": {
+    "skillName": "납기 관리",
+    "queries": {
+      "ko": [
+        "납기 관리 검수의 공급처 발주 납기 수요 수량"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "711": {
+    "skillName": "납품 확인",
+    "queries": {
+      "ko": [
+        "납품 확인 납품 납품의 상태가 확인에서는 일치하는지 확인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "712": {
+    "skillName": "네이티브 기능 연동",
+    "queries": {
+      "ko": [
+        "네이티브 기능 연동 네이티브 연동에서는 기능의 시스템이나 인터페이스 연동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "713": {
+    "skillName": "네트워크 설계",
+    "queries": {
+      "ko": [
+        "네트워크 설계 대역폭 접근 네트워크의 정책을 주소 경로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "714": {
+    "skillName": "노동관계 자문",
+    "queries": {
+      "ko": [
+        "노동관계 자문 노동관계과 노동관계 자문에서는 자문 선택지 상대방의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "715": {
+    "skillName": "노드 운영",
+    "queries": {
+      "ko": [
+        "노드 운영 노드의 참여와 네트워크에 노드 일관성을 시스템이나"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "716": {
+    "skillName": "노사 이슈 대응",
+    "queries": {
+      "ko": [
+        "노사 이슈 대응 노사 이슈에서 이슈 대응에서는 발생한 방지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "717": {
+    "skillName": "노선 운행",
+    "queries": {
+      "ko": [
+        "노선 운행 노선 노선의 운행에서는 운전하는 운행 승객"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "718": {
+    "skillName": "논문 구현",
+    "queries": {
+      "ko": [
+        "논문 구현 해석을 구체화하고 구현에서는 기능이나 논문 동작하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "719": {
+    "skillName": "논문 작성",
+    "queries": {
+      "ko": [
+        "논문 작성 해석을 논문 가설 변수 표본 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "720": {
+    "skillName": "논문 조사",
+    "queries": {
+      "ko": [
+        "논문 조사 자료에 논문 조사에서는 질문과 질문 정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "721": {
+    "skillName": "놀이 중심 보육과정 운영",
+    "queries": {
+      "ko": [
+        "놀이 중심 보육과정 운영 보육과정 보육과정의 놀이 중심 달성을 수행과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "722": {
+    "skillName": "단백질 실험",
+    "queries": {
+      "ko": [
+        "단백질 실험 단백질 단백질에 대조 실험에서는 대한 가설"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "723": {
+    "skillName": "단위 테스트",
+    "queries": {
+      "ko": [
+        "단위 테스트 단위에 테스트에서는 단위 기대 한계를 결함과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "724": {
+    "skillName": "단체급식",
+    "queries": {
+      "ko": [
+        "단체급식 급식 단체급식 단체급식에서는 단체급식의 대량 식수"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "725": {
+    "skillName": "대규모 언어모델 프로젝트",
+    "queries": {
+      "ko": [
+        "대규모 언어모델 프로젝트 방대한 텍스트를 학습해 자연어 언어모델 이해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "726": {
+    "skillName": "대규모 트래픽 처리 프로젝트",
+    "queries": {
+      "ko": [
+        "대규모 트래픽 처리 프로젝트 안정성을 응답성과 동시 캐시 트래픽 비동기"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "727": {
+    "skillName": "대규모 학습 프로젝트",
+    "queries": {
+      "ko": [
+        "대규모 학습 프로젝트 노드에 분산하여 학습하는 효율적으로 gpu와 연산을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "728": {
+    "skillName": "대규모 행사망 프로젝트",
+    "queries": {
+      "ko": [
+        "대규모 행사망 프로젝트 동시에 용량과 접속하는 행사망 행사장의 많은"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "729": {
+    "skillName": "대상 물건 조사",
+    "queries": {
+      "ko": [
+        "대상 물건 조사 물건 물건에 조사에서는 질문 정하고 조사"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "730": {
+    "skillName": "대상자 안내",
+    "queries": {
+      "ko": [
+        "대상자 안내 대상자에 대상자 안내에서는 행동할 상대방이 안내"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "731": {
+    "skillName": "대시보드 구축",
+    "queries": {
+      "ko": [
+        "대시보드 구축 대시보드에 대시보드 구축에서는 사용할 연결 환경으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "732": {
+    "skillName": "대시보드 프로젝트",
+    "queries": {
+      "ko": [
+        "대시보드 프로젝트 차트 판단을 필터로 화면에 빠른 대시보드"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "733": {
+    "skillName": "대용량 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "대용량 서비스 프로젝트 확장성 대용량 처리하도록 가용성을 많은 사용자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "734": {
+    "skillName": "데모 진행",
+    "queries": {
+      "ko": [
+        "데모 진행 데모 데모의 진행에서는 참여자 목적 완료까지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "735": {
+    "skillName": "데이터 거버넌스 프로젝트",
+    "queries": {
+      "ko": [
+        "데이터 거버넌스 프로젝트 생명주기를 소유권 접근권한 차원에서 거버넌스 표준"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "736": {
+    "skillName": "데이터 드리프트 탐지",
+    "queries": {
+      "ko": [
+        "데이터 드리프트 탐지 드리프트 징후 탐지에서는 식별하는 조기에 변화를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "737": {
+    "skillName": "데이터 레이크 구축 프로젝트",
+    "queries": {
+      "ko": [
+        "데이터 레이크 구축 프로젝트 대규모로 레이크 분석에서 원시 활용하도록 원천의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "738": {
+    "skillName": "데이터 모델링",
+    "queries": {
+      "ko": [
+        "데이터 모델링 개념 도형 모델링에서는 수식 모델로 표현하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "739": {
+    "skillName": "데이터 분류",
+    "queries": {
+      "ko": [
+        "데이터 분류 분류에서는 구분하고 속성과 범주 등급으로 일관된"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "740": {
+    "skillName": "데이터 세트 구축",
+    "queries": {
+      "ko": [
+        "데이터 세트 구축 세트 데이터에 구축에서는 사용할 사용하는 연결"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "741": {
+    "skillName": "데이터 수집",
+    "queries": {
+      "ko": [
+        "데이터 수집 수집에서는 원천과 정해 주기 출처를 확보하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "742": {
+    "skillName": "데이터 유출 점검",
+    "queries": {
+      "ko": [
+        "데이터 유출 점검 접근권한을 유출 정제 점검에서는 변환 체크"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "743": {
+    "skillName": "데이터 전처리",
+    "queries": {
+      "ko": [
+        "데이터 전처리 결측 전처리에서는 표준화하는 분석에 전처리 정제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "744": {
+    "skillName": "데이터 추출",
+    "queries": {
+      "ko": [
+        "데이터 추출 규칙에 분리하는 추출에서는 구조화된 항목과 데이터에서"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "745": {
+    "skillName": "데이터 품질 점검",
+    "queries": {
+      "ko": [
+        "데이터 품질 점검 접근권한을 정제 점검에서는 변환 체크 불일치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "746": {
+    "skillName": "데이터센터 이전 프로젝트",
+    "queries": {
+      "ko": [
+        "데이터센터 이전 프로젝트 센터로 스토리지와 이전 최소화 계획에 데이터센터"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "747": {
+    "skillName": "데이터센터 이중화 프로젝트",
+    "queries": {
+      "ko": [
+        "데이터센터 이중화 프로젝트 계속하도록 센터에 센터의 장애에도 중복 별도"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "748": {
+    "skillName": "도메인 모델링",
+    "queries": {
+      "ko": [
+        "도메인 모델링 도메인 도메인의 개념 도형 모델링에서는 수식"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "749": {
+    "skillName": "도면 검토",
+    "queries": {
+      "ko": [
+        "도면 검토 도면에 검토에서는 도면 수정사항을 근거와 사양"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "750": {
+    "skillName": "도면 기반 용접",
+    "queries": {
+      "ko": [
+        "도면 기반 용접 검사하는 기반의 용접에서는 이음 접합한 용접"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "751": {
+    "skillName": "도서관 시스템 운영",
+    "queries": {
+      "ko": [
+        "도서관 시스템 운영 도서관 달성을 수행과 시스템의 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "752": {
+    "skillName": "독서 프로그램 운영",
+    "queries": {
+      "ko": [
+        "독서 프로그램 운영 독서 프로그램의 프로그램 달성을 수행과 안정적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "753": {
+    "skillName": "동물 진료",
+    "queries": {
+      "ko": [
+        "동물 진료 동물 진료에서는 동물의 설명 진료 치료"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "754": {
+    "skillName": "등기 업무",
+    "queries": {
+      "ko": [
+        "등기 업무 신청서 첨부서류를 권리와 법인의 갖춰 등기"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "755": {
+    "skillName": "디자인 검수",
+    "queries": {
+      "ko": [
+        "디자인 검수 규격을 구도 검수에서는 서체 재질 검수"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "756": {
+    "skillName": "디자인 시스템 구축",
+    "queries": {
+      "ko": [
+        "디자인 시스템 구축 산출물에 시각적으로 구축에서는 메시지를 사용할 연결"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "757": {
+    "skillName": "디자인 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "디자인 시스템 프로젝트 간격 일관성을 재사용 정의하여 화면의 ui"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "758": {
+    "skillName": "디지털 자산 지갑 프로젝트",
+    "queries": {
+      "ko": [
+        "디지털 자산 지갑 프로젝트 잔액 전송을 키로 암호화 서명 자산의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "759": {
+    "skillName": "디지털 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "디지털 전환 프로젝트 재설계하는 중심으로 경험을 기존 업무와 자동화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "760": {
+    "skillName": "라이브 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "라이브 서비스 프로젝트 후에도 라이브 출시 이벤트 활동 지표를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "761": {
+    "skillName": "라이브 이슈 대응",
+    "queries": {
+      "ko": [
+        "라이브 이슈 대응 라이브 이슈에서 이슈 대응에서는 발생한 방지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "762": {
+    "skillName": "랜섬웨어 대응 프로젝트",
+    "queries": {
+      "ko": [
+        "랜섬웨어 대응 프로젝트 격리하고 공격을 금전 랜섬웨어 복구하는 암호화와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "763": {
+    "skillName": "레거시 개선 프로젝트",
+    "queries": {
+      "ko": [
+        "레거시 개선 프로젝트 단계적으로 오래된 레거시 코드를 유지보수 구조와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "764": {
+    "skillName": "레거시 현대화 프로젝트",
+    "queries": {
+      "ko": [
+        "레거시 현대화 프로젝트 노후 전환하는 현대적 현대화 레거시 아키텍처"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "765": {
+    "skillName": "레드팀 수행",
+    "queries": {
+      "ko": [
+        "레드팀 수행 ai를 시나리오로 시험하고 개선사항을 관점의 레드팀"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "766": {
+    "skillName": "렌더링 최적화",
+    "queries": {
+      "ko": [
+        "렌더링 최적화 렌더링 시각적으로 최적화에서는 병목을 효율적인 메시지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "767": {
+    "skillName": "로그 모니터링",
+    "queries": {
+      "ko": [
+        "로그 모니터링 로그의 관찰하여 모니터링에서는 보고하는 발견하고 조기에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "768": {
+    "skillName": "로그 분석 플랫폼 프로젝트",
+    "queries": {
+      "ko": [
+        "로그 분석 플랫폼 프로젝트 경보와 시각화하고 분석을 로그를 중앙 검색"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "769": {
+    "skillName": "로봇 제어 알고리즘 개발",
+    "queries": {
+      "ko": [
+        "로봇 제어 알고리즘 개발 로봇 알고리즘에 알고리즘 제어 개발에서는 결과물로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "770": {
+    "skillName": "리테일 매장 운영",
+    "queries": {
+      "ko": [
+        "리테일 매장 운영 리테일 매장의 매장 달성을 수행과 안정적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "771": {
+    "skillName": "리포트 작성",
+    "queries": {
+      "ko": [
+        "리포트 작성 리포트 결론 배경 수치 요청사항을 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "772": {
+    "skillName": "릴리스 검증",
+    "queries": {
+      "ko": [
+        "릴리스 검증 릴리스 릴리스가 검증에서는 충족하는지 판정하는 필요사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "773": {
+    "skillName": "마이그레이션",
+    "queries": {
+      "ko": [
+        "마이그레이션 마이그레이션에서는 마이그레이션의 이전한 정합성을 의존성을 마이그레이션"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "774": {
+    "skillName": "마케팅 분석 프로젝트",
+    "queries": {
+      "ko": [
+        "마케팅 분석 프로젝트 효율과 마케팅 개선점을 유입 캠페인 채널"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "775": {
+    "skillName": "마크업 작성",
+    "queries": {
+      "ko": [
+        "마크업 작성 마크업에 마크업 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "776": {
+    "skillName": "매매",
+    "queries": {
+      "ko": [
+        "매매 대금 매매 인도 권리와 대상의 수량"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "777": {
+    "skillName": "매물 조사",
+    "queries": {
+      "ko": [
+        "매물 조사 매물 매물에 조사에서는 질문 정하고 조사"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "778": {
+    "skillName": "매출 분석 프로젝트",
+    "queries": {
+      "ko": [
+        "매출 분석 프로젝트 부진 요인과 기간별 성장 매출 채널"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "779": {
+    "skillName": "멀티모달 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "멀티모달 AI 프로젝트 이해하거나 형태의 멀티모달 생성하는 서로 텍스트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "780": {
+    "skillName": "멀티모달 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "멀티모달 앱 프로젝트 통합된 멀티모달 입력을 처리하여 텍스트 함께"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "781": {
+    "skillName": "멀티클라우드 프로젝트",
+    "queries": {
+      "ko": [
+        "멀티클라우드 프로젝트 멀티클라우드 분산하는 제공자 종속성과 이상의 조합하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "782": {
+    "skillName": "멀티플레이 게임 프로젝트",
+    "queries": {
+      "ko": [
+        "멀티플레이 게임 프로젝트 네트워크로 플레이하도록 멀티플레이 동기화하여 사용자의 위치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "783": {
+    "skillName": "메뉴 개발",
+    "queries": {
+      "ko": [
+        "메뉴 개발 목적을 메뉴 촬영 재료 조리 배치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "784": {
+    "skillName": "메뉴 연출",
+    "queries": {
+      "ko": [
+        "메뉴 연출 연출 연출에서는 콘셉트를 경험의 메뉴 메뉴의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "785": {
+    "skillName": "메모리 관리",
+    "queries": {
+      "ko": [
+        "메모리 관리 메모리에 메모리 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "786": {
+    "skillName": "메타데이터 관리",
+    "queries": {
+      "ko": [
+        "메타데이터 관리 메타데이터 접근권한의 정제 변환 저장 품질"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "787": {
+    "skillName": "메타버스 콘텐츠 프로젝트",
+    "queries": {
+      "ko": [
+        "메타버스 콘텐츠 프로젝트 가상공간에서 메타버스 참여할 소통 인터랙티브 경험을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "788": {
+    "skillName": "모니터링 구축",
+    "queries": {
+      "ko": [
+        "모니터링 구축 모니터링에 구축에서는 사용할 연결 환경으로 구성하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "789": {
+    "skillName": "모델 개발",
+    "queries": {
+      "ko": [
+        "모델 개발 모델에 개발에서는 결과물로 코드와 구현하고 요구사항에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "790": {
+    "skillName": "모델 거버넌스 프로젝트",
+    "queries": {
+      "ko": [
+        "모델 거버넌스 프로젝트 걸쳐 생명주기에 책임자 폐기 거버넌스 버전"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "791": {
+    "skillName": "모델 공급망 프로젝트",
+    "queries": {
+      "ko": [
+        "모델 공급망 프로젝트 출처와 사전학습 공급망 라이브러리 추적하는 모델"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "792": {
+    "skillName": "모델 레지스트리 운영",
+    "queries": {
+      "ko": [
+        "모델 레지스트리 운영 레지스트리 레지스트리의 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "793": {
+    "skillName": "모델 모니터링",
+    "queries": {
+      "ko": [
+        "모델 모니터링 관찰하여 모니터링에서는 보고하는 발견하고 조기에 알림"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "794": {
+    "skillName": "모델 배포",
+    "queries": {
+      "ko": [
+        "모델 배포 롤백과 배포에서는 환경에 버전 반영하고 설정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "795": {
+    "skillName": "모델 실험",
+    "queries": {
+      "ko": [
+        "모델 실험 대조 실험에서는 모델에 대한 가설 분석하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "796": {
+    "skillName": "모델 취약점 분석",
+    "queries": {
+      "ko": [
+        "모델 취약점 분석 통제에서 취약점 보호하는 정보와 분석에서는 시스템을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "797": {
+    "skillName": "모델 학습",
+    "queries": {
+      "ko": [
+        "모델 학습 결과로 학습에서는 모델에 알고리즘 연산 성능을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "798": {
+    "skillName": "모바일 RPG 프로젝트",
+    "queries": {
+      "ko": [
+        "모바일 RPG 프로젝트 rpg 순환 역할수행게임 보상 전투 성장"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "799": {
+    "skillName": "모바일 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "모바일 앱 프로젝트 스마트폰 운영체제와 화면과 활용해 기기 모바일"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "800": {
+    "skillName": "모바일 화면 개발",
+    "queries": {
+      "ko": [
+        "모바일 화면 개발 상호작용 성능을 반응형 접근성 모바일 표현"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "801": {
+    "skillName": "모빌리티 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "모빌리티 서비스 프로젝트 모빌리티 수요와 운송이나 편의를 기사 연결하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "802": {
+    "skillName": "모의훈련",
+    "queries": {
+      "ko": [
+        "모의훈련 가정해 모의훈련 모의훈련에서는 모의훈련의 미비점을 상황을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "803": {
+    "skillName": "무선망 개선 프로젝트",
+    "queries": {
+      "ko": [
+        "무선망 개선 프로젝트 간섭 무선망 세기 접속량을 커버리지와 신호"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "804": {
+    "skillName": "무역학 전공",
+    "queries": {
+      "ko": [
+        "무역학 전공 무역학 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "805": {
+    "skillName": "무중단 마이그레이션 프로젝트",
+    "queries": {
+      "ko": [
+        "무중단 마이그레이션 프로젝트 무중단 중단을 최소화하면서 마이그레이션 이전하는 환경으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "806": {
+    "skillName": "문서 검색 프로젝트",
+    "queries": {
+      "ko": [
+        "문서 검색 엔진 프로젝트 색인 BM25",
+        "RAG 문서 검색 프로젝트 구현"
+      ],
+      "en": [
+        "document search engine project BM25",
+        "document retrieval RAG project tutorial"
+      ]
+    },
+    "excludeTerms": [
+      "claude code",
+      "davinci resolve",
+      "game tutorial",
+      "video editing",
+      "minecraft",
+      "terraria",
+      "octane guide"
+    ],
+    "reviewed": true
+  },
+  "807": {
+    "skillName": "문서 요약 프로젝트",
+    "queries": {
+      "ko": [
+        "문서 요약 프로젝트 결론을 내용으로 재구성하는 주장 추출하여 문서에서"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "808": {
+    "skillName": "문서 이력 관리",
+    "queries": {
+      "ko": [
+        "문서 이력 관리 게시의 이력 주제 검수 매체 표현"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "809": {
+    "skillName": "문의 대응",
+    "queries": {
+      "ko": [
+        "문의 대응 문의에서 문의 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "810": {
+    "skillName": "문제 정의",
+    "queries": {
+      "ko": [
+        "문제 정의 문제의 정의에서는 조건으로 용어 이해관계자 정의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "811": {
+    "skillName": "물량 내역 검토",
+    "queries": {
+      "ko": [
+        "물량 내역 검토 내역 내역에 물량 검토에서는 수정사항을 근거와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "812": {
+    "skillName": "물류 연계",
+    "queries": {
+      "ko": [
+        "물류 연계 이어지도록 흐름이 연결해 창고 연계 물류"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "813": {
+    "skillName": "물류관리 전공",
+    "queries": {
+      "ko": [
+        "물류관리 전공 물류관리 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "814": {
+    "skillName": "미용 상담",
+    "queries": {
+      "ko": [
+        "미용 상담 미용과 미용 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "815": {
+    "skillName": "미용 시술",
+    "queries": {
+      "ko": [
+        "미용 시술 미용의 시술 시술에서는 미용 설명 치료"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "816": {
+    "skillName": "민원 대응",
+    "queries": {
+      "ko": [
+        "민원 대응 민원에서 민원 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "817": {
+    "skillName": "바운딩 박스 작업",
+    "queries": {
+      "ko": [
+        "바운딩 박스 작업 가림 객체의 겹침 라벨 바운딩 박스"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "818": {
+    "skillName": "바이어 관리",
+    "queries": {
+      "ko": [
+        "바이어 관리 바이어 바이어에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "819": {
+    "skillName": "반려동물 행동 관찰",
+    "queries": {
+      "ko": [
+        "반려동물 행동 관찰 반려동물 행동의 관찰에서는 살피고 주기에 중심으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "820": {
+    "skillName": "반응 조건 최적화",
+    "queries": {
+      "ko": [
+        "반응 조건 최적화 반응 조건의 최적화에서는 병목을 효율적인 최적화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "821": {
+    "skillName": "반응형 웹 프로젝트",
+    "queries": {
+      "ko": [
+        "반응형 웹 프로젝트 레이아웃과 조정되는 콘텐츠가 크기와 특성에 반응형"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "822": {
+    "skillName": "반응형 화면 구현",
+    "queries": {
+      "ko": [
+        "반응형 화면 구현 구체화하고 구현에서는 기능이나 동작하는 상호작용 절차로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "823": {
+    "skillName": "반죽",
+    "queries": {
+      "ko": [
+        "반죽 반죽 반죽에서는 반죽의 반죽하는 배합과 탄력과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "824": {
+    "skillName": "발주",
+    "queries": {
+      "ko": [
+        "발주 공급처에 발주에서는 발행해 입고까지 주문을 발주"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "825": {
+    "skillName": "발주처 보고",
+    "queries": {
+      "ko": [
+        "발주처 보고 발주처 자재와 일정의 대상자가 보고에서는 이해하기"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "826": {
+    "skillName": "발효",
+    "queries": {
+      "ko": [
+        "발효 발효에서는 발효의 습도 관리해 목표한 발효"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "827": {
+    "skillName": "방문 등록",
+    "queries": {
+      "ko": [
+        "방문 등록 등록에서는 방문 방문의 필수 등록 권한에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "828": {
+    "skillName": "방역 일정 관리",
+    "queries": {
+      "ko": [
+        "방역 일정 관리 방역 성과의 의사결정 범위 자원 관리에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "829": {
+    "skillName": "방역 장비 관리",
+    "queries": {
+      "ko": [
+        "방역 장비 관리 장비에 방역 장비 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "830": {
+    "skillName": "방화벽 정책 협의",
+    "queries": {
+      "ko": [
+        "방화벽 정책 협의 목적지 출발지 통신의 포트 필요성을 허용"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "831": {
+    "skillName": "배달 수행",
+    "queries": {
+      "ko": [
+        "배달 수행 미배송 배달 배송지 전달한 완료 요청을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "832": {
+    "skillName": "배송 경로 계획",
+    "queries": {
+      "ko": [
+        "배송 경로 계획 자재의 흐름의 계획에서는 공급 배송 계획"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "833": {
+    "skillName": "배송 업무",
+    "queries": {
+      "ko": [
+        "배송 업무 인도와 출고 포장 주소 배송 수량"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "834": {
+    "skillName": "배식",
+    "queries": {
+      "ko": [
+        "배식 배식에서는 배식의 알레르기 배식 위생과 음식을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "835": {
+    "skillName": "배차 관리",
+    "queries": {
+      "ko": [
+        "배차 관리 배차에 배차 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "836": {
+    "skillName": "배치 개발",
+    "queries": {
+      "ko": [
+        "배치 개발 스케줄 재실행 순서 배치 입력 개발에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "837": {
+    "skillName": "배치·스트리밍 처리",
+    "queries": {
+      "ko": [
+        "배치·스트리밍 처리 스케줄 스트리밍 재실행 기한에 처리에서는 남기는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "838": {
+    "skillName": "배포",
+    "queries": {
+      "ko": [
+        "애플리케이션 배포 CI CD 클라우드 모니터링",
+        "GitHub Actions 배포 롤백"
+      ],
+      "en": [
+        "application deployment CI CD cloud tutorial",
+        "deployment monitoring rollback guide"
+      ]
+    },
+    "excludeTerms": [
+      "계리직",
+      "claude code",
+      "game tutorial",
+      "video editing"
+    ],
+    "reviewed": true
+  },
+  "839": {
+    "skillName": "배포 개선",
+    "queries": {
+      "ko": [
+        "배포 개선 배포의 개선에서는 변경안을 적용한 현행 효과를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "840": {
+    "skillName": "배포 지원",
+    "queries": {
+      "ko": [
+        "배포 지원 배포가 원활히 지원에서는 진행되도록 협의와 관계자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "841": {
+    "skillName": "백업 및 복구",
+    "queries": {
+      "ko": [
+        "백업 및 복구 및의 복구에서는 되돌리는 자원으로 대체 우선순위를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "842": {
+    "skillName": "백업 설계",
+    "queries": {
+      "ko": [
+        "백업 설계 백업에 백업의 백업 설계에서는 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "843": {
+    "skillName": "백엔드 API 개발",
+    "queries": {
+      "ko": [
+        "백엔드 API 개발 엔드포인트 백엔드 응답 인증 api 개발에서는"
+      ],
+      "en": [
+        "API"
+      ]
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "844": {
+    "skillName": "버그 수정",
+    "queries": {
+      "ko": [
+        "버그 수정 버그 버그의 수정에서는 수정하고 조건과 코드를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "845": {
+    "skillName": "법률서류 작성",
+    "queries": {
+      "ko": [
+        "법률서류 작성 법률서류 책임 증빙 작성에서는 정리하여 표현으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "846": {
+    "skillName": "법인 영업",
+    "queries": {
+      "ko": [
+        "법인 영업 법인 제안하고 파악해 협상 솔루션을 고객의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "847": {
+    "skillName": "변경 이력 관리",
+    "queries": {
+      "ko": [
+        "변경 이력 관리 이력에 이력 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "848": {
+    "skillName": "보고서 작성",
+    "queries": {
+      "ko": [
+        "보고서 작성 결론 보고서 배경 수치 요청사항을 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "849": {
+    "skillName": "보드 디버깅",
+    "queries": {
+      "ko": [
+        "보드 디버깅 디버깅에서는 보드 보드의 오동작 찾고 추적하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "850": {
+    "skillName": "보안 가드레일 설계",
+    "queries": {
+      "ko": [
+        "보안 가드레일 설계 가드레일 통제의 위협 자산 취약점 설계에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "851": {
+    "skillName": "보안 검토",
+    "queries": {
+      "ko": [
+        "보안 검토 위협 자산 취약점 검토에서는 수정사항을 근거와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "852": {
+    "skillName": "보안 기준 수립",
+    "queries": {
+      "ko": [
+        "보안 기준 수립 통제의 수립에서는 수립 보호하는 정보와 성과기준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "853": {
+    "skillName": "보안 자동화",
+    "queries": {
+      "ko": [
+        "보안 자동화 수작업과 예외를 워크플로로 자동화에서는 통제의 구현하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "854": {
+    "skillName": "보안 장비 운영",
+    "queries": {
+      "ko": [
+        "보안 장비 운영 대응을 신속한 예방과 침해 사고 통제의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "855": {
+    "skillName": "보안 점검",
+    "queries": {
+      "ko": [
+        "보안 점검 위협 자산 취약점 점검에서는 로그 체크"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "856": {
+    "skillName": "보안 정책 수립",
+    "queries": {
+      "ko": [
+        "보안 정책 수립 통제의 수립에서는 정책 수립 보호하는 정보와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "857": {
+    "skillName": "보안 준수",
+    "queries": {
+      "ko": [
+        "보안 준수 통제에 준수에서는 적용되는 준수 증빙에 표준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "858": {
+    "skillName": "보안 필터 적용",
+    "queries": {
+      "ko": [
+        "보안 필터 적용 적용에서는 필터 원리와 적용 통제의 개인정보"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "859": {
+    "skillName": "보안관제 고도화 프로젝트",
+    "queries": {
+      "ko": [
+        "보안관제 고도화 프로젝트 보안관제 속도를 정확도와 고도화 개선하여 연계"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "860": {
+    "skillName": "보안일지 작성",
+    "queries": {
+      "ko": [
+        "보안일지 작성 보안일지 위협 자산 취약점 로그 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "861": {
+    "skillName": "보장 분석",
+    "queries": {
+      "ko": [
+        "보장 분석 보장에서 보장 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "862": {
+    "skillName": "보험 심사",
+    "queries": {
+      "ko": [
+        "보험 심사 심사에서는 심사 근거에 보험 판단하고 거래와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "863": {
+    "skillName": "보호자 상담",
+    "queries": {
+      "ko": [
+        "보호자 상담 보호자 보호자과 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "864": {
+    "skillName": "복약지도",
+    "queries": {
+      "ko": [
+        "복약지도 복약지도에서는 복약지도 수행을 사용의 치료와 파악하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "865": {
+    "skillName": "부품 검토",
+    "queries": {
+      "ko": [
+        "부품 검토 부품에 검토에서는 수정사항을 근거와 부품 사양"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "866": {
+    "skillName": "부품 교환",
+    "queries": {
+      "ko": [
+        "부품 교환 교체하는 교환 교환에서는 구성으로 부품이나 호환"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "867": {
+    "skillName": "부품 선정",
+    "queries": {
+      "ko": [
+        "부품 선정 선정 선정에서는 고르는 적합성 후보를 최적"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "868": {
+    "skillName": "분석 자동화",
+    "queries": {
+      "ko": [
+        "분석 자동화 분석의 수작업과 예외를 워크플로로 자동화에서는 구현하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "869": {
+    "skillName": "불량 분석",
+    "queries": {
+      "ko": [
+        "불량 분석 불량에서 불량 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "870": {
+    "skillName": "브라우저 호환성 대응",
+    "queries": {
+      "ko": [
+        "브라우저 호환성 대응 브라우저 호환성에서 호환성 대응에서는 발생한 방지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "871": {
+    "skillName": "브랜드 사이트 프로젝트",
+    "queries": {
+      "ko": [
+        "브랜드 사이트 프로젝트 경험으로 몰입감 정체성 사이트 브랜드의 메시지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "872": {
+    "skillName": "비가동 원인 분석",
+    "queries": {
+      "ko": [
+        "비가동 원인 분석 비가동 원인에서 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "873": {
+    "skillName": "비용 최적화",
+    "queries": {
+      "ko": [
+        "비용 최적화 비용의 최적화에서는 병목을 효율적인 최적화 지표와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "874": {
+    "skillName": "비파괴검사",
+    "queries": {
+      "ko": [
+        "비파괴검사 비파괴검사 비파괴검사에서는 비파괴에 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "875": {
+    "skillName": "빌드 관리",
+    "queries": {
+      "ko": [
+        "빌드 관리 빌드에 빌드 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "876": {
+    "skillName": "사고 대응",
+    "queries": {
+      "ko": [
+        "사고 대응 사고에서 사고 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "877": {
+    "skillName": "사고 조사",
+    "queries": {
+      "ko": [
+        "사고 조사 사고에 조사에서는 사고 질문 정하고 조사"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "878": {
+    "skillName": "사내 업무 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "사내 업무 앱 프로젝트 모바일이나 웹에서 구성원의 사내 내부 조회"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "879": {
+    "skillName": "사내 지식검색 프로젝트",
+    "queries": {
+      "ko": [
+        "사내 지식검색 프로젝트 색인하고 지식검색 문서와 권한에 사내 내부"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "880": {
+    "skillName": "사례회의 운영",
+    "queries": {
+      "ko": [
+        "사례회의 운영 사례회의 사례회의의 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "881": {
+    "skillName": "사옥 네트워크 구축 프로젝트",
+    "queries": {
+      "ko": [
+        "사옥 네트워크 구축 프로젝트 내부망을 무선망과 사무공간의 사옥 요구에 인터넷"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "882": {
+    "skillName": "사용자 피드백 기반 제품 개선",
+    "queries": {
+      "ko": [
+        "사용자 피드백 분석 제품 개선 UX",
+        "고객 피드백 우선순위 제품 전략"
+      ],
+      "en": [
+        "user feedback analysis product improvement",
+        "customer feedback product strategy tutorial"
+      ]
+    },
+    "excludeTerms": [
+      "blender",
+      "octane guide",
+      "game tutorial",
+      "corsair cove",
+      "video editing"
+    ],
+    "reviewed": true
+  },
+  "883": {
+    "skillName": "사용자 피드백 반영",
+    "queries": {
+      "ko": [
+        "사용자 피드백 반영 반영 반영에서는 피드백의 원리와 피드백 조건에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "884": {
+    "skillName": "사용자 피드백 분석",
+    "queries": {
+      "ko": [
+        "사용자 피드백 분석 피드백에서 피드백 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "885": {
+    "skillName": "사후 관리",
+    "queries": {
+      "ko": [
+        "사후 관리 사후 사후에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "886": {
+    "skillName": "산업공학 전공",
+    "queries": {
+      "ko": [
+        "산업공학 전공 산업공학 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "887": {
+    "skillName": "산업용 솔루션 프로젝트",
+    "queries": {
+      "ko": [
+        "산업용 솔루션 프로젝트 소프트웨어와 솔루션 산업용 물류 제어 설비"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "888": {
+    "skillName": "산업용 제어기 프로젝트",
+    "queries": {
+      "ko": [
+        "산업용 제어기 프로젝트 밸브 읽고 제어기 모터 설비를 로직으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "889": {
+    "skillName": "상담 교육",
+    "queries": {
+      "ko": [
+        "상담 교육 교육에서는 수행을 파악하여 이해와 구성하고 돕는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "890": {
+    "skillName": "상담 품질 관리",
+    "queries": {
+      "ko": [
+        "상담 품질 관리 이력의 제안 문의 계약 상담 처리"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "891": {
+    "skillName": "상담원 관리",
+    "queries": {
+      "ko": [
+        "상담원 관리 상담원 이력의 제안 문의 계약 처리"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "892": {
+    "skillName": "상용 서비스 개발",
+    "queries": {
+      "ko": [
+        "상용 웹 서비스 백엔드 개발 테스트 배포",
+        "프로덕션 서비스 API 개발"
+      ],
+      "en": [
+        "production web service backend development",
+        "production API development testing deployment"
+      ]
+    },
+    "excludeTerms": [
+      "claude code tutorial",
+      "davinci resolve",
+      "game tutorial",
+      "video editing",
+      "octane guide"
+    ],
+    "reviewed": true
+  },
+  "893": {
+    "skillName": "상용 서비스 운영",
+    "queries": {
+      "ko": [
+        "상용 서비스 운영 모니터링 장애 대응",
+        "프로덕션 서비스 SRE 운영"
+      ],
+      "en": [
+        "production service operations monitoring incident response",
+        "SRE service operations tutorial"
+      ]
+    },
+    "excludeTerms": [
+      "claude code",
+      "davinci resolve",
+      "game tutorial",
+      "video editing",
+      "minecraft",
+      "octane guide"
+    ],
+    "reviewed": true
+  },
+  "894": {
+    "skillName": "상태 관리",
+    "queries": {
+      "ko": [
+        "상태 관리 상태에 산출물의 관리에서는 유지하고 기한 조치를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "895": {
+    "skillName": "상표 출원",
+    "queries": {
+      "ko": [
+        "상표 출원 상표의 관할 기관에 명세 신청하는 요건과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "896": {
+    "skillName": "상품 분석",
+    "queries": {
+      "ko": [
+        "상품 분석 서비스에서 상품과 온라인 분석에서는 패턴 해석하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "897": {
+    "skillName": "상품 상태 확인",
+    "queries": {
+      "ko": [
+        "상품 상태 확인 상태가 확인에서는 일치하는지 확인 상품과 원본"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "898": {
+    "skillName": "상품 상하차",
+    "queries": {
+      "ko": [
+        "상품 상하차 상하차 상하차에서는 고정하는 싣고 무게 부피"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "899": {
+    "skillName": "상품 이미지 프로젝트",
+    "queries": {
+      "ko": [
+        "상품 이미지 프로젝트 보여주는 장면과 장점을 사진 정확하게 재질"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "900": {
+    "skillName": "상품 제안",
+    "queries": {
+      "ko": [
+        "상품 제안 방안 제안에서는 효과 정리하고 포함한 제안"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "901": {
+    "skillName": "상품 진열",
+    "queries": {
+      "ko": [
+        "상품 진열 진열에서는 표시를 배치하고 상품을 진열 동선을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "902": {
+    "skillName": "샘플 검수",
+    "queries": {
+      "ko": [
+        "샘플 검수 샘플에 샘플 검수에서는 검수 체크 불일치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "903": {
+    "skillName": "생산 공정 운영",
+    "queries": {
+      "ko": [
+        "생산 공정 운영 생산과 확보를 공정의 제품과 생산 안정적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "904": {
+    "skillName": "생산 기록 관리",
+    "queries": {
+      "ko": [
+        "생산 기록 관리 변경의 불량 설비 생산 부품 공정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "905": {
+    "skillName": "생산 설비 운영",
+    "queries": {
+      "ko": [
+        "생산 설비 운영 생산과 확보를 공정의 제품과 설비 생산"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "906": {
+    "skillName": "생산관리 전공",
+    "queries": {
+      "ko": [
+        "생산관리 전공 생산관리 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "907": {
+    "skillName": "생산실적 기록",
+    "queries": {
+      "ko": [
+        "생산실적 기록 생산실적 결과의 기록에서는 시점 형식에 항목과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "908": {
+    "skillName": "생성형 AI 보안 프로젝트",
+    "queries": {
+      "ko": [
+        "생성형 AI 보안 프로젝트 민감정보 오용을 탐지하는 유출 유해 생성형"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "909": {
+    "skillName": "생성형 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "생성형 AI 프로젝트 새로운 생성하는 생성형 패턴을 콘텐츠를 텍스트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "910": {
+    "skillName": "생활 지원",
+    "queries": {
+      "ko": [
+        "생활 지원 생활이 원활히 지원에서는 진행되도록 협의와 관계자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "911": {
+    "skillName": "서류 검증",
+    "queries": {
+      "ko": [
+        "서류 검증 서류가 서류 검증에서는 충족하는지 판정하는 필요사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "912": {
+    "skillName": "서버 구축",
+    "queries": {
+      "ko": [
+        "서버 구축 인프라에 서버와 구축에서는 사용할 연결 환경으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "913": {
+    "skillName": "서버 로직 개발",
+    "queries": {
+      "ko": [
+        "서버 로직 개발 모니터링을 가용성 로직 운영체제 백업 설정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "914": {
+    "skillName": "서버 연동",
+    "queries": {
+      "ko": [
+        "서버 연동 연동에서는 인프라의 서버와 시스템이나 인터페이스 연동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "915": {
+    "skillName": "서버 표준화 프로젝트",
+    "queries": {
+      "ko": [
+        "서버 표준화 프로젝트 서버의 통일하는 표준화 이미지와 운영체제 절차로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "916": {
+    "skillName": "서비스 모니터링",
+    "queries": {
+      "ko": [
+        "서비스 모니터링 관찰하여 모니터링에서는 보고하는 발견하고 조기에 알림"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "917": {
+    "skillName": "서비스 제안",
+    "queries": {
+      "ko": [
+        "서비스 제안 방안 제안에서는 효과 정리하고 포함한 제안"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "918": {
+    "skillName": "서지 데이터베이스 관리",
+    "queries": {
+      "ko": [
+        "서지 데이터베이스 관리 권한의 서지 스키마 인덱스 질의 트랜잭션"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "919": {
+    "skillName": "선적서류 관리",
+    "queries": {
+      "ko": [
+        "선적서류 관리 선적서류 선적서류에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "920": {
+    "skillName": "설거지",
+    "queries": {
+      "ko": [
+        "설거지 설거지 설거지에서는 설거지의 방법으로 오염과 청결을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "921": {
+    "skillName": "설계 변경",
+    "queries": {
+      "ko": [
+        "설계 변경 비용과 사유와 수정하는 범위를 영향 도면"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "922": {
+    "skillName": "설계 사양서 작성",
+    "queries": {
+      "ko": [
+        "설계 사양서 작성 사양서 사양서에 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "923": {
+    "skillName": "설비 일상점검",
+    "queries": {
+      "ko": [
+        "설비 일상점검 소음 안전장치를 일상점검 누유 정기 설비의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "924": {
+    "skillName": "성과 데이터 분석",
+    "queries": {
+      "ko": [
+        "성과 데이터 분석 데이터에서 사용하는 분석과 서비스에 분석에서는 패턴"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "925": {
+    "skillName": "성과 분석",
+    "queries": {
+      "ko": [
+        "성과 분석 결과에서 대비 개인 사업의 조직 분석에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "926": {
+    "skillName": "성과지표 설정",
+    "queries": {
+      "ko": [
+        "성과지표 설정 성과지표 결과의 동작 설정에서는 요구조건에 지정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "927": {
+    "skillName": "성능 검증",
+    "queries": {
+      "ko": [
+        "성능 검증 성능이 검증에서는 충족하는지 판정하는 필요사항을 비교하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "928": {
+    "skillName": "성능 비교",
+    "queries": {
+      "ko": [
+        "성능 비교 나란히 비교에서는 장단점 적합성을 성능의 차이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "929": {
+    "skillName": "성능 시험",
+    "queries": {
+      "ko": [
+        "성능 시험 성능에 시험에서는 기대 한계를 결함과 경계"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "930": {
+    "skillName": "성능 진단",
+    "queries": {
+      "ko": [
+        "성능 진단 성능의 진단에서는 증상 식별하고 범위를 정하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "931": {
+    "skillName": "성능 최적화",
+    "queries": {
+      "ko": [
+        "성능 최적화 구간 병목 제거 성능의 최적화에서는 병목을"
+      ],
+      "en": [
+        "API"
+      ]
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "932": {
+    "skillName": "성능 평가",
+    "queries": {
+      "ko": [
+        "성능 평가 평가에서는 근거에 판단하고 성능을 명확한 방향을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "933": {
+    "skillName": "성능·비용·안정성 개선",
+    "queries": {
+      "ko": [
+        "성능·비용·안정성 개선 안정성의 안정성 개선에서는 변경안을 적용한 현행"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "934": {
+    "skillName": "성형",
+    "queries": {
+      "ko": [
+        "성형 가공하는 성형에서는 성형의 요구된 재료와 조절해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "935": {
+    "skillName": "세무 신고",
+    "queries": {
+      "ko": [
+        "세무 신고 과세 신고서를 신고에서는 제출하고 공제 납부"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "936": {
+    "skillName": "세무 조정",
+    "queries": {
+      "ko": [
+        "세무 조정 계산에 과세소득 세법상 장부와 조정사항을 조정에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "937": {
+    "skillName": "세탁",
+    "queries": {
+      "ko": [
+        "세탁 건조 구분해 섬유와 세제 손상을 오염"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "938": {
+    "skillName": "세포 실험",
+    "queries": {
+      "ko": [
+        "세포 실험 세포 세포에 대조 실험에서는 대한 가설"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "939": {
+    "skillName": "센서 모듈 프로젝트",
+    "queries": {
+      "ko": [
+        "센서 모듈 프로젝트 가속도 모듈 물리량을 신호나 출력하는 측정해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "940": {
+    "skillName": "센서 융합",
+    "queries": {
+      "ko": [
+        "센서 융합 결합하여 센서의 융합 융합에서는 좌표 시간과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "941": {
+    "skillName": "소방 법정기록 관리",
+    "queries": {
+      "ko": [
+        "소방 법정기록 관리 법정기록 소방 유지보수의 도면 공정 점검"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "942": {
+    "skillName": "소방시설 기능시험",
+    "queries": {
+      "ko": [
+        "소방시설 기능시험 기능시험 기능시험에서는 설비에 건축물과 소방시설 기대"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "943": {
+    "skillName": "소방시설 점검",
+    "queries": {
+      "ko": [
+        "소방시설 점검 소방시설 유지보수를 도면 점검에서는 체크 공정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "944": {
+    "skillName": "소송 대응",
+    "queries": {
+      "ko": [
+        "소송 대응 절차에서 소송 의무와 법적 권리 대응에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "945": {
+    "skillName": "소프트웨어 구현",
+    "queries": {
+      "ko": [
+        "소프트웨어 구현 소프트웨어에 구체화하고 구현에서는 기능이나 동작하는 절차로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "946": {
+    "skillName": "소프트웨어 테스트",
+    "queries": {
+      "ko": [
+        "소프트웨어 테스트 소프트웨어에 테스트에서는 기대 한계를 결함과 경계"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "947": {
+    "skillName": "손해액 산정",
+    "queries": {
+      "ko": [
+        "손해액 산정 산정에서는 손해액에 계산식으로 비율 산정 산출하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "948": {
+    "skillName": "솔루션 비교",
+    "queries": {
+      "ko": [
+        "솔루션 비교 솔루션의 나란히 비교에서는 장단점 적합성을 솔루션"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "949": {
+    "skillName": "쇼핑몰 프로젝트",
+    "queries": {
+      "ko": [
+        "쇼핑몰 프로젝트 고객관리를 장바구니 쇼핑몰 커머스 온라인으로 탐색"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "950": {
+    "skillName": "수업 운영",
+    "queries": {
+      "ko": [
+        "수업 운영 성취 향상을 수업 학습자의 이해와 활동의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "951": {
+    "skillName": "수업자료 개발",
+    "queries": {
+      "ko": [
+        "수업자료 개발 교수법 수업자료 피드백을 내용 개발에서는 결과물로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "952": {
+    "skillName": "수요 예측 프로젝트",
+    "queries": {
+      "ko": [
+        "수요 예측 프로젝트 요인을 필요량을 향후 계절 과거 상품이나"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "953": {
+    "skillName": "수율 분석",
+    "queries": {
+      "ko": [
+        "수율 분석 수율 수율에서 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "954": {
+    "skillName": "수출계약",
+    "queries": {
+      "ko": [
+        "수출계약 계약과 당사자 수출계약 수출계약에서는 수출의 증빙으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "955": {
+    "skillName": "수출입 정산",
+    "queries": {
+      "ko": [
+        "수출입 정산 금액을 대사하여 수취 정산에서는 조정하고 자재의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "956": {
+    "skillName": "수출입 통관",
+    "queries": {
+      "ko": [
+        "수출입 통관 신고와 통관에서는 세금 원산지 서류를 품목"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "957": {
+    "skillName": "숙박 예약",
+    "queries": {
+      "ko": [
+        "숙박 예약 숙박의 가능 숙박 예약에서는 취소를 요금"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "958": {
+    "skillName": "순찰",
+    "queries": {
+      "ko": [
+        "순찰 구역과 발견 순찰 순찰에서는 순찰의 순회하며"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "959": {
+    "skillName": "스마트 컨트랙트 개발",
+    "queries": {
+      "ko": [
+        "스마트 컨트랙트 개발 수수료를 컨트랙트 서명 트랜잭션 지갑 스마트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "960": {
+    "skillName": "스마트팩토리 시스템 운영",
+    "queries": {
+      "ko": [
+        "스마트팩토리 시스템 운영 스마트팩토리 달성을 수행과 시스템의 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "961": {
+    "skillName": "스위치·라우터 설정",
+    "queries": {
+      "ko": [
+        "스위치·라우터 설정 동작 설정에서는 요구조건에 지정하고 작동을 라우터"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "962": {
+    "skillName": "스크립트 적용",
+    "queries": {
+      "ko": [
+        "스크립트 적용 스크립트의 적용에서는 원리와 적용 스크립트 조건에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "963": {
+    "skillName": "스타일 가이드 관리",
+    "queries": {
+      "ko": [
+        "스타일 가이드 관리 가이드 가이드에 스타일 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "964": {
+    "skillName": "스타일 상담",
+    "queries": {
+      "ko": [
+        "스타일 상담 스타일과 스타일 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "965": {
+    "skillName": "스토어 배포",
+    "queries": {
+      "ko": [
+        "스토어 배포 스토어를 스토어 롤백과 배포에서는 환경에 버전"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "966": {
+    "skillName": "승객 안내",
+    "queries": {
+      "ko": [
+        "승객 안내 승객에 안내에서는 행동할 상대방이 안내 주의사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "967": {
+    "skillName": "승객 운송",
+    "queries": {
+      "ko": [
+        "승객 운송 승객의 운송에서는 운전하는 운행 승객 화물"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "968": {
+    "skillName": "시료 분석",
+    "queries": {
+      "ko": [
+        "시료 분석 시료 시료에서 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "969": {
+    "skillName": "시방서 검토",
+    "queries": {
+      "ko": [
+        "시방서 검토 시방서 시방서에 검토에서는 수정사항을 근거와 사양"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "970": {
+    "skillName": "시설 상태 점검",
+    "queries": {
+      "ko": [
+        "시설 상태 점검 유지보수를 도면 점검에서는 시설 체크 공정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "971": {
+    "skillName": "시스템 데이터 입력",
+    "queries": {
+      "ko": [
+        "시스템 데이터 입력 입력에서는 값을 시스템에 등록하는 항목 입력"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "972": {
+    "skillName": "시약 재고 관리",
+    "queries": {
+      "ko": [
+        "시약 재고 관리 시약 통관의 입출고 수요 재고 운송"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "973": {
+    "skillName": "시운전",
+    "queries": {
+      "ko": [
+        "시운전 시운전 시운전에서는 시의 운전하는 운행 승객"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "974": {
+    "skillName": "시장 분석",
+    "queries": {
+      "ko": [
+        "시장 분석 시장에서 시장 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "975": {
+    "skillName": "시장 조사",
+    "queries": {
+      "ko": [
+        "시장 조사 시장에 조사에서는 질문 정하고 조사 시장"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "976": {
+    "skillName": "시제품 제작",
+    "queries": {
+      "ko": [
+        "시제품 제작 시제품에 가공하여 시제품 제작에서는 규격에 산출물로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "977": {
+    "skillName": "시험 결과 분석",
+    "queries": {
+      "ko": [
+        "시험 결과 분석 결과에서 시험 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "978": {
+    "skillName": "시험 기록 관리",
+    "queries": {
+      "ko": [
+        "시험 기록 관리 기록에 시험 기록 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "979": {
+    "skillName": "시험법 개발",
+    "queries": {
+      "ko": [
+        "시험법 개발 시험법 시험법에 개발에서는 결과물로 코드와 구현하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "980": {
+    "skillName": "식단 작성",
+    "queries": {
+      "ko": [
+        "식단 작성 식단에 식단 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "981": {
+    "skillName": "식재료 검수",
+    "queries": {
+      "ko": [
+        "식재료 검수 식재료에 검수에서는 식재료 검수 체크 불일치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "982": {
+    "skillName": "식재료 관리",
+    "queries": {
+      "ko": [
+        "식재료 관리 식재료에 식재료 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "983": {
+    "skillName": "식재료 세척",
+    "queries": {
+      "ko": [
+        "식재료 세척 세척에서는 식재료의 방법으로 오염과 청결을 소독"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "984": {
+    "skillName": "식재료 손질",
+    "queries": {
+      "ko": [
+        "식재료 손질 부분을 손질에서는 식재료의 용도에 절단 제거하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "985": {
+    "skillName": "신규 구성원 온보딩",
+    "queries": {
+      "ko": [
+        "신규 구성원 온보딩 구성원이 업무에 온보딩에서는 적응하도록 초기 신규"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "986": {
+    "skillName": "신규 프로세스 구축",
+    "queries": {
+      "ko": [
+        "신규 프로세스 구축 프로세스에 신규 프로세스 구축에서는 사용할 연결"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "987": {
+    "skillName": "신뢰성 시험",
+    "queries": {
+      "ko": [
+        "신뢰성 시험 신뢰성 신뢰성에 시험에서는 기대 한계를 결함과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "988": {
+    "skillName": "실시간 액션 프로젝트",
+    "queries": {
+      "ko": [
+        "실시간 액션 프로젝트 액션 입력과 즉각적인 지연으로 짧은 반응을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "989": {
+    "skillName": "실시간 추론 프로젝트",
+    "queries": {
+      "ko": [
+        "실시간 추론 프로젝트 들어오는 입력이 제공하도록 지연 즉시 최적화하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "990": {
+    "skillName": "실시간 파이프라인 프로젝트",
+    "queries": {
+      "ko": [
+        "실시간 파이프라인 프로젝트 전달하여 즉시 반영하는 파이프라인 발생 이벤트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "991": {
+    "skillName": "실적 관리",
+    "queries": {
+      "ko": [
+        "실적 관리 과제의 차이 기간 실적 지표 목표"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "992": {
+    "skillName": "실적 분석",
+    "queries": {
+      "ko": [
+        "실적 분석 결과에서 대비 개인 사업의 실적 조직"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "993": {
+    "skillName": "실패 사례 분석",
+    "queries": {
+      "ko": [
+        "실패 사례 분석 사례 사례에서 실패 분석에서는 패턴 해석하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "994": {
+    "skillName": "실행계획 수립",
+    "queries": {
+      "ko": [
+        "실행계획 수립 실행계획 실행계획의 수립에서는 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "995": {
+    "skillName": "실험 관리",
+    "queries": {
+      "ko": [
+        "실험 관리 해석의 가설 실험 변수 표본 측정"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "996": {
+    "skillName": "실험 추적",
+    "queries": {
+      "ko": [
+        "실험 추적 남겨 이력으로 재현성을 식별 실험의 확보하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "997": {
+    "skillName": "실환경 검증",
+    "queries": {
+      "ko": [
+        "실환경 검증 실환경 실환경이 검증에서는 충족하는지 판정하는 필요사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "998": {
+    "skillName": "안내방송",
+    "queries": {
+      "ko": [
+        "안내방송 방송으로 안내방송 안내방송에 안내방송에서는 알아듣기 정확하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "999": {
+    "skillName": "안전 관리",
+    "queries": {
+      "ko": [
+        "안전 관리 안전에 안전 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1000": {
+    "skillName": "안전 기준 점검",
+    "queries": {
+      "ko": [
+        "안전 기준 점검 점검에서는 체크 불일치 항목에 점검 조치하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1001": {
+    "skillName": "안전 기준 준수",
+    "queries": {
+      "ko": [
+        "안전 기준 준수 준수에서는 적용되는 준수 증빙에 표준을 법령"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1002": {
+    "skillName": "안전규격 대응",
+    "queries": {
+      "ko": [
+        "안전규격 대응 안전규격 안전규격에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1003": {
+    "skillName": "안테나 성능 검증",
+    "queries": {
+      "ko": [
+        "안테나 성능 검증 안테나 성능이 검증에서는 충족하는지 판정하는 필요사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1004": {
+    "skillName": "알고리즘 설계",
+    "queries": {
+      "ko": [
+        "알고리즘 설계 알고리즘의 알고리즘에 알고리즘 설계에서는 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1005": {
+    "skillName": "앱 성능 개선",
+    "queries": {
+      "ko": [
+        "앱 성능 개선 기기에서 실행되는 애플리케이션의 개선에서는 모바일 변경안을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1006": {
+    "skillName": "앱 아키텍처 설계",
+    "queries": {
+      "ko": [
+        "앱 아키텍처 설계 기기에서 배포를 실행되는 아키텍처 기기 애플리케이션의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1007": {
+    "skillName": "양산 이관",
+    "queries": {
+      "ko": [
+        "양산 이관 부서에 양산을 이관 작업표준을 확정하여 시제품"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1008": {
+    "skillName": "업무 계획 수립",
+    "queries": {
+      "ko": [
+        "업무 계획 수립 계획의 수립에서는 계획 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1009": {
+    "skillName": "업무 매뉴얼 정비",
+    "queries": {
+      "ko": [
+        "업무 매뉴얼 정비 매뉴얼 매뉴얼의 정비에서는 소모 확인으로 교체"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1010": {
+    "skillName": "업무 문서 작성",
+    "queries": {
+      "ko": [
+        "업무 문서 작성 게시를 주제 검수 매체 표현 작성에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1011": {
+    "skillName": "업무 문서화",
+    "queries": {
+      "ko": [
+        "업무 문서화 문서화에서는 재현할 입출력 있게 문서화 사람이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1012": {
+    "skillName": "업무 산출물 작성",
+    "queries": {
+      "ko": [
+        "업무 산출물 작성 산출물에 산출물 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1013": {
+    "skillName": "업무 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "업무 시스템 프로젝트 표준화하고 소프트웨어로 정보시스템 조직의 조회 기록"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1014": {
+    "skillName": "업무 실행",
+    "queries": {
+      "ko": [
+        "업무 실행 기한과 실행에서는 업무의 진행 작업을 우선순위"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1015": {
+    "skillName": "업무 인수인계",
+    "queries": {
+      "ko": [
+        "업무 인수인계 담당자에게 미완료 위치를 인수인계에서는 인수인계 주의사항"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1016": {
+    "skillName": "업무 자동화 프로젝트",
+    "queries": {
+      "ko": [
+        "업무 자동화 프로젝트 rpa로 수작업을 스크립트 업무의 구현하여 흐름을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1017": {
+    "skillName": "업무 절차 개선",
+    "queries": {
+      "ko": [
+        "업무 절차 개선 절차의 개선에서는 변경안을 적용한 현행 효과를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1018": {
+    "skillName": "업무 혁신 프로젝트",
+    "queries": {
+      "ko": [
+        "업무 혁신 프로젝트 낭비와 재설계하여 혁신 프로세스의 현행 높이는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1019": {
+    "skillName": "업체 섭외",
+    "queries": {
+      "ko": [
+        "업체 섭외 관계자를 섭외 섭외에서는 업체에 출연자 협의하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1020": {
+    "skillName": "에이전트 자동화 프로젝트",
+    "queries": {
+      "ko": [
+        "에이전트 자동화 프로젝트 에이전트 에이전트가 호출해 단계를 수행하도록 목표에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1021": {
+    "skillName": "엣지 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "엣지 AI 프로젝트 단말이나 보내지 않고 엣지 장치에서 추론을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1022": {
+    "skillName": "여행 상담",
+    "queries": {
+      "ko": [
+        "여행 상담 여행과 여행 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1023": {
+    "skillName": "연구 결과 발표",
+    "queries": {
+      "ko": [
+        "연구 결과 발표 발표 발표에서는 말로 시간에 청중의 메시지와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1024": {
+    "skillName": "연구 기록 관리",
+    "queries": {
+      "ko": [
+        "연구 기록 관리 해석의 가설 변수 연구 표본 기록"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1025": {
+    "skillName": "연구 업무",
+    "queries": {
+      "ko": [
+        "연구 업무 가설을 해석 질문과 기록을 실험 정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1026": {
+    "skillName": "연구 주제 정의",
+    "queries": {
+      "ko": [
+        "연구 주제 정의 정의에서는 조건으로 용어 자료의 질문과 주제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1027": {
+    "skillName": "연구기관 업무",
+    "queries": {
+      "ko": [
+        "연구기관 업무 연구기관 과제의 윤리 기관 실험 계획"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1028": {
+    "skillName": "연구진 협업",
+    "queries": {
+      "ko": [
+        "연구진 협업 연구진 협업에서는 공유하고 역할과 해결하는 공동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1029": {
+    "skillName": "열 해석",
+    "queries": {
+      "ko": [
+        "열 해석 열의 해석에서는 업무적 의미하는 한계와 결과가"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1030": {
+    "skillName": "염습 지원",
+    "queries": {
+      "ko": [
+        "염습 지원 염습 염습이 원활히 지원에서는 진행되도록 협의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1031": {
+    "skillName": "영양 상담",
+    "queries": {
+      "ko": [
+        "영양 상담 영양과 영양 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1032": {
+    "skillName": "영유아 발달 관찰",
+    "queries": {
+      "ko": [
+        "영유아 발달 관찰 발달 발달의 영유아 관찰에서는 살피고 주기에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1033": {
+    "skillName": "예방접종",
+    "queries": {
+      "ko": [
+        "예방접종 금기 백신 예방접종 예방접종에서는 접종 예방의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1034": {
+    "skillName": "예방정비",
+    "queries": {
+      "ko": [
+        "예방정비 예방정비 예방정비에서는 소모 예방의 확인으로 교체"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1035": {
+    "skillName": "예약 관리",
+    "queries": {
+      "ko": [
+        "예약 관리 예약에 예약 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1036": {
+    "skillName": "예약 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "예약 서비스 프로젝트 결제를 객실 취소 조회하고 좌석 예약"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1037": {
+    "skillName": "예측 모델 프로젝트",
+    "queries": {
+      "ko": [
+        "예측 모델 프로젝트 값이나 미래 과거 학습하여 추정하는 발생"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1038": {
+    "skillName": "오븐 작업",
+    "queries": {
+      "ko": [
+        "오븐 작업 스팀 오븐 제품별 굽기 설정하고 수분"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1039": {
+    "skillName": "오픈·마감 관리",
+    "queries": {
+      "ko": [
+        "오픈·마감 관리 마감에 오픈 마감 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1040": {
+    "skillName": "오픈소스 기여",
+    "queries": {
+      "ko": [
+        "오픈소스 기여 검토와 기여 기여에서는 병합 오픈소스의 작성해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1041": {
+    "skillName": "온라인 수업 운영",
+    "queries": {
+      "ko": [
+        "온라인 수업 운영 성취 향상을 수업 학습자의 이해와 활동의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1042": {
+    "skillName": "온체인 데이터 분석",
+    "queries": {
+      "ko": [
+        "온체인 데이터 분석 온체인 데이터에서 사용하는 분석과 서비스에 분석에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1043": {
+    "skillName": "외국어 전공",
+    "queries": {
+      "ko": [
+        "외국어 전공 외국어 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1044": {
+    "skillName": "외식 매장 운영",
+    "queries": {
+      "ko": [
+        "외식 매장 운영 외식 매장의 매장 달성을 수행과 안정적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1045": {
+    "skillName": "요구사항 구체화",
+    "queries": {
+      "ko": [
+        "요구사항 구체화 구체화 구체화에서는 요구사항의 조건으로 용어 요구사항"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1046": {
+    "skillName": "요구사항 분석",
+    "queries": {
+      "ko": [
+        "요구사항 분석 요구사항에서 요구사항 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1047": {
+    "skillName": "요구사항 정의",
+    "queries": {
+      "ko": [
+        "요구사항 정의 요구사항의 정의에서는 조건으로 용어 요구사항 이해관계자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1048": {
+    "skillName": "요금 정산",
+    "queries": {
+      "ko": [
+        "요금 정산 요금의 금액을 대사하여 수취 요금 정산에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1049": {
+    "skillName": "용량 계획",
+    "queries": {
+      "ko": [
+        "용량 계획 용량의 용량 계획에서는 계획 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1050": {
+    "skillName": "운동 지도",
+    "queries": {
+      "ko": [
+        "운동 지도 운동의 지도에서는 운동 수행을 지도 파악하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1051": {
+    "skillName": "운송사 배차",
+    "queries": {
+      "ko": [
+        "운송사 배차 배정하고 배차에서는 운송사 운송사의 배차 적재"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1052": {
+    "skillName": "운영 기준 개선",
+    "queries": {
+      "ko": [
+        "운영 기준 개선 기준의 개선에서는 변경안을 적용한 현행 효과를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1053": {
+    "skillName": "운영 리스크 점검",
+    "queries": {
+      "ko": [
+        "운영 리스크 점검 리스크에 리스크 점검에서는 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1054": {
+    "skillName": "운영 문서화",
+    "queries": {
+      "ko": [
+        "운영 문서화 문서화에서는 운영의 재현할 입출력 있게 문서화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1055": {
+    "skillName": "운영 분석 프로젝트",
+    "queries": {
+      "ko": [
+        "운영 분석 프로젝트 처리량 개선점을 업무의 찾는 지표를 시간"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1056": {
+    "skillName": "운영 이슈 대응",
+    "queries": {
+      "ko": [
+        "운영 이슈 대응 이슈에서 이슈 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1057": {
+    "skillName": "운영 자동화",
+    "queries": {
+      "ko": [
+        "운영 자동화 운영의 수작업과 예외를 워크플로로 자동화에서는 구현하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1058": {
+    "skillName": "운영 지원",
+    "queries": {
+      "ko": [
+        "운영 지원 운영이 원활히 지원에서는 진행되도록 협의와 관계자"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1059": {
+    "skillName": "운영 표준화",
+    "queries": {
+      "ko": [
+        "운영 표준화 양식 표준화에서는 방식과 운영의 통일하는 표준화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1060": {
+    "skillName": "운영체제 관리",
+    "queries": {
+      "ko": [
+        "운영체제 관리 운영체제에 운영체제 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1061": {
+    "skillName": "운용 보고",
+    "queries": {
+      "ko": [
+        "운용 보고 운용의 대상자가 보고에서는 운용 이해하기 쉬운"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1062": {
+    "skillName": "운전 업무",
+    "queries": {
+      "ko": [
+        "운전 업무 교통법규에 운전 운행하는 승객 화물 경로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1063": {
+    "skillName": "운행일지 작성",
+    "queries": {
+      "ko": [
+        "운행일지 작성 운행일지 운행일지에 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1064": {
+    "skillName": "워크숍 진행",
+    "queries": {
+      "ko": [
+        "워크숍 진행 워크숍 워크숍의 진행에서는 참여자 목적 완료까지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1065": {
+    "skillName": "워크플로 관리",
+    "queries": {
+      "ko": [
+        "워크플로 관리 워크플로에 워크플로 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1066": {
+    "skillName": "원가 관리",
+    "queries": {
+      "ko": [
+        "원가 관리 원가에 원가 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1067": {
+    "skillName": "원가 절감",
+    "queries": {
+      "ko": [
+        "원가 절감 원가의 절감 절감에서는 원가 병목을 효율적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1068": {
+    "skillName": "원두 관리",
+    "queries": {
+      "ko": [
+        "원두 관리 원두에 원두 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1069": {
+    "skillName": "원료 관리",
+    "queries": {
+      "ko": [
+        "원료 관리 원료에 원료 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1070": {
+    "skillName": "원인 분석",
+    "queries": {
+      "ko": [
+        "원인 분석 원인에서 분석에서는 패턴 해석하여 비교 원인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1071": {
+    "skillName": "웨이퍼 공정 최적화",
+    "queries": {
+      "ko": [
+        "웨이퍼 공정 최적화 웨이퍼 최적화에서는 병목을 효율적인 공정의 제품과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1072": {
+    "skillName": "웹 기능 설계",
+    "queries": {
+      "ko": [
+        "웹 기능 설계 상호작용 이용하는 기능의 화면과 성능을 반응형"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1073": {
+    "skillName": "웹 접근성 개선",
+    "queries": {
+      "ko": [
+        "웹 접근성 개선 이용하는 기능의 화면과 브라우저에서 접근성 개선에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1074": {
+    "skillName": "웹 접근성 준수",
+    "queries": {
+      "ko": [
+        "웹 접근성 준수 기능에 이용하는 준수에서는 화면과 적용되는 준수"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1075": {
+    "skillName": "웹 표준 준수",
+    "queries": {
+      "ko": [
+        "웹 표준 준수 기능에 이용하는 준수에서는 화면과 적용되는 준수"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1076": {
+    "skillName": "위생 점검",
+    "queries": {
+      "ko": [
+        "위생 점검 위생에 점검에서는 위생 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1077": {
+    "skillName": "위험 보고",
+    "queries": {
+      "ko": [
+        "위험 보고 위험의 대상자가 보고에서는 이해하기 쉬운 형식으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1078": {
+    "skillName": "위험 판단",
+    "queries": {
+      "ko": [
+        "위험 판단 가능성 완화 판단에서는 회피 수용 위험의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1079": {
+    "skillName": "유지보수 이력 관리",
+    "queries": {
+      "ko": [
+        "유지보수 이력 관리 이력에 이력 유지보수 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1080": {
+    "skillName": "유통 계획",
+    "queries": {
+      "ko": [
+        "유통 계획 유통 유통의 계획에서는 계획 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1081": {
+    "skillName": "유통학 전공",
+    "queries": {
+      "ko": [
+        "유통학 전공 유통학 방법론과 배경입니다. 이론 전공 학습한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1082": {
+    "skillName": "음료 제조",
+    "queries": {
+      "ko": [
+        "음료 제조 음료의 음료 제조에서는 통제하여 사양과 제품을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1083": {
+    "skillName": "음성 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "음성 AI 프로젝트 구분하는 합성하거나 화자를 사람의 음성을 인식"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1084": {
+    "skillName": "음성 데이터 프로젝트",
+    "queries": {
+      "ko": [
+        "음성 데이터 프로젝트 구조화한 발화 녹음 학습과 화자 활용하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1085": {
+    "skillName": "음식 제공",
+    "queries": {
+      "ko": [
+        "음식 제공 음식 제공에서는 메뉴의 음식과 제공 품질과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1086": {
+    "skillName": "응급 대응",
+    "queries": {
+      "ko": [
+        "응급 대응 응급 응급에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1087": {
+    "skillName": "응답 평가",
+    "queries": {
+      "ko": [
+        "응답 평가 응답을 평가에서는 근거에 판단하고 응답 명확한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1088": {
+    "skillName": "의료 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "의료 AI 프로젝트 지원에 인공지능 예측 의료 활용하는 진단"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1089": {
+    "skillName": "의료 영상 프로젝트",
+    "queries": {
+      "ko": [
+        "의료 영상 프로젝트 ct mri 시각화한 초음파 ray 인체"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1090": {
+    "skillName": "의료기기 프로젝트",
+    "queries": {
+      "ko": [
+        "의료기기 프로젝트 원리 의료기기 질병의 모니터링에 소프트웨어의 장비와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1091": {
+    "skillName": "의료진 협업",
+    "queries": {
+      "ko": [
+        "의료진 협업 의료진 건강과 협업에서는 공유하고 역할과 정보의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1092": {
+    "skillName": "의무 기록 관리",
+    "queries": {
+      "ko": [
+        "의무 기록 관리 기록에 의무 기록 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1093": {
+    "skillName": "의사결정 근거 문서화",
+    "queries": {
+      "ko": [
+        "의사결정 근거 문서화 근거의 문서화에서는 재현할 입출력 있게 문서화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1094": {
+    "skillName": "의상 선택",
+    "queries": {
+      "ko": [
+        "의상 선택 선택에서는 의상의 고르는 적합성 후보를 선택"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1095": {
+    "skillName": "의약품 재고 관리",
+    "queries": {
+      "ko": [
+        "의약품 재고 관리 통관의 입출고 의약품 수요 재고 운송"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1096": {
+    "skillName": "이벤트 분석",
+    "queries": {
+      "ko": [
+        "이벤트 분석 이벤트에서 이벤트 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1097": {
+    "skillName": "이상 탐지 프로젝트",
+    "queries": {
+      "ko": [
+        "이상 탐지 프로젝트 벗어난 부정을 식별하여 패턴에서 발견하는 탐지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1098": {
+    "skillName": "이슈 보고",
+    "queries": {
+      "ko": [
+        "이슈 보고 대상자가 보고에서는 이해하기 쉬운 형식으로 요청사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1099": {
+    "skillName": "이슈 조율",
+    "queries": {
+      "ko": [
+        "이슈 조율 이슈에 실행을 의존사항을 조율에서는 조정해 합의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1100": {
+    "skillName": "이의 대응",
+    "queries": {
+      "ko": [
+        "이의 대응 이의 이의에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1101": {
+    "skillName": "이중화 운영",
+    "queries": {
+      "ko": [
+        "이중화 운영 이중화의 이중화 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1102": {
+    "skillName": "이커머스 프로젝트",
+    "queries": {
+      "ko": [
+        "이커머스 프로젝트 반품까지 이커머스 탐색부터 과정을 배송 주문"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1103": {
+    "skillName": "이탈 예측 프로젝트",
+    "queries": {
+      "ko": [
+        "이탈 예측 프로젝트 중단이나 이탈 중단 행동과 추정하는 가능성을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1104": {
+    "skillName": "이해관계자 요구사항 조율",
+    "queries": {
+      "ko": [
+        "이해관계자 요구사항 조율 실행을 의존사항을 조율에서는 조정해 합의와 관계자의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1105": {
+    "skillName": "이해관계자 조율",
+    "queries": {
+      "ko": [
+        "이해관계자 조율 이해관계자에 실행을 의존사항을 조율에서는 조정해 합의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1106": {
+    "skillName": "이해관계자 협업",
+    "queries": {
+      "ko": [
+        "이해관계자 협업 이해관계자의 협업에서는 공유하고 역할과 해결하는 공동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1107": {
+    "skillName": "이행계획 수립",
+    "queries": {
+      "ko": [
+        "이행계획 수립 이행계획 이행계획의 수립에서는 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1108": {
+    "skillName": "인력 관리",
+    "queries": {
+      "ko": [
+        "인력 관리 인력에 인력 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1109": {
+    "skillName": "인력 배치",
+    "queries": {
+      "ko": [
+        "인력 배치 배정하는 배치에서는 사람과 업무량 인력의 인력"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1110": {
+    "skillName": "인증 대응",
+    "queries": {
+      "ko": [
+        "인증 대응 인증에서 인증 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1111": {
+    "skillName": "인증 및 인가",
+    "queries": {
+      "ko": [
+        "인증 및 인가 인가 인가에서는 인가의 신원을 접근만 허용된"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1112": {
+    "skillName": "인지 알고리즘 개발",
+    "queries": {
+      "ko": [
+        "인지 알고리즘 개발 인지 알고리즘에 알고리즘 개발에서는 결과물로 코드와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1113": {
+    "skillName": "인프라 자동화",
+    "queries": {
+      "ko": [
+        "인프라 자동화 인프라의 서버와 수작업과 예외를 워크플로로 자동화에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1114": {
+    "skillName": "인허가 서류 작성",
+    "queries": {
+      "ko": [
+        "인허가 서류 작성 인허가 서류에 서류 작성에서는 정리하여 표현으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1115": {
+    "skillName": "일정 관리",
+    "queries": {
+      "ko": [
+        "일정 관리 성과의 의사결정 범위 자원 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1116": {
+    "skillName": "일정 설계",
+    "queries": {
+      "ko": [
+        "일정 설계 산출물이 프로젝트의 설계에서는 의사결정 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1117": {
+    "skillName": "임상·연구 데이터 관리",
+    "queries": {
+      "ko": [
+        "임상·연구 데이터 관리 임상 접근권한의 정제 변환 연구 저장"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1118": {
+    "skillName": "임상시험 계획",
+    "queries": {
+      "ko": [
+        "임상시험 계획 유효성을 의료기기의 임상시험의 안전성과 임상시험 계획에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1119": {
+    "skillName": "임상시험 기관 관리",
+    "queries": {
+      "ko": [
+        "임상시험 기관 관리 연구계획 이상반응 대상자 임상시험 일정의 기관"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1120": {
+    "skillName": "입찰 관리",
+    "queries": {
+      "ko": [
+        "입찰 관리 입찰에 입찰 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1121": {
+    "skillName": "입출고 계획",
+    "queries": {
+      "ko": [
+        "입출고 계획 입출고의 입출고 계획에서는 계획 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1122": {
+    "skillName": "입출금 관리",
+    "queries": {
+      "ko": [
+        "입출금 관리 입출금에 입출금 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1123": {
+    "skillName": "자동차 전장 프로젝트",
+    "queries": {
+      "ko": [
+        "자동차 전장 프로젝트 인포테인먼트 전자제어기와 통신으로 편의 전장 차량의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1124": {
+    "skillName": "자동화 스크립트 작성",
+    "queries": {
+      "ko": [
+        "자동화 스크립트 작성 스크립트에 스크립트 자동화 작성에서는 정리하여 표현으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1125": {
+    "skillName": "자동화 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "자동화 전환 프로젝트 공정을 대체하는 수행하던 업무나 로직으로 사람이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1126": {
+    "skillName": "자료 수집",
+    "queries": {
+      "ko": [
+        "자료 수집 수집에서는 원천과 정해 주기 출처를 확보하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1127": {
+    "skillName": "자료 정리",
+    "queries": {
+      "ko": [
+        "자료 정리 순서로 정리에서는 중복을 분류하고 자료의 정리하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1128": {
+    "skillName": "자원 모니터링",
+    "queries": {
+      "ko": [
+        "자원 모니터링 자원의 관찰하여 모니터링에서는 보고하는 발견하고 조기에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1129": {
+    "skillName": "자율주행 이미지 프로젝트",
+    "queries": {
+      "ko": [
+        "자율주행 이미지 프로젝트 가공한 보행자 인식하도록 자율주행 주행 표지판"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1130": {
+    "skillName": "자재 소요량 산출",
+    "queries": {
+      "ko": [
+        "자재 소요량 산출 산출 산출에서는 소요량 소요량에 계산식으로 비율"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1131": {
+    "skillName": "자재 투입 관리",
+    "queries": {
+      "ko": [
+        "자재 투입 관리 투입 투입에 자재 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1132": {
+    "skillName": "자재코드 관리",
+    "queries": {
+      "ko": [
+        "자재코드 관리 자재코드 자재코드에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1133": {
+    "skillName": "작업 검수",
+    "queries": {
+      "ko": [
+        "작업 검수 작업에 검수에서는 검수 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1134": {
+    "skillName": "작업 기준 확인",
+    "queries": {
+      "ko": [
+        "작업 기준 확인 기준의 상태가 확인에서는 일치하는지 확인 원본"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1135": {
+    "skillName": "작업 보고",
+    "queries": {
+      "ko": [
+        "작업 보고 작업의 대상자가 보고에서는 이해하기 쉬운 형식으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1136": {
+    "skillName": "작업계획 수립",
+    "queries": {
+      "ko": [
+        "작업계획 수립 작업계획 작업계획의 수립에서는 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1137": {
+    "skillName": "작업량 기록",
+    "queries": {
+      "ko": [
+        "작업량 기록 작업량 작업량의 기록에서는 시점 형식에 항목과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1138": {
+    "skillName": "작업장 정리",
+    "queries": {
+      "ko": [
+        "작업장 정리 작업장 작업장의 순서로 정리에서는 중복을 분류하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1139": {
+    "skillName": "작업표준 준수",
+    "queries": {
+      "ko": [
+        "작업표준 준수 작업표준 작업표준에 준수에서는 적용되는 준수 증빙에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1140": {
+    "skillName": "장례 절차 지원",
+    "queries": {
+      "ko": [
+        "장례 절차 지원 장례 절차가 원활히 지원에서는 진행되도록 협의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1141": {
+    "skillName": "장비 운전",
+    "queries": {
+      "ko": [
+        "장비 운전 운전에서는 운전 운전하는 장비의 운행 승객"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1142": {
+    "skillName": "장비 재고 관리",
+    "queries": {
+      "ko": [
+        "장비 재고 관리 통관의 입출고 수요 장비 재고 운송"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1143": {
+    "skillName": "장서 점검",
+    "queries": {
+      "ko": [
+        "장서 점검 장서 장서에 점검에서는 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1144": {
+    "skillName": "장애 대응",
+    "queries": {
+      "ko": [
+        "장애 대응 장애에서 복구 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1145": {
+    "skillName": "장애 분석",
+    "queries": {
+      "ko": [
+        "장애 분석 장애에서 장애 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1146": {
+    "skillName": "장애 원인 분석",
+    "queries": {
+      "ko": [
+        "장애 원인 분석 원인에서 추적 조사 장애 분석에서는 패턴"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1147": {
+    "skillName": "장애 재발 방지",
+    "queries": {
+      "ko": [
+        "장애 재발 방지 근본 장애의 감시 개선을 방지 적용해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1148": {
+    "skillName": "재고 상태 확인",
+    "queries": {
+      "ko": [
+        "재고 상태 확인 자재의 흐름의 공급 상태가 확인에서는 일치하는지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1149": {
+    "skillName": "재고 정확도 관리",
+    "queries": {
+      "ko": [
+        "재고 정확도 관리 정확도 통관의 입출고 수요 재고 운송"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1150": {
+    "skillName": "재무 모델링",
+    "queries": {
+      "ko": [
+        "재무 모델링 개념 도형 모델링에서는 수식 수치의 모델로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1151": {
+    "skillName": "재무제표 검토",
+    "queries": {
+      "ko": [
+        "재무제표 검토 보고를 세금 현금 재무제표 계정 증빙"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1152": {
+    "skillName": "재해복구 체계 프로젝트",
+    "queries": {
+      "ko": [
+        "재해복구 체계 프로젝트 사전에 체계 훈련 대체 재해복구 복구"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1153": {
+    "skillName": "재해복구 프로젝트",
+    "queries": {
+      "ko": [
+        "재해복구 프로젝트 상태로 재해로 중단된 되돌리는 우선순위와 재해복구"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1154": {
+    "skillName": "적대적 공격 프로젝트",
+    "queries": {
+      "ko": [
+        "적대적 공격 프로젝트 교란하는 기법에 변형하거나 의도적으로 잘못 판단하도록"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1155": {
+    "skillName": "전산 입력",
+    "queries": {
+      "ko": [
+        "전산 입력 전산 전산의 입력에서는 값을 시스템에 등록하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1156": {
+    "skillName": "전시회 운영",
+    "queries": {
+      "ko": [
+        "전시회 운영 전시회 전시회의 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1157": {
+    "skillName": "전장 설계 검토",
+    "queries": {
+      "ko": [
+        "전장 설계 검토 설계에 전장 검토에서는 수정사항을 근거와 사양"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1158": {
+    "skillName": "전처리",
+    "queries": {
+      "ko": [
+        "전처리 전처리를 결측 전처리에서는 표준화하는 분석에 전처리"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1159": {
+    "skillName": "전화 응대",
+    "queries": {
+      "ko": [
+        "전화 응대 기록과 듣고 응대에서는 의도를 전화의 전화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1160": {
+    "skillName": "점검 서류 작성",
+    "queries": {
+      "ko": [
+        "점검 서류 작성 서류에 서류 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1161": {
+    "skillName": "점포 지원",
+    "queries": {
+      "ko": [
+        "점포 지원 점포 점포가 원활히 지원에서는 진행되도록 협의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1162": {
+    "skillName": "접근통제",
+    "queries": {
+      "ko": [
+        "접근통제 접근통제에서는 접근통제의 신원을 접근만 허용된 접근통제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1163": {
+    "skillName": "정리정돈",
+    "queries": {
+      "ko": [
+        "정리정돈 물품을 빈도에 용도와 작업환경을 정리정돈 정리정돈에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1164": {
+    "skillName": "정보화 전략 수립",
+    "queries": {
+      "ko": [
+        "정보화 전략 수립 전략의 정보화 수립에서는 전략 수립 성과기준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1165": {
+    "skillName": "정비 기록 관리",
+    "queries": {
+      "ko": [
+        "정비 기록 관리 기록에 정비 기록 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1166": {
+    "skillName": "정비 실무",
+    "queries": {
+      "ko": [
+        "정비 실무 분해 시험을 조립과 수리 증상과 교체"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1167": {
+    "skillName": "정산",
+    "queries": {
+      "ko": [
+        "정산 정산의 금액을 대사하여 수취 정산에서는 조정하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1168": {
+    "skillName": "제로트러스트 프로젝트",
+    "queries": {
+      "ko": [
+        "제로트러스트 프로젝트 검증하고 권한만 모든 접근을 제로트러스트 허용하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1169": {
+    "skillName": "제신고 처리",
+    "queries": {
+      "ko": [
+        "제신고 처리 제신고 제신고에 기한에 처리에서는 남기는 처리하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1170": {
+    "skillName": "제약바이오 업무",
+    "queries": {
+      "ko": [
+        "제약바이오 업무 규정과 바이오 제약바이오 허가 문서를 의약품"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1171": {
+    "skillName": "제조공정 운영",
+    "queries": {
+      "ko": [
+        "제조공정 운영 제조공정 생산과 확보를 공정의 제품과 안정적인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1172": {
+    "skillName": "제품 개발 전 과정 참여",
+    "queries": {
+      "ko": [
+        "제품 개발 전 과정 참여 콘셉트부터 단계별 의사결정과 참여 출시까지 산출물에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1173": {
+    "skillName": "제품 분석 프로젝트",
+    "queries": {
+      "ko": [
+        "제품 분석 프로젝트 유지 기회를 성장 찾는 지표를 제품"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1174": {
+    "skillName": "조리",
+    "queries": {
+      "ko": [
+        "조리 만들고 맛과 조리에서는 조리의 조리법 음식을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1175": {
+    "skillName": "조리 보조",
+    "queries": {
+      "ko": [
+        "조리 보조 과정이 보조에서는 보조의 수행해 원활하도록 관리를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1176": {
+    "skillName": "조리 실무",
+    "queries": {
+      "ko": [
+        "조리 실무 간을 손질하고 식재료를 위생적으로 관리해 조리법"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1177": {
+    "skillName": "조리표준 수립",
+    "queries": {
+      "ko": [
+        "조리표준 수립 조리표준 조리표준의 수립에서는 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1178": {
+    "skillName": "조세 불복 자문",
+    "queries": {
+      "ko": [
+        "조세 불복 자문 불복 불복과 조세 자문에서는 자문 선택지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1179": {
+    "skillName": "종합병원 업무",
+    "queries": {
+      "ko": [
+        "종합병원 업무 병원 의료진이 종합병원 진료과와 협업하는 다양한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1180": {
+    "skillName": "좌석 안내",
+    "queries": {
+      "ko": [
+        "좌석 안내 좌석에 안내에서는 행동할 상대방이 안내 좌석"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1181": {
+    "skillName": "주류 관리",
+    "queries": {
+      "ko": [
+        "주류 관리 주류에 주류 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1182": {
+    "skillName": "주문 관리",
+    "queries": {
+      "ko": [
+        "주문 관리 반품의 배송 가격 주문 재고 결제"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1183": {
+    "skillName": "주문 접수",
+    "queries": {
+      "ko": [
+        "주문 접수 연락처 접수에서는 다음 접수 절차로 내용"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1184": {
+    "skillName": "주문 확인",
+    "queries": {
+      "ko": [
+        "주문 확인 상태가 확인에서는 일치하는지 확인 상품과 원본"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1185": {
+    "skillName": "주방 운영",
+    "queries": {
+      "ko": [
+        "주방 운영 주방 주방의 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1186": {
+    "skillName": "주유",
+    "queries": {
+      "ko": [
+        "주유 연료 종류 주유 주유량 주유에서는 주유의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1187": {
+    "skillName": "중개계약 지원",
+    "queries": {
+      "ko": [
+        "중개계약 지원 중개계약 절차가 의무와 법적 권리 원활히"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1188": {
+    "skillName": "지갑 연동",
+    "queries": {
+      "ko": [
+        "지갑 연동 지갑의 연동에서는 시스템이나 인터페이스 지갑 연동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1189": {
+    "skillName": "지도 데이터 프로젝트",
+    "queries": {
+      "ko": [
+        "지도 데이터 프로젝트 좌표와 지리정보 지형 건물 표현한 활용하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1190": {
+    "skillName": "지식재산 전략",
+    "queries": {
+      "ko": [
+        "지식재산 전략 디자인의 방어 방향에 사업과 지식재산 확보"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1191": {
+    "skillName": "지점 통합 프로젝트",
+    "queries": {
+      "ko": [
+        "지점 통합 프로젝트 지점의 지점 네트워크를 공통 통합 절차와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1192": {
+    "skillName": "지표 설계",
+    "queries": {
+      "ko": [
+        "지표 설계 지표에 지표의 설계에서는 흐름 지표 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1193": {
+    "skillName": "지표 정의",
+    "queries": {
+      "ko": [
+        "지표 정의 지표의 정의에서는 조건으로 용어 이해관계자 정의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1194": {
+    "skillName": "직업심리검사",
+    "queries": {
+      "ko": [
+        "직업심리검사 직업심리검사 직업심리검사에서는 직업심리에 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1195": {
+    "skillName": "진단",
+    "queries": {
+      "ko": [
+        "진단 진단의 진단에서는 증상 식별하고 범위를 정하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1196": {
+    "skillName": "진행 현황 공유",
+    "queries": {
+      "ko": [
+        "진행 현황 공유 같은 공유에서는 관계자가 맥락으로 현황의 공유"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1197": {
+    "skillName": "차량 유도",
+    "queries": {
+      "ko": [
+        "차량 유도 수신호 유도에서는 장비로 정차 주변 출차를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1198": {
+    "skillName": "차량 점검",
+    "queries": {
+      "ko": [
+        "차량 점검 차량에 점검에서는 차량 체크 불일치 항목에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1199": {
+    "skillName": "창고 관리",
+    "queries": {
+      "ko": [
+        "창고 관리 창고 통관의 입출고 수요 재고 운송"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1200": {
+    "skillName": "처방 조제",
+    "queries": {
+      "ko": [
+        "처방 조제 의약품을 조제에서는 처방 상호작용을 조제 사용의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1201": {
+    "skillName": "처치 업무",
+    "queries": {
+      "ko": [
+        "처치 업무 지시에 감염 준비 처치 의료진 관찰"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1202": {
+    "skillName": "청소",
+    "queries": {
+      "ko": [
+        "청소 청소에서는 청소의 청소 방법으로 오염과 청결을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1203": {
+    "skillName": "체크리스트 개선",
+    "queries": {
+      "ko": [
+        "체크리스트 개선 체크리스트 체크리스트의 개선에서는 변경안을 적용한 현행"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1204": {
+    "skillName": "체크인",
+    "queries": {
+      "ko": [
+        "체크인 등록과 신분 안내를 체크인 체크인에서는 체크인의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1205": {
+    "skillName": "추론 최적화",
+    "queries": {
+      "ko": [
+        "추론 최적화 추론의 최적화에서는 병목을 효율적인 추론 최적화"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1206": {
+    "skillName": "추천 모델 프로젝트",
+    "queries": {
+      "ko": [
+        "추천 모델 프로젝트 관심 순위를 예측하는 항목의 가능성이 높은"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1207": {
+    "skillName": "추천 서비스 프로젝트",
+    "queries": {
+      "ko": [
+        "추천 시스템 프로젝트 협업 필터링 평가",
+        "추천 서비스 API 프로젝트 구현"
+      ],
+      "en": [
+        "recommender system project collaborative filtering",
+        "recommendation service API project tutorial"
+      ]
+    },
+    "excludeTerms": [
+      "game tutorial",
+      "video editing",
+      "product recommendation shopping"
+    ],
+    "reviewed": true
+  },
+  "1208": {
+    "skillName": "추천 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "추천 시스템 프로젝트 관련성이 선택해 점수화 정렬을 후보 높은"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1209": {
+    "skillName": "출입 관리",
+    "queries": {
+      "ko": [
+        "출입 관리 출입 출입에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1210": {
+    "skillName": "출입통제",
+    "queries": {
+      "ko": [
+        "출입통제 출입통제 출입통제에서는 출입통제의 신원을 접근만 허용된"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1211": {
+    "skillName": "취약점 조치",
+    "queries": {
+      "ko": [
+        "취약점 조치 실행한 조치에서는 시정 예방 통제의 행동을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1212": {
+    "skillName": "취업 지원",
+    "queries": {
+      "ko": [
+        "취업 지원 취업 취업이 원활히 지원에서는 진행되도록 협의와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1213": {
+    "skillName": "취업규칙 관리",
+    "queries": {
+      "ko": [
+        "취업규칙 관리 취업규칙 취업규칙에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1214": {
+    "skillName": "취재",
+    "queries": {
+      "ko": [
+        "취재 검증하여 기사나 취재에 취재에서는 콘텐츠로 취재"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1215": {
+    "skillName": "치료계획 수립",
+    "queries": {
+      "ko": [
+        "치료계획 수립 치료계획 건강과 정보의 환자의 수립에서는 의료"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1216": {
+    "skillName": "침해사고 대응",
+    "queries": {
+      "ko": [
+        "침해사고 대응 침해사고 침해사고에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1217": {
+    "skillName": "칵테일 제조",
+    "queries": {
+      "ko": [
+        "칵테일 제조 칵테일 칵테일의 제조에서는 통제하여 사양과 제품을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1218": {
+    "skillName": "커머스 플랫폼 프로젝트",
+    "queries": {
+      "ko": [
+        "커머스 플랫폼 프로젝트 판매자 정산을 커머스 연결하여 배송 거래를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1219": {
+    "skillName": "컨테이너 운영",
+    "queries": {
+      "ko": [
+        "컨테이너 운영 컨테이너의 컨테이너 달성을 수행과 안정적인 운영에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1220": {
+    "skillName": "컴포넌트 정리",
+    "queries": {
+      "ko": [
+        "컴포넌트 정리 컴포넌트의 순서로 정리에서는 중복을 분류하고 컴포넌트"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1221": {
+    "skillName": "컴퓨터 비전 프로젝트",
+    "queries": {
+      "ko": [
+        "컴퓨터 비전 프로젝트 영상에서 객체 인식하고 비전 이미지와 컴퓨터"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1222": {
+    "skillName": "컴플라이언스",
+    "queries": {
+      "ko": [
+        "컴플라이언스 컴플라이언스 컴플라이언스에 컴플라이언스에서는 적용되는 증빙에 표준을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1223": {
+    "skillName": "코드 리뷰",
+    "queries": {
+      "ko": [
+        "코드 리뷰 가독성 리뷰 리뷰에서는 리뷰의 준수를 로직"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1224": {
+    "skillName": "콘텐츠 관리 시스템 프로젝트",
+    "queries": {
+      "ko": [
+        "콘텐츠 관리 시스템 프로젝트 권한을 cms 게시 콘텐츠의 수정 분류"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1225": {
+    "skillName": "콘텐츠 생성 프로젝트",
+    "queries": {
+      "ko": [
+        "콘텐츠 생성 프로젝트 기획하고 채널에 고객과 생산하는 콘텐츠를 생성"
+      ],
+      "en": [
+        "AI"
+      ]
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1226": {
+    "skillName": "콘텐츠 시스템 개발",
+    "queries": {
+      "ko": [
+        "콘텐츠 시스템 개발 게시를 주제 검수 매체 표현 개발에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1227": {
+    "skillName": "콘텐츠 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "콘텐츠 앱 프로젝트 공유하도록 소비 음원 모바일에서 콘텐츠를 탐색"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1228": {
+    "skillName": "콘텐츠 업데이트",
+    "queries": {
+      "ko": [
+        "콘텐츠 업데이트 검수하는 업데이트 업데이트에서는 최신 게시 링크"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1229": {
+    "skillName": "쿠버네티스 플랫폼 프로젝트",
+    "queries": {
+      "ko": [
+        "쿠버네티스 플랫폼 프로젝트 모니터링하도록 쿠버네티스 조직이 컨테이너 kubernetes 확장"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1230": {
+    "skillName": "크래시 분석",
+    "queries": {
+      "ko": [
+        "크래시 분석 크래시 크래시에서 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1231": {
+    "skillName": "크로스브라우징 대응",
+    "queries": {
+      "ko": [
+        "크로스브라우징 대응 크로스브라우징에서 크로스브라우징 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1232": {
+    "skillName": "클라우드 AI 프로젝트",
+    "queries": {
+      "ko": [
+        "클라우드 AI 프로젝트 클라우드의 확장하는 관리형 연산 활용해 모델을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1233": {
+    "skillName": "클라우드 마이그레이션 프로젝트",
+    "queries": {
+      "ko": [
+        "클라우드 마이그레이션 프로젝트 인프라를 평가하여 마이그레이션 기존 이전하는 환경으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1234": {
+    "skillName": "클라우드 보안 프로젝트",
+    "queries": {
+      "ko": [
+        "클라우드 보안 프로젝트 공격으로부터 워크로드를 계정 오류와 설정 보호하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1235": {
+    "skillName": "클라우드 아키텍처 설계",
+    "queries": {
+      "ko": [
+        "클라우드 아키텍처 설계 인프라와 자동화를 아키텍처 스토리지 컴퓨팅 설계에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1236": {
+    "skillName": "클라우드 전략 프로젝트",
+    "queries": {
+      "ko": [
+        "클라우드 전략 프로젝트 평가해 결정하는 도입 순서를 업무와 전략"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1237": {
+    "skillName": "클라우드 전환 프로젝트",
+    "queries": {
+      "ko": [
+        "클라우드 전환 프로젝트 방식에 온프레미스 재구성하고 자원과 이전하는 맞게"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1238": {
+    "skillName": "탐색적 분석",
+    "queries": {
+      "ko": [
+        "탐색적 분석 탐색적 탐색적에서 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1239": {
+    "skillName": "테스트 계획",
+    "queries": {
+      "ko": [
+        "테스트 계획 테스트의 계획에서는 계획 성과기준을 제약을 우선순위"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1240": {
+    "skillName": "테스트 세트 구축",
+    "queries": {
+      "ko": [
+        "테스트 세트 구축 세트에 세트 구축에서는 사용할 연결 환경으로"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1241": {
+    "skillName": "테스트 자동화",
+    "queries": {
+      "ko": [
+        "테스트 자동화 테스트의 수작업과 예외를 워크플로로 자동화에서는 구현하여"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1242": {
+    "skillName": "테스트넷 배포",
+    "queries": {
+      "ko": [
+        "테스트넷 배포 테스트넷 테스트넷을 롤백과 배포에서는 환경에 버전"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1243": {
+    "skillName": "테스트케이스 작성",
+    "queries": {
+      "ko": [
+        "테스트케이스 작성 테스트케이스 테스트케이스에 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1244": {
+    "skillName": "테이블 정리",
+    "queries": {
+      "ko": [
+        "테이블 정리 테이블의 테이블 순서로 정리에서는 중복을 분류하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1245": {
+    "skillName": "템플릿 관리",
+    "queries": {
+      "ko": [
+        "템플릿 관리 템플릿 템플릿에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1246": {
+    "skillName": "토큰 플랫폼 프로젝트",
+    "queries": {
+      "ko": [
+        "토큰 플랫폼 프로젝트 토큰 토큰의 발행 정책을 전송 블록체인"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1247": {
+    "skillName": "통신 장비 프로젝트",
+    "queries": {
+      "ko": [
+        "통신 장비 프로젝트 전달 중계하는 구성과 라우터 신호를 장비의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1248": {
+    "skillName": "통합 모니터링 프로젝트",
+    "queries": {
+      "ko": [
+        "통합 모니터링 프로젝트 모아 장애를 한곳에 감시하는 이벤트를 일관되게"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1249": {
+    "skillName": "투약 관리",
+    "queries": {
+      "ko": [
+        "투약 관리 투약에 투약 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1250": {
+    "skillName": "투자 리스크 관리",
+    "queries": {
+      "ko": [
+        "투자 리스크 관리 규제의 리스크 현금흐름 수익 투자 계약"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1251": {
+    "skillName": "툴 개발",
+    "queries": {
+      "ko": [
+        "툴 개발 툴에 개발에서는 결과물로 코드와 구현하고 요구사항에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1252": {
+    "skillName": "트래픽 모니터링",
+    "queries": {
+      "ko": [
+        "트래픽 모니터링 트래픽의 트래픽 관찰하여 모니터링에서는 보고하는 발견하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1253": {
+    "skillName": "트랜잭션 처리",
+    "queries": {
+      "ko": [
+        "트랜잭션 처리 트랜잭션에 조정 기한에 처리에서는 남기는 트랜잭션"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1254": {
+    "skillName": "특허 지원",
+    "queries": {
+      "ko": [
+        "특허 지원 절차가 의무와 특허 법적 권리 원활히"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1255": {
+    "skillName": "특허 출원",
+    "queries": {
+      "ko": [
+        "특허 출원 관할 기관에 명세 신청하는 요건과 절차의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1256": {
+    "skillName": "팀 리딩",
+    "queries": {
+      "ko": [
+        "팀 리딩 갈등 리딩 리딩에서는 정렬하고 팀의 있게"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1257": {
+    "skillName": "파이프라인 모니터링",
+    "queries": {
+      "ko": [
+        "파이프라인 모니터링 관찰하여 모니터링에서는 보고하는 파이프라인 발견하고 조기에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1258": {
+    "skillName": "패치 관리",
+    "queries": {
+      "ko": [
+        "패치 관리 패치 패치에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1259": {
+    "skillName": "패키지 소프트웨어 프로젝트",
+    "queries": {
+      "ko": [
+        "패키지 소프트웨어 프로젝트 고객에게 라이선스 패키지 상용 형태로 공통"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1260": {
+    "skillName": "팩트체크",
+    "queries": {
+      "ko": [
+        "팩트체크 대조하여 맥락과 복수 원자료 주장과 팩트체크"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1261": {
+    "skillName": "페어링",
+    "queries": {
+      "ko": [
+        "페어링 검토한 교대하는 명은 수행하며 실행하고 페어"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1262": {
+    "skillName": "평가 로직 개발",
+    "queries": {
+      "ko": [
+        "평가 로직 개발 로직에 로직 개발에서는 결과물로 코드와 구현하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1263": {
+    "skillName": "평가도구 개발",
+    "queries": {
+      "ko": [
+        "평가도구 개발 평가도구 평가도구에 개발에서는 결과물로 코드와 구현하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1264": {
+    "skillName": "포트폴리오 관리",
+    "queries": {
+      "ko": [
+        "포트폴리오 관리 포트폴리오 포트폴리오에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1265": {
+    "skillName": "표준운영절차 준수",
+    "queries": {
+      "ko": [
+        "표준운영절차 준수 표준운영절차 표준운영절차에 준수에서는 적용되는 준수 증빙에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1266": {
+    "skillName": "푸드 스타일링",
+    "queries": {
+      "ko": [
+        "푸드 스타일링 스타일링에서는 푸드 경험의 배치와 콘셉트에 메뉴의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1267": {
+    "skillName": "푸시 알림",
+    "queries": {
+      "ko": [
+        "푸시 알림 동의 발송 수신 알림에서는 알림을 알림의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1268": {
+    "skillName": "품목분류",
+    "queries": {
+      "ko": [
+        "품목분류 품목분류 품목분류에서는 구분하고 속성과 범주 자재의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1269": {
+    "skillName": "품질 개선 활동",
+    "queries": {
+      "ko": [
+        "품질 개선 활동 불량과 개선을 문제의 적용해 데이터로 활동"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1270": {
+    "skillName": "품질 검증",
+    "queries": {
+      "ko": [
+        "품질 검증 공정이 검증에서는 충족하는지 판정하는 필요사항을 비교하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1271": {
+    "skillName": "품질 기준 수립",
+    "queries": {
+      "ko": [
+        "품질 기준 수립 공정의 수립에서는 제품과 수립 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1272": {
+    "skillName": "품질 기준 점검",
+    "queries": {
+      "ko": [
+        "품질 기준 점검 변경을 불량 점검에서는 설비 부품 체크"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1273": {
+    "skillName": "품질 지표 개선",
+    "queries": {
+      "ko": [
+        "품질 지표 개선 공정의 제품과 개선에서는 변경안을 적용한 지표"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1274": {
+    "skillName": "품질 지표 분석",
+    "queries": {
+      "ko": [
+        "품질 지표 분석 공정에서 제품과 지표 제조 분석에서는 패턴"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1275": {
+    "skillName": "품질시스템 대응",
+    "queries": {
+      "ko": [
+        "품질시스템 대응 공정에서 품질시스템 제품과 대응에서는 발생한 방지를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1276": {
+    "skillName": "프라이빗 체인 프로젝트",
+    "queries": {
+      "ko": [
+        "프라이빗 체인 프로젝트 검증과 조회에 참여자만 체인 폐쇄형 프라이빗"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1277": {
+    "skillName": "프로젝트 관리",
+    "queries": {
+      "ko": [
+        "프로젝트 관리 성과의 의사결정 범위 자원 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1278": {
+    "skillName": "프로토콜 설계",
+    "queries": {
+      "ko": [
+        "프로토콜 설계 프로토콜에 프로토콜의 프로토콜 설계에서는 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1279": {
+    "skillName": "프로토타입 개발",
+    "queries": {
+      "ko": [
+        "프로토타입 개발 프로토타입에 프로토타입 개발에서는 결과물로 코드와 구현하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1280": {
+    "skillName": "프론트엔드 개발",
+    "queries": {
+      "ko": [
+        "프론트엔드 개발 프론트엔드 프론트엔드에 개발에서는 결과물로 코드와 구현하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1281": {
+    "skillName": "프롬프트 공격 점검",
+    "queries": {
+      "ko": [
+        "프롬프트 공격 점검 공격에 공격 점검에서는 프롬프트 체크 불일치"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1282": {
+    "skillName": "프롬프트 관리",
+    "queries": {
+      "ko": [
+        "프롬프트 관리 프롬프트에 프롬프트 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1283": {
+    "skillName": "프롬프트 설계",
+    "queries": {
+      "ko": [
+        "프롬프트 설계 프롬프트의 프롬프트에 프롬프트 설계에서는 흐름 규칙과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1284": {
+    "skillName": "플랫폼 개발 프로젝트",
+    "queries": {
+      "ko": [
+        "플랫폼 개발 프로젝트 서비스가 재사용하도록 인터페이스를 사용자와 소프트웨어를 공통"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1285": {
+    "skillName": "플레이팅",
+    "queries": {
+      "ko": [
+        "플레이팅 담는 매력적으로 먹기 보이도록 온도를 음식이"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1286": {
+    "skillName": "피드백 기반 품질 개선",
+    "queries": {
+      "ko": [
+        "피드백 기반 품질 개선 피드백 공정의 제품과 개선에서는 변경안을 적용한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1287": {
+    "skillName": "피처 엔지니어링",
+    "queries": {
+      "ko": [
+        "피처 엔지니어링 기여도를 변수를 엔지니어링에서는 엔지니어링의 원천 좋은"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1288": {
+    "skillName": "피팅",
+    "queries": {
+      "ko": [
+        "피팅 불편 피팅 피팅에서는 피팅을 대상에 움직임"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1289": {
+    "skillName": "하자 대응",
+    "queries": {
+      "ko": [
+        "하자 대응 하자 하자에서 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1290": {
+    "skillName": "학사 행정",
+    "queries": {
+      "ko": [
+        "학사 행정 교육기관 문의를 성적 졸업 학사 학적"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1291": {
+    "skillName": "학습 결과 분석",
+    "queries": {
+      "ko": [
+        "학습 결과 분석 활동에서 교육 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1292": {
+    "skillName": "학습 코칭",
+    "queries": {
+      "ko": [
+        "학습 코칭 코칭 코칭에서는 수행을 파악하여 이해와 구성하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1293": {
+    "skillName": "학습 파이프라인 구축",
+    "queries": {
+      "ko": [
+        "학습 파이프라인 구축 보상으로 과정에 학습시키는 파이프라인 구축에서는 데이터와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1294": {
+    "skillName": "학습 피드백 제공",
+    "queries": {
+      "ko": [
+        "학습 피드백 제공 제공에서는 제공 품질과 활동을 전달하고 피드백"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1295": {
+    "skillName": "학습자 상담",
+    "queries": {
+      "ko": [
+        "학습자 상담 활동과 학습자 상담에서는 선택지 상대방의 상황과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1296": {
+    "skillName": "학습자 수준 진단",
+    "queries": {
+      "ko": [
+        "학습자 수준 진단 수준 진단에서는 학습자 증상 식별하고 범위를"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1297": {
+    "skillName": "학습환경 조성",
+    "queries": {
+      "ko": [
+        "학습환경 조성 몰입과 조성 참여를 학습환경 상호작용을 학습자의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1298": {
+    "skillName": "한국어 문장 프로젝트",
+    "queries": {
+      "ko": [
+        "한국어 문장 프로젝트 문맥과 문장 문장을 자연스러운 한국어의 어휘"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1299": {
+    "skillName": "한방 진료",
+    "queries": {
+      "ko": [
+        "한방 진료 진료에서는 한방 사용의 치료와 상태에 설명"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1300": {
+    "skillName": "한방 처방",
+    "queries": {
+      "ko": [
+        "한방 처방 결정하고 복용 약재 진단에 처방에서는 지침을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1301": {
+    "skillName": "한방 치료",
+    "queries": {
+      "ko": [
+        "한방 치료 치료에서는 한방 사용의 치료와 상태에 설명"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1302": {
+    "skillName": "항공 예약",
+    "queries": {
+      "ko": [
+        "항공 예약 항공의 가능 예약에서는 취소를 항공 요금"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1303": {
+    "skillName": "핵심 이슈 분석",
+    "queries": {
+      "ko": [
+        "핵심 이슈 분석 이슈에서 이슈 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1304": {
+    "skillName": "행사 기획",
+    "queries": {
+      "ko": [
+        "행사 기획 기획에서는 행사 행사의 기획 성과기준을 제약을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1305": {
+    "skillName": "행정부서 협업",
+    "queries": {
+      "ko": [
+        "행정부서 협업 행정부서 행정부서의 협업에서는 공유하고 역할과 해결하는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1306": {
+    "skillName": "헬스케어 앱 프로젝트",
+    "queries": {
+      "ko": [
+        "헬스케어 앱 프로젝트 복약 헬스케어 운동 건강 모바일에서 진료"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1307": {
+    "skillName": "현장 설치",
+    "queries": {
+      "ko": [
+        "현장 설치 고정 작동과 부품을 도면과 안전을 연결하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1308": {
+    "skillName": "현장 수리",
+    "queries": {
+      "ko": [
+        "현장 수리 수리한 수리 증상과 진단하고 배선 작동을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1309": {
+    "skillName": "현장 실측",
+    "queries": {
+      "ko": [
+        "현장 실측 각도 길이 높이 실측 도면과 설계에"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1310": {
+    "skillName": "현장 진행",
+    "queries": {
+      "ko": [
+        "현장 진행 건축물과 진행에서는 참여자 목적 설비의 완료까지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1311": {
+    "skillName": "현황 분석",
+    "queries": {
+      "ko": [
+        "현황 분석 현황에서 현황 분석에서는 패턴 해석하여 비교"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1312": {
+    "skillName": "협력사 기술 대응",
+    "queries": {
+      "ko": [
+        "협력사 기술 대응 기술에서 협력사 대응에서는 발생한 방지를 이슈의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1313": {
+    "skillName": "협력사 일정 조율",
+    "queries": {
+      "ko": [
+        "협력사 일정 조율 산출물이 프로젝트에 협력사 실행을 의존사항을 조율에서는"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1314": {
+    "skillName": "협력사 평가",
+    "queries": {
+      "ko": [
+        "협력사 평가 협력사를 평가에서는 협력사 근거에 판단하고 명확한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1315": {
+    "skillName": "협력업체 작업 조율",
+    "queries": {
+      "ko": [
+        "협력업체 작업 조율 협력업체 작업에 실행을 의존사항을 조율에서는 조정해"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1316": {
+    "skillName": "협업 효율 개선",
+    "queries": {
+      "ko": [
+        "협업 효율 개선 효율 효율의 개선에서는 변경안을 적용한 협업"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1317": {
+    "skillName": "화물 적재",
+    "queries": {
+      "ko": [
+        "화물 적재 적재에서는 화물의 고정하는 싣고 무게 부피"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1318": {
+    "skillName": "화학 공정 물질수지 검토",
+    "queries": {
+      "ko": [
+        "화학 공정 물질수지 검토 물질수지 화학 변경을 불량 검토에서는 수정사항을"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1319": {
+    "skillName": "환자 간호사정",
+    "queries": {
+      "ko": [
+        "환자 간호사정 간호사정 간호사정에서는 건강과 증상 현재 정보의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1320": {
+    "skillName": "환자 상태 확인",
+    "queries": {
+      "ko": [
+        "환자 상태 확인 건강과 정보의 환자의 상태가 확인에서는 일치하는지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1321": {
+    "skillName": "회계 감사",
+    "queries": {
+      "ko": [
+        "회계 감사 감사에서는 미비를 점검하여 식별하는 독립적으로 수치의"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1322": {
+    "skillName": "회계 자문",
+    "queries": {
+      "ko": [
+        "회계 자문 수치과 자문에서는 자문 경영 거래와 선택지"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1323": {
+    "skillName": "회귀 테스트",
+    "queries": {
+      "ko": [
+        "회귀 테스트 회귀에 테스트에서는 회귀 기대 한계를 결함과"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1324": {
+    "skillName": "회로 설계 검토",
+    "queries": {
+      "ko": [
+        "회로 설계 검토 변경을 불량 회로 검토에서는 수정사항을 근거와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1325": {
+    "skillName": "회선 관리",
+    "queries": {
+      "ko": [
+        "회선 관리 회선 회선에 산출물의 관리에서는 유지하고 기한"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1326": {
+    "skillName": "회의 자료 작성",
+    "queries": {
+      "ko": [
+        "회의 자료 작성 자료에 회의 작성에서는 정리하여 표현으로 독자와"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  },
+  "1327": {
+    "skillName": "후속 조치 관리",
+    "queries": {
+      "ko": [
+        "후속 조치 관리 조치에 후속 조치 산출물의 관리에서는 유지하고"
+      ],
+      "en": []
+    },
+    "excludeTerms": [],
+    "reviewed": false
+  }
+}

@@ -144,6 +144,18 @@ class GeneratedMilestoneContent(RoadmapModel):
     resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
 
 
+class ModelGeneratedMilestoneContent(RoadmapModel):
+    """Model-authored fields; milestoneType is owned by the application."""
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(min_length=1, max_length=500)
+    learningObjective: str = Field(min_length=1, max_length=300)
+    completionCriteria: str = Field(min_length=1, max_length=300)
+    difficulty: Difficulty
+    estimatedMinutes: int = Field(ge=30, le=2400)
+    required: bool
+    resourceRecommendations: list[GeneratedResourceRecommendation] = Field(max_length=3)
+
+
 class GeneratedLearningStage(RoadmapModel):
     startLevel: int
     targetLevel: int
@@ -152,7 +164,7 @@ class GeneratedLearningStage(RoadmapModel):
 
 class ModelGeneratedLearningStageContent(RoadmapModel):
     """One stage authored by the model; application-owned bounds are excluded."""
-    milestones: list[GeneratedMilestoneContent] = Field(min_length=3, max_length=4)
+    milestones: list[ModelGeneratedMilestoneContent] = Field(min_length=3, max_length=4)
 
 
 class ModelGeneratedSkillContent(RoadmapModel):

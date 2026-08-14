@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import re
+import unicodedata
 from collections.abc import Awaitable, Callable
+from collections import defaultdict
 from dataclasses import dataclass
 from urllib.parse import urlparse
 
@@ -18,6 +21,8 @@ class RecommendationTarget:
     learning_objective: str
     completion_criteria: str
     candidates: list[LearningResource]
+    distinctive_terms: tuple[str, ...] = ()
+    excluded_terms: tuple[str, ...] = ()
 
 
 ResourceSearch = Callable[
@@ -25,10 +30,14 @@ ResourceSearch = Callable[
 ]
 
 
+def _focus_terms(target: RecommendationTarget) -> str:
+    return target.competency_context.strip()
+
+
 def build_milestone_search_query(target: RecommendationTarget) -> str:
     return " ".join(filter(None, (
-        target.competency_name,
-        target.competency_context[:180],
+        f'"{target.competency_name}"',
+        _focus_terms(target),
         target.title,
         target.learning_objective,
         target.completion_criteria,
@@ -39,24 +48,95 @@ def build_milestone_search_query(target: RecommendationTarget) -> str:
 def build_book_search_query(target: RecommendationTarget) -> str:
     return " ".join(filter(None, (
         target.competency_name,
+        _focus_terms(target),
         target.title,
-        target.competency_context,
     )))[:80]
 
 
 def build_web_search_query(target: RecommendationTarget) -> str:
     """Keep web search focused on the concrete milestone learning task."""
     return " ".join(filter(None, (
-        target.competency_name,
+        f'"{target.competency_name}"',
+        _focus_terms(target),
         target.title,
         target.learning_objective,
-        "tutorial guide",
-    )))[:180]
+        "공식 문서 tutorial guide",
+    )))[:240]
+
+
+def build_competency_search_query(target: RecommendationTarget) -> str:
+    return " ".join(filter(None, (
+        f'"{target.competency_name}"',
+        _focus_terms(target),
+        "입문 실습 학습 가이드 강의 공식 문서 tutorial",
+    )))[:300]
+
+
+def build_competency_book_query(target: RecommendationTarget) -> str:
+    return " ".join(filter(None, (
+        target.competency_name,
+        _focus_terms(target),
+        "입문 실무",
+    )))[:80]
+
+
+def build_competency_web_query(target: RecommendationTarget) -> str:
+    return " ".join(filter(None, (
+        f'"{target.competency_name}"',
+        _focus_terms(target),
+        "공식 문서 tutorial course guide",
+    )))[:240]
+
+
+_STOP_WORDS = {
+    "가이드", "강의", "개발", "공식", "기본", "기초", "도구", "문서", "목표", "사용",
+    "사용할", "실무", "실습", "역량", "완료", "이해", "입문", "자료", "적용",
+    "학습", "guide", "introduction", "learn", "learning", "official", "tutorial",
+}
+
+
+def _tokens(value: str) -> set[str]:
+    return {
+        token for token in re.findall(r"[가-힣A-Za-z0-9+#.]+", value.casefold())
+        if len(token) >= 2 and token not in _STOP_WORDS
+    }
+
+
+def classify_resource_relevance(
+    target: RecommendationTarget,
+    resource: LearningResource,
+) -> int:
+    """2=마일스톤 직접 관련, 1=역량 관련, 0=무관."""
+    resource_text = f"{resource.title} {resource.description}".casefold()
+    if any(term in resource_text for term in target.excluded_terms):
+        return 0
+    competency_phrase = target.competency_name.casefold().strip()
+    resource_tokens = _tokens(resource_text)
+    name_tokens = _tokens(target.competency_name)
+    distinctive_tokens = set(target.distinctive_terms)
+    matched_name_tokens = name_tokens & resource_tokens
+    required_name_matches = 1 if len(name_tokens) <= 1 else 2
+    competency_related = (
+        bool(competency_phrase and competency_phrase in resource_text)
+        or len(matched_name_tokens) >= required_name_matches
+        or len(distinctive_tokens & resource_tokens) >= 2
+    )
+    if not competency_related:
+        return 0
+    milestone_tokens = _tokens(
+        f"{target.title} {target.learning_objective} {target.completion_criteria}"
+    ) - name_tokens - distinctive_tokens
+    return 2 if milestone_tokens & resource_tokens else 1
 
 
 def _is_http_url(value: str) -> bool:
     parsed = urlparse(value)
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def _normalized_book_title(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return "".join(re.findall(r"[가-힣a-z0-9]+", normalized))
 
 
 def _recommendation_reason(target: RecommendationTarget) -> str:
@@ -82,18 +162,44 @@ class LearningResourceRecommender:
                 additional_search(target) for target in targets
             ))
 
+        url_competencies: defaultdict[str, set[str]] = defaultdict(set)
+        for target, resources in zip(targets, search_results, strict=True):
+            competency_key = target.key.rsplit(":", 3)[0]
+            for resource in resources:
+                if _is_http_url(resource.url):
+                    url_competencies[resource.url.rstrip("/").casefold()].add(
+                        competency_key
+                    )
+
         recommendations: dict[str, list[LearningResource]] = {}
         for target, resources in zip(targets, search_results, strict=True):
             unique: dict[str, LearningResource] = {}
             seen_urls: set[str] = set()
+            seen_book_titles: set[str] = set()
             book_count = 0
-            for resource in resources:
+            ranked_resources = sorted(
+                resources,
+                key=lambda resource: classify_resource_relevance(target, resource),
+                reverse=True,
+            )
+            for resource in ranked_resources:
+                if classify_resource_relevance(target, resource) == 0:
+                    continue
                 if not _is_http_url(resource.url):
+                    continue
+                normalized_url = resource.url.rstrip("/").casefold()
+                resource_text = f"{resource.title} {resource.description}".casefold()
+                if (
+                    len(url_competencies[normalized_url]) >= 3
+                    and target.competency_name.casefold() not in resource_text
+                ):
                     continue
                 if resource.resourceType.value == "BOOK":
                     if book_count >= 2:
                         continue
-                normalized_url = resource.url.rstrip("/")
+                    normalized_title = _normalized_book_title(resource.title)
+                    if normalized_title in seen_book_titles:
+                        continue
                 if resource.resourceId in unique or normalized_url in seen_urls:
                     continue
                 seen_urls.add(normalized_url)
@@ -101,6 +207,7 @@ class LearningResourceRecommender:
                     "description": _recommendation_reason(target)
                 })
                 if resource.resourceType.value == "BOOK":
+                    seen_book_titles.add(normalized_title)
                     book_count += 1
                 if len(unique) >= self._settings.resource_recommendation_limit:
                     break

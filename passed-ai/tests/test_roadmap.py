@@ -12,6 +12,8 @@ from app.main import app
 from api.features.roadmap.planner import create_learning_stages
 from api.features.roadmap.schema import LearningResource
 from api.features.roadmap.schema import (
+    MilestoneType,
+    ModelGeneratedMilestoneContent,
     ModelGeneratedSkillContent,
     ModelGeneratedTwoStageRoadmapContent,
     RoadmapGenerateRequest,
@@ -173,7 +175,9 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
 
     await generate_roadmap(request, generator=TrackingGenerator())
 
-    assert state["searches"] == 6
+    # 동일 역량의 모든 마일스톤이 검색 결과를 공유한다. 엄격 검색이 비면
+    # 역량 중심 보완 검색을 딱 한 번 더 수행한다.
+    assert state["searches"] == 2
 
 
 @pytest.mark.asyncio
@@ -295,6 +299,42 @@ async def test_same_milestone_titles_are_allowed_in_different_stages() -> None:
         "핵심 개념", "단계별 실습", "실전 과제",
         "핵심 개념", "단계별 실습", "실전 과제",
     ]
+
+
+@pytest.mark.asyncio
+async def test_application_assigns_milestone_type_from_category_and_stage() -> None:
+    assert "milestoneType" not in ModelGeneratedMilestoneContent.model_fields
+    technical_request = RoadmapGenerateRequest.model_validate(
+        request_with(competency(current_level=1, target_level=3))
+    )
+    technical = await generate_roadmap(
+        technical_request, generator=FakeRoadmapContentGenerator()
+    )
+    assert [item.milestoneType for item in technical.skills[0].milestones] == [
+        MilestoneType.PRACTICE,
+        MilestoneType.PRACTICE,
+        MilestoneType.PRACTICE,
+        MilestoneType.PROJECT,
+        MilestoneType.PROJECT,
+        MilestoneType.PROJECT,
+    ]
+
+    certification_request = RoadmapGenerateRequest.model_validate(request_with(
+        competency(
+            key="certification-1",
+            name="SQLD",
+            category="CERTIFICATION",
+            current_level=0,
+            target_level=1,
+        )
+    ))
+    certification = await generate_roadmap(
+        certification_request, generator=FakeRoadmapContentGenerator()
+    )
+    assert all(
+        item.milestoneType == MilestoneType.CERTIFICATION
+        for item in certification.skills[0].milestones
+    )
 
 
 @pytest.mark.parametrize(

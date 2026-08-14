@@ -48,6 +48,12 @@ public class SecurityConfig {
                                 response.sendError(HttpStatus.FORBIDDEN.value())))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/jobPostings", "/api/v1/jobPostings/**").permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/users/preferences/industries",
+                                "/api/v1/users/preferences/industries/*/job-roles"
+                        ).permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/signup",
                                 "/api/v1/auth/login",

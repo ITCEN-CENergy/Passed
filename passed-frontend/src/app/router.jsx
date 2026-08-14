@@ -10,7 +10,7 @@ import CompanyCoverLetterList from '../features/cover-letter/pages/CompanyCoverL
 import LoginPage from '../pages/login/LoginPage.jsx'
 import SignupPage from '../pages/signup/SignupPage.jsx'
 import { JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
-import { RecommendationDetailPage, RecommendationPage } from '../features/recommendation/pages/index.js'
+import { RecommendationDetailPage, RecommendationHistoryPage, RecommendationPage, RecommendationRunResultPage } from '../features/recommendation/pages/index.js'
 import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/index.js'
 import { MyPage } from '../features/user/pages/index.js'
 
@@ -42,6 +42,14 @@ const router = createBrowserRouter([
       {
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
+      },
+      {
+        path: 'mypage/recommendations',
+        element: <RecommendationHistoryPage />,
+      },
+      {
+        path: 'mypage/recommendations/:recommendationRunId',
+        element: <RecommendationRunResultPage />,
       },
       {
         path: 'roadmap',

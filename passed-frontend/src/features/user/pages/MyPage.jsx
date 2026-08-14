@@ -154,9 +154,9 @@ const MyPage = () => {
         />
         <MyPageActionCard
           title="추천 내역 보기"
-          description="맞춤 공고 추천 내역을 확인해보세요."
+          description="맞춤 추천과 직접 매칭한 공고 내역을 확인해보세요."
           icon={<RecommendationIcon />}
-          to="/recommendations"
+          to="/mypage/recommendations"
           tone="purple"
         />
       </nav>

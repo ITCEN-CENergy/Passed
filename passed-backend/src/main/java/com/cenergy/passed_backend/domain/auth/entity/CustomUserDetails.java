@@ -23,19 +23,21 @@ public final class CustomUserDetails implements UserDetails {
     private final String email;
     private final String password;
     private final String name;
+    private final com.cenergy.passed_backend.domain.user.entity.UserRole role;
 
     public static CustomUserDetails from(User user) {
         return new CustomUserDetails(
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getName()
+                user.getName(),
+                user.getRole()
         );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

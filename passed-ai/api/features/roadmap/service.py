@@ -20,6 +20,7 @@ from api.features.roadmap.schema import (
     GeneratedResourceRecommendation,
     GeneratedSkillContent,
     ModelGeneratedRoadmapContent,
+    ModelGeneratedMilestoneContent,
     ModelGeneratedSkillContent,
     LearningResource,
     Milestone,
@@ -35,10 +36,14 @@ from api.features.roadmap.resource_recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
+    build_competency_book_query,
+    build_competency_search_query,
+    build_competency_web_query,
     build_milestone_search_query,
     build_web_search_query,
+    classify_resource_relevance,
 )
-from api.features.roadmap.resource_query import build_competency_ranking_contexts
+from api.features.roadmap.resource_query import build_competency_search_profiles
 from api.features.roadmap.validator import (
     remove_unknown_resource_recommendations,
     validate_generated_content,
@@ -80,7 +85,7 @@ class FakeRoadmapContentGenerator:
     def _contents(
         self, competency: Competency, stage: LearningStage,
         resources: list[LearningResource],
-    ) -> list[GeneratedMilestoneContent]:
+    ) -> list[ModelGeneratedMilestoneContent]:
         name = competency.standardCompetencyName
         recommendations = [
             GeneratedResourceRecommendation(
@@ -94,72 +99,69 @@ class FakeRoadmapContentGenerator:
         ]
         if competency.category == CompetencyCategory.CERTIFICATION:
             return [
-                GeneratedMilestoneContent(
+                ModelGeneratedMilestoneContent(
                     title=f"{name} 시험 범위 학습",
                     description=f"{name} 시험의 핵심 개념과 출제 범위를 학습한다.",
                     learningObjective=f"{name} 시험에 필요한 핵심 개념을 설명할 수 있다.",
                     completionCriteria=f"{name} 모의고사에서 목표 점수를 달성한다.",
-                    milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.BEGINNER,
                     estimatedMinutes=60,
+                    required=True,
                     resourceRecommendations=recommendations,
                 ),
-                GeneratedMilestoneContent(
+                ModelGeneratedMilestoneContent(
                     title=f"{name} 모의고사 실전 연습",
                     description=f"{name} 모의고사를 풀고 오답을 분석한다.",
                     learningObjective=f"{name} 시험 유형별 문제를 시간 내에 해결할 수 있다.",
                     completionCriteria=f"{name} 모의고사에서 안정적으로 합격 기준을 넘는다.",
-                    milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.INTERMEDIATE,
                     estimatedMinutes=60,
                     required=False,
                     resourceRecommendations=recommendations,
                 ),
-                GeneratedMilestoneContent(
+                ModelGeneratedMilestoneContent(
                     title=f"{name} 자격 취득",
                     description=f"{name} 시험을 응시하고 자격 취득을 완료한다.",
                     learningObjective=f"{name} 시험 문제에 학습한 지식을 적용할 수 있다.",
                     completionCriteria=f"{name} 시험에 합격해 자격을 취득한다.",
-                    milestoneType=MilestoneType.CERTIFICATION,
                     difficulty=Difficulty.INTERMEDIATE,
                     estimatedMinutes=60,
+                    required=True,
                     resourceRecommendations=recommendations,
                 ),
             ]
 
         target = stage.targetLevel
-        milestone_type = MilestoneType.PRACTICE if target == 2 else MilestoneType.PROJECT
         difficulty = Difficulty.INTERMEDIATE if target == 2 else Difficulty.ADVANCED
         return [
-            GeneratedMilestoneContent(
+            ModelGeneratedMilestoneContent(
                 title=f"{name} 수준 {target} 핵심 학습",
                 description=f"{name} 수준 {target}에 필요한 핵심 개념과 기능을 학습한다.",
                 learningObjective=f"{name} 수준 {target}의 핵심 기능을 설명할 수 있다.",
                 completionCriteria=f"{name} 수준 {target}의 핵심 기능을 실습으로 검증한다.",
-                milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=True,
                 resourceRecommendations=recommendations,
             ),
-            GeneratedMilestoneContent(
+            ModelGeneratedMilestoneContent(
                 title=f"{name} 수준 {target} 단계별 실습",
                 description=f"{name} 수준 {target}의 핵심 기능을 단계별로 적용한다.",
                 learningObjective=f"{name} 수준 {target}의 기능을 스스로 적용할 수 있다.",
                 completionCriteria=f"{name} 수준 {target}의 핵심 기능을 사용한 실습을 완료한다.",
-                milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
                 required=False,
                 resourceRecommendations=recommendations,
             ),
-            GeneratedMilestoneContent(
+            ModelGeneratedMilestoneContent(
                 title=f"{name} 수준 {target} 실전 과제",
                 description=f"{name}을 활용해 수준 {target}에 맞는 실무 과제를 수행한다.",
                 learningObjective=f"{name} 수준 {target}의 작업을 수행할 수 있다.",
                 completionCriteria=f"{name} 수준 {target}의 검증 가능한 결과물을 완성한다.",
-                milestoneType=milestone_type,
                 difficulty=difficulty,
                 estimatedMinutes=target * 60,
+                required=True,
                 resourceRecommendations=recommendations,
             ),
         ]
@@ -214,11 +216,32 @@ async def _generate_content_in_batches(
                 GeneratedLearningStage(
                     startLevel=stage.startLevel,
                     targetLevel=stage.targetLevel,
-                    milestones=model_stage.milestones,
+                    milestones=bind_milestone_types(
+                        competency, stage, model_stage.milestones
+                    ),
                 )
                 for stage, model_stage in zip(stages, model_stages, strict=True)
             ],
         )
+
+    def bind_milestone_types(
+        competency: Competency,
+        stage: LearningStage,
+        milestones: list[ModelGeneratedMilestoneContent],
+    ) -> list[GeneratedMilestoneContent]:
+        """Assign the application-owned milestone type from validated inputs."""
+        if competency.category == CompetencyCategory.CERTIFICATION:
+            expected_type = MilestoneType.CERTIFICATION
+        else:
+            expected_type = (
+                MilestoneType.PRACTICE
+                if stage.targetLevel <= 2
+                else MilestoneType.PROJECT
+            )
+        return [GeneratedMilestoneContent.model_validate({
+            **milestone.model_dump(),
+            "milestoneType": expected_type,
+        }) for milestone in milestones]
 
     def validate_skill(competency: Competency, skill: GeneratedSkillContent) -> None:
         skill_for_validation = skill.model_copy(deep=True)
@@ -250,7 +273,9 @@ async def _generate_content_in_batches(
         return GeneratedLearningStage(
             startLevel=stage.startLevel,
             targetLevel=stage.targetLevel,
-            milestones=model_stages[0].milestones,
+            milestones=bind_milestone_types(
+                competency, stage, model_stages[0].milestones
+            ),
         )
 
     async def generate_skill(competency: Competency) -> GeneratedSkillContent:
@@ -417,7 +442,7 @@ async def _generate_roadmap(
         competency.roadmapSkillKey: competency
         for competency in request.competencies
     }
-    ranking_contexts = await build_competency_ranking_contexts(
+    search_profiles = await build_competency_search_profiles(
         request.competencies
     )
     targets = [
@@ -426,11 +451,17 @@ async def _generate_roadmap(
             competency_name=competency_by_key[
                 skill.roadmapSkillKey
             ].standardCompetencyName,
-            competency_context=ranking_contexts[skill.roadmapSkillKey],
+            competency_context=search_profiles[skill.roadmapSkillKey].context,
             title=milestone.title,
             learning_objective=milestone.learningObjective,
             completion_criteria=milestone.completionCriteria,
             candidates=[],
+            distinctive_terms=search_profiles[
+                skill.roadmapSkillKey
+            ].distinctive_terms,
+            excluded_terms=search_profiles[
+                skill.roadmapSkillKey
+            ].excluded_terms,
         )
         for skill in generated.skills
         for stage in skill.stages
@@ -441,7 +472,7 @@ async def _generate_roadmap(
         for target in targets
     }
 
-    async def additional_search(
+    async def search_for_competency(
         target: RecommendationTarget,
     ) -> list[LearningResource]:
         competency = target_competencies[target.key]
@@ -453,6 +484,19 @@ async def _generate_roadmap(
                 "keenable": build_web_search_query(target),
             },
         )
+        if not any(
+            classify_resource_relevance(target, resource) > 0
+            for resource in resources
+        ):
+            fallback = await search_service.search(
+                competency,
+                build_competency_search_query(target),
+                provider_queries={
+                    "kakao_book": build_competency_book_query(target),
+                    "keenable": build_competency_web_query(target),
+                },
+            )
+            resources = [*resources, *fallback]
         key = competency.roadmapSkillKey
         merged = {
             resource.resourceId: resource
@@ -460,7 +504,19 @@ async def _generate_roadmap(
         }
         merged.update({resource.resourceId: resource for resource in resources})
         resources_by_key[key] = list(merged.values())
-        return resources
+        return resources_by_key[key]
+
+    competency_search_tasks: dict[str, asyncio.Task[list[LearningResource]]] = {}
+
+    async def additional_search(
+        target: RecommendationTarget,
+    ) -> list[LearningResource]:
+        competency_key = target.key.rsplit(":", 3)[0]
+        task = competency_search_tasks.get(competency_key)
+        if task is None:
+            task = asyncio.create_task(search_for_competency(target))
+            competency_search_tasks[competency_key] = task
+        return await task
 
     recommendations = await LearningResourceRecommender(settings).recommend(
         targets, additional_search=additional_search

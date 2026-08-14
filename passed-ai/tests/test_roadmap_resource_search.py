@@ -6,11 +6,11 @@ import httpx
 import pytest
 
 from api.features.roadmap.config import RoadmapSettings
-from api.features.roadmap.resource_provider import (
+from api.features.roadmap.resources.provider import (
     KeenableWebProvider,
     create_resource_providers,
 )
-from api.features.roadmap.resource_search import (
+from api.features.roadmap.resources.search import (
     LearningResourceSearchService,
     _summarize,
 )

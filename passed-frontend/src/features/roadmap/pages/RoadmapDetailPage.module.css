@@ -25,6 +25,8 @@
 .meta .requiredMilestone{color:#087f72;background:#e1f5f1}.meta .optionalMilestone{color:#66758f;background:#edf1f6}
 .meta b.preferred{color:#d97706;background:#fff1dc}
 
+.toolbar{justify-content:space-between;gap:10px}.toolbar a,.toolbar button{display:inline-flex;min-height:42px;align-items:center;justify-content:center;padding:11px 16px;border-radius:7px;font-weight:800;text-decoration:none}.toolbar a{color:#0877ed;background:#fff;border:1px solid #87baf4}.toolbar a:hover{background:#f1f7ff}.toolbar a:focus-visible,.toolbar button:focus-visible{outline:3px solid #9bc7fb;outline-offset:2px}.toolbar button{border:1px solid #e7353f}
+
 /* 데스크톱 로드맵 탐색 */
 .page{width:min(100% - 40px,1360px)}
 .contentLayout{display:grid;grid-template-columns:minmax(0,1fr) 286px;align-items:start;gap:24px}

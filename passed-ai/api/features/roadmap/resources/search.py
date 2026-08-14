@@ -2,7 +2,7 @@ import asyncio
 import logging
 from time import perf_counter
 
-from api.features.roadmap.resource_provider import (
+from api.features.roadmap.resources.provider import (
     LearningResourceProvider,
     _summarize,
 )

@@ -1,6 +1,6 @@
 .page { width: min(100% - 48px, 1050px); margin: 0 auto; padding: 44px 0 72px; color: #10234a; }
-.heading { margin-bottom: 30px; text-align: center; }
-.heading h1 { font-size: clamp(32px, 4vw, 42px); line-height: 1.25; letter-spacing: -.045em; }
+.heading { margin-bottom: 30px; text-align: left; }
+.heading h1 { font-size: 36px; line-height: 1.25; letter-spacing: -.045em; }
 .heading p { margin-top: 12px; color: #546789; font-size: 17px; }
 .list { display: grid; gap: 14px; }
 .card { display: grid; grid-template-columns: minmax(0, 1fr) 190px; min-height: 214px; overflow: hidden; color: inherit; background: #fff; border: 1px solid #dce3ed; border-radius: 13px; box-shadow: 0 2px 7px rgba(28, 54, 92, .05); text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s; }
@@ -34,6 +34,7 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 760px) {
   .page { width: min(100% - 28px, 1050px); padding-top: 34px; }
+  .heading h1 { font-size: 31px; }
   .heading p { font-size: 15px; line-height: 1.55; }
   .card { grid-template-columns: 1fr; }
   .cardBody { padding: 25px 22px 12px; }

@@ -23,6 +23,7 @@ public class RoadmapPersistenceService {
     private final ResourceRecommendationRepository recommendationRepository;
     private final MilestoneReuseService milestoneReuseService;
     private final RoadmapEtaCalculator etaCalculator;
+    private final RoadmapProgressSynchronizer progressSynchronizer;
 
     public RoadmapPersistenceService(RoadmapRepository roadmapRepository,
                                      RoadmapSkillRepository skillRepository,
@@ -32,7 +33,8 @@ public class RoadmapPersistenceService {
                                      LearningResourceRepository resourceRepository,
                                      ResourceRecommendationRepository recommendationRepository,
                                      MilestoneReuseService milestoneReuseService,
-                                     RoadmapEtaCalculator etaCalculator) {
+                                     RoadmapEtaCalculator etaCalculator,
+                                     RoadmapProgressSynchronizer progressSynchronizer) {
         this.roadmapRepository = roadmapRepository;
         this.skillRepository = skillRepository;
         this.sourceRepository = sourceRepository;
@@ -42,6 +44,7 @@ public class RoadmapPersistenceService {
         this.recommendationRepository = recommendationRepository;
         this.milestoneReuseService = milestoneReuseService;
         this.etaCalculator = etaCalculator;
+        this.progressSynchronizer = progressSynchronizer;
     }
 
     @Transactional
@@ -130,6 +133,7 @@ public class RoadmapPersistenceService {
         }
         roadmap.activate(result.title(), totalMinutes);
         roadmap.initializeEndDate(etaCalculator.calculate(savedRoadmapMilestones));
+        progressSynchronizer.synchronizeInitialProgress(roadmapId);
         return roadmap;
     }
 }

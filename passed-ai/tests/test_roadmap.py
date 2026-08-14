@@ -166,7 +166,7 @@ async def test_resource_search_runs_after_milestone_generation(monkeypatch) -> N
         return []
 
     monkeypatch.setattr(
-        "api.features.roadmap.service.LearningResourceSearchService.search",
+        "api.features.roadmap.resource_recommendation.LearningResourceSearchService.search",
         search_after_generation,
     )
     request = RoadmapGenerateRequest.model_validate(
@@ -566,7 +566,7 @@ def test_resource_description_is_milestone_recommendation_reason(monkeypatch) ->
         return [resource]
 
     monkeypatch.setattr(
-        "api.features.roadmap.service.LearningResourceSearchService.search",
+        "api.features.roadmap.resource_recommendation.LearningResourceSearchService.search",
         search_resources,
     )
 

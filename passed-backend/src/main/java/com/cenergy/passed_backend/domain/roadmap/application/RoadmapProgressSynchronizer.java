@@ -88,6 +88,23 @@ public class RoadmapProgressSynchronizer {
         roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
     }
 
+    public void synchronizeInitialProgress(Long roadmapId) {
+        Roadmap roadmap = roadmapRepository.findById(roadmapId).orElse(null);
+        if (roadmap == null) return;
+        List<RoadmapSkill> skills = roadmapSkillRepository
+                .findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId);
+        List<Long> skillIds = skills.stream().map(RoadmapSkill::getId).toList();
+        List<RoadmapMilestone> links = skillIds.isEmpty() ? List.of()
+                : roadmapMilestoneRepository.findAllByRoadmapSkillIds(skillIds);
+        Map<Long, List<RoadmapMilestone>> bySkill = links.stream()
+                .collect(Collectors.groupingBy(link -> link.getRoadmapSkill().getId()));
+        for (RoadmapSkill skill : skills) {
+            skill.updateProgressRate(calculate(bySkill.getOrDefault(skill.getId(), List.of())));
+        }
+        roadmap.updateProgressRate(calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
+    }
+
     private BigDecimal calculate(Collection<RoadmapMilestone> links) {
         List<RoadmapMilestone> required = links.stream()
                 .filter(RoadmapMilestone::isRequired)

@@ -106,6 +106,7 @@ const RoadmapDetailPage = () => {
     ...group,
     skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
   })).filter(group => group.skills.length)
+  const orderedSkills = groupedSkills.flatMap(group => group.skills)
   return <main className={styles.page}>
     <div className={styles.toolbar}><Link to="/roadmap">로드맵 목록 보기</Link><button type="button" disabled={actionBusy} onClick={() => setDialog('delete')}>⌫ 로드맵 삭제</button></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
@@ -119,9 +120,9 @@ const RoadmapDetailPage = () => {
           <div className={styles.skills}>{group.skills.map((skill, index) => <SkillCard key={skill.roadmapSkillId} skill={skill} groupOrder={index + 1} anchorId={`roadmap-skill-${skill.roadmapSkillId}`} openRequest={openSkillRequest} onToggle={toggle} busyId={busyId} />)}</div>
         </section>)}</div>
       </div>
-      {!!roadmap.skills?.length && <aside className={styles.skillNavigation} aria-label="스킬 바로가기">
-        <div className={styles.skillNavigationHeader}><h2>스킬 바로가기</h2><span>{roadmap.skills.length}</span></div>
-        <nav>{roadmap.skills.map((skill) => {
+      {!!orderedSkills.length && <aside className={styles.skillNavigation} aria-label="스킬 바로가기">
+        <div className={styles.skillNavigationHeader}><h2>스킬 바로가기</h2><span>{orderedSkills.length}</span></div>
+        <nav>{orderedSkills.map((skill) => {
           const anchorId = `roadmap-skill-${skill.roadmapSkillId}`
           const active = activeSkillId === anchorId
           return <button key={skill.roadmapSkillId} className={active ? styles.activeSkillLink : ''} type="button" title={skill.standardCompetencyName} aria-current={active ? 'location' : undefined} onClick={() => moveToSkill(anchorId)}><span className={styles[`nav${skill.requirementType}`]}>{labels[skill.requirementType]}</span><strong>{skill.standardCompetencyName}</strong></button>

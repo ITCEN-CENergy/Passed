@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ConfirmDialog, PageLoading } from '../../../common/components/index.js'
+import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
 import { applyRoadmapReplan, changeMilestoneCompletion, deleteRoadmap, getRoadmap, previewRoadmapReplan } from '../api/index.js'
 import styles from './RoadmapDetailPage.module.css'
 
@@ -110,7 +111,7 @@ const RoadmapDetailPage = () => {
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
     <div className={styles.contentLayout} ref={contentRef}>
       <div className={styles.mainContent}>
-        <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostingIds?.length || 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p><div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong></span><span>최초 완료 예정일<strong>{fmtDate(roadmap.baselineEndDate)}</strong></span><span>현재 완료 예정일<strong>{fmtDate(roadmap.estimatedEndDate)}</strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
+        <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostings?.length ?? roadmap.jobPostingIds?.length ?? 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p>{!!roadmap.jobPostings?.length && <div className={styles.linkedPostings}>{roadmap.jobPostings.map(posting => <Link className={styles.linkedPosting} to={`/job-postings/${posting.jobPostingId}`} state={{ image: getJobPostingImage(posting.jobPostingId) }} key={posting.jobPostingId}><img src={getJobPostingImage(posting.jobPostingId)} alt="" /><span><small>{posting.companyName}</small><strong>{posting.title}</strong></span></Link>)}</div>}<div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong></span><span>최초 완료 예정일<strong>{fmtDate(roadmap.baselineEndDate)}</strong></span><span>현재 완료 예정일<strong>{fmtDate(roadmap.estimatedEndDate)}</strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
         <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
         <div className={styles.skillGroups}>{groupedSkills.map(group => <section className={`${styles.skillGroup} ${styles[`${group.type.toLowerCase()}Group`]}`} key={group.type}>

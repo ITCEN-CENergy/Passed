@@ -12,12 +12,16 @@ public record RoadmapDetailResponse(
         BigDecimal progressRate, LocalDate baselineEndDate, LocalDate estimatedEndDate,
         RoadmapScheduleStatus scheduleStatus, long delayDays, boolean replanRecommended,
         String failureReason,
-        List<Long> jobPostingIds, List<Skill> skills,
+        List<Long> jobPostingIds, List<JobPostingSummary> jobPostings, List<Skill> skills,
         OffsetDateTime createdAt, OffsetDateTime updatedAt
 ) {
     public RoadmapDetailResponse {
         jobPostingIds = List.copyOf(jobPostingIds);
+        jobPostings = List.copyOf(jobPostings);
         skills = List.copyOf(skills);
+    }
+
+    public record JobPostingSummary(Long jobPostingId, String companyName, String title) {
     }
 
     public record Skill(Long roadmapSkillId, Long standardCompetencyId, String standardCompetencyName,

@@ -1,5 +1,6 @@
 package com.cenergy.passed_backend.domain.roadmap.application;
 
+import com.cenergy.passed_backend.domain.jobposting.entity.JobPosting;
 import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapDetailResponse;
 import com.cenergy.passed_backend.domain.roadmap.dto.RoadmapListResponse;
 import com.cenergy.passed_backend.domain.roadmap.entity.*;
@@ -20,6 +21,7 @@ public class RoadmapQueryService {
     private final CurrentUserIdProvider currentUserIdProvider;
     private final RoadmapRepository roadmapRepository;
     private final RoadmapJobPostingRepository jobPostingRepository;
+    private final com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository sourceJobPostingRepository;
     private final RoadmapSkillRepository skillRepository;
     private final RoadmapSkillSourceRepository sourceRepository;
     private final RoadmapMilestoneRepository roadmapMilestoneRepository;
@@ -29,6 +31,7 @@ public class RoadmapQueryService {
     public RoadmapQueryService(CurrentUserIdProvider currentUserIdProvider,
                                RoadmapRepository roadmapRepository,
                                RoadmapJobPostingRepository jobPostingRepository,
+                               com.cenergy.passed_backend.domain.jobposting.repository.JobPostingRepository sourceJobPostingRepository,
                                RoadmapSkillRepository skillRepository,
                                RoadmapSkillSourceRepository sourceRepository,
                                RoadmapMilestoneRepository roadmapMilestoneRepository,
@@ -37,6 +40,7 @@ public class RoadmapQueryService {
         this.currentUserIdProvider = currentUserIdProvider;
         this.roadmapRepository = roadmapRepository;
         this.jobPostingRepository = jobPostingRepository;
+        this.sourceJobPostingRepository = sourceJobPostingRepository;
         this.skillRepository = skillRepository;
         this.sourceRepository = sourceRepository;
         this.roadmapMilestoneRepository = roadmapMilestoneRepository;
@@ -66,6 +70,10 @@ public class RoadmapQueryService {
         Roadmap roadmap = roadmapRepository.findByIdAndUserId(roadmapId, currentUserId())
                 .orElseThrow(() -> new RoadmapException(ErrorCode.ROADMAP_NOT_FOUND, "Roadmap not found"));
         List<RoadmapJobPosting> postings = jobPostingRepository.findAllByRoadmapIdOrderByIdAsc(roadmapId);
+        List<Long> postingIds = postings.stream().map(RoadmapJobPosting::getJobPostingId).toList();
+        Map<Long, JobPosting> sourcePostings = (postingIds.isEmpty() ? List.<JobPosting>of()
+                : sourceJobPostingRepository.findAllByIdIn(postingIds)).stream()
+                .collect(Collectors.toMap(JobPosting::getId, Function.identity()));
         List<RoadmapSkill> skills = skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(roadmapId);
         List<Long> skillIds = skills.stream().map(RoadmapSkill::getId).toList();
         List<RoadmapSkillSource> sources = skillIds.isEmpty() ? List.of()
@@ -94,7 +102,10 @@ public class RoadmapQueryService {
         return new RoadmapDetailResponse(roadmap.getId(), roadmap.getTitle(), roadmap.getStatus(),
                 roadmap.getTotalEstimatedMinutes(), roadmap.getProgressRate(), roadmap.getBaselineEndDate(),
                 currentEstimatedEndDate, schedule.status(), schedule.delayDays(), replanRecommended,
-                roadmap.getFailureReason(), postings.stream().map(RoadmapJobPosting::getJobPostingId).toList(),
+                roadmap.getFailureReason(), postingIds,
+                postingIds.stream().map(sourcePostings::get).filter(Objects::nonNull)
+                        .map(posting -> new RoadmapDetailResponse.JobPostingSummary(posting.getId(),
+                                posting.getCompany().getCompanyName(), posting.getTitle())).toList(),
                 skills.stream().map(skill -> toSkill(skill, sourcesBySkill.getOrDefault(skill.getId(), List.of()),
                         milestonesBySkill.getOrDefault(skill.getId(), List.of()), resourcesByMilestone)).toList(),
                 roadmap.getCreatedAt(), roadmap.getUpdatedAt());

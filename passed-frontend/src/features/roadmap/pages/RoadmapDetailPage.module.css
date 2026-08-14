@@ -22,6 +22,8 @@
 
 .summaryTitle .roadmapStatusCOMPLETED{color:#31a148;background:#e8f8e9}
 
+.linkedPostings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}.linkedPosting{display:flex;min-width:0;align-items:center;gap:12px;padding:10px;color:#263a5e;background:#f8fafc;border:1px solid #e0e7f0;border-radius:9px;text-decoration:none;transition:border-color .2s,box-shadow .2s}.linkedPosting:hover{border-color:#9fc5f3;box-shadow:0 3px 10px #1c4b8c12}.linkedPosting:focus-visible{outline:3px solid #9bc7fb;outline-offset:2px}.linkedPosting img{width:58px;height:48px;flex:none;border-radius:7px;object-fit:cover}.linkedPosting>span{display:flex;min-width:0;flex-direction:column;gap:5px}.linkedPosting small{overflow:hidden;color:#7485a0;font-size:11px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}.linkedPosting strong{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:13px;line-height:1.35}
+
 .meta .requiredMilestone{color:#087f72;background:#e1f5f1}.meta .optionalMilestone{color:#66758f;background:#edf1f6}
 .meta b.preferred{color:#d97706;background:#fff1dc}
 
@@ -52,3 +54,4 @@
 .order.required{background:#0877ed}.order.preferred{background:#e58a16}.order.related{background:#9254c8}
 .skillNavigation nav button{grid-template-columns:58px minmax(0,1fr);gap:8px}.skillNavigation nav button>span{padding:3px 5px;border-radius:5px;text-align:center}.navREQUIRED{color:#0877ed;background:#e6f2ff}.navPREFERRED{color:#b86200;background:#fff1dc}.navRELATED{color:#8242b7;background:#f4eaff}
 @media(max-width:720px){.skillGuide{margin-top:18px}.skillGroupHeader>div{align-items:flex-start;flex-direction:column;gap:7px}.skillGroupHeader h2{font-size:19px}}
+@media(max-width:620px){.linkedPostings{grid-template-columns:1fr}}

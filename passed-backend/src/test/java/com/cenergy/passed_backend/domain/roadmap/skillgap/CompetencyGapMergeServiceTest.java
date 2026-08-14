@@ -40,7 +40,7 @@ class CompetencyGapMergeServiceTest {
         assertThat(docker.targetLevel()).isEqualTo(4);
         assertThat(docker.gapLevel()).isEqualTo(2);
         assertThat(docker.frequency()).isEqualTo(2);
-        assertThat(docker.requirementType()).isEqualTo(RequirementType.REQUIRED);
+        assertThat(docker.requirementType()).isEqualTo(RequirementType.PREFERRED);
         assertThat(docker.sources()).extracting("jobPostingId").containsExactly(101L, 102L);
     }
 
@@ -98,7 +98,7 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void selectsMostFrequentRequirementTypeInsteadOfStrongestType() {
+    void usesPreferredUnlessCompetencyIsRequiredInEverySelectedPosting() {
         MergedCompetencyGap result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
@@ -107,6 +107,26 @@ class CompetencyGapMergeServiceTest {
 
         assertThat(result.requirementType()).isEqualTo(RequirementType.PREFERRED);
         assertThat(result.priorityScore()).isEqualTo(223);
+    }
+
+    @Test
+    void keepsRequiredOnlyWhenEverySelectedPostingRequiresCompetency() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+    }
+
+    @Test
+    void usesRelatedWhenCompetencyAppearsOnlyAsRelated() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.RELATED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.RELATED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.RELATED);
     }
 
     @Test
@@ -146,11 +166,11 @@ class CompetencyGapMergeServiceTest {
         List<MergedCompetencyGap> second = service.merge(List.of(id2, id10, required));
 
         assertThat(first).isEqualTo(second);
-        assertThat(first).extracting("standardCompetencyId").containsExactly(30L, 2L, 10L);
+        assertThat(first).extracting("standardCompetencyId").containsExactly(2L, 10L, 30L);
         assertThat(first).extracting("priority").containsExactly(1, 2, 3);
-        assertThat(first).extracting("priorityScore").containsExactly(311, 221, 221);
+        assertThat(first).extracting("priorityScore").containsExactly(221, 221, 211);
         assertThat(first).extracting("roadmapSkillKey")
-                .containsExactly("competency-30", "competency-2", "competency-10");
+                .containsExactly("competency-2", "competency-10", "competency-30");
     }
 
     @Test

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 from api.features.roadmap.schema import Competency
@@ -30,6 +31,7 @@ def _profile_tokens(value: str) -> set[str]:
     }
 
 
+@lru_cache(maxsize=1)
 def load_curated_search_profiles() -> dict[int, dict[str, object]]:
     profiles: dict[int, dict[str, object]] = {}
     for path in sorted(_SEARCH_PROFILE_DIRECTORY.glob("*.json")):

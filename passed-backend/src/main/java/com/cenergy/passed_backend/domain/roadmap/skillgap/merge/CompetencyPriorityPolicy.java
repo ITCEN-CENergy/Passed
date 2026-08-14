@@ -29,9 +29,10 @@ public class CompetencyPriorityPolicy {
                 || competencyPostingCount > selectedPostingCount) {
             throw invalid("invalid posting counts");
         }
-        boolean requiredInEveryPosting = competencyPostingCount == selectedPostingCount
-                && requirementTypes.stream().allMatch(type -> type == RequirementType.REQUIRED);
-        if (requiredInEveryPosting) {
+        boolean requiredOrPreferredInEveryPosting = competencyPostingCount == selectedPostingCount
+                && requirementTypes.stream().allMatch(type ->
+                        type == RequirementType.REQUIRED || type == RequirementType.PREFERRED);
+        if (requiredOrPreferredInEveryPosting) {
             return RequirementType.REQUIRED;
         }
         boolean hasRequiredOrPreferred = requirementTypes.stream()

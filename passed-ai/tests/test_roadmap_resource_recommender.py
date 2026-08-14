@@ -5,6 +5,7 @@ from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
+    build_inflearn_search_query,
     build_milestone_search_query,
     build_web_search_query,
     classify_resource_relevance,
@@ -30,6 +31,17 @@ def _book(resource_id: str, title: str) -> LearningResource:
         title=title,
         provider="Test",
         url=f"https://example.com/books/{resource_id}",
+    )
+
+
+def _inflearn(resource_id: str) -> LearningResource:
+    return LearningResource(
+        resourceId=resource_id,
+        resourceType="WEB_RESOURCE",
+        title=f"JavaScript 비동기 오류 처리 인프런 강의 {resource_id}",
+        description="Promise 오류 처리 실습 강의",
+        provider="인프런",
+        url=f"https://www.inflearn.com/course/{resource_id}",
     )
 
 
@@ -72,6 +84,15 @@ def test_web_query_focuses_on_milestone_without_broad_context() -> None:
     assert "tutorial guide" in query
     assert "웹 애플리케이션" in query
     assert "오류 처리 테스트" not in query
+    assert len(query) <= 240
+
+
+def test_inflearn_query_is_restricted_to_course_pages() -> None:
+    query = build_inflearn_search_query(_target())
+
+    assert "JavaScript" in query
+    assert "비동기 오류 처리" in query
+    assert "한국어 한글 인프런 실습 강의" in query
     assert len(query) <= 240
 
 
@@ -140,6 +161,24 @@ async def test_limits_same_url_reuse_within_one_competency() -> None:
     ]
     assert len(recommended_urls) == 8
     assert all(recommended_urls.count(url) <= 2 for url in set(recommended_urls))
+
+
+@pytest.mark.asyncio
+async def test_prefers_at_most_two_inflearn_courses_per_milestone() -> None:
+    target = _target([
+        _resource("web-1"),
+        _resource("web-2"),
+        _resource("web-3"),
+        _inflearn("course-1"),
+        _inflearn("course-2"),
+    ])
+
+    result = await LearningResourceRecommender(RoadmapSettings()).recommend([target])
+
+    resources = result[target.key]
+    assert resources[0].provider == "인프런"
+    assert sum(resource.provider == "인프런" for resource in resources) == 2
+    assert len(resources) == 3
 
 
 @pytest.mark.asyncio

@@ -7,14 +7,22 @@ import styles from './RoadmapDetailPage.module.css'
 const labels = {
   ACTIVE: '진행 중', COMPLETED: '완료', CREATING: '생성 중', FAILED: '생성 실패',
   TECHNICAL_SKILL: '기술 역량', EXPERIENCE: '경험', BEHAVIORAL_TRAIT: '행동 특성', CERTIFICATION: '자격',
-  REQUIRED: '공통 필수', PREFERRED: '선택', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
+  REQUIRED: '공통', PREFERRED: '선택', RELATED: '관련', CONCEPT: '개념', PRACTICE: '실습', PROJECT: '프로젝트', ASSESSMENT: '평가', CERTIFICATION_TYPE: '자격',
   BEGINNER: '초급', INTERMEDIATE: '중급', ADVANCED: '고급', NOT_STARTED: '시작 전', IN_PROGRESS: '진행 중', COMPLETED_MILESTONE: '완료',
 }
 const fmtDate = (value) => value ? String(value).slice(0, 10).replaceAll('-', '.') : '-'
 const fmtHours = (minutes) => `${Number.isInteger((minutes || 0) / 60) ? (minutes || 0) / 60 : ((minutes || 0) / 60).toFixed(1)}시간`
 const progress = (value) => Math.min(100, Math.max(0, Number(value) || 0))
+const resourceTypeLabels = {
+  WEB_RESOURCE: '웹 자료',
+  BOOK: '책',
+  KMOOC_COURSE: '강의',
+}
+const resourceTypeLabel = (resource) => resource.provider === '인프런'
+  ? '강의'
+  : resourceTypeLabels[resource.resourceType] || '학습자료'
 const skillGroups = [
-  { type: 'REQUIRED', title: '공통 필수 역량', description: '선택한 모든 공고에서 필수로 요구하는 역량' },
+  { type: 'REQUIRED', title: '공통 역량', description: '선택한 모든 공고에서 필수 또는 우대하는 역량' },
   { type: 'PREFERRED', title: '선택 역량', description: '일부 공고에서 필수 또는 우대하는 역량' },
   { type: 'RELATED', title: '관련 역량', description: '직무 수행에 도움이 되는 보완 역량' },
 ]
@@ -37,7 +45,7 @@ const Milestone = ({ item, onToggle, busy }) => {
         <button className={styles.resourceHeading} type="button" aria-expanded={resourcesOpen} onClick={() => setResourcesOpen(value => !value)}><span><strong>추천 학습자료</strong><b>{item.learningResources.length}개</b></span><i aria-hidden="true">{resourcesOpen ? '⌃' : '⌄'}</i></button>
         {resourcesOpen && <div className={styles.resourceList}>{item.learningResources.map((resource) => <article className={styles.resourceCard} key={resource.resourceId}>
           <div className={styles.resourceInfo}>
-            <div><span className={styles.resourceType}>{resource.resourceType || '학습자료'}</span></div>
+            <div><span className={styles.resourceType}>{resourceTypeLabel(resource)}</span></div>
             <h5>{resource.title}</h5>
             {resource.provider && <p>{resource.provider}</p>}
           </div>
@@ -104,7 +112,7 @@ const RoadmapDetailPage = () => {
       <div className={styles.mainContent}>
         <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostingIds?.length || 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p><div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong></span><span>최초 완료 예정일<strong>{fmtDate(roadmap.baselineEndDate)}</strong></span><span>현재 완료 예정일<strong>{fmtDate(roadmap.estimatedEndDate)}</strong></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
-        <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통 필수·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
+        <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>
         <div className={styles.skillGroups}>{groupedSkills.map(group => <section className={`${styles.skillGroup} ${styles[`${group.type.toLowerCase()}Group`]}`} key={group.type}>
           <header className={styles.skillGroupHeader}><div><span>{labels[group.type]}</span><h2>{group.title}</h2></div><strong>{group.skills.length}개</strong><p>{group.description}</p></header>
           <div className={styles.skills}>{group.skills.map((skill, index) => <SkillCard key={skill.roadmapSkillId} skill={skill} groupOrder={index + 1} anchorId={`roadmap-skill-${skill.roadmapSkillId}`} openRequest={openSkillRequest} onToggle={toggle} busyId={busyId} />)}</div>

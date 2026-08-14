@@ -94,6 +94,8 @@ class LearningResourceSearchService:
         competency: Competency,
         search_query: str,
     ) -> list[LearningResource]:
+        if not search_query:
+            return []
         queued_at = perf_counter()
         wait_ms = 0
         try:

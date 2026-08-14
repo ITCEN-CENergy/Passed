@@ -17,7 +17,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+def _resolve_project_root(module_file: Path = Path(__file__)) -> Path:
+    """Locate passed-ai locally and tolerate the flattened loader image layout."""
+    resolved_file = module_file.resolve()
+    for parent in resolved_file.parents:
+        if (parent / "embedding-data" / "job-posting").is_dir():
+            return parent
+
+    return Path.cwd().resolve()
+
+
+PROJECT_ROOT = _resolve_project_root()
 
 
 class Settings(BaseSettings):

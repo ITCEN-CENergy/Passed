@@ -23,7 +23,7 @@ class JwtProviderTest {
         );
         ReflectionTestUtils.setField(jwtProvider, "accessTokenExpiration", 1_800_000L);
         ReflectionTestUtils.setField(jwtProvider, "refreshTokenExpiration", 604_800_000L);
-        principal = new CustomUserDetails(42L, "user@example.com", "encoded", "사용자");
+        principal = new CustomUserDetails(42L, "user@example.com", "encoded", "사용자", com.cenergy.passed_backend.domain.user.entity.UserRole.GENERAL_USER);
     }
 
     @Test
@@ -41,7 +41,7 @@ class JwtProviderTest {
     void refreshTokenIsBoundToItsUser() {
         String token = jwtProvider.generateRefreshToken(principal);
         CustomUserDetails another =
-                new CustomUserDetails(43L, "other@example.com", "encoded", "다른 사용자");
+                new CustomUserDetails(43L, "other@example.com", "encoded", "다른 사용자", com.cenergy.passed_backend.domain.user.entity.UserRole.GENERAL_USER);
 
         assertThat(jwtProvider.isRefreshToken(token)).isTrue();
         assertThat(jwtProvider.isValidRefreshToken(token, principal)).isTrue();

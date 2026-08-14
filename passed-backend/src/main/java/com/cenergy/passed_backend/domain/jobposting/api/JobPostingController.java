@@ -10,6 +10,7 @@ import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class JobPostingController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('GENERAL_USER', 'RECRUITER')")
     public ResponseEntity<JobPostingListResponse> getJobPostings(
             @Valid @ModelAttribute JobPostingListRequest jobPostingListRequest
     ) {
@@ -34,6 +36,7 @@ public class JobPostingController {
     }
 
     @GetMapping("/{jobPostingId}")
+    @PreAuthorize("hasAnyRole('GENERAL_USER', 'RECRUITER')")
     public ResponseEntity<JobPostingDetailResponse> getJobPosting(
             @PathVariable Long jobPostingId
     ) {
@@ -41,6 +44,7 @@ public class JobPostingController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<JobPostingCreateResponse> createJobPosting(
             @Valid @RequestBody JobPostingCreateRequest request
     ) {

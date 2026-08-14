@@ -13,6 +13,10 @@ import com.cenergy.passed_backend.domain.jobposting.repository.JobPostingSkillRe
 import com.cenergy.passed_backend.domain.jobposting.repository.JobRoleRepository;
 import com.cenergy.passed_backend.domain.skill.entity.Skill;
 import com.cenergy.passed_backend.domain.skill.repository.SkillRepository;
+import com.cenergy.passed_backend.domain.user.entity.User;
+import com.cenergy.passed_backend.domain.user.entity.UserRole;
+import com.cenergy.passed_backend.domain.user.repository.UserRepository;
+import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +40,8 @@ class JobPostingCommandServiceTest {
     private final CompanyRepository companyRepository = mock(CompanyRepository.class);
     private final JobRoleRepository jobRoleRepository = mock(JobRoleRepository.class);
     private final SkillRepository skillRepository = mock(SkillRepository.class);
+    private final CurrentUserIdProvider currentUserIdProvider = mock(CurrentUserIdProvider.class);
+    private final UserRepository userRepository = mock(UserRepository.class);
     private JobPostingCommandService service;
 
     @BeforeEach
@@ -45,7 +51,9 @@ class JobPostingCommandServiceTest {
                 postingSkillRepository,
                 companyRepository,
                 jobRoleRepository,
-                skillRepository
+                skillRepository,
+                currentUserIdProvider,
+                userRepository
         );
     }
 
@@ -57,6 +65,10 @@ class JobPostingCommandServiceTest {
         Skill requiredSkill = skill(10L);
         Skill preferredSkill = skill(20L);
         JobPosting savedPosting = mock(JobPosting.class);
+        User recruiter = mock(User.class);
+        when(recruiter.getRole()).thenReturn(UserRole.RECRUITER);
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(42L);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(recruiter));
         when(savedPosting.getId()).thenReturn(100L);
         when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
         when(jobRoleRepository.findById(2L)).thenReturn(Optional.of(role));

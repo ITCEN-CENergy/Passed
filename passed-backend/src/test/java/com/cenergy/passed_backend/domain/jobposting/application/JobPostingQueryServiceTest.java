@@ -15,6 +15,7 @@ import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class JobPostingQueryServiceTest {
@@ -85,6 +89,26 @@ class JobPostingQueryServiceTest {
         assertEquals("서버 개발", result.content().getFirst().jobRoleName());
         assertEquals("IT", result.content().getFirst().industryName());
         assertEquals(true, result.content().getFirst().matched());
+    }
+
+    @Test
+    void returnsPublicPostingsWithoutMatchingDataForAnonymousUser() {
+        JobPosting posting = posting();
+        when(currentUserIdProvider.getCurrentUserId())
+                .thenThrow(new InsufficientAuthenticationException("authentication required"));
+        when(repository.findFiltered(
+                eq(""), eq(""), eq(0L), eq(0L), eq(false), eq(CompanySize.STARTUP),
+                eq(false), eq(0L), any(Pageable.class)
+        )).thenAnswer(invocation -> {
+            Pageable pageable = invocation.getArgument(8);
+            return new PageImpl<>(List.of(posting), pageable, 1);
+        });
+
+        var result = service.findAll(new JobPostingListRequest(0, 12));
+
+        assertEquals(1, result.content().size());
+        assertEquals(false, result.content().getFirst().matched());
+        verify(recommendationRepository, never()).findMatchedJobPostingIds(anyLong(), any());
     }
 
     @Test

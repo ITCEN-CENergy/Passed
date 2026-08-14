@@ -17,6 +17,7 @@ import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,15 +63,16 @@ public class JobPostingQueryService {
 
     public JobPostingListResponse findAll(JobPostingListRequest request) {
         Objects.requireNonNull(request, "request must not be null");
-        Long userId = currentUserIdProvider.getCurrentUserId();
+        Long userId = currentUserIdOrNull();
+        boolean matchedOnly = userId != null && request.matchedOnly();
         Page<JobPosting> postings = jobPostingRepository.findFiltered(
                 queryText(request.keyword()), queryText(request.region()),
                 queryId(request.industryId()), queryId(request.jobRoleId()),
                 request.companySize() != null, queryCompanySize(request.companySize()),
-                request.matchedOnly(), userId,
+                matchedOnly, userId == null ? 0L : userId,
                 PageRequest.of(request.page(), request.size(), Sort.by(Sort.Direction.DESC, "id"))
         );
-        Set<Long> matchedIds = postings.isEmpty()
+        Set<Long> matchedIds = userId == null || postings.isEmpty()
                 ? Set.of()
                 : Set.copyOf(recommendationRepository.findMatchedJobPostingIds(
                         userId,
@@ -85,6 +87,14 @@ public class JobPostingQueryService {
                 postings.getTotalElements(),
                 postings.getTotalPages()
         );
+    }
+
+    private Long currentUserIdOrNull() {
+        try {
+            return currentUserIdProvider.getCurrentUserId();
+        } catch (InsufficientAuthenticationException ignored) {
+            return null;
+        }
     }
 
     private String queryText(String value) {

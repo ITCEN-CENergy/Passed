@@ -85,8 +85,8 @@
 
 .intro {
   align-items: flex-end;
-  padding: 30px 32px;
-  margin-bottom: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
   background: #fff;
   border: 1px solid var(--color-border);
   border-radius: 14px;
@@ -119,7 +119,7 @@
   gap: 7px;
   flex: 0 0 auto;
   color: #667085;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .guide {
@@ -168,7 +168,7 @@
 }
 
 .overallResult {
-  padding: 26px 28px;
+  padding: 24px;
   margin-bottom: 24px;
   background: #fff;
   border: 1px solid #cbd9ec;
@@ -184,14 +184,6 @@
   margin-bottom: 16px;
 }
 
-.overallHeading > div > p {
-  margin-bottom: 4px;
-  color: #667085;
-  font-size: 11px;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
 .overallHeading h2 {
   color: #1d2939;
@@ -199,7 +191,7 @@
 }
 
 .overallSummary {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #1d2939;
   font-size: 17px;
   font-weight: 750;
@@ -210,7 +202,7 @@
 .overallColumns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .overallStrengths,
@@ -269,7 +261,7 @@
 
 .items {
   display: grid;
-  gap: 22px;
+  gap: 24px;
 }
 
 .itemCard {
@@ -293,13 +285,13 @@
 
 .itemHeading span {
   color: #344054;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 850;
 }
 
 .itemHeading small {
   color: #667085;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .feedbackButton,
@@ -342,7 +334,7 @@
 
 .originalSection {
   position: relative;
-  padding: 26px 24px 30px;
+  padding: 24px;
 }
 
 .originalSection h2 {
@@ -364,7 +356,7 @@
 .originalSection > span {
   position: absolute;
   right: 24px;
-  bottom: 28px;
+  bottom: 24px;
   color: #98a2b3;
   font-size: 12px;
 }
@@ -391,13 +383,13 @@
 }
 
 .feedbackResult {
-  padding: 28px 24px 24px;
+  padding: 24px;
   background: #fbfcfe;
   border-top: 1px solid #dce4ef;
 }
 
 .feedbackTitle {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .feedbackTitle p {
@@ -440,14 +432,14 @@
 }
 
 .feedbackBlock {
-  padding: 17px 18px;
+  padding: 18px;
   border-radius: 10px;
 }
 
 .feedbackBlock + .feedbackBlock,
 .feedbackBlock + .suggestedAnswer,
 .suggestedAnswer {
-  margin-top: 13px;
+  margin-top: 16px;
 }
 
 .feedbackBlock h4 {
@@ -490,19 +482,19 @@
 }
 
 .improvementBlock {
-  padding: 17px 18px;
+  padding: 18px;
   background: #fff;
   border: 1px solid #dfe2e7;
   border-radius: 10px;
 }
 
 .improvementBlock h5 {
-  margin-bottom: 8px;
+  margin: 0 0 8px 0;
   color: #20242b;
   font-size: 14px;
 }
 
-.improvementArea { margin-top: 13px; }
+.improvementArea { margin-top: 16px; }
 
 .improvementTitle {
   display: flex;
@@ -530,8 +522,12 @@
   gap: 12px;
 }
 
+.improvementBlock:only-child {
+  grid-column: 1 / -1;
+}
+
 .suggestedAnswer {
-  padding: 19px;
+  padding: 18px;
   background: #fff;
   border: 1px solid #cbd9ec;
   border-radius: 10px;
@@ -542,15 +538,24 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 19px;
-  margin-top: 13px;
+  padding: 18px;
+  margin-top: 16px;
   background: #fff;
   border: 1px solid #dfe2e7;
   border-radius: 10px;
 }
 
-.suggestionPrompt h4 { margin-bottom: 5px; color: #20242b; font-size: 14px; }
-.suggestionPrompt p { color: #667085; font-size: 12px; }
+.suggestionPrompt h4 {
+  margin: 5px 0;
+  color: #20242b;
+  font-size: 14px;
+}
+
+.suggestionPrompt p {
+  color: #667085;
+  font-size: 12px;
+}
+
 .suggestionPrompt button {
   min-height: 42px;
   flex: 0 0 auto;
@@ -565,10 +570,11 @@
 .suggestionPrompt button:disabled { opacity: 0.6; cursor: wait; }
 
 .suggestedHeading {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .suggestedHeading h4 {
+  margin: 4px 0;
   color: #20242b;
   font-size: 14px;
 }
@@ -587,7 +593,7 @@
 }
 
 .feedbackDate {
-  margin-top: 14px;
+  margin-top: 16px;
   color: #98a2b3;
   font-size: 11px;
   text-align: right;

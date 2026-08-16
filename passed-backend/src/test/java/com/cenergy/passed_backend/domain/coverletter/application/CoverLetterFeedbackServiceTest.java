@@ -40,7 +40,7 @@ class CoverLetterFeedbackServiceTest {
                 12L, "question", "answer", 700, "job description"
         );
         ValidatedCoverLetterAiResult aiResult = new ValidatedCoverLetterAiResult(
-                84, "item feedback", "job feedback", "final answer"
+                84, "item feedback", "job feedback"
         );
         CoverLetterFeedbackResult saved = new CoverLetterFeedbackResult(
                 33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
@@ -54,6 +54,30 @@ class CoverLetterFeedbackServiceTest {
         CoverLetterFeedbackResult result = service.generate(12L);
 
         assertThat(result).isEqualTo(saved);
+    }
+
+    @Test
+    void generatesSuggestedAnswerOnlyAfterFeedbackExists() {
+        CoverLetterFeedbackInput input = new CoverLetterFeedbackInput(
+                12L, "question", "answer", 700, "job description"
+        );
+        CoverLetterFeedbackResult existing = new CoverLetterFeedbackResult(
+                33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
+                null, 700, 0, true, null, null
+        );
+        CoverLetterFeedbackResult saved = new CoverLetterFeedbackResult(
+                33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
+                "suggested answer", 700, 16, true, null, null
+        );
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        when(queryService.loadInput(257L, 12L)).thenReturn(input);
+        when(queryService.findFeedback(257L, 12L)).thenReturn(existing);
+        when(aiClient.suggest(new CoverLetterAiRequest("question", "answer", "job description")))
+                .thenReturn("suggested answer");
+        when(persistenceService.saveSuggestedAnswer(257L, input, "suggested answer"))
+                .thenReturn(saved);
+
+        assertThat(service.generateSuggestedAnswer(12L)).isEqualTo(saved);
     }
 
     /** Invalid item IDs are rejected before repository or external-AI work begins. */

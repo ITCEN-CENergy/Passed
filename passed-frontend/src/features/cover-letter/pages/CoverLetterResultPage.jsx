@@ -7,7 +7,7 @@ import {
   getCoverLetterItemFeedback,
   getCoverLetterOverallFeedback,
 } from '../api'
-import { FeedbackContent, LoadingOverlay } from '../components'
+import { FeedbackContent, LoadingOverlay, normalizeFeedbackText } from '../components'
 import { useCompanyCoverLetter } from '../hooks'
 import styles from './styles/CoverLetterResultPage.module.css'
 
@@ -35,19 +35,25 @@ function initialFeedbackState(items) {
 }
 
 function improvementSections(value) {
+  const normalized = normalizeFeedbackText(value)
   const sections = []
   let current = { title: '종합 개선점', lines: [] }
-  String(value ?? '').split(/\r?\n/).forEach((line) => {
-    const heading = line.trim().match(/^\[([^\]]+)]$/) || line.trim().match(/^#{1,6}\s+(.+)$/)
+
+  normalized.split('\n').forEach((line) => {
+    const trimmed = line.trim()
+    const bracketHeading = trimmed.match(/^\[([^\]]+)]\s*(.*)$/)
+    const markdownHeading = trimmed.match(/^#{1,6}\s+(.+)$/)
+    const heading = bracketHeading || markdownHeading
     if (heading) {
       if (current.lines.some(Boolean)) sections.push(current)
       current = { title: heading[1].trim(), lines: [] }
+      if (bracketHeading?.[2]) current.lines.push(bracketHeading[2])
     } else {
       current.lines.push(line)
     }
   })
   if (current.lines.some(Boolean)) sections.push(current)
-  return sections.length ? sections : [{ title: '종합 개선점', lines: [String(value ?? '')] }]
+  return sections.length ? sections : [{ title: '종합 개선점', lines: [normalized] }]
 }
 
 function scoreTone(score) {
@@ -311,10 +317,7 @@ const CoverLetterResultPage = () => {
         {overallFeedback && (
           <section className={styles.overallResult} aria-label="자기소개서 종합 첨삭 결과">
             <div className={styles.overallHeading}>
-              <div>
-                <p>Overall feedback</p>
-                <h2>종합 진단</h2>
-              </div>
+              <h2>종합 진단</h2>
               <span className={`${styles.scoreBadge} ${scoreTone(overallFeedback.score)}`}>
                 {overallFeedback.scoreLabel ?? overallFeedback.score}
               </span>
@@ -359,7 +362,7 @@ const CoverLetterResultPage = () => {
               <article className={styles.itemCard} key={item.id}>
                 <div className={styles.itemHeading}>
                   <div>
-                    <span>Question {String(item.displayOrder).padStart(2, '0')}</span>
+                    <span>문항 {item.displayOrder}</span>
                     <small>{item.characterLimit ? `${item.characterLimit.toLocaleString()}자 이내` : '글자 수 제한 없음'}</small>
                   </div>
                   <button
@@ -418,8 +421,8 @@ const CoverLetterResultPage = () => {
                     <div className={styles.improvementArea}>
                       <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 개선할 점</h4>
                       <div className={styles.improvementGrid}>
-                        {improvementSections(state.feedback.improvements).map((section) => (
-                          <article className={styles.improvementBlock} key={section.title}>
+                        {improvementSections(state.feedback.improvements).map((section, sectionIndex) => (
+                          <article className={styles.improvementBlock} key={`${section.title}-${sectionIndex}`}>
                             <h5>{section.title}</h5>
                             <FeedbackContent text={section.lines.join('\n')} />
                           </article>

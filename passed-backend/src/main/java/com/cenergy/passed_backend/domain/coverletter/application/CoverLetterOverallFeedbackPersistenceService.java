@@ -98,19 +98,18 @@ public class CoverLetterOverallFeedbackPersistenceService {
         }
         requireText(result.qaAlignmentFeedback(), "qa_alignment_feedback");
         requireText(result.jobFitFeedback(), "jd_fit_feedback");
-        requireText(result.finalEditedContent(), "final_edited_content");
         String improvements = "[질문-답변 일치도]\n" + result.qaAlignmentFeedback().trim()
                 + "\n\n[채용공고 적합도]\n" + result.jobFitFeedback().trim();
         CoverLetterItemFeedback feedback = itemFeedbackRepository
                 .findByCoverLetterCompanyItemId(item.getId())
                 .map(existing -> {
                     existing.update(score(result.qaAlignmentScore()), null,
-                            improvements, result.finalEditedContent());
+                            improvements, null);
                     return existing;
                 })
                 .orElseGet(() -> CoverLetterItemFeedback.create(
                         item, score(result.qaAlignmentScore()), null,
-                        improvements, result.finalEditedContent()));
+                        improvements, null));
         return itemFeedbackRepository.save(feedback);
     }
 

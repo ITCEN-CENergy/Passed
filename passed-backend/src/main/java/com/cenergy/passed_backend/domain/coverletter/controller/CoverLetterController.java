@@ -33,4 +33,13 @@ public class CoverLetterController {
     ) {
         return CoverLetterItemFeedbackResponse.from(feedbackService.find(companyCoverLetterItemId));
     }
+
+    @PostMapping("/{companyCoverLetterItemId}/suggested-answer")
+    public CoverLetterItemFeedbackResponse generateSuggestedAnswer(
+            @PathVariable Long companyCoverLetterItemId
+    ) {
+        return CoverLetterItemFeedbackResponse.from(
+                feedbackService.generateSuggestedAnswer(companyCoverLetterItemId)
+        );
+    }
 }

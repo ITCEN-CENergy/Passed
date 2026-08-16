@@ -21,13 +21,10 @@ public class CoverLetterAiResponseValidator {
                 "qa_alignment_score must be between 0 and 100");
         requireText(response.qaAlignmentFeedback(), "qa_alignment_feedback");
         invalidIf(response.jobFitFeedback() == null, "jd_fit_feedback must not be null");
-        requireText(response.finalEditedContent(), "final_edited_content");
-
         return new ValidatedCoverLetterAiResult(
                 response.qaAlignmentScore(),
                 response.qaAlignmentFeedback(),
-                response.jobFitFeedback(),
-                response.finalEditedContent()
+                response.jobFitFeedback()
         );
     }
 

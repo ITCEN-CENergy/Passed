@@ -3,9 +3,11 @@ import { Link, useSearchParams } from 'react-router-dom'
 import {
   generateCoverLetterItemFeedback,
   generateCoverLetterOverallFeedback,
+  generateCoverLetterSuggestedAnswer,
   getCoverLetterItemFeedback,
   getCoverLetterOverallFeedback,
 } from '../api'
+import { FeedbackContent, LoadingOverlay } from '../components'
 import { useCompanyCoverLetter } from '../hooks'
 import styles from './styles/CoverLetterResultPage.module.css'
 
@@ -27,8 +29,25 @@ function initialFeedbackState(items) {
     feedback: null,
     isLoading: true,
     isGenerating: false,
+    isSuggesting: false,
     error: null,
   }]))
+}
+
+function improvementSections(value) {
+  const sections = []
+  let current = { title: '종합 개선점', lines: [] }
+  String(value ?? '').split(/\r?\n/).forEach((line) => {
+    const heading = line.trim().match(/^\[([^\]]+)]$/) || line.trim().match(/^#{1,6}\s+(.+)$/)
+    if (heading) {
+      if (current.lines.some(Boolean)) sections.push(current)
+      current = { title: heading[1].trim(), lines: [] }
+    } else {
+      current.lines.push(line)
+    }
+  })
+  if (current.lines.some(Boolean)) sections.push(current)
+  return sections.length ? sections : [{ title: '종합 개선점', lines: [String(value ?? '')] }]
 }
 
 function scoreTone(score) {
@@ -83,7 +102,7 @@ const CoverLetterResultPage = () => {
         .then((feedback) => {
           setFeedbackByItem((current) => ({
             ...current,
-            [item.id]: { feedback, isLoading: false, isGenerating: false, error: null },
+            [item.id]: { feedback, isLoading: false, isGenerating: false, isSuggesting: false, error: null },
           }))
         })
         .catch((feedbackError) => {
@@ -96,6 +115,7 @@ const CoverLetterResultPage = () => {
               feedback: null,
               isLoading: false,
               isGenerating: false,
+              isSuggesting: false,
               error: hasNoFeedback ? null : feedbackError,
             },
           }))
@@ -119,7 +139,7 @@ const CoverLetterResultPage = () => {
       const feedback = await generateCoverLetterItemFeedback(itemId)
       setFeedbackByItem((current) => ({
         ...current,
-        [itemId]: { feedback, isLoading: false, isGenerating: false, error: null },
+        [itemId]: { feedback, isLoading: false, isGenerating: false, isSuggesting: false, error: null },
       }))
       return true
     } catch (feedbackError) {
@@ -132,6 +152,25 @@ const CoverLetterResultPage = () => {
         },
       }))
       return false
+    }
+  }
+
+  const generateSuggestedAnswer = async (itemId) => {
+    setFeedbackByItem((current) => ({
+      ...current,
+      [itemId]: { ...current[itemId], isSuggesting: true, error: null },
+    }))
+    try {
+      const feedback = await generateCoverLetterSuggestedAnswer(itemId)
+      setFeedbackByItem((current) => ({
+        ...current,
+        [itemId]: { ...current[itemId], feedback, isSuggesting: false, error: null },
+      }))
+    } catch (suggestionError) {
+      setFeedbackByItem((current) => ({
+        ...current,
+        [itemId]: { ...current[itemId], isSuggesting: false, error: suggestionError },
+      }))
     }
   }
 
@@ -154,6 +193,7 @@ const CoverLetterResultPage = () => {
             feedback,
             isLoading: false,
             isGenerating: false,
+            isSuggesting: false,
             error: null,
           }
         })
@@ -165,7 +205,7 @@ const CoverLetterResultPage = () => {
         total: targets.length,
         failed: 0,
       })
-    } catch (bulkError) {
+    } catch {
       setBulkFeedback({
         isRunning: false,
         completed: 0,
@@ -207,15 +247,30 @@ const CoverLetterResultPage = () => {
   const answeredItems = coverLetter.items.filter((item) => item.answer?.trim())
   const feedbackStates = Object.values(feedbackByItem)
   const isFeedbackBusy = feedbackStates.some((state) => state.isLoading || state.isGenerating)
+  const generatingState = feedbackStates.find((state) => state.isGenerating || state.isSuggesting)
   const allAnsweredItemsHaveFeedback = answeredItems.length > 0
     && answeredItems.every((item) => feedbackByItem[item.id]?.feedback)
   const bulkSucceeded = bulkFeedback.completed - bulkFeedback.failed
+  const loadingCopy = generatingState?.isSuggesting
+    ? {
+        title: '추천 수정안을 생성하고 있어요',
+        description: '첨삭 결과와 글자 수 제한을 반영해 답변을 다듬고 있어요.',
+      }
+    : bulkFeedback.isRunning
+      ? {
+          title: '자기소개서 전체를 첨삭하고 있어요',
+          description: '채용공고와 모든 답변을 비교해 종합 피드백을 만들고 있어요.',
+        }
+      : {
+          title: '자기소개서 답변을 첨삭하고 있어요',
+          description: '채용공고와 선택한 답변을 분석해 개선점을 찾고 있어요.',
+        }
 
   return (
     <div className={styles.page}>
+      {(bulkFeedback.isRunning || generatingState) && <LoadingOverlay {...loadingCopy} />}
       <main className={styles.content}>
         <div className={styles.topNavigation}>
-          <Link className={styles.backLink} to="/cover-letter-list">← 자기소개서 목록</Link>
           <div className={styles.topActions}>
             <button
               className={styles.bulkFeedbackButton}
@@ -264,15 +319,15 @@ const CoverLetterResultPage = () => {
                 {overallFeedback.scoreLabel ?? overallFeedback.score}
               </span>
             </div>
-            <p className={styles.overallSummary}>{overallFeedback.summary}</p>
+            <div className={styles.overallSummary}><FeedbackContent text={overallFeedback.summary} /></div>
             <div className={styles.overallColumns}>
               <div className={styles.overallStrengths}>
                 <h3><span aria-hidden="true">✓</span> 잘된 점</h3>
-                <p>{overallFeedback.strengths}</p>
+                <FeedbackContent text={overallFeedback.strengths} />
               </div>
               <div className={styles.overallImprovements}>
                 <h3><span aria-hidden="true">!</span> 우선 개선할 점</h3>
-                <p>{overallFeedback.improvements}</p>
+                <FeedbackContent text={overallFeedback.improvements} />
               </div>
             </div>
             <p className={styles.feedbackDate}>최근 종합 첨삭 {formatDate(overallFeedback.updatedAt)}</p>
@@ -296,6 +351,7 @@ const CoverLetterResultPage = () => {
               feedback: null,
               isLoading: true,
               isGenerating: false,
+              isSuggesting: false,
               error: null,
             }
             const hasAnswer = Boolean(item.answer?.trim())
@@ -355,27 +411,46 @@ const CoverLetterResultPage = () => {
                     {state.feedback.strengths && (
                       <div className={`${styles.feedbackBlock} ${styles.strengthBlock}`}>
                         <h4><span aria-hidden="true">✓</span> 잘된 점</h4>
-                        <p>{state.feedback.strengths}</p>
+                        <FeedbackContent text={state.feedback.strengths} />
                       </div>
                     )}
 
-                    <div className={`${styles.feedbackBlock} ${styles.improvementBlock}`}>
-                      <h4><span aria-hidden="true">!</span> 개선할 점</h4>
-                      <p>{state.feedback.improvements}</p>
+                    <div className={styles.improvementArea}>
+                      <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 개선할 점</h4>
+                      <div className={styles.improvementGrid}>
+                        {improvementSections(state.feedback.improvements).map((section) => (
+                          <article className={styles.improvementBlock} key={section.title}>
+                            <h5>{section.title}</h5>
+                            <FeedbackContent text={section.lines.join('\n')} />
+                          </article>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className={styles.suggestedAnswer}>
-                      <div className={styles.suggestedHeading}>
-                        <h4>추천 수정안</h4>
-                        <span className={state.feedback.withinCharacterLimit ? styles.limitGood : styles.limitWarning}>
-                          {state.feedback.suggestedAnswerLength.toLocaleString()}
-                          {state.feedback.characterLimit
-                            ? ` / ${state.feedback.characterLimit.toLocaleString()}자`
-                            : '자'}
-                        </span>
+                    {state.feedback.suggestedAnswer ? (
+                      <div className={styles.suggestedAnswer}>
+                        <div className={styles.suggestedHeading}>
+                          <h4>추천 수정안</h4>
+                          <span className={state.feedback.withinCharacterLimit ? styles.limitGood : styles.limitWarning}>
+                            {state.feedback.suggestedAnswerLength.toLocaleString()}
+                            {state.feedback.characterLimit
+                              ? ` / ${state.feedback.characterLimit.toLocaleString()}자`
+                              : '자'}
+                          </span>
+                        </div>
+                        <FeedbackContent text={state.feedback.suggestedAnswer} />
                       </div>
-                      <p>{state.feedback.suggestedAnswer}</p>
-                    </div>
+                    ) : (
+                      <div className={styles.suggestionPrompt}>
+                        <div>
+                          <h4>추천 수정안</h4>
+                          <p>개선점을 반영한 답변이 필요할 때 생성할 수 있습니다.</p>
+                        </div>
+                        <button type="button" disabled={state.isSuggesting} onClick={() => generateSuggestedAnswer(item.id)}>
+                          {state.isSuggesting ? '생성 중...' : '추천 수정안 생성하기'}
+                        </button>
+                      </div>
+                    )}
 
                     <p className={styles.feedbackDate}>최근 첨삭 {formatDate(state.feedback.updatedAt)}</p>
                   </section>

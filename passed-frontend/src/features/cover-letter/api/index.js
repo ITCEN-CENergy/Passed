@@ -13,6 +13,9 @@ export const getCoverLetterItemFeedback = (itemId, { signal } = {}) =>
 export const generateCoverLetterItemFeedback = (itemId) =>
   csrfRequest(`/api/v1/company-cover-letter-items/${itemId}/feedback`, { method: 'POST' })
 
+export const generateCoverLetterSuggestedAnswer = (itemId) =>
+  csrfRequest(`/api/v1/company-cover-letter-items/${itemId}/suggested-answer`, { method: 'POST' })
+
 export const getCoverLetterOverallFeedback = (coverLetterId, { signal } = {}) =>
   httpClient(`/api/v1/company-cover-letters/${coverLetterId}/feedback`, { signal })
 

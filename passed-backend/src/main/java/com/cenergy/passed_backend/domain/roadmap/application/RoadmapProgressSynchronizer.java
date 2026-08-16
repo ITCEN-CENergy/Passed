@@ -60,7 +60,8 @@ public class RoadmapProgressSynchronizer {
             List<RoadmapMilestone> roadmapLinks = roadmapSkillIds.isEmpty() ? List.of()
                     : roadmapMilestoneRepository.findAllByRoadmapSkillIds(roadmapSkillIds);
             roadmap.updateProgressRate(calculate(roadmapLinks));
-            roadmap.updateEstimatedEndDate(etaCalculator.calculate(roadmapLinks));
+            roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                    roadmapLinks, roadmap.getDailyStudyMinutes()));
         }
     }
 
@@ -85,7 +86,8 @@ public class RoadmapProgressSynchronizer {
                 .filter(RoadmapMilestone::isRequired)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
         roadmap.updateProgressRate(calculate(links));
-        roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                links, roadmap.getDailyStudyMinutes()));
     }
 
     public void synchronizeInitialProgress(Long roadmapId) {
@@ -102,7 +104,8 @@ public class RoadmapProgressSynchronizer {
             skill.updateProgressRate(calculate(bySkill.getOrDefault(skill.getId(), List.of())));
         }
         roadmap.updateProgressRate(calculate(links));
-        roadmap.updateEstimatedEndDate(etaCalculator.calculate(links));
+        roadmap.updateEstimatedEndDate(etaCalculator.calculate(
+                links, roadmap.getDailyStudyMinutes()));
     }
 
     private BigDecimal calculate(Collection<RoadmapMilestone> links) {

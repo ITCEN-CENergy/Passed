@@ -3,7 +3,7 @@
 .heading h1 { font-size: 36px; line-height: 1.25; letter-spacing: -.045em; }
 .heading p { margin-top: 12px; color: #546789; font-size: 17px; }
 .list { display: grid; gap: 14px; }
-.card { display: grid; grid-template-columns: minmax(0, 1fr) 190px; min-height: 214px; overflow: hidden; color: inherit; background: #fff; border: 1px solid #dce3ed; border-radius: 13px; box-shadow: 0 2px 7px rgba(28, 54, 92, .05); text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.card { display: grid; grid-template-columns: minmax(0, 1fr) 210px; min-height: 238px; overflow: hidden; color: inherit; background: #fff; border: 1px solid #dce3ed; border-radius: 13px; box-shadow: 0 2px 7px rgba(28, 54, 92, .05); text-decoration: none; transition: border-color .2s, box-shadow .2s, transform .2s; }
 .card:hover { border-color: #a9c9f6; box-shadow: 0 8px 22px rgba(28, 75, 140, .11); transform: translateY(-2px); }
 .card:focus-visible { outline: 3px solid rgba(8, 103, 242, .3); outline-offset: 3px; }
 .cardBody { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: 27px 38px; }
@@ -15,13 +15,14 @@
 .creating .status { color: #42516e; background: #eef1f5; }
 .failed .status { color: #c33d44; background: #fde9ea; }
 .spinner, .loader { width: 22px; height: 22px; border: 3px dotted #1680ff; border-radius: 50%; animation: spin 1.2s linear infinite; }
-.time { margin-top: 14px; }
-.metrics, .dates { display: flex; flex-wrap: wrap; align-items: center; margin-top: 17px; }
-.metric { display: inline-flex; align-items: center; gap: 10px; color: #526789; font-size: 16px; font-weight: 650; white-space: nowrap; }
-.metrics .metric + .metric, .dates .metric + .metric { padding-left: 26px; margin-left: 26px; border-left: 1px solid #dce3ed; }
+.time { margin-top: 38px; transform: translateY(12px); }
+.time .metric { font-size: 17px; font-weight: 700; }
+.metrics { display: flex; flex-wrap: wrap; align-items: center; margin-top: 21px; transform: translateY(12px); }
+.metric { display: inline-flex; align-items: center; gap: 10px; color: #526789; font-size: 16px; font-weight: 400; white-space: nowrap; }
+.metrics .metric + .metric { padding-left: 26px; margin-left: 26px; border-left: 1px solid #dce3ed; }
 .metricIcon { display: inline-flex; width: 22px; height: 22px; color: #627aa2; }
 .metricIcon svg { width: 100%; height: 100%; }
-.progressBlock { display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 18px 30px 22px 10px; }
+.progressBlock { display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px 24px 20px 8px; }
 .progressBlock > strong { margin-bottom: 12px; color: #213355; font-size: 14px; }
 .progressRing { display: grid; width: 128px; height: 128px; place-items: center; border-radius: 50%; background: conic-gradient(from 0deg, #0875ef 0deg var(--progress), #e1e5ea var(--progress) 360deg); }
 .progressRing > div { display: grid; width: 108px; height: 108px; place-items: center; background: #fff; border-radius: 50%; }
@@ -40,8 +41,9 @@
   .cardBody { padding: 25px 22px 12px; }
   .titleRow { flex-wrap: wrap; }
   .titleRow h2 { width: 100%; font-size: 21px; white-space: normal; }
-  .metrics, .dates { gap: 12px 18px; }
-  .metrics .metric + .metric, .dates .metric + .metric { padding-left: 0; margin-left: 0; border-left: 0; }
+  .time, .metrics { transform: none; }
+  .metrics { gap: 12px 18px; }
+  .metrics .metric + .metric { padding-left: 0; margin-left: 0; border-left: 0; }
   .metric { font-size: 14px; }
   .progressBlock { padding: 15px 20px 25px; }
   .progressRing { width: 105px; height: 105px; }

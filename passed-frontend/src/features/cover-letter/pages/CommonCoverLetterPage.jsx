@@ -108,7 +108,7 @@ const CommonCoverLetterPage = ({ onboarding = false }) => {
         })}
         {!questions.length && <section className={styles.empty}>작성 가능한 자기소개서 문항이 없습니다.</section>}
         {error && <p className={styles.error} role="alert">{error}</p>}
-        <button className={styles.submit} type="submit" disabled={saving || !questions.length}>{saving ? '저장 중…' : existing ? '수정 완료' : '작성 완료'} <span aria-hidden="true">→</span></button>
+        <button className={styles.submit} type="submit" disabled={saving || !questions.length}>{saving ? '저장 중…' : existing ? '수정 완료' : '작성 완료'}</button>
       </form>
     </main>
   )

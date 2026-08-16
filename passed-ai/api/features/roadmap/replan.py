@@ -12,6 +12,7 @@ from api.features.roadmap.resources.recommender import (
     LearningResourceRecommender,
     RecommendationTarget,
     build_book_search_query,
+    build_inflearn_search_query,
     build_milestone_search_query,
     build_web_search_query,
 )
@@ -152,6 +153,7 @@ async def replan_roadmap(
             provider_queries={
                 "kakao_book": build_book_search_query(target),
                 "keenable": build_web_search_query(target),
+                "keenable_inflearn": build_inflearn_search_query(target),
             },
         )
 

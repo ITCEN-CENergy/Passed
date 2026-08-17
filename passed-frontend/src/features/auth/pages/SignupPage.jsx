@@ -1,4 +1,4 @@
-import { SignupForm } from '../../features/auth/index.js'
+import { SignupForm } from '../components/index.js'
 
 const SignupPage = () => <SignupForm />
 

@@ -1,4 +1,4 @@
-package com.cenergy.passed_backend.domain.coverletter.ai.client;
+package com.cenergy.passed_backend.domain.coverletter.ai.exception;
 
 import com.cenergy.passed_backend.global.error.ErrorCode;
 

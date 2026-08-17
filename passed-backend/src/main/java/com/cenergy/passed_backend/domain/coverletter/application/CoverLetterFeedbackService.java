@@ -49,6 +49,19 @@ public class CoverLetterFeedbackService {
         return queryService.findFeedback(userId, itemId);
     }
 
+    public CoverLetterFeedbackResult generateSuggestedAnswer(Long itemId) {
+        Long userId = currentUserId();
+        validateItemId(itemId);
+        CoverLetterFeedbackInput input = queryService.loadInput(userId, itemId);
+        queryService.findFeedback(userId, itemId);
+        String suggestedAnswer = aiClient.suggest(new CoverLetterAiRequest(
+                input.question(),
+                input.answer(),
+                input.jobDescription()
+        ));
+        return persistenceService.saveSuggestedAnswer(userId, input, suggestedAnswer);
+    }
+
     private Long currentUserId() {
         Long userId = currentUserIdProvider.getCurrentUserId();
         if (userId == null || userId <= 0) {

@@ -30,13 +30,11 @@ const CompanyCoverLetterList = () => {
   return (
     <div className={styles.page}>
       <main className={styles.content} aria-labelledby="cover-letter-title">
-        <Link className={styles.backLink} to="/">
-          <span aria-hidden="true">←</span>
-          학습 로드맵
-        </Link>
-
         <div className={styles.pageHeader}>
-          <h1 id="cover-letter-title">자기소개서 목록</h1>
+          <div>
+            <h1 id="cover-letter-title">자기소개서 목록</h1>
+            <p>지원할 채용공고에 맞춰 작성한 자기소개서를 확인하고 첨삭해 보세요.</p>
+          </div>
           <Link className={styles.writeButton} to="/cover-letter-write">
             직접 자기소개서 입력하기
           </Link>

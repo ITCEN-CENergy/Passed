@@ -56,6 +56,7 @@ qa_alignment_prompt = ChatPromptTemplate.from_messages([
 질문의 핵심 의도와 답변의 일치도를 100점 만점으로 평가하세요.
 피드백에는 내용의 구체성·논리성뿐 아니라 맞춤법, 띄어쓰기, 문법, 어색하거나 모호한 표현도 함께 지적하고 개선 방향을 제안하세요.
 답변 전체를 교정한 별도 원고는 만들지 마세요.
+마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 말고 일반 문장만 작성하세요.
 반드시 score는 정수, feedback은 중첩 객체가 아닌 하나의 문자열인 JSON 객체로 반환하세요."""),
     ("user", "질문: {question}\n\n답변: {content}")
 ])
@@ -64,7 +65,8 @@ qa_alignment_prompt = ChatPromptTemplate.from_messages([
 jd_fit_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 채용 담당자(HR)이자 자기소개서 편집자입니다.
 채용 공고의 필수 요건과 우대 사항을 기준으로 자기소개서가 직무에 적합한 역량을 보여주는지 분석하세요.
-부족한 근거와 보완할 키워드를 제안하고, 직무 적합성을 약화하는 맞춤법·문법 오류나 모호하고 어색한 표현도 피드백에 포함하세요."""),
+부족한 근거와 보완할 키워드를 제안하고, 직무 적합성을 약화하는 맞춤법·문법 오류나 모호하고 어색한 표현도 피드백에 포함하세요.
+마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 말고 일반 문장만 작성하세요."""),
     ("user", "채용 공고: {job_description}\n\n자기소개서: {content}")
 ])
 
@@ -73,7 +75,7 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 전문 취업 컨설턴트이자 교정 편집자입니다.
 주어진 분석을 바탕으로 자기소개서를 최종 첨삭하세요.
 원문의 사실과 경험을 임의로 추가하지 말고, 맞춤법·띄어쓰기·문법·어색한 표현을 바로잡으면서 가독성과 설득력을 높이세요.
-설명이나 변경 목록 없이 완성된 최종본만 반환하세요."""),
+설명, 제목, 마크다운 문법 없이 완성된 최종본만 반환하세요."""),
     ("user", """
 원본 질문: {question}
 원본 내용: {content}
@@ -89,6 +91,7 @@ overall_review_prompt = ChatPromptTemplate.from_messages([
 여러 문항의 원문과 문항별 분석 결과를 함께 검토하여 자기소개서 전체의 완성도를 평가하세요.
 문항 하나의 표현을 반복하지 말고, 문항 간 일관성·경험의 중복·직무 적합성·근거의 구체성을 종합하세요.
 원문에 없는 사실을 만들지 마세요.
+각 텍스트 필드에는 마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 마세요.
 반드시 overall_score, summary, strengths, improvements 필드를 가진 JSON 객체만 반환하세요.
 overall_score는 0에서 100 사이의 정수입니다."""),
     ("user", """채용 공고(분석에만 사용):
@@ -134,7 +137,7 @@ def _process_cover_letter_with_chains(
     job_description: str,
     chains: tuple,
 ) -> dict:
-    qa_alignment_chain, jd_fit_chain, final_edit_chain = chains
+    qa_alignment_chain, jd_fit_chain, _ = chains
 
     qa_result = qa_alignment_chain.invoke({
         "question": question,
@@ -149,18 +152,10 @@ def _process_cover_letter_with_chains(
             "content": content,
         })
 
-    final_edited_content = final_edit_chain.invoke({
-        "question": question,
-        "content": content,
-        "qa_alignment_feedback": qa_alignment_feedback,
-        "jd_fit_feedback": jd_fit_feedback,
-    })
-
     return {
         "qa_alignment_score": qa_result.get("score", 0),
         "qa_alignment_feedback": qa_alignment_feedback,
-        "jd_fit_feedback": jd_fit_feedback,
-        "final_edited_content": final_edited_content,
+        "jd_fit_feedback": _feedback_to_text(jd_fit_feedback),
     }
 
 def process_cover_letter_chain(question: str, content: str, job_description: str = "") -> dict:
@@ -171,6 +166,22 @@ def process_cover_letter_chain(question: str, content: str, job_description: str
         job_description,
         _create_cover_letter_chains(),
     )
+
+
+def process_cover_letter_suggestion_chain(
+    question: str,
+    content: str,
+    job_description: str = "",
+) -> str:
+    """분석과 분리된 사용자 요청 시점에만 추천 수정안을 생성합니다."""
+    chains = _create_cover_letter_chains()
+    analysis = _process_cover_letter_with_chains(question, content, job_description, chains)
+    return chains[2].invoke({
+        "question": question,
+        "content": content,
+        "qa_alignment_feedback": analysis["qa_alignment_feedback"],
+        "jd_fit_feedback": analysis["jd_fit_feedback"],
+    }).strip()
 
 # 전체 자기소개서를 읽고 리뷰하는 기능
 def process_cover_letter_review_chain(items: list[dict], job_description: str = "") -> dict:

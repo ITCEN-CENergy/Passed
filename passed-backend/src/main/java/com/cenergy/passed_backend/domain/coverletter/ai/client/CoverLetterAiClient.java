@@ -8,5 +8,7 @@ import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiR
 public interface CoverLetterAiClient {
     ValidatedCoverLetterAiResult edit(CoverLetterAiRequest request);
 
+    String suggest(CoverLetterAiRequest request);
+
     CoverLetterReviewAiResponse review(CoverLetterReviewAiRequest request);
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import logo from '../../assets/images/logo.webp'
-import { ConfirmDialog } from '../../common/components/index.js'
+import { ConfirmDialog } from './index.js'
 import useAuthStore from '../../features/auth/model/useAuthStore.js'
 import styles from './Header.module.css'
 

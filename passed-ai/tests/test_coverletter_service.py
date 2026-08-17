@@ -13,7 +13,7 @@ class RecordingChain:
         return self.response
 
 
-def test_feedback_and_editing_use_original_content_without_spell_check(monkeypatch):
+def test_feedback_analysis_does_not_generate_suggested_answer(monkeypatch):
     qa_chain = RecordingChain({"score": 82, "feedback": "맞춤법과 질문 의도 피드백"})
     jd_chain = RecordingChain("공고 적합도와 표현 피드백")
     final_chain = RecordingChain("교정 사항을 반영한 최종 답변")
@@ -27,17 +27,11 @@ def test_feedback_and_editing_use_original_content_without_spell_check(monkeypat
 
     assert qa_chain.calls == [{"question": "지원 동기는?", "content": "원본 답변"}]
     assert jd_chain.calls == [{"job_description": "채용 공고", "content": "원본 답변"}]
-    assert final_chain.calls == [{
-        "question": "지원 동기는?",
-        "content": "원본 답변",
-        "qa_alignment_feedback": "맞춤법과 질문 의도 피드백",
-        "jd_fit_feedback": "공고 적합도와 표현 피드백",
-    }]
+    assert final_chain.calls == []
     assert result == {
         "qa_alignment_score": 82,
         "qa_alignment_feedback": "맞춤법과 질문 의도 피드백",
         "jd_fit_feedback": "공고 적합도와 표현 피드백",
-        "final_edited_content": "교정 사항을 반영한 최종 답변",
     }
 
 
@@ -55,7 +49,7 @@ def test_job_feedback_is_skipped_when_job_description_is_missing(monkeypatch):
 
     assert jd_chain.calls == []
     assert result["jd_fit_feedback"] == "제공된 채용 공고 정보가 없습니다."
-    assert final_chain.calls[0]["jd_fit_feedback"] == "제공된 채용 공고 정보가 없습니다."
+    assert final_chain.calls == []
 
 
 def test_nested_qa_feedback_is_normalized_to_string(monkeypatch):
@@ -83,7 +77,28 @@ def test_nested_qa_feedback_is_normalized_to_string(monkeypatch):
         "개선 방향: 본인의 역할을 먼저 제시해 주세요."
     )
     assert result["qa_alignment_feedback"] == expected
-    assert final_chain.calls[0]["qa_alignment_feedback"] == expected
+    assert final_chain.calls == []
+
+
+def test_suggested_answer_is_generated_only_on_explicit_request(monkeypatch):
+    qa_chain = RecordingChain({"score": 82, "feedback": "문항 피드백"})
+    jd_chain = RecordingChain("직무 피드백")
+    final_chain = RecordingChain("추천 수정안")
+    monkeypatch.setattr(
+        service,
+        "_create_cover_letter_chains",
+        lambda: (qa_chain, jd_chain, final_chain),
+    )
+
+    result = service.process_cover_letter_suggestion_chain("질문", "답변", "공고")
+
+    assert result == "추천 수정안"
+    assert final_chain.calls == [{
+        "question": "질문",
+        "content": "답변",
+        "qa_alignment_feedback": "문항 피드백",
+        "jd_fit_feedback": "직무 피드백",
+    }]
 
 
 def test_review_returns_overall_and_ordered_item_feedback_without_page_metadata(monkeypatch):

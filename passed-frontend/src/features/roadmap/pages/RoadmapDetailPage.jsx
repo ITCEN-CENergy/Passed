@@ -71,15 +71,24 @@ const LearningActivity = ({ activities = [] }) => {
 const ProgressRing = ({ value }) => <div className={styles.ring} style={{ '--progress': `${progress(value) * 3.6}deg` }}><div><strong>{progress(value).toFixed(progress(value) % 1 ? 1 : 0)}%</strong><span>전체 진행률</span></div></div>
 
 const ProgressSummary = ({ value, skills = [] }) => {
-  const milestones = skills.flatMap(skill => skill.milestones || [])
+  const milestones = skills.flatMap(skill => (skill.milestones || []).map(milestone => ({ ...milestone, skillName: skill.standardCompetencyName })))
   const completedCount = milestones.filter(milestone => milestone.status === 'COMPLETED').length
   const remainingCount = Math.max(0, milestones.length - completedCount)
+  const remainingMilestones = milestones.filter(milestone => milestone.status !== 'COMPLETED')
+  const remainingMinutes = remainingMilestones.reduce((sum, milestone) => sum + (Number(milestone.estimatedMinutes) || 0), 0)
+  const nextMilestone = remainingMilestones[0]
   return <aside className={styles.progressSummary} aria-label="로드맵 진행 요약">
     <ProgressRing value={value} />
     <div className={styles.milestoneSummary}>
       <span><small>완료한 마일스톤</small><strong>{completedCount}<em>개</em></strong></span>
       <i aria-hidden="true" />
       <span><small>남은 마일스톤</small><strong>{remainingCount}<em>개</em></strong></span>
+    </div>
+    <div className={styles.nextMilestone}>
+      <div className={styles.nextMilestoneHeading}><span>다음 학습 목표</span>{remainingCount > 0 && <small>남은 {fmtHours(remainingMinutes)}</small>}</div>
+      {nextMilestone
+        ? <><strong>{nextMilestone.title}</strong><p>{nextMilestone.skillName}</p><span className={styles.nextMilestoneTime}>예상 {fmtHours(nextMilestone.estimatedMinutes)}</span></>
+        : <p className={styles.allMilestonesDone}>모든 마일스톤을 완료했어요!</p>}
     </div>
   </aside>
 }
@@ -224,6 +233,7 @@ const RoadmapDetailPage = () => {
     skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
   })).filter(group => group.skills.length)
   const orderedSkills = groupedSkills.flatMap(group => group.skills)
+  const completedStudyMinutes = (roadmap.skills || []).flatMap(skill => skill.milestones || []).reduce((sum, milestone) => milestone.status === 'COMPLETED' ? sum + (Number(milestone.estimatedMinutes) || 0) : sum, 0)
   return <main className={styles.page}>
     <div className={styles.toolbar}><Link to="/roadmap">로드맵 목록 보기</Link></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
@@ -241,9 +251,9 @@ const RoadmapDetailPage = () => {
               </div>
               <div className={styles.scheduleFlow}>
                 <article className={styles.scheduleMetric}>
-                  <span className={styles.scheduleStep}>1. 총 학습시간</span>
-                  <p>모든 학습 단계를 완료하는 데 필요한 총 시간</p>
-                  <strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong>
+                  <span className={styles.scheduleStep}>1. 나의 학습시간</span>
+                  <p>완료한 마일스톤 기준 진행 시간과 총 학습시간</p>
+                  <strong className={styles.studyTimeProgress}><span>{fmtHours(completedStudyMinutes)}</span><small>/</small><span>{fmtHours(roadmap.totalEstimatedMinutes)}</span></strong>
                 </article>
                 <span className={styles.scheduleArrow} aria-hidden="true"></span>
                 <article className={`${styles.scheduleMetric} ${styles.dailyScheduleMetric}`}>

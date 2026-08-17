@@ -70,6 +70,9 @@
 .scheduleStep{align-self:flex-start;padding:4px 8px;color:#607493;background:#eef6ff;border-radius:6px;font-size:14px;font-weight:800}
 .scheduleMetric h3{margin-top:14px;color:#536987;font-size:12px;letter-spacing:-.01em}
 .scheduleMetric>strong{display:block;margin-top:15px;color:#172f56;font-size:27px;line-height:1.15;letter-spacing:-.04em}
+.scheduleMetric .studyTimeProgress{display:flex;align-items:baseline;gap:7px;font-size:20px;letter-spacing:-.035em;white-space:nowrap}
+.studyTimeProgress>span:first-child{color:#0877ed}
+.studyTimeProgress>small{color:#a2afc1;font-size:14px;font-weight:700}
 .scheduleMetric>p{min-height:36px;margin-top:11px;color:#7a8ba5;font-size:12px;line-height:1.5}
 .scheduleArrow{display:none}
 .dailyScheduleMetric{background:#fff;border-color:#dce5f0;box-shadow:none}
@@ -96,6 +99,14 @@
 .milestoneSummary strong{color:#1c3459;font-size:20px;line-height:1}
 .milestoneSummary strong em{margin-left:2px;font-size:11px;font-style:normal;font-weight:700}
 .milestoneSummary>i{width:1px;height:34px;background:#e1e7ef}
+.nextMilestone{display:flex;width:100%;min-height:184px;flex-direction:column;padding:18px;margin-top:10px;background:#f5f9ff;border:1px solid #dce5f0;border-radius:11px}
+.nextMilestoneHeading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.nextMilestoneHeading>span{color:#0877ed;font-size:11px;font-weight:850}
+.nextMilestoneHeading>small{color:#7184a1;font-size:10px;white-space:nowrap}
+.nextMilestone>strong{display:-webkit-box;overflow:hidden;color:#1c3459;font-size:13px;line-height:1.45;letter-spacing:-.02em;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.nextMilestone>p{margin-top:6px;overflow:hidden;color:#71829e;font-size:11px;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}
+.nextMilestone .nextMilestoneTime{display:inline-flex;align-self:flex-start;padding:4px 7px;margin-top:auto;color:#526b91;background:#fff;border:1px solid #dae5f2;border-radius:5px;font-size:10px;font-weight:750}
+.nextMilestone .allMilestonesDone{color:#2c9345;font-weight:750;white-space:normal}
 .periodScheduleMetric{background:#fff;border-color:#dce5f0}
 .periodScheduleMetric>strong{color:#172f56}
 .studyDates{display:flex;align-items:center;gap:5px;margin-top:7px;color:#526988;font-size:13px;font-weight:750;white-space:nowrap}

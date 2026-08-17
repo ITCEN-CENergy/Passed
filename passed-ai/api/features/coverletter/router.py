@@ -2,10 +2,15 @@ from fastapi import APIRouter
 from .schema import (
     CoverLetterEditRequest,
     CoverLetterEditResponse,
+    CoverLetterSuggestionResponse,
     CoverLetterReviewRequest,
     CoverLetterReviewResponse,
 )
-from .service import process_cover_letter_chain, process_cover_letter_review_chain
+from .service import (
+    process_cover_letter_chain,
+    process_cover_letter_review_chain,
+    process_cover_letter_suggestion_chain,
+)
 
 router = APIRouter(
     prefix="/coverletter",
@@ -27,8 +32,18 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
         qa_alignment_score=result["qa_alignment_score"],
         qa_alignment_feedback=result["qa_alignment_feedback"],
         jd_fit_feedback=result["jd_fit_feedback"],
-        final_edited_content=result["final_edited_content"]
     )
+
+
+@router.post("/suggest", response_model=CoverLetterSuggestionResponse)
+async def suggest_cover_letter(request: CoverLetterEditRequest):
+    """사용자가 요청한 경우에만 피드백을 반영한 추천 수정안을 생성합니다."""
+    result = process_cover_letter_suggestion_chain(
+        question=request.question,
+        content=request.content,
+        job_description=request.job_description or "",
+    )
+    return CoverLetterSuggestionResponse(suggested_answer=result)
 
 
 @router.post("/review", response_model=CoverLetterReviewResponse)

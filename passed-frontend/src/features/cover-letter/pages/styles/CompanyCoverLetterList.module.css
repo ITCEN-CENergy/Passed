@@ -1,12 +1,12 @@
 .page {
   min-height: 100%;
-  color: #101318;
-  background: #fff;
+  color: var(--color-text);
+  background: var(--color-page);
 }
 
 .content {
-  width: min(100% - 48px, 820px);
-  padding: 28px 0 88px;
+  width: min(100% - 40px, 1120px);
+  padding: 48px 0 80px;
   margin: 0 auto;
 }
 
@@ -38,38 +38,44 @@
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  padding: 30px 0 36px;
+  padding: 0 0 32px;
 }
 
 .pageHeader h1 {
-  color: #0f1115;
-  font-size: clamp(30px, 4vw, 40px);
+  color: var(--color-dark);
+  font-size: 36px;
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.055em;
 }
 
+.pageHeader p {
+  margin-top: 10px;
+  color: var(--color-muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
 .writeButton {
   display: inline-flex;
-  min-height: 62px;
+  min-height: 50px;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  padding: 16px 27px;
+  padding: 12px 22px;
   color: #fff;
-  background: #0867f2;
-  border-radius: 11px;
-  box-shadow: 0 5px 12px rgba(8, 103, 242, 0.16);
-  font-size: 19px;
-  font-weight: 750;
+  background: #146bff;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: -0.035em;
   text-decoration: none;
   transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .writeButton:hover {
-  background: #0759d2;
-  box-shadow: 0 7px 16px rgba(8, 103, 242, 0.22);
+  background: #0f5ce0;
+  box-shadow: 0 6px 14px rgba(29, 111, 233, 0.18);
   transform: translateY(-1px);
 }
 
@@ -84,7 +90,8 @@
 
 .list {
   display: grid;
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -92,14 +99,15 @@
 
 .card {
   display: flex;
-  min-height: 136px;
+  min-height: 148px;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 28px 31px;
+  padding: 25px 26px;
   background: #fff;
-  border: 1.5px solid #d1d9e5;
-  border-radius: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
@@ -119,8 +127,8 @@
 .cardContent h2 {
   margin: 0 0 8px;
   overflow: hidden;
-  color: #101318;
-  font-size: 25px;
+  color: var(--color-dark);
+  font-size: 21px;
   font-weight: 750;
   line-height: 1.35;
   letter-spacing: -0.045em;
@@ -129,8 +137,8 @@
 }
 
 .cardContent p {
-  color: #252a32;
-  font-size: 17px;
+  color: var(--color-muted);
+  font-size: 14px;
   line-height: 1.45;
   letter-spacing: -0.025em;
 }
@@ -142,9 +150,9 @@
   justify-content: center;
   flex: 0 0 auto;
   padding: 10px 17px;
-  color: #0867f2;
-  background: #f5f9ff;
-  border: 1px solid #a9caf8;
+  color: var(--color-primary);
+  background: #f4f8ff;
+  border: 1px solid #b9cdf0;
   border-radius: 8px;
   font-size: 15px;
   font-weight: 700;
@@ -191,8 +199,9 @@
   color: #667085;
   text-align: center;
   background: #fff;
-  border: 1.5px solid #d1d9e5;
-  border-radius: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
 }
 
 .emptyState strong {
@@ -218,10 +227,14 @@
   background: #f5f9ff;
 }
 
+@media (max-width: 860px) {
+  .list { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 620px) {
   .content {
-    width: min(100% - 32px, 820px);
-    padding-top: 22px;
+    width: min(100% - 28px, 1120px);
+    padding-top: 32px;
   }
 
   .pageHeader {
@@ -232,16 +245,17 @@
   }
 
   .pageHeader h1 {
-    font-size: 31px;
+    font-size: 36px;
   }
 
   .writeButton {
-    min-height: 54px;
+    min-height: 50px;
     padding: 13px 20px;
     font-size: 17px;
   }
 
   .list {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 

@@ -11,7 +11,10 @@ class CoverLetterEditResponse(BaseModel):
     qa_alignment_score: int
     qa_alignment_feedback: str
     jd_fit_feedback: str
-    final_edited_content: str
+
+
+class CoverLetterSuggestionResponse(BaseModel):
+    suggested_answer: str = Field(min_length=1)
 
 
 class CoverLetterReviewItemRequest(BaseModel):
@@ -33,7 +36,6 @@ class CoverLetterReviewItemResponse(BaseModel):
     qa_alignment_score: int = Field(ge=0, le=100)
     qa_alignment_feedback: str
     jd_fit_feedback: str
-    final_edited_content: str
 
 
 class CoverLetterOverallFeedbackResponse(BaseModel):

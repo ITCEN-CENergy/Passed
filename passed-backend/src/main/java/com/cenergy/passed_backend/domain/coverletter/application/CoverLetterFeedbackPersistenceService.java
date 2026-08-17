@@ -55,7 +55,7 @@ public class CoverLetterFeedbackPersistenceService {
         String improvements = improvements(aiResult);
         CoverLetterItemFeedback feedback = feedbackRepository.findByCoverLetterCompanyItemId(item.getId())
                 .map(existing -> {
-                    existing.update(score, null, improvements, aiResult.finalEditedContent());
+                    existing.update(score, null, improvements, null);
                     return existing;
                 })
                 .orElseGet(() -> CoverLetterItemFeedback.create(
@@ -63,8 +63,44 @@ public class CoverLetterFeedbackPersistenceService {
                         score,
                         null,
                         improvements,
-                        aiResult.finalEditedContent()
+                        null
                 ));
+        return CoverLetterFeedbackQueryService.toResult(feedbackRepository.saveAndFlush(feedback));
+    }
+
+    @Transactional
+    public CoverLetterFeedbackResult saveSuggestedAnswer(
+            Long userId,
+            CoverLetterFeedbackInput input,
+            String suggestedAnswer
+    ) {
+        CoverLetterCompanyItem item = itemRepository.findOwnedItemForUpdate(input.itemId(), userId)
+                .orElseThrow(() -> new CoverLetterException(
+                        ErrorCode.COVER_LETTER_ITEM_NOT_FOUND,
+                        "Cover letter item not found"
+                ));
+        if (!Objects.equals(item.getQuestionText(), input.question())
+                || !Objects.equals(item.getAnswer(), input.answer())
+                || !Objects.equals(
+                        jobPostingDescriptionBuilder.build(item.getCoverLetterCompany()),
+                        input.jobDescription()
+                )) {
+            throw new CoverLetterException(
+                    ErrorCode.COVER_LETTER_ITEM_CHANGED,
+                    "Cover letter item changed while suggested answer was generated"
+            );
+        }
+        CoverLetterItemFeedback feedback = feedbackRepository.findByCoverLetterCompanyItemId(item.getId())
+                .orElseThrow(() -> new CoverLetterException(
+                        ErrorCode.COVER_LETTER_ITEM_FEEDBACK_NOT_FOUND,
+                        "Cover letter item feedback not found"
+                ));
+        feedback.update(
+                feedback.getScore(),
+                feedback.getStrengths(),
+                feedback.getImprovements(),
+                suggestedAnswer.trim()
+        );
         return CoverLetterFeedbackQueryService.toResult(feedbackRepository.saveAndFlush(feedback));
     }
 

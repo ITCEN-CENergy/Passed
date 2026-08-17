@@ -70,6 +70,84 @@ const LearningActivity = ({ activities = [] }) => {
 
 const ProgressRing = ({ value }) => <div className={styles.ring} style={{ '--progress': `${progress(value) * 3.6}deg` }}><div><strong>{progress(value).toFixed(progress(value) % 1 ? 1 : 0)}%</strong><span>전체 진행률</span></div></div>
 
+const ProgressSummary = ({ value, skills = [] }) => {
+  const milestones = skills.flatMap(skill => (skill.milestones || []).map(milestone => ({ ...milestone, skillName: skill.standardCompetencyName })))
+  const completedCount = milestones.filter(milestone => milestone.status === 'COMPLETED').length
+  const remainingCount = Math.max(0, milestones.length - completedCount)
+  const remainingMilestones = milestones.filter(milestone => milestone.status !== 'COMPLETED')
+  const remainingMinutes = remainingMilestones.reduce((sum, milestone) => sum + (Number(milestone.estimatedMinutes) || 0), 0)
+  const nextMilestone = remainingMilestones[0]
+  return <aside className={styles.progressSummary} aria-label="로드맵 진행 요약">
+    <ProgressRing value={value} />
+    <div className={styles.milestoneSummary}>
+      <span><small>완료한 마일스톤</small><strong>{completedCount}<em>개</em></strong></span>
+      <i aria-hidden="true" />
+      <span><small>남은 마일스톤</small><strong>{remainingCount}<em>개</em></strong></span>
+    </div>
+    <div className={styles.nextMilestone}>
+      <div className={styles.nextMilestoneHeading}><span>다음 학습 목표</span>{remainingCount > 0 && <small>남은 {fmtHours(remainingMinutes)}</small>}</div>
+      {nextMilestone
+        ? <><strong>{nextMilestone.title}</strong><p>{nextMilestone.skillName}</p><span className={styles.nextMilestoneTime}>예상 {fmtHours(nextMilestone.estimatedMinutes)}</span></>
+        : <p className={styles.allMilestonesDone}>모든 마일스톤을 완료했어요!</p>}
+    </div>
+  </aside>
+}
+
+const StudyTimeSelect = ({ value, disabled, onChange }) => {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef(null)
+  const optionRefs = useRef([])
+  const selectedIndex = Math.max(0, dailyStudyTimeOptions.indexOf(Number(value)))
+
+  useEffect(() => {
+    if (!open) return undefined
+    const close = (event) => {
+      if (!rootRef.current?.contains(event.target)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', close)
+    return () => document.removeEventListener('pointerdown', close)
+  }, [open])
+
+  const openAndFocus = (index = selectedIndex) => {
+    if (disabled) return
+    setOpen(true)
+    requestAnimationFrame(() => optionRefs.current[index]?.focus())
+  }
+  const choose = (minutes) => {
+    setOpen(false)
+    if (minutes !== Number(value)) onChange(minutes)
+    requestAnimationFrame(() => rootRef.current?.querySelector('button')?.focus())
+  }
+  const handleTriggerKeyDown = (event) => {
+    if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
+      event.preventDefault()
+      openAndFocus(event.key === 'ArrowUp' ? dailyStudyTimeOptions.length - 1 : selectedIndex)
+    }
+  }
+  const handleOptionKeyDown = (event, index) => {
+    if (event.key === 'Escape') {
+      event.preventDefault(); setOpen(false); rootRef.current?.querySelector('button')?.focus()
+    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const direction = event.key === 'ArrowDown' ? 1 : -1
+      optionRefs.current[(index + direction + dailyStudyTimeOptions.length) % dailyStudyTimeOptions.length]?.focus()
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault(); optionRefs.current[event.key === 'Home' ? 0 : dailyStudyTimeOptions.length - 1]?.focus()
+    }
+  }
+
+  return <div className={styles.studyTimeSelect} ref={rootRef}>
+    <button className={styles.studyTimeTrigger} type="button" aria-label="하루 학습시간" aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={() => open ? setOpen(false) : openAndFocus()} onKeyDown={handleTriggerKeyDown}>
+      <span>{fmtDailyStudyTime(value)}</span><svg className={styles.studyTimeChevron} aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></svg>
+    </button>
+    {open && <div className={styles.studyTimeMenu} role="listbox" aria-label="하루 학습시간 선택">
+      {dailyStudyTimeOptions.map((minutes, index) => <button className={`${styles.studyTimeOption} ${minutes === Number(value) ? styles.selectedStudyTime : ''}`} type="button" role="option" aria-selected={minutes === Number(value)} tabIndex={-1} ref={(element) => { optionRefs.current[index] = element }} onClick={() => choose(minutes)} onKeyDown={(event) => handleOptionKeyDown(event, index)} key={minutes}>
+        <span>{fmtDailyStudyTime(minutes)}</span>{minutes === Number(value) && <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>}
+      </button>)}
+    </div>}
+  </div>
+}
+
 const Milestone = ({ item, onToggle, busy }) => {
   const complete = item.status === 'COMPLETED'
   const [resourcesOpen, setResourcesOpen] = useState(true)
@@ -140,9 +218,8 @@ const RoadmapDetailPage = () => {
   const remove = async () => { setActionBusy(true); try { await deleteRoadmap(roadmapId); navigate('/roadmap') } catch (e) { setError(e.message); setActionBusy(false); setDialog(null) } }
   const prepareReplan = async () => { setDialog(null); setActionBusy(true); setIsReplanning(true); setError(''); try { const preview = await previewRoadmapReplan(roadmapId); setReplanPreview(preview); setDialog('replan-result') } catch (e) { setError(e.message) } finally { setIsReplanning(false); setActionBusy(false) } }
   const applyReplan = async () => { setDialog(null); setActionBusy(true); setIsReplanning(true); try { await applyRoadmapReplan(roadmapId, replanPreview.replanToken); await load(); setReplanPreview(null) } catch (e) { setError(e.message) } finally { setIsReplanning(false); setActionBusy(false) } }
-  const changeStudyTime = async (event) => {
+  const changeStudyTime = async (dailyStudyMinutes) => {
     const previousMinutes = roadmap.dailyStudyMinutes || 60
-    const dailyStudyMinutes = Number(event.target.value)
     setRoadmap(current => ({ ...current, dailyStudyMinutes })); setStudyTimeBusy(true); setError('')
     try { setRoadmap(await updateRoadmapStudyTime(roadmapId, dailyStudyMinutes)) }
     catch (e) { setRoadmap(current => ({ ...current, dailyStudyMinutes: previousMinutes })); setError(e.message) }
@@ -156,6 +233,7 @@ const RoadmapDetailPage = () => {
     skills: (roadmap.skills || []).filter(skill => skill.requirementType === group.type),
   })).filter(group => group.skills.length)
   const orderedSkills = groupedSkills.flatMap(group => group.skills)
+  const completedStudyMinutes = (roadmap.skills || []).flatMap(skill => skill.milestones || []).reduce((sum, milestone) => milestone.status === 'COMPLETED' ? sum + (Number(milestone.estimatedMinutes) || 0) : sum, 0)
   return <main className={styles.page}>
     <div className={styles.toolbar}><Link to="/roadmap">로드맵 목록 보기</Link></div>
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
@@ -173,17 +251,17 @@ const RoadmapDetailPage = () => {
               </div>
               <div className={styles.scheduleFlow}>
                 <article className={styles.scheduleMetric}>
-                  <span className={styles.scheduleStep}>1. 총 학습시간</span>
-                  <p>모든 학습 단계를 완료하는 데 필요한 총 시간</p>
-                  <strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong>
+                  <span className={styles.scheduleStep}>1. 나의 학습시간</span>
+                  <p>완료한 마일스톤 기준 진행 시간과 총 학습시간</p>
+                  <strong className={styles.studyTimeProgress}><span>{fmtHours(completedStudyMinutes)}</span><small>/</small><span>{fmtHours(roadmap.totalEstimatedMinutes)}</span></strong>
                 </article>
                 <span className={styles.scheduleArrow} aria-hidden="true"></span>
                 <article className={`${styles.scheduleMetric} ${styles.dailyScheduleMetric}`}>
                   <span className={styles.scheduleStep}>2. 나의 하루 학습시간</span>
                   <p>내가 매일 공부할 수 있는 시간을 선택하세요.</p>
-                  <label className={styles.studyTimeControl}>
-                    <select aria-label="하루 학습시간" value={roadmap.dailyStudyMinutes || 60} disabled={studyTimeBusy} onChange={changeStudyTime}>{dailyStudyTimeOptions.map(minutes => <option value={minutes} key={minutes}>{fmtDailyStudyTime(minutes)}</option>)}</select>
-                  </label>
+                  <div className={styles.studyTimeControl}>
+                    <StudyTimeSelect value={roadmap.dailyStudyMinutes || 60} disabled={studyTimeBusy} onChange={changeStudyTime} />
+                  </div>
                 </article>
                 <span className={styles.scheduleArrow} aria-hidden="true"></span>
                 <article className={`${styles.scheduleMetric} ${styles.periodScheduleMetric}`} aria-live="polite">
@@ -195,7 +273,7 @@ const RoadmapDetailPage = () => {
               </div>
             </div>
           </div>
-          <ProgressRing value={roadmap.progressRate} />
+          <ProgressSummary value={roadmap.progressRate} skills={roadmap.skills} />
         </section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
         <LearningActivity activities={roadmap.learningActivities} />

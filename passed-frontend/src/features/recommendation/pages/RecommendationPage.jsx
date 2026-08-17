@@ -332,7 +332,11 @@ const RecommendationContent = ({ embedded = false }) => {
         ) : recommendations.length ? (
           <>
             <div className={styles.resultsHeader}>
-              <div><h2>역량 매칭 채용공고 BEST 12</h2></div>
+              <div>
+                <h2>역량 매칭 채용공고 BEST 12</h2>
+                <p>공고를 선택해 적합도 리포트를 확인하고, 나에게 맞는 취업 코칭을 받아보세요.</p>
+              </div>
+
               {run?.preference && <span>{run.preference.industryName} · {run.preference.jobRoles?.map((role) => role.name).join(', ')}</span>}
             </div>
             <div className={styles.recommendationGrid}>

@@ -10,6 +10,7 @@ import {
   getLatestJobPostingRecommendation,
   getRecommendationResult,
 } from '../../recommendation/api/index.js'
+import { RecommendationJourney } from '../../recommendation/components/index.js'
 import styles from './JobPostingPages.module.css'
 
 const JobPostingDetailPage = () => {
@@ -89,9 +90,13 @@ const JobPostingDetailPage = () => {
       <JobPostingDetailContent
         jobPosting={jobPosting}
         image={image}
-        action={user
-          ? <button className={styles.primaryButton} type="button" onClick={runMatching} disabled={matching}>{matching ? '매칭 분석 중…' : '내 스킬과 매칭하기'}</button>
-          : <Link className={styles.primaryButton} to="/login">로그인 후 매칭하기</Link>}
+        guidance={<RecommendationJourney
+          phase="analysis"
+          compact
+          action={user
+            ? <button className={styles.primaryButton} type="button" onClick={runMatching} disabled={matching}>{matching ? '분석 중…' : '적합도 분석'}</button>
+            : <Link className={styles.primaryButton} to="/login">로그인 후 적합도 분석</Link>}
+        />}
       />
     </div>
   )

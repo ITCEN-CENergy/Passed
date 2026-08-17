@@ -48,19 +48,24 @@ const HighlightColumn = ({ title, description, skills, emptyMessage, strength })
   </section>
 )
 
-const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) => (
+const RoadmapIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h9a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3v-12Z" /><path d="M8 4.5v15M11 9h3M11 13h3" /></svg>
+)
+
+const CoverLetterIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Z" /><path d="M15 4v4h4M8 12h8M8 16h5" /></svg>
+)
+
+const DetailChevron = () => (
+  <svg viewBox="0 0 20 14" aria-hidden="true"><path d="m2 4 8 7 8-7" /></svg>
+)
+
+const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter, roadmapAdded = false }) => (
   <section className={styles.report} aria-labelledby="report-title">
     <div className={styles.reportTitle}>
       <div>
         <h2 id="report-title">나와 채용공고의 적합도 분석</h2>
-      </div>
-      <div className={styles.reportActions}>
-        <button className={styles.roadmapButton} type="button" onClick={onCreateRoadmap}>
-          학습 로드맵 담기
-        </button>
-        <button className={styles.coverLetterButton} type="button" onClick={onReviewCoverLetter}>
-          자소서 첨삭
-        </button>
+        <p>분석 결과를 확인하고 바로 다음 합격 준비로 이어가세요.</p>
       </div>
     </div>
 
@@ -91,7 +96,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
               </div>
               <h4>{TYPE_LABELS[group.skillType] ?? group.skillType}</h4>
               <details>
-                <summary>상세보기 <span aria-hidden="true">⌄</span></summary>
+                <summary>상세보기 <span aria-hidden="true"><DetailChevron /></span></summary>
                 <div className={styles.skillList}>
                   {group.skills?.length ? group.skills.map((skill) => <SkillRow key={skill.skillId} skill={skill} />) : <p className={styles.empty}>분석할 스킬이 없습니다.</p>}
                 </div>
@@ -107,6 +112,31 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter }) 
       <HighlightColumn title="강점 스킬" description="공고와 잘 맞는 보유 역량이에요." skills={report.topStrengthSkills} emptyMessage="표시할 강점 스킬이 없습니다." strength />
       <HighlightColumn title="보완 스킬" description="지원 전 보완하면 경쟁력이 높아져요." skills={report.topGapSkills} emptyMessage="보완이 필요한 스킬이 없습니다." />
     </div>
+
+    <section className={styles.nextStepPanel} aria-labelledby="next-step-title">
+      <div className={styles.nextStepCopy}>
+        <h3 id="next-step-title">맞춤형 취업 코칭</h3>
+        <p>부족한 역량은 학습 계획으로 채우고, 이 공고에 맞는 자기소개서로 지원 준비를 완성할 수 있어요.</p>
+      </div>
+      <div className={styles.nextActions}>
+        <button className={styles.roadmapAction} type="button" onClick={onCreateRoadmap} disabled={roadmapAdded}>
+          <span className={styles.actionIcon}><RoadmapIcon /></span>
+          <span className={styles.actionText}>
+            <small>보완 역량부터 채우기</small>
+            <strong>{roadmapAdded ? '학습 로드맵에 담았어요' : '학습 로드맵에 담기'}</strong>
+          </span>
+          <b aria-hidden="true">{roadmapAdded ? '✓' : '→'}</b>
+        </button>
+        <button className={styles.coverLetterAction} type="button" onClick={onReviewCoverLetter}>
+          <span className={styles.actionIcon}><CoverLetterIcon /></span>
+          <span className={styles.actionText}>
+            <small>공고에 맞춰 지원서 다듬기</small>
+            <strong>이 공고로 자기소개서 첨삭</strong>
+          </span>
+          <b aria-hidden="true">→</b>
+        </button>
+      </div>
+    </section>
   </section>
 )
 

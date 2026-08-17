@@ -1,7 +1,7 @@
 import json
 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
@@ -11,7 +11,7 @@ from core.config import get_settings
 # 실제 환경에서는 의존성 주입(Dependency Injection) 등으로 관리하는 것이 좋습니다.
 # 1. 질문과 응답의 일치도 및 표현 품질 확인 (Q&A Alignment)
 class QAAlignmentOutput(BaseModel):
-    score: int = Field(description="1에서 100 사이의 점수")
+    score: int = Field(ge=1, le=100, description="1에서 100 사이의 점수")
     feedback: str = Field(description="평가 이유")
 
 
@@ -111,8 +111,9 @@ def _create_cover_letter_chains():
         model="gpt-4o-mini",
         temperature=0.2,
     )
+    qa_llm = llm.with_structured_output(QAAlignmentOutput, method="json_schema")
     return (
-        qa_alignment_prompt | llm | JsonOutputParser(pydantic_object=QAAlignmentOutput),
+        qa_alignment_prompt | qa_llm,
         jd_fit_prompt | llm | StrOutputParser(),
         final_edit_prompt | llm | StrOutputParser(),
     )
@@ -126,9 +127,11 @@ def _create_overall_review_chain():
         model="gpt-4o-mini",
         temperature=0.2,
     )
-    return overall_review_prompt | llm | JsonOutputParser(
-        pydantic_object=OverallReviewOutput
+    overall_llm = llm.with_structured_output(
+        OverallReviewOutput,
+        method="json_schema",
     )
+    return overall_review_prompt | overall_llm
 
 
 def _process_cover_letter_with_chains(
@@ -143,6 +146,8 @@ def _process_cover_letter_with_chains(
         "question": question,
         "content": content,
     })
+    if isinstance(qa_result, BaseModel):
+        qa_result = qa_result.model_dump()
     qa_alignment_feedback = _feedback_to_text(qa_result.get("feedback"))
 
     jd_fit_feedback = "제공된 채용 공고 정보가 없습니다."
@@ -220,6 +225,8 @@ def process_cover_letter_review_chain(items: list[dict], job_description: str = 
         "job_description": job_description or "제공된 채용 공고 정보가 없습니다.",
         "items_json": json.dumps(aggregate_source, ensure_ascii=False),
     })
+    if isinstance(overall_raw, BaseModel):
+        overall_raw = overall_raw.model_dump()
     normalized_overall = {
         **overall_raw,
         "summary": _feedback_to_text(overall_raw.get("summary")),

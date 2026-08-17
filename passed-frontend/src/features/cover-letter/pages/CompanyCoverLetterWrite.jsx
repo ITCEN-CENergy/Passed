@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   createManualCompanyCoverLetter,
+  createCompanyCoverLetter,
   getCompanyCoverLetter,
   replaceCompanyCoverLetter,
 } from '../api'
@@ -38,9 +39,17 @@ function optionalText(value) {
 }
 
 function toFormPosting(posting = {}) {
-  return Object.fromEntries(
-    Object.keys(EMPTY_POSTING).map((field) => [field, posting[field] ?? '']),
-  )
+  return {
+    postingTitle: posting.postingTitle ?? posting.title ?? '',
+    companyName: posting.companyName ?? '',
+    jobRoleName: posting.jobRoleName ?? '',
+    positionDetail: posting.positionDetail ?? '',
+    careerType: posting.careerType ?? '',
+    hireType: posting.hireType ?? '',
+    mainDuty: posting.mainDuty ?? '',
+    qualification: posting.qualification ?? '',
+    preference: posting.preference ?? '',
+  }
 }
 
 function toFormItem(item, index) {
@@ -56,14 +65,18 @@ function toFormItem(item, index) {
 
 const CompanyCoverLetterWrite = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { coverLetterId: coverLetterIdParam } = useParams()
   const coverLetterId = Number(coverLetterIdParam)
   const isEditMode = coverLetterIdParam !== undefined
   const hasValidId = Number.isSafeInteger(coverLetterId) && coverLetterId > 0
+  const linkedJobPosting = !isEditMode ? location.state?.jobPosting : null
+  const linkedJobPostingId = Number(linkedJobPosting?.jobPostingId)
+  const hasLinkedJobPosting = Number.isSafeInteger(linkedJobPostingId) && linkedJobPostingId > 0
   const [title, setTitle] = useState('')
-  const [posting, setPosting] = useState(EMPTY_POSTING)
+  const [posting, setPosting] = useState(() => toFormPosting(linkedJobPosting ?? EMPTY_POSTING))
   const [items, setItems] = useState([newItem(1)])
-  const [isManual, setIsManual] = useState(true)
+  const [isManual, setIsManual] = useState(!hasLinkedJobPosting)
   const [isLoading, setIsLoading] = useState(isEditMode)
   const [isSaving, setIsSaving] = useState(false)
   const [loadError, setLoadError] = useState(null)
@@ -122,7 +135,7 @@ const CompanyCoverLetterWrite = () => {
   }
 
   const validate = () => {
-    if (isEditMode && !title.trim()) return '자기소개서 제목을 입력해 주세요.'
+    if ((isEditMode || !isManual) && !title.trim()) return '자기소개서 제목을 입력해 주세요.'
     if (title.length > 255) return '자기소개서 제목은 255자 이내로 입력해 주세요.'
     if ((!isEditMode || isManual) && !posting.postingTitle.trim()) return '공고 제목을 입력해 주세요.'
     if ((!isEditMode || isManual) && !posting.jobRoleName.trim()) return '직무를 입력해 주세요.'
@@ -177,11 +190,17 @@ const CompanyCoverLetterWrite = () => {
             jobPosting: isManual ? postingPayload : null,
             items: itemPayload,
           })
-        : await createManualCompanyCoverLetter({
-            title: optionalText(title),
-            jobPosting: postingPayload,
-            items: itemPayload,
-          })
+        : isManual
+          ? await createManualCompanyCoverLetter({
+              title: optionalText(title),
+              jobPosting: postingPayload,
+              items: itemPayload,
+            })
+          : await createCompanyCoverLetter({
+              jobPostingId: linkedJobPostingId,
+              title: title.trim(),
+              items: itemPayload,
+            })
       navigate(`/cover-letter-result?coverLetterId=${saved.id}`, { replace: true })
     } catch (error) {
       setFormError(error.message ?? '자기소개서를 저장하지 못했습니다.')
@@ -303,11 +322,11 @@ const CompanyCoverLetterWrite = () => {
             </div>
 
             <label className={styles.titleField}>
-              <span>자기소개서 제목 <small>{isEditMode ? '필수' : '선택'}</small></span>
+              <span>자기소개서 제목 <small>{isEditMode || !isManual ? '필수' : '선택'}</small></span>
               <input
                 maxLength={255}
                 placeholder="비워두면 회사명 또는 자기소개서 번호로 저장됩니다."
-                required={isEditMode}
+                required={isEditMode || !isManual}
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />

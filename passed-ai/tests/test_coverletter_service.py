@@ -13,6 +13,18 @@ class RecordingChain:
         return self.response
 
 
+class StructuredOutputLlm:
+    def __init__(self):
+        self.calls = []
+
+    def __call__(self, value):
+        return value
+
+    def with_structured_output(self, schema, **kwargs):
+        self.calls.append((schema, kwargs))
+        return self
+
+
 def test_feedback_analysis_does_not_generate_suggested_answer(monkeypatch):
     qa_chain = RecordingChain({"score": 82, "feedback": "맞춤법과 질문 의도 피드백"})
     jd_chain = RecordingChain("공고 적합도와 표현 피드백")
@@ -33,6 +45,43 @@ def test_feedback_analysis_does_not_generate_suggested_answer(monkeypatch):
         "qa_alignment_feedback": "맞춤법과 질문 의도 피드백",
         "jd_fit_feedback": "공고 적합도와 표현 피드백",
     }
+
+
+def test_cover_letter_chains_enforce_openai_json_schema(monkeypatch):
+    llm = StructuredOutputLlm()
+    monkeypatch.setattr(service, "ChatOpenAI", lambda **kwargs: llm)
+
+    service._create_cover_letter_chains()
+    service._create_overall_review_chain()
+
+    assert llm.calls == [(
+        service.QAAlignmentOutput,
+        {"method": "json_schema"},
+    ), (
+        service.OverallReviewOutput,
+        {"method": "json_schema"},
+    )]
+
+
+def test_feedback_analysis_accepts_structured_pydantic_output(monkeypatch):
+    qa_chain = RecordingChain(service.QAAlignmentOutput(
+        score=75,
+        feedback="질문 의도와 향후 계획을 더 명확히 연결해 주세요.",
+    ))
+    jd_chain = RecordingChain("직무 피드백")
+    final_chain = RecordingChain("최종 답변")
+    monkeypatch.setattr(
+        service,
+        "_create_cover_letter_chains",
+        lambda: (qa_chain, jd_chain, final_chain),
+    )
+
+    result = service.process_cover_letter_chain("질문", "답변", "공고")
+
+    assert result["qa_alignment_score"] == 75
+    assert result["qa_alignment_feedback"] == (
+        "질문 의도와 향후 계획을 더 명확히 연결해 주세요."
+    )
 
 
 def test_job_feedback_is_skipped_when_job_description_is_missing(monkeypatch):

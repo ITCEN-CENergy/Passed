@@ -28,6 +28,12 @@ export const createManualCompanyCoverLetter = (payload) =>
     body: payload,
   })
 
+export const createCompanyCoverLetter = (payload) =>
+  csrfRequest('/api/v1/company-cover-letters', {
+    method: 'POST',
+    body: payload,
+  })
+
 export const replaceCompanyCoverLetter = (coverLetterId, payload) =>
   csrfRequest(`/api/v1/company-cover-letters/${coverLetterId}`, {
     method: 'PUT',

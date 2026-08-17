@@ -24,7 +24,7 @@ const splitSentences = (value) => String(value ?? '')
 
 const paragraphText = (value) => splitSentences(value).join(' ')
 
-const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
+const JobPostingDetailContent = ({ jobPosting, image, action, guidance, children }) => (
   <article className={styles.detail}>
     <div className={styles.hero} style={{ '--hero-image': `url("${image}")` }}>
       <img src={image} alt={`${jobPosting.companyName} 회사 이미지`} />
@@ -42,7 +42,7 @@ const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
       {action}
     </header>
 
-    <dl className={styles.metaGrid}>
+    <dl className={`${styles.metaGrid} ${guidance ? styles.metaGridWithGuidance : ''}`}>
       {META_FIELDS.map(([field, label]) => (
         <div key={field}>
           <dt>{label}</dt>
@@ -50,6 +50,8 @@ const JobPostingDetailContent = ({ jobPosting, image, action, children }) => (
         </div>
       ))}
     </dl>
+
+    {guidance}
 
     {children}
 

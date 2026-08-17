@@ -4,7 +4,7 @@ import { PageLoading } from '../../../common/components/index.js'
 import { JobPostingDetailContent, PageState } from '../../job-posting/components/index.js'
 import { getJobPostingImage } from '../../job-posting/utils/jobPostingImages.js'
 import { getRecommendationDetail } from '../api/index.js'
-import { RecommendationReport } from '../components/index.js'
+import { RecommendationJourney, RecommendationReport } from '../components/index.js'
 import useRoadmapBasketStore from '../../roadmap/model/useRoadmapBasketStore.js'
 import jobStyles from '../../job-posting/pages/JobPostingPages.module.css'
 
@@ -13,6 +13,7 @@ const RecommendationDetailPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const addRoadmapItem = useRoadmapBasketStore((state) => state.addItem)
+  const roadmapItems = useRoadmapBasketStore((state) => state.items)
   const [detail, setDetail] = useState(null)
   const [error, setError] = useState('')
 
@@ -30,6 +31,7 @@ const RecommendationDetailPage = () => {
   if (!detail) return <div className={jobStyles.detailShell}><PageState title="매칭 리포트를 불러오지 못했습니다" description={error} /></div>
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
+  const roadmapAdded = roadmapItems.some((item) => item.jobPostingId === Number(detail.jobPosting.jobPostingId))
   const createRoadmap = () => {
     addRoadmapItem(detail.jobPosting)
   }
@@ -41,11 +43,16 @@ const RecommendationDetailPage = () => {
 
   return (
     <div className={jobStyles.detailShell}>
-      <JobPostingDetailContent jobPosting={detail.jobPosting} image={image}>
+      <JobPostingDetailContent
+        jobPosting={detail.jobPosting}
+        image={image}
+        guidance={<RecommendationJourney phase="report" compact />}
+      >
         <RecommendationReport
           report={detail.report}
           onCreateRoadmap={createRoadmap}
           onReviewCoverLetter={reviewCoverLetter}
+          roadmapAdded={roadmapAdded}
         />
       </JobPostingDetailContent>
     </div>

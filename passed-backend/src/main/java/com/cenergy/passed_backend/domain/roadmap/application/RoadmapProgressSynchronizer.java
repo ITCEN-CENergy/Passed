@@ -79,11 +79,9 @@ public class RoadmapProgressSynchronizer {
             List<RoadmapMilestone> skillLinks = bySkill.getOrDefault(skill.getId(), List.of());
             skill.updateProgressRate(calculate(skillLinks));
             skill.updateEstimatedMinutes(skillLinks.stream()
-                    .filter(RoadmapMilestone::isRequired)
                     .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
         }
         roadmap.updateTotalEstimatedMinutes(links.stream()
-                .filter(RoadmapMilestone::isRequired)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum());
         roadmap.updateProgressRate(calculate(links));
         roadmap.updateEstimatedEndDate(etaCalculator.calculate(
@@ -109,15 +107,12 @@ public class RoadmapProgressSynchronizer {
     }
 
     private BigDecimal calculate(Collection<RoadmapMilestone> links) {
-        List<RoadmapMilestone> required = links.stream()
-                .filter(RoadmapMilestone::isRequired)
-                .toList();
-        if (required.isEmpty()) return BigDecimal.ZERO.setScale(2);
-        long completed = required.stream()
+        if (links.isEmpty()) return BigDecimal.ZERO.setScale(2);
+        long completed = links.stream()
                 .filter(link -> link.getMilestone().getStatus() == MilestoneStatus.COMPLETED)
                 .count();
         return BigDecimal.valueOf(completed)
                 .multiply(BigDecimal.valueOf(100))
-                .divide(BigDecimal.valueOf(required.size()), 2, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(links.size()), 2, RoundingMode.HALF_UP);
     }
 }

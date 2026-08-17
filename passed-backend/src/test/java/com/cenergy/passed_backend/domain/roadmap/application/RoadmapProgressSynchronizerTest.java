@@ -25,11 +25,12 @@ class RoadmapProgressSynchronizerTest {
         RoadmapMilestone incomplete = link(true, MilestoneStatus.NOT_STARTED);
 
         when(skill.getId()).thenReturn(10L);
+        when(roadmap.getDailyStudyMinutes()).thenReturn(60);
         when(roadmapRepository.findById(100L)).thenReturn(Optional.of(roadmap));
         when(skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(100L)).thenReturn(List.of(skill));
         when(linkRepository.findAllByRoadmapSkillIds(List.of(10L)))
                 .thenReturn(List.of(completed, incomplete));
-        when(etaCalculator.calculate(List.of(completed, incomplete)))
+        when(etaCalculator.calculate(List.of(completed, incomplete), 60))
                 .thenReturn(java.time.LocalDate.of(2026, 8, 8));
 
         new RoadmapProgressSynchronizer(linkRepository, skillRepository, roadmapRepository, etaCalculator)
@@ -43,7 +44,7 @@ class RoadmapProgressSynchronizerTest {
     }
 
     @Test
-    void recalculatesEveryAffectedSkillAndRoadmapByRequiredMilestoneCount() {
+    void recalculatesEveryAffectedSkillAndRoadmapByAllMilestoneCount() {
         RoadmapMilestoneRepository linkRepository = mock(RoadmapMilestoneRepository.class);
         RoadmapSkillRepository skillRepository = mock(RoadmapSkillRepository.class);
         RoadmapRepository roadmapRepository = mock(RoadmapRepository.class);
@@ -51,9 +52,10 @@ class RoadmapProgressSynchronizerTest {
         Roadmap roadmap = mock(Roadmap.class);
         RoadmapSkill skill = mock(RoadmapSkill.class);
         RoadmapMilestone completed = link(true, MilestoneStatus.COMPLETED);
-        RoadmapMilestone incomplete = link(true, MilestoneStatus.NOT_STARTED);
+        RoadmapMilestone incomplete = link(false, MilestoneStatus.NOT_STARTED);
 
         when(roadmap.getId()).thenReturn(100L);
+        when(roadmap.getDailyStudyMinutes()).thenReturn(60);
         when(skill.getId()).thenReturn(10L);
         when(skill.getRoadmap()).thenReturn(roadmap);
         when(linkRepository.findRoadmapSkillIdsByMilestoneId(1L)).thenReturn(List.of(10L));
@@ -62,7 +64,7 @@ class RoadmapProgressSynchronizerTest {
                 .thenReturn(List.of(completed, incomplete));
         when(roadmapRepository.findById(100L)).thenReturn(Optional.of(roadmap));
         when(skillRepository.findAllByRoadmapIdOrderByPriorityAscIdAsc(100L)).thenReturn(List.of(skill));
-        when(etaCalculator.calculate(List.of(completed, incomplete)))
+        when(etaCalculator.calculate(List.of(completed, incomplete), 60))
                 .thenReturn(java.time.LocalDate.of(2026, 8, 8));
 
         new RoadmapProgressSynchronizer(linkRepository, skillRepository, roadmapRepository, etaCalculator)

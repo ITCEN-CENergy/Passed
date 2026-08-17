@@ -299,7 +299,7 @@ public class RoadmapReplanService {
     }
 
     private List<RoadmapMilestone> candidates(List<RoadmapMilestone> links) {
-        return links.stream().filter(RoadmapMilestone::isRequired)
+        return links.stream()
                 .filter(link -> link.getMilestone().getStatus() == MilestoneStatus.NOT_STARTED).toList();
     }
 
@@ -339,7 +339,7 @@ public class RoadmapReplanService {
     }
 
     private int remainingMinutes(Collection<RoadmapMilestone> values) {
-        return values.stream().filter(RoadmapMilestone::isRequired)
+        return values.stream()
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
     }

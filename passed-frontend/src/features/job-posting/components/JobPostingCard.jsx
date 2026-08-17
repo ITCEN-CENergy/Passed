@@ -19,13 +19,10 @@ const JobPostingCard = ({ jobPosting, image, to, recommendation }) => (
       </div>
       <span className={styles.industry}>{jobPosting.industryName || '산업 정보 없음'}</span>
       {recommendation && (
-        <>
-          <div className={styles.scoreRow}>
-            <strong>{recommendation.gradeLabel}</strong>
-            <span>통합 점수 <b>{Math.round(Number(recommendation.totalScore ?? 0))}점</b></span>
-          </div>
-          <span className={styles.reportCta}>적합도 리포트 보고 합격 준비하기 <b aria-hidden="true">→</b></span>
-        </>
+        <div className={styles.scoreRow}>
+          <strong>{recommendation.gradeLabel}</strong>
+          <span>통합 점수 <b>{Math.round(Number(recommendation.totalScore ?? 0))}점</b></span>
+        </div>
       )}
     </div>
   </Link>

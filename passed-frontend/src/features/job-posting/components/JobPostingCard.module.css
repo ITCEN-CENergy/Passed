@@ -136,27 +136,3 @@
 .scoreRow strong { color: #0f5ce0; font-size: 19px; line-height: 1.25; }
 .scoreRow span { flex: 0 0 auto; color: #6b7890; text-align: right; }
 .scoreRow b { color: #07183d; font-size: 15px; }
-
-.reportCta {
-  display: flex;
-  width: 100%;
-  min-height: 42px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  margin-top: 12px;
-  color: #075bbd;
-  background: #eef5ff;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.reportCta b {
-  font-size: 18px;
-  line-height: 1;
-  transition: transform 180ms ease;
-}
-
-.card:hover .reportCta b { transform: translateX(4px); }

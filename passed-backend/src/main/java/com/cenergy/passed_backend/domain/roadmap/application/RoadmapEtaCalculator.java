@@ -52,7 +52,6 @@ public class RoadmapEtaCalculator {
                         int studyMinutesPerDay) {
         requirePositive(studyMinutesPerDay);
         long remainingMinutes = milestones.stream()
-                .filter(RoadmapMilestone::isRequired)
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToLong(link -> link.getMilestone().getEstimatedMinutes())
                 .sum();

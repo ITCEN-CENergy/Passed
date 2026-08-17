@@ -217,7 +217,60 @@ async def test_keenable_inflearn_search_keeps_only_inflearn_results() -> None:
 
     assert len(resources) == 1
     assert resources[0].provider == "인프런"
-    assert resources[0].url == "https://www.inflearn.com/course/docker-practical"
+    assert resources[0].url == "https://www.inflearn.com/ko/course/docker-practical"
+
+
+@pytest.mark.asyncio
+async def test_keenable_inflearn_search_keeps_only_course_landing_pages() -> None:
+    class FakeMcpClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            return None
+
+        async def call_tool(self, name, arguments):
+            return SimpleNamespace(content=[SimpleNamespace(text=(
+                "Title: 인프런 - 라이프타임 커리어 플랫폼\n"
+                "URL: https://www.inflearn.com/ko/courses/it/network?skill=docker\n"
+                "Snippets:\nDocker 강의 목록\n"
+                "---\n"
+                "Title: Docker 강의 | 질문 & 답변 - 인프런\n"
+                "URL: https://www.inflearn.com/course/docker/community?cid=1\n"
+                "Snippets:\nDocker 질문\n"
+                "---\n"
+                "Title: Docker for DevOps | Inflearn\n"
+                "URL: https://www.inflearn.com/en/course/docker-devops\n"
+                "Snippets:\nEnglish Docker course\n"
+                "---\n"
+                "Title: Docker Mastery | Inflearn\n"
+                "URL: https://www.inflearn.com/course/docker-mastery\n"
+                "Snippets:\nEnglish Docker course\n"
+                "---\n"
+                "Title: Docker 실전 강의 | 인프런\n"
+                "URL: https://www.inflearn.com/ko/course/docker-practical?cid=2\n"
+                "Snippets:\nDocker 컨테이너 실습"
+            ))])
+
+    settings = RoadmapSettings(
+        KEENABLE_SEARCH_ENABLED=True,
+        KEENABLE_REQUESTS_PER_SECOND=10,
+    )
+    async with httpx.AsyncClient() as client:
+        resources = await KeenableInflearnProvider(
+            client, settings, FakeMcpClient()
+        ).search(_competency(), "Docker 인프런 강의")
+
+    assert [resource.title for resource in resources] == [
+        "Docker for DevOps | Inflearn",
+        "Docker Mastery | Inflearn",
+        "Docker 실전 강의 | 인프런",
+    ]
+    assert [resource.url for resource in resources] == [
+        "https://www.inflearn.com/ko/course/docker-devops",
+        "https://www.inflearn.com/ko/course/docker-mastery",
+        "https://www.inflearn.com/ko/course/docker-practical?cid=2",
+    ]
 
 
 @pytest.mark.asyncio

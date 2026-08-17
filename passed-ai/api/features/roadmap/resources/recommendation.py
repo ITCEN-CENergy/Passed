@@ -216,6 +216,13 @@ async def recommend_learning_resources(
         http_client,
         settings.resource_search_timeout_seconds,
     )
+    for target_key, resources in recommendations.items():
+        recommendations[target_key] = [
+            resource
+            for resource in resources
+            if resource.provider != "인프런"
+            or _contains_hangul(resource.title)
+        ]
     # 후보 URL 중복 제거 과정에서 버려진 resourceId를 추천 결과가 참조하지
     # 않도록, 실제로 선택된 자료만 resourceId 기준으로 조립용 저장소에 둔다.
     for target in targets:

@@ -300,6 +300,7 @@ class KeenableWebProvider:
             title, url = _clean(item.get("title")), _clean(item.get("url"))
             if not title or not url:
                 continue
+            url = self._normalize_url(url)
             if self.required_domain:
                 hostname = (urlparse(url).hostname or "").casefold()
                 if not (
@@ -307,6 +308,8 @@ class KeenableWebProvider:
                     or hostname.endswith(f".{self.required_domain}")
                 ):
                     continue
+            if not self._accept_result(title, url):
+                continue
             resources.append(LearningResource(
                 resourceId=_resource_id(self.resource_id_namespace, url),
                 resourceType=LearningResourceType.WEB_RESOURCE,
@@ -318,6 +321,12 @@ class KeenableWebProvider:
                 isFree=True,
             ))
         return resources
+
+    def _accept_result(self, title: str, url: str) -> bool:
+        return True
+
+    def _normalize_url(self, url: str) -> str:
+        return url
 
     def _search_arguments(self, search_query: str) -> dict[str, str]:
         return {"query": search_query}
@@ -362,6 +371,31 @@ class KeenableInflearnProvider(KeenableWebProvider):
     provider_label = "인프런"
     resource_id_namespace = "inflearn"
     required_domain = "inflearn.com"
+
+    def _normalize_url(self, url: str) -> str:
+        parsed = urlparse(url)
+        path = re.sub(r"^/en/course/", "/ko/course/", parsed.path, count=1)
+        path = re.sub(r"^/course/", "/ko/course/", path, count=1)
+        return parsed._replace(path=path).geturl()
+
+    def _accept_result(self, title: str, url: str) -> bool:
+        # Search results frequently include the Inflearn home/catalog, tag pages,
+        # Q&A, and course news. Recommend only an actual course landing page.
+        path_segments = [
+            segment
+            for segment in urlparse(url).path.casefold().split("/")
+            if segment
+        ]
+        if path_segments[:1] == ["ko"]:
+            path_segments = path_segments[1:]
+        if len(path_segments) != 2 or path_segments[0] != "course":
+            return False
+        normalized_title = re.sub(r"\s+", " ", title).strip().casefold()
+        return normalized_title not in {
+            "inflearn",
+            "인프런",
+            "인프런 - 라이프타임 커리어 플랫폼",
+        }
 
     def _search_arguments(self, search_query: str) -> dict[str, str]:
         return {

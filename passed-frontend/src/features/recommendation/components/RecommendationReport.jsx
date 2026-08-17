@@ -122,18 +122,16 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter, ro
         <button className={styles.roadmapAction} type="button" onClick={onCreateRoadmap} disabled={roadmapAdded}>
           <span className={styles.actionIcon}><RoadmapIcon /></span>
           <span className={styles.actionText}>
-            <small>보완 역량부터 채우기</small>
-            <strong>{roadmapAdded ? '학습 로드맵에 담았어요' : '학습 로드맵에 담기'}</strong>
+            <small>보완점은 채우고, 강점을 강조하기</small>
+            <strong>{roadmapAdded ? '학습 로드맵 담기 완료' : '학습 로드맵 담기'}</strong>
           </span>
-          <b aria-hidden="true">{roadmapAdded ? '✓' : '→'}</b>
         </button>
         <button className={styles.coverLetterAction} type="button" onClick={onReviewCoverLetter}>
           <span className={styles.actionIcon}><CoverLetterIcon /></span>
           <span className={styles.actionText}>
-            <small>공고에 맞춰 지원서 다듬기</small>
-            <strong>이 공고로 자기소개서 첨삭</strong>
+            <small>공고에 맞춰 자기소개서 다듬기</small>
+            <strong>자기소개서 첨삭</strong>
           </span>
-          <b aria-hidden="true">→</b>
         </button>
       </div>
     </section>

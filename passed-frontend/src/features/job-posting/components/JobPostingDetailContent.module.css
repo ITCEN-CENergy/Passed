@@ -75,6 +75,8 @@
   border-radius: 14px;
 }
 
+.metaGridWithGuidance { margin-bottom: 28px; }
+
 .metaGrid > div { padding: 20px; background: #f7f9fc; }
 .metaGrid dt { margin-bottom: 7px; color: #6b7890; font-size: 13px; }
 .metaGrid dd { margin: 0; color: #07183d; font-weight: 700; }

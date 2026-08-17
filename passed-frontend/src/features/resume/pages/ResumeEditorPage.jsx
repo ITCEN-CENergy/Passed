@@ -38,16 +38,77 @@ const sections = [
 
 const initialCollections = Object.fromEntries(sections.map((section) => [section.key, []]))
 
-const normalizeDate = (value) => {
+const parseDate = (value) => {
+  if (value === null || value === undefined || value === '') return ''
   const digits = String(value ?? '').replace(/\D/g, '').slice(0, 8)
-  if (digits.length !== 8) return value
+  if (digits.length !== 8) return null
   const year = Number(digits.slice(0, 4)); const month = Number(digits.slice(4, 6)); const day = Number(digits.slice(6, 8))
   const date = new Date(Date.UTC(year, month - 1, day))
-  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return value
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null
   return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`
 }
 
+const normalizeDate = (value) => parseDate(value) ?? value
+
 const cleanItem = ({ clientId, ...item }) => Object.fromEntries(Object.entries(item).map(([key, value]) => [key, value === '' ? null : key.endsWith('Date') ? normalizeDate(value) : value]))
+
+const hasMeaningfulValue = (item) => Object.entries(item).some(([key, value]) => (
+  key !== 'id'
+  && key !== 'clientId'
+  && value !== null
+  && value !== undefined
+  && value !== ''
+  && value !== false
+))
+
+const validateDate = (value, label) => (
+  value && parseDate(value) === null ? `${label}은(는) YYYY-MM-DD 형식의 올바른 날짜로 입력해주세요.` : ''
+)
+
+const validatePeriod = (startDate, endDate, label) => {
+  const start = parseDate(startDate)
+  const end = parseDate(endDate)
+  if (start && end && end < start) return `${label} 종료일은 시작일보다 빠를 수 없습니다.`
+  return ''
+}
+
+const validateResume = ({ personalInfo, educations, collections }) => {
+  const birthDateError = validateDate(personalInfo.birthDate, '생년월일')
+  if (birthDateError) return birthDateError
+
+  for (const [index, education] of educations.entries()) {
+    const label = `학력 ${index + 1}번째 항목`
+    const dateError = validateDate(education.admissionDate, `${label} 입학일`)
+      || validateDate(education.graduationDate, `${label} 졸업일`)
+    if (dateError) return dateError
+
+    const periodError = validatePeriod(education.admissionDate, education.graduationDate, label)
+    if (periodError) return periodError
+
+    if (education.gpa !== '' && education.gpa !== null
+      && education.maxGpa !== '' && education.maxGpa !== null
+      && Number(education.gpa) > Number(education.maxGpa)) {
+      return `${label}의 학점은 총점을 초과할 수 없습니다.`
+    }
+  }
+
+  for (const section of sections) {
+    const items = collections[section.key].filter(hasMeaningfulValue)
+    for (const [index, item] of items.entries()) {
+      const label = `${section.title} ${index + 1}번째 항목`
+      const missingField = section.fields.find((field) => field.required && !String(item[field.name] ?? '').trim())
+      if (missingField) return `${label}의 ${missingField.label}을(를) 입력해주세요.`
+
+      const invalidDateField = section.fields.find((field) => field.type === 'date' && validateDate(item[field.name], field.label))
+      if (invalidDateField) return validateDate(item[invalidDateField.name], `${label} ${invalidDateField.label}`)
+
+      const periodError = validatePeriod(item.startDate, item.endDate, label)
+      if (periodError) return periodError
+    }
+  }
+
+  return ''
+}
 
 const resolvePhotoUrl = (value) => {
   if (!value || /^(https?:)?\/\//.test(value) || value.startsWith('data:') || value.startsWith('blob:')) return value
@@ -79,7 +140,7 @@ const ResumeEditorPage = ({ onboarding = false }) => {
 
   const personalComplete = ['birthDate', 'gender', 'email', 'phone', 'address'].every((key) => String(personalInfo[key] ?? '').trim())
   const educationComplete = educations.some((education) => String(education.schoolName ?? '').trim())
-  const completedOptionalCount = sections.filter((section) => collections[section.key].length > 0).length
+  const completedOptionalCount = sections.filter((section) => collections[section.key].some(hasMeaningfulValue)).length
   const completedSectionCount = Number(personalComplete) + Number(educationComplete) + completedOptionalCount
   const completionPercent = completedSectionCount === 9 ? 100 : completedSectionCount * 11
 
@@ -143,13 +204,24 @@ const ResumeEditorPage = ({ onboarding = false }) => {
 
   const submit = async (event) => {
     event.preventDefault()
-    setSaving(true); setError('')
+    setError('')
+    const cleanedCollections = Object.fromEntries(sections.map((section) => [
+      section.key,
+      collections[section.key].filter(hasMeaningfulValue),
+    ]))
+    const validationError = validateResume({ personalInfo, educations, collections: cleanedCollections })
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
+    setSaving(true)
     const { id: personalInfoId, ...cleanPersonalInfo } = personalInfo
     void personalInfoId
     const payload = {
       personalInfo: { ...cleanPersonalInfo, birthDate: normalizeDate(cleanPersonalInfo.birthDate) },
       educations: educations.map(cleanItem),
-      ...Object.fromEntries(sections.map((section) => [section.key, collections[section.key].map(cleanItem)])),
+      ...Object.fromEntries(sections.map((section) => [section.key, cleanedCollections[section.key].map(cleanItem)])),
     }
     const documentChanged = JSON.stringify(payload) !== initialPayloadRef.current
     try {
@@ -233,7 +305,7 @@ const ResumeEditorPage = ({ onboarding = false }) => {
             <button className={personalComplete ? styles.completedItem : ''} type="button" onClick={() => scrollToSection('personal')}><span>{personalComplete ? '✓' : ''}</span>인적사항<small>필수</small></button>
             <button className={educationComplete ? styles.completedItem : ''} type="button" onClick={() => scrollToSection('education')}><span>{educationComplete ? '✓' : ''}</span>학력<small>필수</small></button>
             {sections.map((section) => (
-              <button className={collections[section.key].length ? styles.completedItem : ''} type="button" key={section.key} onClick={() => openOptionalSection(section)}>
+              <button className={collections[section.key].some(hasMeaningfulValue) ? styles.completedItem : ''} type="button" key={section.key} onClick={() => openOptionalSection(section)}>
                 <span>{collections[section.key].length ? '−' : '+'}</span>{section.title}
               </button>
             ))}

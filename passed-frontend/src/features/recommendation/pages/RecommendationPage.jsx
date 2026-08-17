@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import heroBanner from '../../../assets/images/home-ai-coaching-banner.webp'
+import coachingBanner from '../../../assets/images/home-banner-coaching-wide.png'
+import recommendationBanner from '../../../assets/images/home-banner-recommendation-wide.png'
 import { PageLoading } from '../../../common/components/index.js'
 import useAuthStore from '../../auth/model/useAuthStore.js'
 import { JobPostingCard, PageState } from '../../job-posting/components/index.js'
@@ -14,7 +15,7 @@ import {
   getUserJobPreference,
   updateUserJobPreference,
 } from '../api/index.js'
-import { GRADE_LABELS } from '../components/index.js'
+import { GRADE_LABELS, RecommendationJourney } from '../components/index.js'
 import styles from './RecommendationPages.module.css'
 
 const matchingSteps = [
@@ -34,6 +35,76 @@ const matchingSteps = [
     description: '부족한 역량의 학습 로드맵과 공고별 자기소개서 첨삭으로 이어가요.',
   },
 ]
+
+const homeBanners = [
+  {
+    src: recommendationBanner,
+    alt: '나에게 맞는 채용공고 추천. 이력서와 자기소개서에서 나의 강점을 찾아 딱 맞는 공고를 추천해요.',
+  },
+  {
+    src: coachingBanner,
+    alt: '합격을 위한 취업 코칭. 부족한 역량은 학습 로드맵으로 채우고 자기소개서는 맞춤 첨삭으로 완성해요.',
+  },
+]
+
+const HomeBannerCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+
+  useEffect(() => {
+    if (isPaused) return undefined
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % homeBanners.length)
+    }, 5000)
+
+    return () => window.clearInterval(timer)
+  }, [isPaused])
+
+  return (
+    <section
+      className={styles.hero}
+      aria-roledescription="carousel"
+      aria-label="PASSED 주요 서비스 소개"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+    >
+      <div
+        className={styles.heroTrack}
+        style={{ transform: `translateX(-${activeIndex * 50}%)` }}
+      >
+        {homeBanners.map((banner, index) => (
+          <div
+            className={styles.heroSlide}
+            key={banner.src}
+            aria-hidden={activeIndex !== index}
+          >
+            <img
+              src={banner.src}
+              alt={activeIndex === index ? banner.alt : ''}
+              draggable="false"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.heroDots} aria-label="배너 선택">
+        {homeBanners.map((banner, index) => (
+          <button
+            className={index === activeIndex ? styles.heroDotActive : styles.heroDot}
+            type="button"
+            key={banner.src}
+            aria-label={`${index + 1}번 배너 보기`}
+            aria-current={index === activeIndex ? 'true' : undefined}
+            onClick={() => setActiveIndex(index)}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
 
 const GuestRecommendation = () => (
   <div className={styles.guestPanel}>
@@ -261,7 +332,11 @@ const RecommendationContent = ({ embedded = false }) => {
         ) : recommendations.length ? (
           <>
             <div className={styles.resultsHeader}>
-              <div><h2>역량 매칭 채용공고 BEST 12</h2></div>
+              <div>
+                <h2>역량 매칭 채용공고 BEST 12</h2>
+                <p>공고를 선택해 적합도 리포트를 확인하고, 나에게 맞는 취업 코칭을 받아보세요.</p>
+              </div>
+
               {run?.preference && <span>{run.preference.industryName} · {run.preference.jobRoles?.map((role) => role.name).join(', ')}</span>}
             </div>
             <div className={styles.recommendationGrid}>
@@ -298,12 +373,7 @@ const RecommendationPage = ({ home = false }) => {
 
   return (
     <div className={styles.home}>
-      <section className={styles.hero} aria-label="PASSED AI 취업 코칭 소개">
-        <img
-          src={heroBanner}
-          alt="AI 취업 코칭, 나에게 맞는 채용공고부터 합격을 위한 취업 코칭. 맞춤 채용공고 추천, 학습 로드맵, 자기소개서 첨삭"
-        />
-      </section>
+      <HomeBannerCarousel />
 
       <section className={styles.recommendationSection} aria-label="맞춤 채용공고 추천">
         {isChecking ? (

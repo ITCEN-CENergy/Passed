@@ -161,7 +161,42 @@ const RoadmapDetailPage = () => {
     {error && <div className={styles.error} role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
     <div className={styles.contentLayout} ref={contentRef}>
       <div className={styles.mainContent}>
-        <section className={styles.summary}><div className={styles.summaryBody}><div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div><p>연결된 채용공고 {roadmap.jobPostings?.length ?? roadmap.jobPostingIds?.length ?? 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p>{!!roadmap.jobPostings?.length && <div className={styles.linkedPostings}>{roadmap.jobPostings.map(posting => <Link className={styles.linkedPosting} to={`/job-postings/${posting.jobPostingId}`} state={{ image: getJobPostingImage(posting.jobPostingId) }} key={posting.jobPostingId}><img src={getJobPostingImage(posting.jobPostingId)} alt="" /><span><small>{posting.companyName}</small><strong>{posting.title}</strong></span></Link>)}</div>}<div className={styles.schedule}><span>예상 학습시간<strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong><label className={styles.studyTimeControl}>하루 학습 <select value={roadmap.dailyStudyMinutes || 60} disabled={studyTimeBusy} onChange={changeStudyTime}>{dailyStudyTimeOptions.map(minutes => <option value={minutes} key={minutes}>{fmtDailyStudyTime(minutes)}</option>)}</select></label></span><span className={styles.studyPeriod} aria-label="시작일부터 완료 예정일까지의 학습 기간"><div className={styles.studyPeriodContent}><div>학습 기간</div><strong>{fmtDate(roadmap.createdAt)} ~ {fmtDate(roadmap.estimatedEndDate)} <small>({fmtRemainingWeeks(roadmap.estimatedEndDate)}주)</small></strong></div></span></div></div><ProgressRing value={roadmap.progressRate} /></section>
+        <section className={styles.summary}>
+          <div className={styles.summaryBody}>
+            <div className={styles.summaryTitle}><h1>{roadmap.title}</h1><span className={styles[`roadmapStatus${roadmap.status}`]}>{labels[roadmap.status] || roadmap.status}</span></div>
+            <p>연결된 채용공고 {roadmap.jobPostings?.length ?? roadmap.jobPostingIds?.length ?? 0}개 <i /> 최근 수정 {fmtDate(roadmap.updatedAt)}</p>
+            {!!roadmap.jobPostings?.length && <div className={styles.linkedPostings}>{roadmap.jobPostings.map(posting => <Link className={styles.linkedPosting} to={`/job-postings/${posting.jobPostingId}`} state={{ image: getJobPostingImage(posting.jobPostingId) }} key={posting.jobPostingId}><img src={getJobPostingImage(posting.jobPostingId)} alt="" /><span><small>{posting.companyName}</small><strong>{posting.title}</strong></span></Link>)}</div>}
+            <div className={styles.scheduleSection}>
+              <div className={styles.scheduleHeading}>
+                <div><h2>나의 학습 일정</h2></div>
+                <p>하루 학습시간을 바꾸면 예상 완료 기간이 자동으로 조정돼요.</p>
+              </div>
+              <div className={styles.scheduleFlow}>
+                <article className={styles.scheduleMetric}>
+                  <span className={styles.scheduleStep}>1. 총 학습시간</span>
+                  <p>모든 학습 단계를 완료하는 데 필요한 총 시간</p>
+                  <strong>{fmtHours(roadmap.totalEstimatedMinutes)}</strong>
+                </article>
+                <span className={styles.scheduleArrow} aria-hidden="true"></span>
+                <article className={`${styles.scheduleMetric} ${styles.dailyScheduleMetric}`}>
+                  <span className={styles.scheduleStep}>2. 나의 하루 학습시간</span>
+                  <p>내가 매일 공부할 수 있는 시간을 선택하세요.</p>
+                  <label className={styles.studyTimeControl}>
+                    <select aria-label="하루 학습시간" value={roadmap.dailyStudyMinutes || 60} disabled={studyTimeBusy} onChange={changeStudyTime}>{dailyStudyTimeOptions.map(minutes => <option value={minutes} key={minutes}>{fmtDailyStudyTime(minutes)}</option>)}</select>
+                  </label>
+                </article>
+                <span className={styles.scheduleArrow} aria-hidden="true"></span>
+                <article className={`${styles.scheduleMetric} ${styles.periodScheduleMetric}`} aria-live="polite">
+                  <span className={styles.scheduleStep}>3. 예상 완료 기간</span>
+                  <p>{studyTimeBusy ? '완료 기간을 다시 계산하고 있어요…' : `하루 ${fmtDailyStudyTime(roadmap.dailyStudyMinutes || 60)} 학습 기준`}</p>
+                  <strong>{fmtRemainingWeeks(roadmap.estimatedEndDate)}주</strong>
+                  <div className={styles.studyDates}><time>{fmtDate(roadmap.createdAt)}</time>~<time>{fmtDate(roadmap.estimatedEndDate)}</time></div>
+                </article>
+              </div>
+            </div>
+          </div>
+          <ProgressRing value={roadmap.progressRate} />
+        </section>
         {roadmap.replanRecommended && <section className={styles.warning}><strong>⚠</strong><div><h2>학습 일정이 예정보다 {roadmap.delayDays}일 늦어지고 있어요</h2><p>남은 학습 단계를 현재 일정에 맞게 다시 구성할 수 있습니다.</p></div><button type="button" disabled={actionBusy} onClick={() => setDialog('replan')}>일정 재계획</button></section>}
         <LearningActivity activities={roadmap.learningActivities} />
         <div className={styles.skillGuide}><strong>역량 중요도를 먼저 확인해 보세요</strong><p>공통·선택·관련 순으로 구분했고, 각 그룹 안에서는 공고 요구 빈도와 역량 격차를 반영한 추천 순서로 보여줘요.</p></div>

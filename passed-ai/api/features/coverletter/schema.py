@@ -2,10 +2,19 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+
+class CoverLetterUserSkill(BaseModel):
+    skill_id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=100)
+    category: str
+    level: int = Field(ge=1, le=3)
+
+
 class CoverLetterEditRequest(BaseModel):
     question: str
     content: str
     job_description: Optional[str] = None
+    user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
 
 class CoverLetterEditResponse(BaseModel):
     qa_alignment_score: int
@@ -28,6 +37,7 @@ class CoverLetterReviewItemRequest(BaseModel):
 class CoverLetterReviewRequest(BaseModel):
     items: list[CoverLetterReviewItemRequest] = Field(min_length=1)
     job_description: Optional[str] = None
+    user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
 
 
 class CoverLetterReviewItemResponse(BaseModel):

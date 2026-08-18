@@ -58,19 +58,22 @@ def _feedback_to_text(value) -> str:
 item_feedback_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 엄격한 면접관이자 자기소개서 편집자입니다.
 질문의 핵심 의도와 답변의 일치도를 100점 만점으로 평가하고, 채용 공고가 제공된 경우 직무 적합성도 함께 검토하세요.
+사용자 보유 스킬이 제공된 경우 답변 및 채용 공고와의 연관성을 분석에 반영하세요.
+보유 스킬만으로 실제 사용 경험이나 성과를 추정하지 마세요.
 미흡한 부분에는 근거가 부족하거나 논리적 연결이 약한 부분, 맞춤법·띄어쓰기·문법·모호한 표현을 구체적으로 설명하세요.
 추천 수정 방향에는 각 미흡한 부분을 어떻게 보완할지 행동 가능한 방법을 제안하세요.
 원문에 없는 사실, 경험, 수치를 만들지 마세요.
 답변 전체를 교정한 별도 원고는 만들지 마세요.
 마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 말고 일반 문장만 작성하세요.
 반드시 score, shortcomings, recommended_revision_direction 필드를 가진 JSON 객체로 반환하세요."""),
-    ("user", "질문: {question}\n\n답변: {content}\n\n채용 공고: {job_description}")
+    ("user", "질문: {question}\n\n답변: {content}\n\n채용 공고: {job_description}\n\n사용자 보유 스킬: {user_skills_json}")
 ])
 
 # 3. 피드백을 반영한 최종 첨삭 (Custom Criteria Editing)
 final_edit_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 전문 취업 컨설턴트이자 교정 편집자입니다.
 주어진 분석을 바탕으로 자기소개서를 최종 첨삭하세요.
+사용자 보유 스킬은 원문에 해당 스킬의 사용 근거가 있을 때만 표현을 구체화하는 데 활용하세요.
 원문의 사실과 경험을 임의로 추가하지 말고, 맞춤법·띄어쓰기·문법·어색한 표현을 바로잡으면서 가독성과 설득력을 높이세요.
 설명, 제목, 마크다운 문법 없이 완성된 최종본만 반환하세요."""),
     ("user", """
@@ -78,6 +81,7 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
 원본 내용: {content}
 미흡한 부분: {shortcomings}
 추천 수정 방향: {recommended_revision_direction}
+사용자 보유 스킬: {user_skills_json}
 
 위 내용을 종합하여 가장 완벽하고 설득력 있는 자기소개서 최종본을 작성해 주세요.
 """)
@@ -86,6 +90,8 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
 overall_review_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 채용 담당자이자 자기소개서 전문 컨설턴트입니다.
 여러 문항의 원문과 문항별 분석 결과를 함께 검토하여 자기소개서 전체의 완성도를 평가하세요.
+사용자 보유 스킬이 문항 전반에서 채용 공고와 일관되게 연결되는지도 검토하세요.
+보유 스킬만으로 실제 사용 경험이나 성과를 추정하지 마세요.
 문항 하나의 표현을 반복하지 말고, 문항 간 일관성·경험의 중복·직무 적합성·근거의 구체성을 종합하세요.
 원문에 없는 사실을 만들지 마세요.
 각 텍스트 필드에는 마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 마세요.
@@ -93,6 +99,9 @@ overall_review_prompt = ChatPromptTemplate.from_messages([
 overall_score는 0에서 100 사이의 정수입니다."""),
     ("user", """채용 공고(분석에만 사용):
 {job_description}
+
+사용자 보유 스킬(분석에만 사용):
+{user_skills_json}
 
 문항별 원문 및 분석 결과:
 {items_json}
@@ -134,6 +143,7 @@ def _process_cover_letter_with_chains(
     question: str,
     content: str,
     job_description: str,
+    user_skills: list[dict],
     chains: tuple,
 ) -> dict:
     item_feedback_chain, _ = chains
@@ -142,6 +152,7 @@ def _process_cover_letter_with_chains(
         "question": question,
         "content": content,
         "job_description": job_description or "제공된 채용 공고 정보가 없습니다.",
+        "user_skills_json": json.dumps(user_skills, ensure_ascii=False),
     })
     if isinstance(feedback_result, BaseModel):
         feedback_result = feedback_result.model_dump()
@@ -154,12 +165,18 @@ def _process_cover_letter_with_chains(
         ),
     }
 
-def process_cover_letter_chain(question: str, content: str, job_description: str = "") -> dict:
+def process_cover_letter_chain(
+    question: str,
+    content: str,
+    job_description: str = "",
+    user_skills: list[dict] | None = None,
+) -> dict:
     """Run the existing single-item cover-letter editing pipeline."""
     return _process_cover_letter_with_chains(
         question,
         content,
         job_description,
+        user_skills or [],
         _create_cover_letter_chains(),
     )
 
@@ -168,28 +185,39 @@ def process_cover_letter_suggestion_chain(
     question: str,
     content: str,
     job_description: str = "",
+    user_skills: list[dict] | None = None,
 ) -> str:
     """분석과 분리된 사용자 요청 시점에만 추천 수정안을 생성합니다."""
     chains = _create_cover_letter_chains()
-    analysis = _process_cover_letter_with_chains(question, content, job_description, chains)
+    normalized_skills = user_skills or []
+    analysis = _process_cover_letter_with_chains(
+        question, content, job_description, normalized_skills, chains
+    )
     return chains[1].invoke({
         "question": question,
         "content": content,
         "shortcomings": analysis["shortcomings"],
         "recommended_revision_direction": analysis["recommended_revision_direction"],
+        "user_skills_json": json.dumps(normalized_skills, ensure_ascii=False),
     }).strip()
 
 # 전체 자기소개서를 읽고 리뷰하는 기능
-def process_cover_letter_review_chain(items: list[dict], job_description: str = "") -> dict:
+def process_cover_letter_review_chain(
+    items: list[dict],
+    job_description: str = "",
+    user_skills: list[dict] | None = None,
+) -> dict:
     """Generate item edits and one aggregate review without returning page metadata."""
     item_chains = _create_cover_letter_chains()
     reviewed_items = []
+    normalized_skills = user_skills or []
 
     for item in sorted(items, key=lambda value: value["display_order"]):
         result = _process_cover_letter_with_chains(
             item["question"],
             item["content"],
             job_description,
+            normalized_skills,
             item_chains,
         )
         reviewed_items.append({
@@ -214,6 +242,7 @@ def process_cover_letter_review_chain(items: list[dict], job_description: str = 
     ]
     overall_raw = _create_overall_review_chain().invoke({
         "job_description": job_description or "제공된 채용 공고 정보가 없습니다.",
+        "user_skills_json": json.dumps(normalized_skills, ensure_ascii=False),
         "items_json": json.dumps(aggregate_source, ensure_ascii=False),
     })
     if isinstance(overall_raw, BaseModel):

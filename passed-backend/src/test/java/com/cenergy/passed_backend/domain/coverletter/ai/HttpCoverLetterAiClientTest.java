@@ -3,7 +3,9 @@ package com.cenergy.passed_backend.domain.coverletter.ai;
 import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.client.HttpCoverLetterAiClient;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterUserSkill;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -41,7 +43,15 @@ class HttpCoverLetterAiClientTest {
                         {
                           "question": "질문",
                           "content": "답변",
-                          "job_description": "공고"
+                          "job_description": "공고",
+                          "user_skills": [
+                            {
+                              "skill_id": 9,
+                              "name": "Spring Boot",
+                              "category": "TECHNICAL_SKILL",
+                              "level": 2
+                            }
+                          ]
                         }
                         """))
                 .andRespond(withSuccess(validJson(), MediaType.APPLICATION_JSON));
@@ -65,7 +75,15 @@ class HttpCoverLetterAiClientTest {
                         {
                           "question": "질문",
                           "content": "답변",
-                          "job_description": "공고"
+                          "job_description": "공고",
+                          "user_skills": [
+                            {
+                              "skill_id": 9,
+                              "name": "Spring Boot",
+                              "category": "TECHNICAL_SKILL",
+                              "level": 2
+                            }
+                          ]
                         }
                         """))
                 .andRespond(withSuccess("""
@@ -133,7 +151,14 @@ class HttpCoverLetterAiClientTest {
     }
 
     private CoverLetterAiRequest request() {
-        return new CoverLetterAiRequest("질문", "답변", "공고");
+        return new CoverLetterAiRequest(
+                "질문",
+                "답변",
+                "공고",
+                java.util.List.of(new CoverLetterUserSkill(
+                        9L, "Spring Boot", SkillCategory.TECHNICAL_SKILL, (short) 2
+                ))
+        );
     }
 
     private String validJson() {

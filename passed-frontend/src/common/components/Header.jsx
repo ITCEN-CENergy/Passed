@@ -12,6 +12,7 @@ const Header = () => {
   const initialize = useAuthStore((state) => state.initialize)
   const logout = useAuthStore((state) => state.logout)
   const [dialog, setDialog] = useState(null)
+  const isRecruiter = user?.role === 'RECRUITER'
 
   useEffect(() => {
     void initialize()
@@ -41,18 +42,29 @@ const Header = () => {
           <img className={styles.logo} src={logo} alt="PASSED" />
         </Link>
 
-        <nav className={styles.navigation} aria-label="주요 메뉴">
-          <div className={styles.serviceLinks}>
-            <NavLink to="/job-postings">채용공고 검색</NavLink>
-            <NavLink className={({ isActive }) => isActive ? styles.activeServiceLink : undefined} to="/roadmap" onClick={guardMemberPage('/roadmap')}>학습로드맵</NavLink>
-            <Link to="/cover-letter-list" onClick={guardMemberPage('/cover-letter-list')}>자기소개서 첨삭</Link>
+        <nav className={`${styles.navigation} ${isRecruiter ? styles.recruiterNavigation : ''}`} aria-label="주요 메뉴">
+          <div className={`${styles.serviceLinks} ${isRecruiter ? styles.recruiterServiceLinks : ''}`}>
+            {isChecking ? (
+              <span className={styles.servicePlaceholder} aria-hidden="true" />
+            ) : isRecruiter ? (
+              <>
+                <NavLink end to="/job-postings">채용공고 목록</NavLink>
+                <NavLink to="/job-postings/new">채용공고 등록</NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink to="/job-postings">채용공고 검색</NavLink>
+                <NavLink className={({ isActive }) => isActive ? styles.activeServiceLink : undefined} to="/roadmap" onClick={guardMemberPage('/roadmap')}>학습로드맵</NavLink>
+                <Link to="/cover-letter-list" onClick={guardMemberPage('/cover-letter-list')}>자기소개서 첨삭</Link>
+              </>
+            )}
           </div>
           <div className={styles.authLinks}>
             {isChecking ? (
               <span className={styles.authPlaceholder} aria-hidden="true" />
             ) : user ? (
               <>
-                <Link className={styles.loginLink} to="/mypage">마이페이지</Link>
+                {!isRecruiter && <Link className={styles.loginLink} to="/mypage">마이페이지</Link>}
                 <button className={styles.logoutButton} type="button" onClick={handleLogout}>
                   로그아웃
                 </button>

@@ -51,7 +51,7 @@ const RecommendationRunResultPage = () => {
   }, [location.pathname, navigate, recommendationRunId, retryCount])
 
   if (!result && !error) {
-    return <main className={styles.page}><PageLoading title="추천 결과를 불러오고 있어요" description="추천 당시의 상위 공고를 확인하고 있어요." /></main>
+    return <PageLoading fullPage title="추천 결과를 불러오고 있어요" description="추천 당시의 상위 공고를 확인하고 있어요." ariaLabel="추천 결과 불러오는 중" />
   }
 
   if (error) {

@@ -6,8 +6,8 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
 import {
   CommonCoverLetterPage,
   CompanyCoverLetterList,
-  CompanyCoverLetterWrite,
   CoverLetterResultPage,
+  CoverLetterWritePage,
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
@@ -55,14 +55,14 @@ const router = createBrowserRouter([
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
       },
-      // {
-      //   path: 'mypage/recommendations',
-      //   element: <RecommendationHistoryPage />,
-      // },
-      // {
-      //   path: 'mypage/recommendations/:recommendationRunId',
-      //   element: <RecommendationRunResultPage />,
-      // },
+      {
+        path: 'mypage/recommendations',
+        element: <RecommendationHistoryPage />,
+      },
+      {
+        path: 'mypage/recommendations/:recommendationRunId',
+        element: <RecommendationRunResultPage />,
+      },
       {
         path: 'roadmap',
         element: <RoadmapListPage />,
@@ -117,11 +117,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-write',
-        element: <CompanyCoverLetterWrite />,
+        element: <CoverLetterWritePage />,
       },
       {
         path: 'cover-letter-write/:coverLetterId',
-        element: <CompanyCoverLetterWrite />,
+        element: <CoverLetterWritePage />,
       },
       {
         path: '*',

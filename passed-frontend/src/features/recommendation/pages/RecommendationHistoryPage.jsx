@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { PageLoading } from '../../../common/components/index.js'
 import { JobPostingCard, PageState } from '../../job-posting/components/index.js'
@@ -54,7 +55,7 @@ const StatusBadge = ({ status }) => (
   </span>
 )
 
-const SkillSnapshot = ({ state }) => {
+const SkillSnapshot = ({ state, hideHeader = false }) => {
   if (state.loading) {
     return <div className={styles.skillPanel}><span className={styles.skillLoading}>추천 당시 스킬을 불러오고 있어요…</span></div>
   }
@@ -64,10 +65,12 @@ const SkillSnapshot = ({ state }) => {
   const skills = state.skills ?? []
   return (
     <div className={styles.skillPanel}>
-      <div className={styles.skillPanelHeader}>
-        <strong>추천 당시 매칭한 내 스킬</strong>
-        <span><b>★</b> 중요 표시한 스킬</span>
-      </div>
+      {!hideHeader && (
+        <div className={styles.skillPanelHeader}>
+          <strong>추천 당시 매칭한 내 스킬</strong>
+          <span><b>★</b> 중요 표시한 스킬</span>
+        </div>
+      )}
       {skills.length ? (
         <ul className={styles.skillList}>
           {skills.map((skill) => (
@@ -82,6 +85,55 @@ const SkillSnapshot = ({ state }) => {
   )
 }
 
+const SkillSnapshotModal = ({ state, onClose }) => {
+  const dialogRef = useRef(null)
+
+  useEffect(() => {
+    dialogRef.current?.focus()
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [onClose])
+
+  return createPortal(
+    <div className={styles.skillModalBackdrop} onMouseDown={(event) => {
+      if (event.target === event.currentTarget) onClose()
+    }}>
+      <section
+        ref={dialogRef}
+        className={styles.skillModal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="skill-modal-title"
+        tabIndex="-1"
+      >
+        <header className={styles.skillModalHeader}>
+          <div>
+            <h2 id="skill-modal-title">추천 당시 매칭한 내 스킬</h2>
+            <p>이 공고의 적합도를 분석할 때 저장된 내 스킬이에요.</p>
+          </div>
+          <button type="button" aria-label="스킬 모달 닫기" onClick={onClose}>×</button>
+        </header>
+        <div className={styles.skillModalGuide}><b>★</b> 사용자가 중요 표시한 스킬</div>
+        <div className={styles.skillModalBody}>
+          <SkillSnapshot state={state} hideHeader />
+        </div>
+        <footer className={styles.skillModalFooter}>
+          <button type="button" onClick={onClose}>확인</button>
+        </footer>
+      </section>
+    </div>,
+    document.body,
+  )
+}
+
 const RecommendationHistoryPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -92,14 +144,14 @@ const RecommendationHistoryPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [retryCount, setRetryCount] = useState(0)
-  const [openSkillRunId, setOpenSkillRunId] = useState(null)
+  const [skillModalRunId, setSkillModalRunId] = useState(null)
   const [skillsByRun, setSkillsByRun] = useState({})
 
   useEffect(() => {
     const controller = new AbortController()
     setLoading(true)
     setError('')
-    setOpenSkillRunId(null)
+    setSkillModalRunId(null)
 
     const type = activeTab === 'multiple' ? 'MULTIPLE_POSTINGS' : 'SINGLE_POSTING'
     const status = activeTab === 'single' ? 'COMPLETED' : undefined
@@ -143,15 +195,10 @@ const RecommendationHistoryPage = () => {
     setEntries([])
     setActiveTab(tab)
     setPage(0)
-    setOpenSkillRunId(null)
+    setSkillModalRunId(null)
   }
 
-  const toggleSkills = async (runId) => {
-    if (openSkillRunId === runId) {
-      setOpenSkillRunId(null)
-      return
-    }
-    setOpenSkillRunId(runId)
+  const loadSkills = async (runId) => {
     if (skillsByRun[runId]) return
     setSkillsByRun((current) => ({ ...current, [runId]: { loading: true } }))
     try {
@@ -165,6 +212,11 @@ const RecommendationHistoryPage = () => {
     }
   }
 
+  const openSkillModal = (runId) => {
+    setSkillModalRunId(runId)
+    void loadSkills(runId)
+  }
+
   const singleEntries = activeTab === 'single'
     ? entries.filter((entry) => entry?.result?.recommendations?.[0]?.jobPosting)
     : []
@@ -174,7 +226,7 @@ const RecommendationHistoryPage = () => {
   const visibleEntries = activeTab === 'single' ? singleEntries : entries
 
   if (loading) {
-    return <main className={styles.page}><PageLoading title="추천 내역을 불러오고 있어요" description="추천 실행 결과를 유형별로 정리하고 있어요." /></main>
+    return <PageLoading fullPage title="추천 내역을 불러오고 있어요" description="추천 실행 결과를 유형별로 정리하고 있어요." ariaLabel="추천 내역 불러오는 중" />
   }
 
   if (error) {
@@ -193,7 +245,6 @@ const RecommendationHistoryPage = () => {
     <main className={styles.page}>
       <header className={styles.pageHeader}>
         <div>
-          <span>MY RECOMMENDATION</span>
           <h1>추천 내역</h1>
           <p>맞춤 추천과 직접 매칭한 공고를 구분해서 확인해 보세요.</p>
         </div>
@@ -240,8 +291,8 @@ const RecommendationHistoryPage = () => {
                     <h3>{preferenceTitle(entry.history.preference)}</h3>
                     <div className={styles.roleChips}>{roles.length ? roles.map((role) => <span key={role}>{role}</span>) : <span>희망 직무 정보 없음</span>}</div>
                     <div className={styles.historyActions}>
-                      <button className={styles.skillButton} type="button" aria-expanded={openSkillRunId === entry.history.runId} onClick={() => toggleSkills(entry.history.runId)}>
-                        매칭한 내 스킬 보기 <span aria-hidden="true">{openSkillRunId === entry.history.runId ? '−' : '+'}</span>
+                      <button className={styles.skillButton} type="button" aria-haspopup="dialog" onClick={() => openSkillModal(entry.history.runId)}>
+                        매칭한 내 스킬 보기 <span aria-hidden="true">↗</span>
                       </button>
                       {completed ? (
                         <Link className={styles.resultButton} to={`/mypage/recommendations/${entry.history.runId}`}>추천 결과 보기</Link>
@@ -249,7 +300,6 @@ const RecommendationHistoryPage = () => {
                         <button className={styles.resultButton} type="button" disabled>{STATUS_LABELS[status] ?? status}</button>
                       )}
                     </div>
-                    {openSkillRunId === entry.history.runId && <SkillSnapshot state={skillsByRun[entry.history.runId] ?? { loading: true }} />}
                   </article>
                 )
               })}
@@ -267,10 +317,9 @@ const RecommendationHistoryPage = () => {
                       recommendation={{ ...recommendation, rankOrder: null, gradeLabel: GRADE_LABELS[recommendation.grade] ?? recommendation.grade }}
                       to={`/recommendations/${entry.history.runId}/${recommendation.jobRecommendationId}`}
                     />
-                    <button className={styles.skillButton} type="button" aria-expanded={openSkillRunId === entry.history.runId} onClick={() => toggleSkills(entry.history.runId)}>
-                      매칭한 내 스킬 보기 <span aria-hidden="true">{openSkillRunId === entry.history.runId ? '−' : '+'}</span>
+                    <button className={styles.skillButton} type="button" aria-haspopup="dialog" onClick={() => openSkillModal(entry.history.runId)}>
+                      매칭한 내 스킬 보기 <span aria-hidden="true">↗</span>
                     </button>
-                    {openSkillRunId === entry.history.runId && <SkillSnapshot state={skillsByRun[entry.history.runId] ?? { loading: true }} />}
                   </article>
                 )
               })}
@@ -292,6 +341,13 @@ const RecommendationHistoryPage = () => {
           </nav>
         )}
       </section>
+
+      {skillModalRunId !== null && (
+        <SkillSnapshotModal
+          state={skillsByRun[skillModalRunId] ?? { loading: true }}
+          onClose={() => setSkillModalRunId(null)}
+        />
+      )}
 
     </main>
   )

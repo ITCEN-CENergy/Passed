@@ -91,6 +91,18 @@
   min-width: 0;
 }
 
+.identityRow {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.identity {
+  min-width: 0;
+}
+
 .identity h2 {
   overflow: hidden;
   color: var(--color-navy, #07183d);
@@ -105,6 +117,33 @@
   overflow-wrap: anywhere;
   color: var(--color-text-muted, #6b7890);
   font-size: 14px;
+}
+
+.skillEditLink {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 16px;
+  color: #0867f2;
+  background: #fff;
+  border: 1.5px solid #0867f2;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skillEditLink:hover {
+  color: #0759d2;
+  background: #f5f9ff;
+  border-color: #0759d2;
+}
+
+.skillEditLink:focus-visible {
+  outline: 3px solid rgba(8, 103, 242, .3);
+  outline-offset: 3px;
 }
 
 .documentDates {
@@ -307,6 +346,11 @@
 
   .profileInfo {
     width: 100%;
+  }
+
+  .identityRow {
+    align-items: center;
+    flex-direction: column;
   }
 
   .documentDates {

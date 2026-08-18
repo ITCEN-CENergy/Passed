@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { PageLoading } from '../../../common/components/index.js'
 import { getMyPage } from '../api/index.js'
 import { MyPageActionCard } from '../components/index.js'
@@ -126,9 +126,12 @@ const MyPage = () => {
             )}
           </div>
           <div className={styles.profileInfo}>
-            <div className={styles.identity}>
-              <h2>{profile.name}</h2>
-              <p>{profile.email}</p>
+            <div className={styles.identityRow}>
+              <div className={styles.identity}>
+                <h2>{profile.name}</h2>
+                <p>{profile.email}</p>
+              </div>
+              <Link className={styles.skillEditLink} to="/skills">스킬 레벨 강조 수정</Link>
             </div>
             <div className={styles.documentDates}>
               <div>
@@ -174,7 +177,7 @@ const MyPage = () => {
             <h2 id="recommendation-notice-title">변경한 내용으로 추천을 새로 받아보세요</h2>
             <p>{updatedDocumentLabel} 수정 내용이 저장되었습니다. 최신 정보를 분석해 맞춤 채용공고를 다시 추천해드릴게요.</p>
           </div>
-          <button type="button" onClick={() => navigate('/onboarding/analysis')}>재추천 받기 <span aria-hidden="true">→</span></button>
+          <button type="button" onClick={() => navigate('/onboarding/analysis')}>재추천 받기</button>
         </section>
       )}
     </main>

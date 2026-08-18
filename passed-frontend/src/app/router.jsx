@@ -22,6 +22,7 @@ import { RoadmapDetailPage, RoadmapListPage } from '../features/roadmap/pages/in
 import { JobPreferenceOnboardingPage, MyPage } from '../features/user/pages/index.js'
 import { ResumeEditorPage } from '../features/resume/pages/index.js'
 import { SkillAnalysisPage, SkillReviewPage } from '../features/skill/pages/index.js'
+import LandingHomePage from '../features/landing/pages/LandingHomePage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <RecommendationPage home />,
+        element: <LandingHomePage />,
       },
       {
         path: 'about',
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
       },
       {
         path: 'onboarding/skills',
+        element: <SkillReviewPage />,
+      },
+      {
+        path: 'skills',
         element: <SkillReviewPage />,
       },
       {

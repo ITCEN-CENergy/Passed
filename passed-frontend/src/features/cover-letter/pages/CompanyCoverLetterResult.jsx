@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { PageLoading } from '../../../common/components/index.js'
 import {
   generateCoverLetterItemFeedback,
   generateCoverLetterOverallFeedback,
@@ -7,7 +8,7 @@ import {
   getCoverLetterItemFeedback,
   getCoverLetterOverallFeedback,
 } from '../api'
-import { FeedbackContent, LoadingOverlay, normalizeFeedbackText } from '../components'
+import { FeedbackContent } from '../components'
 import { useCompanyCoverLetter } from '../hooks'
 import styles from './styles/CoverLetterResultPage.module.css'
 
@@ -34,35 +35,13 @@ function initialFeedbackState(items) {
   }]))
 }
 
-function improvementSections(value) {
-  const normalized = normalizeFeedbackText(value)
-  const sections = []
-  let current = { title: '종합 개선점', lines: [] }
-
-  normalized.split('\n').forEach((line) => {
-    const trimmed = line.trim()
-    const bracketHeading = trimmed.match(/^\[([^\]]+)]\s*(.*)$/)
-    const markdownHeading = trimmed.match(/^#{1,6}\s+(.+)$/)
-    const heading = bracketHeading || markdownHeading
-    if (heading) {
-      if (current.lines.some(Boolean)) sections.push(current)
-      current = { title: heading[1].trim(), lines: [] }
-      if (bracketHeading?.[2]) current.lines.push(bracketHeading[2])
-    } else {
-      current.lines.push(line)
-    }
-  })
-  if (current.lines.some(Boolean)) sections.push(current)
-  return sections.length ? sections : [{ title: '종합 개선점', lines: [normalized] }]
-}
-
 function scoreTone(score) {
   if (score === 'SUFFICIENT') return styles.scoreGood
   if (score === 'INSUFFICIENT') return styles.scoreCaution
   return styles.scoreNeedsWork
 }
 
-const CoverLetterResultPage = () => {
+const CompanyCoverLetterResult = () => {
   const [searchParams] = useSearchParams()
   const coverLetterId = Number(searchParams.get('coverLetterId'))
   const isValidId = Number.isSafeInteger(coverLetterId) && coverLetterId > 0
@@ -233,7 +212,16 @@ const CoverLetterResultPage = () => {
   }
 
   if (isLoading) {
-    return <section className={styles.statePage}>자기소개서를 불러오는 중입니다.</section>
+    return (
+      <div className={styles.page}>
+        <main className={`${styles.content} ${styles.loadingContent}`}>
+          <PageLoading
+            title="자기소개서를 불러오고 있어요"
+            description="작성한 문항과 첨삭 결과를 확인하고 있어요."
+          />
+        </main>
+      </div>
+    )
   }
 
   if (error || !coverLetter) {
@@ -272,9 +260,18 @@ const CoverLetterResultPage = () => {
           description: '채용공고와 선택한 답변을 분석해 개선점을 찾고 있어요.',
         }
 
+  if (bulkFeedback.isRunning || generatingState) {
+    return (
+      <div className={styles.page}>
+        <main className={`${styles.content} ${styles.loadingContent}`}>
+          <PageLoading {...loadingCopy} />
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.page}>
-      {(bulkFeedback.isRunning || generatingState) && <LoadingOverlay {...loadingCopy} />}
       <main className={styles.content}>
         <div className={styles.topNavigation}>
           <div className={styles.topActions}>
@@ -411,22 +408,21 @@ const CoverLetterResultPage = () => {
                       </span>
                     </div>
 
-                    {state.feedback.strengths && (
-                      <div className={`${styles.feedbackBlock} ${styles.strengthBlock}`}>
-                        <h4><span aria-hidden="true">✓</span> 잘된 점</h4>
-                        <FeedbackContent text={state.feedback.strengths} />
+                    <div className={styles.improvementArea}>
+                      <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 미흡한 부분</h4>
+                      <div className={styles.improvementGrid}>
+                        <article className={styles.improvementBlock}>
+                          <FeedbackContent text={state.feedback.shortcomings} />
+                        </article>
                       </div>
-                    )}
+                    </div>
 
                     <div className={styles.improvementArea}>
-                      <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 개선할 점</h4>
+                      <h4 className={styles.improvementTitle}>추천 수정 방향</h4>
                       <div className={styles.improvementGrid}>
-                        {improvementSections(state.feedback.improvements).map((section, sectionIndex) => (
-                          <article className={styles.improvementBlock} key={`${section.title}-${sectionIndex}`}>
-                            <h5>{section.title}</h5>
-                            <FeedbackContent text={section.lines.join('\n')} />
-                          </article>
-                        ))}
+                        <article className={styles.improvementBlock}>
+                          <FeedbackContent text={state.feedback.recommendedRevisionDirection} />
+                        </article>
                       </div>
                     </div>
 
@@ -467,4 +463,4 @@ const CoverLetterResultPage = () => {
   )
 }
 
-export default CoverLetterResultPage
+export default CompanyCoverLetterResult

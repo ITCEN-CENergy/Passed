@@ -7,7 +7,8 @@ import {
   CommonCoverLetterPage,
   CompanyCoverLetterList,
   CompanyCoverLetterWrite,
-  CoverLetterResultPage,
+  CompanyCoverLetterResult,
+  CoverLetterWritePage
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
@@ -56,14 +57,14 @@ const router = createBrowserRouter([
         path: 'recommendations/:recommendationRunId/:jobRecommendationId',
         element: <RecommendationDetailPage />,
       },
-      // {
-      //   path: 'mypage/recommendations',
-      //   element: <RecommendationHistoryPage />,
-      // },
-      // {
-      //   path: 'mypage/recommendations/:recommendationRunId',
-      //   element: <RecommendationRunResultPage />,
-      // },
+      {
+        path: 'mypage/recommendations',
+        element: <RecommendationHistoryPage />,
+      },
+      {
+        path: 'mypage/recommendations/:recommendationRunId',
+        element: <RecommendationRunResultPage />,
+      },
       {
         path: 'roadmap',
         element: <RoadmapListPage />,
@@ -110,12 +111,8 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-result',
-        element: <CoverLetterResultPage />,
+        element: <CompanyCoverLetterResult />,
       },
-      // {
-      //   path: 'cover-letter-review',
-      //   element: <CoverLetterReviewPage />,
-      // },
       {
         path: 'cover-letter-list',
         element: <CompanyCoverLetterList />,
@@ -126,7 +123,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-write/:coverLetterId',
-        element: <CompanyCoverLetterWrite />,
+        element: <CoverLetterWritePage />,
       },
       {
         path: '*',

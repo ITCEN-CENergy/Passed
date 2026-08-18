@@ -52,17 +52,21 @@ public class CoverLetterFeedbackPersistenceService {
             );
         }
 
-        String improvements = improvements(aiResult);
         CoverLetterItemFeedback feedback = feedbackRepository.findByCoverLetterCompanyItemId(item.getId())
                 .map(existing -> {
-                    existing.update(score, null, improvements, null);
+                    existing.update(
+                            score,
+                            aiResult.shortcomings(),
+                            aiResult.recommendedRevisionDirection(),
+                            null
+                    );
                     return existing;
                 })
                 .orElseGet(() -> CoverLetterItemFeedback.create(
                         item,
                         score,
-                        null,
-                        improvements,
+                        aiResult.shortcomings(),
+                        aiResult.recommendedRevisionDirection(),
                         null
                 ));
         return CoverLetterFeedbackQueryService.toResult(feedbackRepository.saveAndFlush(feedback));
@@ -97,17 +101,10 @@ public class CoverLetterFeedbackPersistenceService {
                 ));
         feedback.update(
                 feedback.getScore(),
-                feedback.getStrengths(),
-                feedback.getImprovements(),
+                feedback.getShortcomings(),
+                feedback.getRecommendedRevisionDirection(),
                 suggestedAnswer.trim()
         );
         return CoverLetterFeedbackQueryService.toResult(feedbackRepository.saveAndFlush(feedback));
-    }
-
-    private String improvements(ValidatedCoverLetterAiResult result) {
-        return "[질문-답변 일치도]\n"
-                + result.qaAlignmentFeedback().trim()
-                + "\n\n[채용공고 적합도]\n"
-                + result.jobFitFeedback().trim();
     }
 }

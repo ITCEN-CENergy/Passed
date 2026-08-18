@@ -319,6 +319,7 @@ const RecommendationContent = ({ embedded = false }) => {
           <PageLoading title="저장된 추천 설정과 결과를 불러오고 있어요" description="잠시만 기다려주세요." />
         ) : loading ? (
           <PageLoading
+            fullPage
             title="맞춤형 채용공고를 추천하는 중이에요"
             description={loadingDescriptions[loadingStage]}
             ariaLabel="맞춤형 채용공고 추천 중"

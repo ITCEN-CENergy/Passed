@@ -1,6 +1,7 @@
 .header {
-  position: relative;
+  position: sticky;
   z-index: 10;
+  top: 0;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #e3e8f0;

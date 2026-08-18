@@ -47,13 +47,13 @@ public class CoverLetterItemFeedback extends BaseTimeEntity {
     @Column(name = "score", length = 10)
     private CoverLetterScore score;
 
-    /** Strengths identified by the AI. */
+    /** Shortcomings identified by the AI. The legacy column name is retained for schema compatibility. */
     @Column(name = "strengths", columnDefinition = "text")
-    private String strengths;
+    private String shortcomings;
 
-    /** Improvements identified by the AI. */
+    /** Actionable revision direction. The legacy column name is retained for schema compatibility. */
     @Column(name = "improvements", columnDefinition = "text")
-    private String improvements;
+    private String recommendedRevisionDirection;
 
     /** The AI's suggested revised answer. */
     @Column(name = "suggested_answer", columnDefinition = "text")
@@ -63,26 +63,26 @@ public class CoverLetterItemFeedback extends BaseTimeEntity {
     public static CoverLetterItemFeedback create(
             CoverLetterCompanyItem item,
             CoverLetterScore score,
-            String strengths,
-            String improvements,
+            String shortcomings,
+            String recommendedRevisionDirection,
             String suggestedAnswer
     ) {
         CoverLetterItemFeedback value = new CoverLetterItemFeedback();
         value.coverLetterCompanyItem = item;
-        value.update(score, strengths, improvements, suggestedAnswer);
+        value.update(score, shortcomings, recommendedRevisionDirection, suggestedAnswer);
         return value;
     }
 
     /** Replaces the mutable AI-feedback fields during feedback regeneration. */
     public void update(
             CoverLetterScore score,
-            String strengths,
-            String improvements,
+            String shortcomings,
+            String recommendedRevisionDirection,
             String suggestedAnswer
     ) {
         this.score = score;
-        this.strengths = strengths;
-        this.improvements = improvements;
+        this.shortcomings = shortcomings;
+        this.recommendedRevisionDirection = recommendedRevisionDirection;
         this.suggestedAnswer = suggestedAnswer;
     }
 }

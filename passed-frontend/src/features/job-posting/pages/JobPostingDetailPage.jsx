@@ -80,9 +80,9 @@ const JobPostingDetailPage = () => {
     }
   }
 
-  if ((!jobPosting || checkingHistory) && !error) return <div className={styles.detailShell}><PageLoading title="공고 정보를 불러오고 있어요" description="공고 내용과 매칭 이력을 확인하고 있어요." /></div>
+  if ((!jobPosting || checkingHistory) && !error) return <PageLoading fullPage title="공고 정보를 불러오고 있어요" description="공고 내용과 매칭 이력을 확인하고 있어요." ariaLabel="공고 상세 불러오는 중" />
   if (!jobPosting) return <div className={styles.detailShell}><PageState title="공고를 불러오지 못했습니다" description={error} /></div>
-  if (matching) return <div className={styles.detailShell}><PageLoading title="공고와 내 스킬을 매칭하고 있어요" description="보유 역량과 공고의 요구 스킬을 분석하고 있어요." /></div>
+  if (matching) return <PageLoading fullPage title="공고와 내 스킬을 매칭하고 있어요" description="보유 역량과 공고의 요구 스킬을 분석하고 있어요." ariaLabel="공고 적합도 분석 중" />
 
   return (
     <div className={styles.detailShell}>

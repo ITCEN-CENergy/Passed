@@ -1,0 +1,212 @@
+.header {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #e3e8f0;
+}
+
+.inner {
+  display: flex;
+  width: min(100% - 72px, 1600px);
+  min-height: 88px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.logo {
+  display: block;
+  width: 175px;
+  height: auto;
+}
+
+.navigation,
+.serviceLinks,
+.authLinks {
+  display: flex;
+  align-items: center;
+}
+
+.navigation {
+  gap: 40px;
+}
+
+.serviceLinks {
+  gap: 44px;
+}
+
+.authLinks {
+  gap: 20px;
+}
+
+.navigation a {
+  color: #111827;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.navigation a:hover,
+.navigation a:focus-visible {
+  color: #0867f2;
+}
+
+.serviceLinks a {
+  position: relative;
+  display: inline-flex;
+  min-height: 88px;
+  align-items: center;
+}
+
+.serviceLinks a[aria-current='page'] {
+  color: #146bff;
+}
+
+.serviceLinks a[aria-current='page']::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #146bff;
+}
+
+.navigation .activeServiceLink {
+  position: relative;
+  color: #0867f2;
+}
+
+.navigation .activeServiceLink::after {
+  position: absolute;
+  right: 0;
+  bottom: -31px;
+  left: 0;
+  height: 3px;
+  background: #0867f2;
+  border-radius: 3px 3px 0 0;
+  content: '';
+}
+
+.navigation .loginLink,
+.navigation .signupLink,
+.logoutButton {
+  display: inline-flex;
+  min-width: 100px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.navigation .loginLink {
+  color: #0867f2;
+  background: #fff;
+  border: 1.5px solid #0867f2;
+}
+
+.navigation .signupLink,
+.logoutButton {
+  color: #fff;
+  background: #0867f2;
+  border: 1.5px solid #0867f2;
+  box-shadow: 0 4px 10px rgba(8, 103, 242, 0.16);
+}
+
+.logoutButton {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+}
+
+.authPlaceholder {
+  display: block;
+  width: 220px;
+  height: 48px;
+}
+
+.navigation .loginLink:hover,
+.navigation .loginLink:focus-visible {
+  color: #0759d2;
+  background: #f5f9ff;
+}
+
+.navigation .signupLink:hover,
+.navigation .signupLink:focus-visible,
+.logoutButton:hover,
+.logoutButton:focus-visible {
+  color: #fff;
+  background: #0759d2;
+}
+
+.brand:focus-visible,
+.navigation a:focus-visible,
+.logoutButton:focus-visible {
+  outline: 3px solid rgba(8, 103, 242, 0.3);
+  outline-offset: 3px;
+}
+
+@media (max-width: 780px) {
+  .inner {
+    width: min(100% - 32px, 1570px);
+    min-height: 72px;
+    gap: 20px;
+  }
+
+  .logo {
+    width: 142px;
+  }
+
+  .navigation {
+    gap: 12px;
+  }
+
+  .serviceLinks {
+    display: none;
+  }
+
+  .authLinks {
+    gap: 8px;
+  }
+
+  .authPlaceholder {
+    width: 148px;
+    height: 40px;
+  }
+
+  .navigation .loginLink,
+  .navigation .signupLink,
+  .logoutButton {
+    min-width: auto;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .inner {
+    width: min(100% - 24px, 1570px);
+  }
+
+  .logo {
+    width: 122px;
+  }
+
+  .navigation .loginLink,
+  .navigation .signupLink,
+  .logoutButton {
+    padding-inline: 9px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,116 @@
+.page {
+  min-height: 100%;
+  padding: 42px 24px 64px;
+  background: var(--color-page);
+}
+
+.content {
+  width: min(100%, 820px);
+  margin: 0 auto;
+}
+
+.intro {
+  margin-bottom: 20px;
+}
+
+.intro h1 {
+  margin-bottom: 8px;
+  color: var(--color-text);
+  font-size: 30px;
+  letter-spacing: -1.2px;
+}
+
+.intro p,
+.cardInfo p {
+  color: var(--color-muted);
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.cardInfo h2 {
+  margin: 0 0 7px;
+  font-size: 18px;
+}
+
+.cardInfo p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.cardActions,
+.stateMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkButton,
+.deleteButton,
+.retryButton {
+  min-height: 38px;
+  padding: 8px 13px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.checkButton,
+.retryButton {
+  color: #fff;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.deleteButton {
+  color: #b42318;
+  background: #fff;
+  border: 1px solid #f3b5b0;
+}
+
+.empty,
+.stateMessage {
+  justify-content: center;
+  min-height: 180px;
+  padding: 24px;
+  color: var(--color-muted);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.actionError {
+  padding: 12px 14px;
+  color: #b42318;
+  background: #fff3f2;
+  border-radius: 8px;
+}
+
+@media (max-width: 620px) {
+  .page {
+    padding-inline: 16px;
+  }
+
+  .card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

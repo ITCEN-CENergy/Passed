@@ -1,0 +1,54 @@
+:root {
+  --color-page: #f7f9fc;
+  --color-surface: #ffffff;
+  --color-text: #182238;
+  --color-muted: #6b7890;
+  --color-border: #dce4ef;
+  --color-primary: #146bff;
+  --color-primary-hover: #0f5ce0;
+  --color-dark: #07183d;
+  --shadow-card: 0 4px 16px rgba(7, 24, 61, 0.06);
+  --font-sans: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}

@@ -11,6 +11,7 @@ import {
   CoverLetterWritePage
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
+import RecruiterRoute from '../features/auth/components/RecruiterRoute.jsx'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
 import {
   RecommendationDetailPage,
@@ -42,7 +43,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'job-postings/new',
-        element: <JobPostingCreatePage />,
+        element: (
+          <RecruiterRoute>
+            <JobPostingCreatePage />
+          </RecruiterRoute>
+        ),
       },
       {
         path: 'job-postings/:jobPostingId',

@@ -135,6 +135,12 @@
   height: 48px;
 }
 
+.servicePlaceholder {
+  display: block;
+  width: 360px;
+  height: 48px;
+}
+
 .navigation .loginLink:hover,
 .navigation .loginLink:focus-visible {
   color: #0759d2;
@@ -175,6 +181,20 @@
     display: none;
   }
 
+  .recruiterServiceLinks {
+    display: flex;
+    gap: 20px;
+  }
+
+  .recruiterServiceLinks a {
+    min-height: 72px;
+    font-size: 15px;
+  }
+
+  .servicePlaceholder {
+    display: none;
+  }
+
   .authLinks {
     gap: 8px;
   }
@@ -201,7 +221,17 @@
   }
 
   .logo {
-    width: 122px;
+    width: 104px;
+  }
+
+  .recruiterNavigation,
+  .recruiterServiceLinks {
+    gap: 8px;
+  }
+
+  .recruiterServiceLinks a {
+    min-height: 72px;
+    font-size: 12px;
   }
 
   .navigation .loginLink,

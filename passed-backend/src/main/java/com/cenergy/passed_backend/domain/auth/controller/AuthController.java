@@ -82,7 +82,7 @@ public class AuthController {
                 .userId(principal.getUserId())
                 .email(principal.getEmail())
                 .name(principal.getName())
-                .role("USER")
+                .role(principal.getRole().name())
                 .build();
     }
 

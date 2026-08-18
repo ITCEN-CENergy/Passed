@@ -1,4 +1,8 @@
 import styles from './JobPostingDetailContent.module.css'
+import {
+  formatJobPostingParagraph,
+  splitJobPostingSentences,
+} from '../utils/jobPostingText.js'
 
 const SECTION_FIELDS = [
   ['positionDetail', '포지션 소개'],
@@ -16,13 +20,6 @@ const META_FIELDS = [
   ['educationLevel', '학력'],
   ['companySize', '기업 규모'],
 ]
-
-const splitSentences = (value) => String(value ?? '')
-  .split(/[?？]+|\r?\n+|[•●○◦▪︎■◆]+/)
-  .map((sentence) => sentence.trim().replace(/^[•·●○◦▪︎■◆\-–—]+\s*/, ''))
-  .filter(Boolean)
-
-const paragraphText = (value) => splitSentences(value).join(' ')
 
 const JobPostingDetailContent = ({ jobPosting, image, action, guidance, children }) => (
   <article className={styles.detail}>
@@ -57,13 +54,13 @@ const JobPostingDetailContent = ({ jobPosting, image, action, guidance, children
 
     <div className={styles.sections}>
       {SECTION_FIELDS.map(([field, label]) => {
-        const sentences = splitSentences(jobPosting[field])
+        const sentences = splitJobPostingSentences(jobPosting[field])
         if (!sentences.length) return null
         return (
           <section key={field}>
             <h2>{label}</h2>
             {field === 'positionDetail' ? (
-              <p className={styles.paragraph}>{paragraphText(jobPosting[field])}</p>
+              <p className={styles.paragraph}>{formatJobPostingParagraph(jobPosting[field])}</p>
             ) : (
               <ul>
                 {sentences.map((sentence, index) => <li key={`${field}-${index}`}>{sentence}</li>)}

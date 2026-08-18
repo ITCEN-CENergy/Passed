@@ -27,7 +27,7 @@ const RecommendationDetailPage = () => {
     return () => controller.abort()
   }, [recommendationRunId, jobRecommendationId])
 
-  if (!detail && !error) return <div className={jobStyles.detailShell}><PageLoading title="매칭 리포트를 불러오고 있어요" description="공고와 내 역량의 적합도를 확인하고 있어요." /></div>
+  if (!detail && !error) return <PageLoading fullPage title="매칭 리포트를 불러오고 있어요" description="공고와 내 역량의 적합도를 확인하고 있어요." ariaLabel="매칭 리포트 불러오는 중" />
   if (!detail) return <div className={jobStyles.detailShell}><PageState title="매칭 리포트를 불러오지 못했습니다" description={error} /></div>
 
   const image = location.state?.image || getJobPostingImage(detail.jobPosting.jobPostingId)
@@ -36,8 +36,8 @@ const RecommendationDetailPage = () => {
     addRoadmapItem(detail.jobPosting)
   }
   const reviewCoverLetter = () => {
-    navigate('/cover-letter-write', {
-      state: { jobPosting: detail.jobPosting },
+    navigate(`/cover-letter-write?jobPostingId=${encodeURIComponent(detail.jobPosting.jobPostingId)}`, {
+      state: { jobPostingDetail: detail.jobPosting },
     })
   }
 

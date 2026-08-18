@@ -10,6 +10,15 @@
   text-align: center;
 }
 
+.fullPage {
+  position: fixed;
+  z-index: 9;
+  min-height: calc(100vh - 88px);
+  min-height: calc(100dvh - 88px);
+  background: #f5f6f8;
+  inset: 88px 0 0;
+}
+
 .dots {
   display: flex;
   align-items: center;
@@ -47,4 +56,12 @@
 @media (prefers-reduced-motion: reduce) {
   .dots i { animation: none; }
   .dots i:first-child { background: #0877ed; }
+}
+
+@media (max-width: 780px) {
+  .fullPage {
+    min-height: calc(100vh - 72px);
+    min-height: calc(100dvh - 72px);
+    inset: 72px 0 0;
+  }
 }

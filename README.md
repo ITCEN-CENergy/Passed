@@ -59,7 +59,7 @@
 
 ### 구성원
 
-| <img width="120" height="160" alt="강민주" src="https://github.com/user-attachments/assets/86ecb961-bf83-4c18-bdd7-5624699b18c4" /> | <img width="120" height="160" alt="신재욱" src="https://github.com/user-attachments/assets/9b47c974-ce65-422a-b756-4039843bb377" /> | <img width="120" height="160" alt="이민호" src="https://github.com/user-attachments/assets/829fd1ef-5227-449e-af46-b0383ed0ce76" /> | <img width="120" height="160" alt="조윤지" src="https://github.com/user-attachments/assets/6e53a579-c869-4bb7-9c9d-6099d1454a44" /> |
+| <img width="120" height="160" alt="강민주" src="https://github.com/user-attachments/assets/86ecb961-bf83-4c18-bdd7-5624699b18c4" /> | <img width="120" height="160" alt="신재욱" src="https://github.com/user-attachments/assets/9b47c974-ce65-422a-b756-4039843bb377" /> | <img width="120" height="160" alt="이민호" src="https://github.com/user-attachments/assets/eb3fb149-a4d6-430c-933d-391c936da4cf" /> | <img width="120" height="160" alt="조윤지" src="https://github.com/user-attachments/assets/6e53a579-c869-4bb7-9c9d-6099d1454a44" /> |
 | :---: | :---: | :---: | :---: |
 | **강민주** | **신재욱** | **이민호** | **조윤지** |
 | [GitHub](https://github.com/mimo626) | [GitHub](https://github.com/tls427wodnr) | [GitHub](https://github.com/minho2618) | [GitHub](https://github.com/YUMZII) |

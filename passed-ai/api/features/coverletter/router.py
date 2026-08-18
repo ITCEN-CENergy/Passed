@@ -30,8 +30,8 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
     
     return CoverLetterEditResponse(
         qa_alignment_score=result["qa_alignment_score"],
-        qa_alignment_feedback=result["qa_alignment_feedback"],
-        jd_fit_feedback=result["jd_fit_feedback"],
+        shortcomings=result["shortcomings"],
+        recommended_revision_direction=result["recommended_revision_direction"],
     )
 
 

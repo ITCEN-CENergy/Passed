@@ -9,8 +9,8 @@ class CoverLetterEditRequest(BaseModel):
 
 class CoverLetterEditResponse(BaseModel):
     qa_alignment_score: int
-    qa_alignment_feedback: str
-    jd_fit_feedback: str
+    shortcomings: str
+    recommended_revision_direction: str
 
 
 class CoverLetterSuggestionResponse(BaseModel):
@@ -34,8 +34,8 @@ class CoverLetterReviewItemResponse(BaseModel):
     item_id: int
     display_order: int
     qa_alignment_score: int = Field(ge=0, le=100)
-    qa_alignment_feedback: str
-    jd_fit_feedback: str
+    shortcomings: str
+    recommended_revision_direction: str
 
 
 class CoverLetterOverallFeedbackResponse(BaseModel):

@@ -10,9 +10,13 @@ from core.config import get_settings
 # LLM 초기화 (환경에 맞게 모델 변경 가능, 예: gpt-4o 또는 gemini-pro)
 # 실제 환경에서는 의존성 주입(Dependency Injection) 등으로 관리하는 것이 좋습니다.
 # 1. 질문과 응답의 일치도 및 표현 품질 확인 (Q&A Alignment)
-class QAAlignmentOutput(BaseModel):
+class ItemFeedbackOutput(BaseModel):
     score: int = Field(ge=1, le=100, description="1에서 100 사이의 점수")
-    feedback: str = Field(description="평가 이유")
+    shortcomings: str = Field(min_length=1, description="답변의 미흡한 부분")
+    recommended_revision_direction: str = Field(
+        min_length=1,
+        description="미흡한 부분을 보완할 추천 수정 방향",
+    )
 
 
 class OverallReviewOutput(BaseModel):
@@ -51,23 +55,16 @@ def _feedback_to_text(value) -> str:
         )
     return str(value).strip()
 
-qa_alignment_prompt = ChatPromptTemplate.from_messages([
+item_feedback_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 엄격한 면접관이자 자기소개서 편집자입니다.
-질문의 핵심 의도와 답변의 일치도를 100점 만점으로 평가하세요.
-피드백에는 내용의 구체성·논리성뿐 아니라 맞춤법, 띄어쓰기, 문법, 어색하거나 모호한 표현도 함께 지적하고 개선 방향을 제안하세요.
+질문의 핵심 의도와 답변의 일치도를 100점 만점으로 평가하고, 채용 공고가 제공된 경우 직무 적합성도 함께 검토하세요.
+미흡한 부분에는 근거가 부족하거나 논리적 연결이 약한 부분, 맞춤법·띄어쓰기·문법·모호한 표현을 구체적으로 설명하세요.
+추천 수정 방향에는 각 미흡한 부분을 어떻게 보완할지 행동 가능한 방법을 제안하세요.
+원문에 없는 사실, 경험, 수치를 만들지 마세요.
 답변 전체를 교정한 별도 원고는 만들지 마세요.
 마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 말고 일반 문장만 작성하세요.
-반드시 score는 정수, feedback은 중첩 객체가 아닌 하나의 문자열인 JSON 객체로 반환하세요."""),
-    ("user", "질문: {question}\n\n답변: {content}")
-])
-
-# 2. 공고와 자기소개서가 일치하는 지 확인 (JD Alignment)
-jd_fit_prompt = ChatPromptTemplate.from_messages([
-    ("system", """당신은 채용 담당자(HR)이자 자기소개서 편집자입니다.
-채용 공고의 필수 요건과 우대 사항을 기준으로 자기소개서가 직무에 적합한 역량을 보여주는지 분석하세요.
-부족한 근거와 보완할 키워드를 제안하고, 직무 적합성을 약화하는 맞춤법·문법 오류나 모호하고 어색한 표현도 피드백에 포함하세요.
-마크다운 제목, 글머리 기호, 굵게 표시 문법을 사용하지 말고 일반 문장만 작성하세요."""),
-    ("user", "채용 공고: {job_description}\n\n자기소개서: {content}")
+반드시 score, shortcomings, recommended_revision_direction 필드를 가진 JSON 객체로 반환하세요."""),
+    ("user", "질문: {question}\n\n답변: {content}\n\n채용 공고: {job_description}")
 ])
 
 # 3. 피드백을 반영한 최종 첨삭 (Custom Criteria Editing)
@@ -79,8 +76,8 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
     ("user", """
 원본 질문: {question}
 원본 내용: {content}
-질문-응답 일치도 분석: {qa_alignment_feedback}
-직무 적합도 분석: {jd_fit_feedback}
+미흡한 부분: {shortcomings}
+추천 수정 방향: {recommended_revision_direction}
 
 위 내용을 종합하여 가장 완벽하고 설득력 있는 자기소개서 최종본을 작성해 주세요.
 """)
@@ -111,10 +108,9 @@ def _create_cover_letter_chains():
         model="gpt-4o-mini",
         temperature=0.2,
     )
-    qa_llm = llm.with_structured_output(QAAlignmentOutput, method="json_schema")
+    item_feedback_llm = llm.with_structured_output(ItemFeedbackOutput, method="json_schema")
     return (
-        qa_alignment_prompt | qa_llm,
-        jd_fit_prompt | llm | StrOutputParser(),
+        item_feedback_prompt | item_feedback_llm,
         final_edit_prompt | llm | StrOutputParser(),
     )
 
@@ -140,27 +136,22 @@ def _process_cover_letter_with_chains(
     job_description: str,
     chains: tuple,
 ) -> dict:
-    qa_alignment_chain, jd_fit_chain, _ = chains
+    item_feedback_chain, _ = chains
 
-    qa_result = qa_alignment_chain.invoke({
+    feedback_result = item_feedback_chain.invoke({
         "question": question,
         "content": content,
+        "job_description": job_description or "제공된 채용 공고 정보가 없습니다.",
     })
-    if isinstance(qa_result, BaseModel):
-        qa_result = qa_result.model_dump()
-    qa_alignment_feedback = _feedback_to_text(qa_result.get("feedback"))
-
-    jd_fit_feedback = "제공된 채용 공고 정보가 없습니다."
-    if job_description:
-        jd_fit_feedback = jd_fit_chain.invoke({
-            "job_description": job_description,
-            "content": content,
-        })
+    if isinstance(feedback_result, BaseModel):
+        feedback_result = feedback_result.model_dump()
 
     return {
-        "qa_alignment_score": qa_result.get("score", 0),
-        "qa_alignment_feedback": qa_alignment_feedback,
-        "jd_fit_feedback": _feedback_to_text(jd_fit_feedback),
+        "qa_alignment_score": feedback_result.get("score", 0),
+        "shortcomings": _feedback_to_text(feedback_result.get("shortcomings")),
+        "recommended_revision_direction": _feedback_to_text(
+            feedback_result.get("recommended_revision_direction")
+        ),
     }
 
 def process_cover_letter_chain(question: str, content: str, job_description: str = "") -> dict:
@@ -181,11 +172,11 @@ def process_cover_letter_suggestion_chain(
     """분석과 분리된 사용자 요청 시점에만 추천 수정안을 생성합니다."""
     chains = _create_cover_letter_chains()
     analysis = _process_cover_letter_with_chains(question, content, job_description, chains)
-    return chains[2].invoke({
+    return chains[1].invoke({
         "question": question,
         "content": content,
-        "qa_alignment_feedback": analysis["qa_alignment_feedback"],
-        "jd_fit_feedback": analysis["jd_fit_feedback"],
+        "shortcomings": analysis["shortcomings"],
+        "recommended_revision_direction": analysis["recommended_revision_direction"],
     }).strip()
 
 # 전체 자기소개서를 읽고 리뷰하는 기능

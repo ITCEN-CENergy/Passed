@@ -19,12 +19,12 @@ public class CoverLetterAiResponseValidator {
                         || response.qaAlignmentScore() < 0
                         || response.qaAlignmentScore() > 100,
                 "qa_alignment_score must be between 0 and 100");
-        requireText(response.qaAlignmentFeedback(), "qa_alignment_feedback");
-        invalidIf(response.jobFitFeedback() == null, "jd_fit_feedback must not be null");
+        requireText(response.shortcomings(), "shortcomings");
+        requireText(response.recommendedRevisionDirection(), "recommended_revision_direction");
         return new ValidatedCoverLetterAiResult(
                 response.qaAlignmentScore(),
-                response.qaAlignmentFeedback(),
-                response.jobFitFeedback()
+                response.shortcomings().trim(),
+                response.recommendedRevisionDirection().trim()
         );
     }
 

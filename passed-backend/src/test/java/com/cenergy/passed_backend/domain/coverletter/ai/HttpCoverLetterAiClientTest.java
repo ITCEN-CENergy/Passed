@@ -49,7 +49,8 @@ class HttpCoverLetterAiClientTest {
         var result = client.edit(request());
 
         assertThat(result.qaAlignmentScore()).isEqualTo(84);
-        assertThat(result.jobFitFeedback()).isEqualTo("직무 피드백");
+        assertThat(result.shortcomings()).isEqualTo("미흡한 부분");
+        assertThat(result.recommendedRevisionDirection()).isEqualTo("추천 수정 방향");
         server.verify();
     }
 
@@ -139,8 +140,8 @@ class HttpCoverLetterAiClientTest {
         return """
                 {
                   "qa_alignment_score": 84,
-                  "qa_alignment_feedback": "문항 피드백",
-                  "jd_fit_feedback": "직무 피드백"
+                  "shortcomings": "미흡한 부분",
+                  "recommended_revision_direction": "추천 수정 방향"
                 }
                 """;
     }

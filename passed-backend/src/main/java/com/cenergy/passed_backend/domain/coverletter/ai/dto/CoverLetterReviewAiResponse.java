@@ -19,8 +19,8 @@ public record CoverLetterReviewAiResponse(
             @JsonProperty("item_id") Long itemId,
             @JsonProperty("display_order") Integer displayOrder,
             @JsonProperty("qa_alignment_score") Integer qaAlignmentScore,
-            @JsonProperty("qa_alignment_feedback") String qaAlignmentFeedback,
-            @JsonProperty("jd_fit_feedback") String jobFitFeedback
+            String shortcomings,
+            @JsonProperty("recommended_revision_direction") String recommendedRevisionDirection
     ) {
     }
 }

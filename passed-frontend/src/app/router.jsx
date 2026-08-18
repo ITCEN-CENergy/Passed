@@ -8,6 +8,7 @@ import {
   CompanyCoverLetterList,
   CompanyCoverLetterWrite,
   CompanyCoverLetterResult,
+  CoverLetterWritePage
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'

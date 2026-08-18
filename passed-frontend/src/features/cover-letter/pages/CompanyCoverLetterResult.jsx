@@ -8,7 +8,7 @@ import {
   getCoverLetterItemFeedback,
   getCoverLetterOverallFeedback,
 } from '../api'
-import { FeedbackContent, normalizeFeedbackText } from '../components'
+import { FeedbackContent } from '../components'
 import { useCompanyCoverLetter } from '../hooks'
 import styles from './styles/CoverLetterResultPage.module.css'
 
@@ -33,28 +33,6 @@ function initialFeedbackState(items) {
     isSuggesting: false,
     error: null,
   }]))
-}
-
-function improvementSections(value) {
-  const normalized = normalizeFeedbackText(value)
-  const sections = []
-  let current = { title: '종합 개선점', lines: [] }
-
-  normalized.split('\n').forEach((line) => {
-    const trimmed = line.trim()
-    const bracketHeading = trimmed.match(/^\[([^\]]+)]\s*(.*)$/)
-    const markdownHeading = trimmed.match(/^#{1,6}\s+(.+)$/)
-    const heading = bracketHeading || markdownHeading
-    if (heading) {
-      if (current.lines.some(Boolean)) sections.push(current)
-      current = { title: heading[1].trim(), lines: [] }
-      if (bracketHeading?.[2]) current.lines.push(bracketHeading[2])
-    } else {
-      current.lines.push(line)
-    }
-  })
-  if (current.lines.some(Boolean)) sections.push(current)
-  return sections.length ? sections : [{ title: '종합 개선점', lines: [normalized] }]
 }
 
 function scoreTone(score) {
@@ -430,22 +408,21 @@ const CompanyCoverLetterResult = () => {
                       </span>
                     </div>
 
-                    {state.feedback.strengths && (
-                      <div className={`${styles.feedbackBlock} ${styles.strengthBlock}`}>
-                        <h4><span aria-hidden="true">✓</span> 잘된 점</h4>
-                        <FeedbackContent text={state.feedback.strengths} />
+                    <div className={styles.improvementArea}>
+                      <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 미흡한 부분</h4>
+                      <div className={styles.improvementGrid}>
+                        <article className={styles.improvementBlock}>
+                          <FeedbackContent text={state.feedback.shortcomings} />
+                        </article>
                       </div>
-                    )}
+                    </div>
 
                     <div className={styles.improvementArea}>
-                      <h4 className={styles.improvementTitle}><span aria-hidden="true">!</span> 개선할 점</h4>
+                      <h4 className={styles.improvementTitle}>추천 수정 방향</h4>
                       <div className={styles.improvementGrid}>
-                        {improvementSections(state.feedback.improvements).map((section, sectionIndex) => (
-                          <article className={styles.improvementBlock} key={`${section.title}-${sectionIndex}`}>
-                            <h5>{section.title}</h5>
-                            <FeedbackContent text={section.lines.join('\n')} />
-                          </article>
-                        ))}
+                        <article className={styles.improvementBlock}>
+                          <FeedbackContent text={state.feedback.recommendedRevisionDirection} />
+                        </article>
                       </div>
                     </div>
 

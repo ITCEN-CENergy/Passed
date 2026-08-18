@@ -16,7 +16,8 @@ class CoverLetterAiResponseValidatorTest {
         var result = validator.validate(response(84));
 
         assertThat(result.qaAlignmentScore()).isEqualTo(84);
-        assertThat(result.jobFitFeedback()).isEqualTo("직무 피드백");
+        assertThat(result.shortcomings()).isEqualTo("미흡한 부분");
+        assertThat(result.recommendedRevisionDirection()).isEqualTo("추천 수정 방향");
     }
 
     @Test
@@ -30,7 +31,7 @@ class CoverLetterAiResponseValidatorTest {
         CoverLetterAiResponse response = new CoverLetterAiResponse(
                 80,
                 " ",
-                "직무 피드백"
+                "추천 수정 방향"
         );
 
         assertThatThrownBy(() -> validator.validate(response))
@@ -40,8 +41,8 @@ class CoverLetterAiResponseValidatorTest {
     private CoverLetterAiResponse response(int score) {
         return new CoverLetterAiResponse(
                 score,
-                "문항 피드백",
-                "직무 피드백"
+                "미흡한 부분",
+                "추천 수정 방향"
         );
     }
 }

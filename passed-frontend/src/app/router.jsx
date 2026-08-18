@@ -6,9 +6,8 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
 import {
   CommonCoverLetterPage,
   CompanyCoverLetterList,
-  CompanyCoverLetterWrite,
   CompanyCoverLetterResult,
-  CoverLetterWritePage
+  CoverLetterWritePage,
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import RecruiterRoute from '../features/auth/components/RecruiterRoute.jsx'
@@ -124,7 +123,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-write',
-        element: <CompanyCoverLetterWrite />,
+        element: <CoverLetterWritePage />,
       },
       {
         path: 'cover-letter-write/:coverLetterId',

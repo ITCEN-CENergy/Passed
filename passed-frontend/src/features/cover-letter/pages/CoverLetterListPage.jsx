@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCompanyCoverLetters } from '../hooks/index.js'
-import styles from './CoverLetterListPage.module.css'
+import styles from './styles/CoverLetterListPage.module.css'
 
 function formatDate(value) {
   const date = new Date(value)

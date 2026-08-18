@@ -6,8 +6,8 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
 import {
   CommonCoverLetterPage,
   CompanyCoverLetterList,
-  CoverLetterResultPage,
-  CoverLetterWritePage,
+  CompanyCoverLetterWrite,
+  CompanyCoverLetterResult,
 } from '../features/cover-letter/pages/index.js'
 import { LoginPage, SignupPage } from '../features/auth/pages/index.js'
 import { JobPostingCreatePage, JobPostingDetailPage, JobPostingListPage } from '../features/job-posting/pages/index.js'
@@ -105,19 +105,15 @@ const router = createBrowserRouter([
       },
       {
         path: 'cover-letter-result',
-        element: <CoverLetterResultPage />,
+        element: <CompanyCoverLetterResult />,
       },
-      // {
-      //   path: 'cover-letter-review',
-      //   element: <CoverLetterReviewPage />,
-      // },
       {
         path: 'cover-letter-list',
         element: <CompanyCoverLetterList />,
       },
       {
         path: 'cover-letter-write',
-        element: <CoverLetterWritePage />,
+        element: <CompanyCoverLetterWrite />,
       },
       {
         path: 'cover-letter-write/:coverLetterId',

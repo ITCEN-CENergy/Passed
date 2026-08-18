@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { PageLoading } from '../../../common/components/index.js'
 import {
   generateCoverLetterItemFeedback,
   generateCoverLetterOverallFeedback,
@@ -7,7 +8,7 @@ import {
   getCoverLetterItemFeedback,
   getCoverLetterOverallFeedback,
 } from '../api'
-import { FeedbackContent, LoadingOverlay, normalizeFeedbackText } from '../components'
+import { FeedbackContent, normalizeFeedbackText } from '../components'
 import { useCompanyCoverLetter } from '../hooks'
 import styles from './styles/CoverLetterResultPage.module.css'
 
@@ -62,7 +63,7 @@ function scoreTone(score) {
   return styles.scoreNeedsWork
 }
 
-const CoverLetterResultPage = () => {
+const CompanyCoverLetterResult = () => {
   const [searchParams] = useSearchParams()
   const coverLetterId = Number(searchParams.get('coverLetterId'))
   const isValidId = Number.isSafeInteger(coverLetterId) && coverLetterId > 0
@@ -233,7 +234,16 @@ const CoverLetterResultPage = () => {
   }
 
   if (isLoading) {
-    return <section className={styles.statePage}>자기소개서를 불러오는 중입니다.</section>
+    return (
+      <div className={styles.page}>
+        <main className={`${styles.content} ${styles.loadingContent}`}>
+          <PageLoading
+            title="자기소개서를 불러오고 있어요"
+            description="작성한 문항과 첨삭 결과를 확인하고 있어요."
+          />
+        </main>
+      </div>
+    )
   }
 
   if (error || !coverLetter) {
@@ -272,9 +282,18 @@ const CoverLetterResultPage = () => {
           description: '채용공고와 선택한 답변을 분석해 개선점을 찾고 있어요.',
         }
 
+  if (bulkFeedback.isRunning || generatingState) {
+    return (
+      <div className={styles.page}>
+        <main className={`${styles.content} ${styles.loadingContent}`}>
+          <PageLoading {...loadingCopy} />
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.page}>
-      {(bulkFeedback.isRunning || generatingState) && <LoadingOverlay {...loadingCopy} />}
       <main className={styles.content}>
         <div className={styles.topNavigation}>
           <div className={styles.topActions}>
@@ -467,4 +486,4 @@ const CoverLetterResultPage = () => {
   )
 }
 
-export default CoverLetterResultPage
+export default CompanyCoverLetterResult

@@ -10,6 +10,14 @@
   margin: 0 auto;
 }
 
+.loadingContent {
+  display: grid;
+  min-height: calc(100vh - 88px);
+  min-height: calc(100dvh - 88px);
+  padding-block: 0;
+  place-items: center;
+}
+
 .topNavigation,
 .intro,
 .itemHeading,
@@ -655,6 +663,11 @@
 }
 
 @media (max-width: 680px) {
+  .loadingContent {
+    min-height: calc(100vh - 72px);
+    min-height: calc(100dvh - 72px);
+  }
+
   .content,
   .statePage {
     width: min(100% - 28px, 1120px);

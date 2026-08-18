@@ -1,6 +1,0 @@
-export { default as CommonCoverLetterPage } from './CommonCoverLetterPage.jsx'
-export { default as CompanyCoverLetterList } from './CompanyCoverLetterList.jsx'
-export { default as CompanyCoverLetterWrite } from './CompanyCoverLetterWrite.jsx'
-export { default as CoverLetterListPage } from './CoverLetterListPage.jsx'
-export { default as CoverLetterResultPage } from './CoverLetterResultPage.jsx'
-export { default as CoverLetterWritePage } from './CoverLetterWritePage.jsx'

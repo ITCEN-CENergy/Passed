@@ -44,6 +44,7 @@ def test_feedback_analysis_returns_requested_structure_without_suggestion(monkey
         "question": "지원 동기는?",
         "content": "원본 답변",
         "job_description": "채용 공고",
+        "user_skills_json": "[]",
     }]
     assert final_chain.calls == []
     assert result == {
@@ -106,6 +107,24 @@ def test_suggested_answer_uses_both_feedback_sections(monkeypatch):
     assert final_chain.calls[0]["recommended_revision_direction"] == "구체적인 사례를 보완하세요."
 
 
+def test_user_skills_are_sent_to_feedback_and_suggestion_prompts(monkeypatch):
+    feedback_chain = RecordingChain(item_feedback())
+    final_chain = RecordingChain("추천 수정안")
+    monkeypatch.setattr(service, "_create_cover_letter_chains", lambda: (feedback_chain, final_chain))
+    skills = [{
+        "skill_id": 9,
+        "name": "Spring Boot",
+        "category": "TECHNICAL_SKILL",
+        "level": 2,
+    }]
+
+    service.process_cover_letter_suggestion_chain("질문", "답변", "공고", skills)
+
+    expected = json.dumps(skills, ensure_ascii=False)
+    assert feedback_chain.calls[0]["user_skills_json"] == expected
+    assert final_chain.calls[0]["user_skills_json"] == expected
+
+
 def test_review_returns_ordered_item_feedback_with_requested_structure(monkeypatch):
     monkeypatch.setattr(
         service,
@@ -120,15 +139,17 @@ def test_review_returns_ordered_item_feedback_with_requested_structure(monkeypat
     })
     monkeypatch.setattr(service, "_create_overall_review_chain", lambda: overall_chain)
 
+    skills = [{"skill_id": 9, "name": "Spring Boot", "category": "TECHNICAL_SKILL", "level": 2}]
     result = service.process_cover_letter_review_chain([
         {"item_id": 2, "display_order": 2, "question": "두 번째", "content": "답변 2", "character_limit": 800},
         {"item_id": 1, "display_order": 1, "question": "첫 번째", "content": "답변 1", "character_limit": 500},
-    ], "비공개 분석용 채용 공고")
+    ], "비공개 분석용 채용 공고", skills)
 
     assert [item["item_id"] for item in result["items"]] == [1, 2]
     assert result["items"][0]["shortcomings"] == "근거가 부족합니다."
     aggregate_items = json.loads(overall_chain.calls[0]["items_json"])
     assert [item["item_id"] for item in aggregate_items] == [1, 2]
+    assert json.loads(overall_chain.calls[0]["user_skills_json"]) == skills
 
 
 def test_review_normalizes_overall_list_fields_to_strings(monkeypatch):

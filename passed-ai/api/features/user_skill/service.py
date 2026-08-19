@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 
 from resume_pipeline.db import connection, validate_embedding_schema
@@ -11,6 +12,12 @@ from resume_pipeline.embedding_worker import (
 )
 from resume_pipeline.pipeline import run_chunking_for_user
 from resume_pipeline.skill_extraction_worker import extract_user_skill_candidates
+from resume_pipeline.skill_recall_worker import (
+    build_pass1_strict_validation_retrieval,
+    filter_pass1_mapping_with_strict_validation,
+    retrieve_missing_master_candidates,
+    verify_retrieval_with_pass2,
+)
 from resume_pipeline.user_skill_analysis_state import (
     build_analysis_fingerprint,
     load_reusable_analysis_state,
@@ -18,11 +25,16 @@ from resume_pipeline.user_skill_analysis_state import (
 )
 from resume_pipeline.user_skill_mapping_worker import (
     build_user_skill_mapping_report,
+    merge_verified_pass2_skills,
     persist_user_skill_mapping,
 )
 
 from .schema import UserSkillExtractionResponse
 
+
+logger = logging.getLogger(__name__)
+RUNTIME_RETRIEVAL_TOP_K = 40
+RUNTIME_SENTENCE_TOP_K = 5
 
 class UserSkillPipelineConfigurationError(RuntimeError):
     """필수 환경 설정이 없어 분석을 시작할 수 없을 때 발생한다."""
@@ -95,7 +107,65 @@ def run_user_skill_analysis(user_id: int) -> UserSkillExtractionResponse:
         if extraction.failures:
             raise UserSkillPipelineExecutionError("skill extraction failed")
 
-        report = build_user_skill_mapping_report(conn, extraction)
+        pass1_mapping = build_user_skill_mapping_report(conn, extraction)
+
+        # Q. Pass 1 오탐을 그대로 저장하지 않으면서 Recall은 어떻게 보완하나요?
+        # A. 먼저 매핑된 Pass 1 기술·성향을 같은 Strict 계약으로 재검증합니다. 그 뒤
+        #    승인된 마스터를 제외한 Hybrid Top-40만 Pass 2에 제시해 자유 생성을 막습니다.
+        pass1_validation_input = build_pass1_strict_validation_retrieval(
+            conn,
+            extraction,
+            pass1_mapping,
+        )
+        pass1_validation = verify_retrieval_with_pass2(
+            pass1_validation_input,
+            strict=True,
+        )
+        strict_pass1_mapping = filter_pass1_mapping_with_strict_validation(
+            pass1_mapping,
+            pass1_validation,
+        )
+
+        retrieval = retrieve_missing_master_candidates(
+            conn,
+            extraction,
+            strict_pass1_mapping,
+            top_k_per_category=RUNTIME_RETRIEVAL_TOP_K,
+            retrieval_mode="hybrid",
+            sentence_top_k=RUNTIME_SENTENCE_TOP_K,
+            final_top_k=RUNTIME_RETRIEVAL_TOP_K,
+        )
+        pass2 = verify_retrieval_with_pass2(
+            retrieval,
+            strict=True,
+            pass1_mapping=strict_pass1_mapping,
+        )
+        report = merge_verified_pass2_skills(
+            extraction,
+            strict_pass1_mapping,
+            pass2,
+        )
+        logger.info(
+            "사용자 스킬 Strict 파이프라인 완료 user_id=%s "
+            "pass1_skills=%s pass2_recovered=%s final_skills=%s unmapped=%s",
+            user_id,
+            len(strict_pass1_mapping.skills),
+            pass2.verified_count,
+            len(report.skills),
+            len(report.unmapped),
+        )
+        for item in report.unmapped:
+            logger.info(
+                "unmapped_skill_candidate user_id=%s source=%s chunk_id=%s "
+                "name=%r category=%s reason=%s evidence=%r",
+                user_id,
+                item.source_kind,
+                item.chunk_id,
+                item.extracted_name,
+                item.category.value,
+                item.failure_reason.value,
+                item.evidence,
+            )
         persist_user_skill_mapping(conn, report)
         save_analysis_state(
             conn,

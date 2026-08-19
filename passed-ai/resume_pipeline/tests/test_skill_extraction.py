@@ -241,6 +241,7 @@ def test_explicit_completed_actions_recover_high_confidence_missing_skills():
     candidates = extraction._validated_candidates(
         _chunk(content=content),
         SkillExtractionResponse(skills=[]),
+        enable_recovery_rules=True,
     )
 
     assert {
@@ -262,6 +263,7 @@ def test_one_deterministic_recovery_rule_can_be_disabled_for_regression_experime
         _chunk(content=content),
         SkillExtractionResponse(skills=[]),
         disabled_recovery_rules=frozenset({"사용자 피드백 반영"}),
+        enable_recovery_rules=True,
     )
 
     assert "사용자 피드백 반영" not in {
@@ -285,6 +287,7 @@ def test_explicit_named_ai_service_actions_are_recovered_conservatively():
     candidates = extraction._validated_candidates(
         _chunk(content=content),
         SkillExtractionResponse(skills=[]),
+        enable_recovery_rules=True,
     )
 
     assert {
@@ -408,14 +411,31 @@ def test_future_only_evidence_is_excluded_but_completed_action_is_kept():
     assert [candidate.extracted_name for candidate in candidates] == ["API 개발"]
 
 
-def test_certification_level_is_owned_value_one_only():
-    with pytest.raises(ValueError, match="반드시 1"):
-        SkillCandidate(
-            extracted_name="정보처리기사",
-            category=SkillCategory.CERTIFICATION,
-            level=2,
-            evidence="정보처리기사",
-        )
+def test_fixed_level_categories_are_normalized_to_storage_value_one():
+    certification = SkillCandidate(
+        extracted_name="정보처리기사",
+        category=SkillCategory.CERTIFICATION,
+        level=2,
+        evidence="정보처리기사",
+    )
+    behavioral = SkillCandidate(
+        extracted_name="협업",
+        category=SkillCategory.BEHAVIORAL_TRAIT,
+        level=3,
+        evidence="역할을 조율했습니다.",
+    )
+
+    assert certification.level == 1
+    assert behavioral.level == 1
+
+
+def test_hard_coded_recovery_is_off_by_default():
+    candidates = extraction._validated_candidates(
+        _chunk(content="추천 서비스를 개발했습니다."),
+        SkillExtractionResponse(skills=[]),
+    )
+
+    assert candidates == []
 
 
 def test_one_chunk_failure_does_not_stop_next_chunk(monkeypatch):

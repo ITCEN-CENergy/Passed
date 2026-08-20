@@ -3,6 +3,7 @@ package com.cenergy.passed_backend.domain.coverletter.application;
 import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiClient;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiResponse;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterUserSkill;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CoverLetterItemFeedbackResponse;
 import com.cenergy.passed_backend.domain.coverletter.dto.responses.CoverLetterOverallFeedbackResponse;
 import com.cenergy.passed_backend.domain.coverletter.entity.CoverLetterCompany;
@@ -12,6 +13,7 @@ import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompa
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterCompanyRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterFeedbackRepository;
 import com.cenergy.passed_backend.domain.coverletter.repository.CoverLetterItemFeedbackRepository;
+import com.cenergy.passed_backend.domain.user.repository.UserSkillRepository;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import com.cenergy.passed_backend.global.security.CurrentUserIdProvider;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class CoverLetterOverallFeedbackService {
     private final JobPostingDescriptionBuilder descriptionBuilder;
     private final CoverLetterAiClient aiClient;
     private final CoverLetterOverallFeedbackPersistenceService persistenceService;
+    private final UserSkillRepository userSkillRepository;
 
     public CoverLetterOverallFeedbackService(
             CurrentUserIdProvider currentUserIdProvider,
@@ -38,7 +41,8 @@ public class CoverLetterOverallFeedbackService {
             CoverLetterItemFeedbackRepository itemFeedbackRepository,
             JobPostingDescriptionBuilder descriptionBuilder,
             CoverLetterAiClient aiClient,
-            CoverLetterOverallFeedbackPersistenceService persistenceService
+            CoverLetterOverallFeedbackPersistenceService persistenceService,
+            UserSkillRepository userSkillRepository
     ) {
         this.currentUserIdProvider = currentUserIdProvider;
         this.coverLetterRepository = coverLetterRepository;
@@ -48,6 +52,7 @@ public class CoverLetterOverallFeedbackService {
         this.descriptionBuilder = descriptionBuilder;
         this.aiClient = aiClient;
         this.persistenceService = persistenceService;
+        this.userSkillRepository = userSkillRepository;
     }
 
     public CoverLetterOverallFeedbackResponse generate(Long coverLetterId) {
@@ -63,7 +68,12 @@ public class CoverLetterOverallFeedbackService {
                     "At least one answered item is required");
         }
         CoverLetterReviewAiRequest request = new CoverLetterReviewAiRequest(
-                items, descriptionBuilder.build(coverLetter));
+                items,
+                descriptionBuilder.build(coverLetter),
+                userSkillRepository.findAllByUserIdOrderBySkill_IdAsc(userId).stream()
+                        .map(CoverLetterUserSkill::from)
+                        .toList()
+        );
         CoverLetterReviewAiResponse response = aiClient.review(request);
         return persistenceService.save(userId, coverLetterId, request, response);
     }

@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.coverletter.controller;
 
-import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiException;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.application.CoverLetterException;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -22,12 +22,21 @@ public class RoadmapEtaCalculator {
     }
 
     public LocalDate calculate(Collection<RoadmapMilestone> milestones) {
-        return calculate(milestones, LocalDate.now());
+        return calculate(milestones, dailyStudyMinutes);
+    }
+
+    public LocalDate calculate(Collection<RoadmapMilestone> milestones, int studyMinutesPerDay) {
+        return calculate(milestones, LocalDate.now(), studyMinutesPerDay);
     }
 
     public LocalDate calculateRemainingMinutes(int remainingMinutes) {
+        return calculateRemainingMinutes(remainingMinutes, dailyStudyMinutes);
+    }
+
+    public LocalDate calculateRemainingMinutes(int remainingMinutes, int studyMinutesPerDay) {
         if (remainingMinutes < 0) throw new IllegalArgumentException("remainingMinutes must not be negative");
-        long remainingDays = (remainingMinutes + (long) dailyStudyMinutes - 1) / dailyStudyMinutes;
+        requirePositive(studyMinutesPerDay);
+        long remainingDays = (remainingMinutes + (long) studyMinutesPerDay - 1) / studyMinutesPerDay;
         return LocalDate.now().plusDays(remainingDays);
     }
 
@@ -36,12 +45,21 @@ public class RoadmapEtaCalculator {
     }
 
     LocalDate calculate(Collection<RoadmapMilestone> milestones, LocalDate baseDate) {
+        return calculate(milestones, baseDate, dailyStudyMinutes);
+    }
+
+    LocalDate calculate(Collection<RoadmapMilestone> milestones, LocalDate baseDate,
+                        int studyMinutesPerDay) {
+        requirePositive(studyMinutesPerDay);
         long remainingMinutes = milestones.stream()
-                .filter(RoadmapMilestone::isRequired)
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToLong(link -> link.getMilestone().getEstimatedMinutes())
                 .sum();
-        long remainingDays = (remainingMinutes + dailyStudyMinutes - 1) / dailyStudyMinutes;
+        long remainingDays = (remainingMinutes + studyMinutesPerDay - 1) / studyMinutesPerDay;
         return baseDate.plusDays(remainingDays);
+    }
+
+    private void requirePositive(int value) {
+        if (value <= 0) throw new IllegalArgumentException("studyMinutesPerDay must be positive");
     }
 }

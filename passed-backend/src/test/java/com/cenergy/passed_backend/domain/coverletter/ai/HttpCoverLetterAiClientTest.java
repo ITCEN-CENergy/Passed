@@ -1,9 +1,11 @@
 package com.cenergy.passed_backend.domain.coverletter.ai;
 
-import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiException;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.client.HttpCoverLetterAiClient;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterUserSkill;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
+import com.cenergy.passed_backend.domain.skill.entity.SkillCategory;
 import com.cenergy.passed_backend.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 class HttpCoverLetterAiClientTest {
     private static final String URL = "http://localhost:8000/coverletter/edit";
+    private static final String SUGGEST_URL = "http://localhost:8000/coverletter/suggest";
 
     @Test
     void postsSnakeCaseRequestAndReturnsValidatedResponse() {
@@ -40,7 +43,15 @@ class HttpCoverLetterAiClientTest {
                         {
                           "question": "질문",
                           "content": "답변",
-                          "job_description": "공고"
+                          "job_description": "공고",
+                          "user_skills": [
+                            {
+                              "skill_id": 9,
+                              "name": "Spring Boot",
+                              "category": "TECHNICAL_SKILL",
+                              "level": 2
+                            }
+                          ]
                         }
                         """))
                 .andRespond(withSuccess(validJson(), MediaType.APPLICATION_JSON));
@@ -48,7 +59,38 @@ class HttpCoverLetterAiClientTest {
         var result = client.edit(request());
 
         assertThat(result.qaAlignmentScore()).isEqualTo(84);
-        assertThat(result.finalEditedContent()).isEqualTo("수정 답변");
+        assertThat(result.shortcomings()).isEqualTo("미흡한 부분");
+        assertThat(result.recommendedRevisionDirection()).isEqualTo("추천 수정 방향");
+        server.verify();
+    }
+
+    @Test
+    void generatesSuggestedAnswerThroughSeparateEndpoint() {
+        RestClient.Builder builder = RestClient.builder().baseUrl("http://localhost:8000");
+        MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
+        HttpCoverLetterAiClient client = client(builder.build());
+        server.expect(requestTo(SUGGEST_URL))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().json("""
+                        {
+                          "question": "질문",
+                          "content": "답변",
+                          "job_description": "공고",
+                          "user_skills": [
+                            {
+                              "skill_id": 9,
+                              "name": "Spring Boot",
+                              "category": "TECHNICAL_SKILL",
+                              "level": 2
+                            }
+                          ]
+                        }
+                        """))
+                .andRespond(withSuccess("""
+                        {"suggested_answer":"추천 수정안"}
+                        """, MediaType.APPLICATION_JSON));
+
+        assertThat(client.suggest(request())).isEqualTo("추천 수정안");
         server.verify();
     }
 
@@ -109,16 +151,22 @@ class HttpCoverLetterAiClientTest {
     }
 
     private CoverLetterAiRequest request() {
-        return new CoverLetterAiRequest("질문", "답변", "공고");
+        return new CoverLetterAiRequest(
+                "질문",
+                "답변",
+                "공고",
+                java.util.List.of(new CoverLetterUserSkill(
+                        9L, "Spring Boot", SkillCategory.TECHNICAL_SKILL, (short) 2
+                ))
+        );
     }
 
     private String validJson() {
         return """
                 {
                   "qa_alignment_score": 84,
-                  "qa_alignment_feedback": "문항 피드백",
-                  "jd_fit_feedback": "직무 피드백",
-                  "final_edited_content": "수정 답변"
+                  "shortcomings": "미흡한 부분",
+                  "recommended_revision_direction": "추천 수정 방향"
                 }
                 """;
     }

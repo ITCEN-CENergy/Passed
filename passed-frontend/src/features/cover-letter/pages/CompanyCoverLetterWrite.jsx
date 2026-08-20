@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   createManualCompanyCoverLetter,
+  createCompanyCoverLetter,
   getCompanyCoverLetter,
   replaceCompanyCoverLetter,
 } from '../api'
@@ -38,9 +39,17 @@ function optionalText(value) {
 }
 
 function toFormPosting(posting = {}) {
-  return Object.fromEntries(
-    Object.keys(EMPTY_POSTING).map((field) => [field, posting[field] ?? '']),
-  )
+  return {
+    postingTitle: posting.postingTitle ?? posting.title ?? '',
+    companyName: posting.companyName ?? '',
+    jobRoleName: posting.jobRoleName ?? '',
+    positionDetail: posting.positionDetail ?? '',
+    careerType: posting.careerType ?? '',
+    hireType: posting.hireType ?? '',
+    mainDuty: posting.mainDuty ?? '',
+    qualification: posting.qualification ?? '',
+    preference: posting.preference ?? '',
+  }
 }
 
 function toFormItem(item, index) {
@@ -56,14 +65,18 @@ function toFormItem(item, index) {
 
 const CompanyCoverLetterWrite = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { coverLetterId: coverLetterIdParam } = useParams()
   const coverLetterId = Number(coverLetterIdParam)
   const isEditMode = coverLetterIdParam !== undefined
   const hasValidId = Number.isSafeInteger(coverLetterId) && coverLetterId > 0
+  const linkedJobPosting = !isEditMode ? location.state?.jobPosting : null
+  const linkedJobPostingId = Number(linkedJobPosting?.jobPostingId)
+  const hasLinkedJobPosting = Number.isSafeInteger(linkedJobPostingId) && linkedJobPostingId > 0
   const [title, setTitle] = useState('')
-  const [posting, setPosting] = useState(EMPTY_POSTING)
-  const [items, setItems] = useState([newItem(1), newItem(2)])
-  const [isManual, setIsManual] = useState(true)
+  const [posting, setPosting] = useState(() => toFormPosting(linkedJobPosting ?? EMPTY_POSTING))
+  const [items, setItems] = useState([newItem(1)])
+  const [isManual, setIsManual] = useState(!hasLinkedJobPosting)
   const [isLoading, setIsLoading] = useState(isEditMode)
   const [isSaving, setIsSaving] = useState(false)
   const [loadError, setLoadError] = useState(null)
@@ -122,7 +135,7 @@ const CompanyCoverLetterWrite = () => {
   }
 
   const validate = () => {
-    if (isEditMode && !title.trim()) return '자기소개서 제목을 입력해 주세요.'
+    if ((isEditMode || !isManual) && !title.trim()) return '자기소개서 제목을 입력해 주세요.'
     if (title.length > 255) return '자기소개서 제목은 255자 이내로 입력해 주세요.'
     if ((!isEditMode || isManual) && !posting.postingTitle.trim()) return '공고 제목을 입력해 주세요.'
     if ((!isEditMode || isManual) && !posting.jobRoleName.trim()) return '직무를 입력해 주세요.'
@@ -177,11 +190,17 @@ const CompanyCoverLetterWrite = () => {
             jobPosting: isManual ? postingPayload : null,
             items: itemPayload,
           })
-        : await createManualCompanyCoverLetter({
-            title: optionalText(title),
-            jobPosting: postingPayload,
-            items: itemPayload,
-          })
+        : isManual
+          ? await createManualCompanyCoverLetter({
+              title: optionalText(title),
+              jobPosting: postingPayload,
+              items: itemPayload,
+            })
+          : await createCompanyCoverLetter({
+              jobPostingId: linkedJobPostingId,
+              title: title.trim(),
+              items: itemPayload,
+            })
       navigate(`/cover-letter-result?coverLetterId=${saved.id}`, { replace: true })
     } catch (error) {
       setFormError(error.message ?? '자기소개서를 저장하지 못했습니다.')
@@ -215,14 +234,13 @@ const CompanyCoverLetterWrite = () => {
   return (
     <div className={styles.page}>
       <main className={styles.content}>
-        <Link className={styles.backLink} to="/cover-letter-list">
-          <span aria-hidden="true">←</span> 자기소개서 목록
-        </Link>
-
         <header className={styles.pageHeader}>
           <div>
-            <p>{isEditMode ? '자기소개서 수정' : '직접 입력 자기소개서'}</p>
-            <h1>{isEditMode ? '자기소개서를 수정해 주세요' : '지원할 공고와 자기소개서를 입력해 주세요'}</h1>
+            <div className={styles.headingTitle}>
+              <span className={styles.headingIcon} aria-hidden="true">01</span>
+              <h1>채용공고 입력</h1>
+            </div>
+            <p className={styles.headingDescription}>첨삭 기준이 되는 채용공고입니다. 공고 제목과 직무를 필수로 입력해 주세요.</p>
           </div>
           <span>총 답변 {answerTotal.toLocaleString()}자</span>
         </header>
@@ -239,28 +257,12 @@ const CompanyCoverLetterWrite = () => {
 
         <form onSubmit={handleSubmit}>
           <section className={`${styles.card} ${styles.postingCard}`} aria-labelledby="posting-heading">
-            <div className={styles.sectionHeading}>
-              <div>
-                <p className={styles.step}>01</p>
-                <h2 id="posting-heading">채용공고 정보</h2>
-              </div>
-              {!isManual && <span className={styles.readOnlyBadge}>연결 공고 · 읽기 전용</span>}
-            </div>
+            <h2 className={styles.visuallyHidden} id="posting-heading">채용공고 입력란</h2>
+            {!isManual && <div className={styles.badgeRow}><span className={styles.readOnlyBadge}>연결 공고 · 읽기 전용</span></div>}
 
             <div className={styles.fieldGrid}>
               <label className={styles.fullField}>
-                <span>자기소개서 제목 <small>{isEditMode ? '필수' : '선택'}</small></span>
-                <input
-                  maxLength={255}
-                  placeholder="비워두면 회사명 또는 자기소개서 번호로 저장됩니다."
-                  required={isEditMode}
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                />
-              </label>
-
-              <label className={styles.fullField}>
-                <span>공고 제목 <b>*</b></span>
+                <span>공고 제목</span>
                 <input
                   disabled={!isManual}
                   maxLength={255}
@@ -276,7 +278,7 @@ const CompanyCoverLetterWrite = () => {
                 <input disabled={!isManual} maxLength={255} placeholder="기업명" value={posting.companyName} onChange={(event) => updatePosting('companyName', event.target.value)} />
               </label>
               <label>
-                <span>직무 <b>*</b></span>
+                <span>직무</span>
                 <input disabled={!isManual} maxLength={255} placeholder="예: 백엔드 개발자" required={isManual} value={posting.jobRoleName} onChange={(event) => updatePosting('jobRoleName', event.target.value)} />
               </label>
               <label>
@@ -310,11 +312,25 @@ const CompanyCoverLetterWrite = () => {
           <section className={styles.questionsSection} aria-labelledby="questions-heading">
             <div className={styles.questionsHeader}>
               <div>
-                <p className={styles.step}>02</p>
-                <h2 id="questions-heading">자기소개서 문항</h2>
+                <div className={styles.headingTitle}>
+                  <span className={styles.headingIcon} aria-hidden="true">02</span>
+                  <h2 id="questions-heading">자기소개서 입력</h2>
+                </div>
+                <p className={styles.headingDescription}>자기소개서는 최소 1개 이상 작성해 주세요. 문항별 질문과 답변을 입력할 수 있습니다.</p>
               </div>
               <span>{items.length} / {MAX_ITEMS}</span>
             </div>
+
+            <label className={styles.titleField}>
+              <span>자기소개서 제목 <small>{isEditMode || !isManual ? '필수' : '선택'}</small></span>
+              <input
+                maxLength={255}
+                placeholder="비워두면 회사명 또는 자기소개서 번호로 저장됩니다."
+                required={isEditMode || !isManual}
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+              />
+            </label>
 
             <div className={styles.questionList}>
               {items.map((item, index) => {

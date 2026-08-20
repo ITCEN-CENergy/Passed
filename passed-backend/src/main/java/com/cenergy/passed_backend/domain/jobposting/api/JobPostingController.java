@@ -4,12 +4,14 @@ import com.cenergy.passed_backend.domain.jobposting.application.JobPostingComman
 import com.cenergy.passed_backend.domain.jobposting.application.JobPostingQueryService;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateResponse;
+import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingCreateOptionsResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingDetailResponse;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListRequest;
 import com.cenergy.passed_backend.domain.jobposting.dto.JobPostingListResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,7 +42,14 @@ public class JobPostingController {
         return ResponseEntity.ok(queryService.findById(jobPostingId));
     }
 
+    @GetMapping("/create-options")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<JobPostingCreateOptionsResponse> getCreateOptions() {
+        return ResponseEntity.ok(queryService.findCreateOptions());
+    }
+
     @PostMapping
+    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<JobPostingCreateResponse> createJobPosting(
             @Valid @RequestBody JobPostingCreateRequest request
     ) {

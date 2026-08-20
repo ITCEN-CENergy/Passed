@@ -1,19 +1,21 @@
 import pytest
 
-from api.features.roadmap.resource_query import (
-    _build_queries_sync,
-    build_competency_ranking_contexts,
-    build_contextual_search_queries,
+from api.features.roadmap.resources.query import (
+    build_competency_search_profiles,
+    load_curated_search_profiles,
 )
 from api.features.roadmap.schema import Competency, CompetencySource
 
 
-def _competency() -> Competency:
+def _competency(
+    skill_id: int = 323,
+    name: str = "문서 검색",
+) -> Competency:
     return Competency(
-        roadmapSkillKey="incident-prevention",
-        standardCompetencyId=1147,
-        standardCompetencyName="장애 재발 방지",
-        category="EXPERIENCE",
+        roadmapSkillKey="document-search",
+        standardCompetencyId=skill_id,
+        standardCompetencyName=name,
+        category="TECHNICAL_SKILL",
         currentLevel=1,
         targetLevel=2,
         requirementType="REQUIRED",
@@ -24,75 +26,63 @@ def _competency() -> Competency:
     )
 
 
-def test_query_combines_skill_description_and_job_posting_context(monkeypatch):
-    monkeypatch.setattr(
-        "api.features.roadmap.resource_query._load_search_context",
-        lambda skill_ids, posting_ids: (
-            {1147: "서비스 장애 원인을 분석하고 재발 방지 대책을 수립"},
-            {4730: "백엔드 개발자 대규모 소프트웨어 시스템 운영"},
-        ),
-    )
+def test_search_profile_files_cover_every_database_skill() -> None:
+    profiles = load_curated_search_profiles()
 
-    query = _build_queries_sync([_competency()])["incident-prevention"]
-
-    assert "장애 재발 방지" in query
-    assert "서비스 장애 원인" in query
-    assert "백엔드 개발자" in query
-    assert "소프트웨어 시스템 운영" in query
-    assert "불안장애" not in query
+    assert len(profiles) == 1655
+    assert all(profile["queries"]["ko"] for profile in profiles.values())
+    assert profiles[323]["skillName"] == "문서 검색"
+    assert "BM25 information retrieval tutorial" in profiles[323]["queries"]["en"]
+    assert profiles[12]["reviewed"] is True
+    assert profiles[694]["reviewed"] is True
+    assert profiles[699]["reviewed"] is True
+    assert profiles[403]["reviewed"] is True
+    assert profiles[1016]["reviewed"] is True
+    assert profiles[1241]["reviewed"] is True
+    assert profiles[1271]["reviewed"] is True
+    assert profiles[1273]["reviewed"] is True
 
 
 @pytest.mark.asyncio
-async def test_query_falls_back_to_request_data_when_database_fails(monkeypatch):
-    monkeypatch.setattr(
-        "api.features.roadmap.resource_query._build_queries_sync",
-        lambda competencies: (_ for _ in ()).throw(RuntimeError("db unavailable")),
-    )
-
-    query = (await build_contextual_search_queries([_competency()]))[
-        "incident-prevention"
+async def test_search_profile_uses_json_queries_and_exclusions() -> None:
+    profile = (await build_competency_search_profiles([_competency()]))[
+        "document-search"
     ]
 
-    assert query == "장애 재발 방지 EXPERIENCE 학습 가이드 실무 실습"
+    assert "문서 정보 검색 색인 실습" in profile.context
+    assert "BM25 information retrieval tutorial" in profile.context
+    assert "davinci resolve" in profile.excluded_terms
+    assert "bm25" in profile.distinctive_terms
 
 
 @pytest.mark.asyncio
-async def test_ranking_context_combines_skill_and_job_context(monkeypatch) -> None:
-    monkeypatch.setattr(
-        "api.features.roadmap.resource_query._load_search_context",
-        lambda skill_ids, posting_ids: (
-            {1147: "서비스 로그와 메트릭으로 장애 원인을 추적하는 역량"},
-            {4730: "백엔드 서비스 운영 및 장애 대응 담당"},
-        ),
-    )
-
-    context = (await build_competency_ranking_contexts([_competency()]))[
-        "incident-prevention"
-    ]
-
-    assert "서비스 로그와 메트릭" in context
-    assert "백엔드 서비스 운영" in context
-
-
-@pytest.mark.asyncio
-async def test_ranking_context_uses_peer_competencies_when_database_fails(
-    monkeypatch,
+@pytest.mark.parametrize(
+    ("skill_id", "name", "context_term", "distinctive_term"),
+    [
+        (403, "업무 자동화", "Power Automate", "openpyxl"),
+        (1016, "업무 자동화 프로젝트", "Playwright", "browser automation"),
+        (1241, "테스트 자동화", "pytest", "automated testing"),
+        (1271, "품질 기준 수립", "ISO 25010", "acceptance criteria"),
+        (1273, "품질 지표 개선", "SonarQube", "test coverage"),
+    ],
+)
+async def test_curated_profiles_keep_search_and_relevance_terms(
+    skill_id: int,
+    name: str,
+    context_term: str,
+    distinctive_term: str,
 ) -> None:
-    monkeypatch.setattr(
-        "api.features.roadmap.resource_query._load_search_context",
-        lambda skill_ids, posting_ids: (_ for _ in ()).throw(
-            RuntimeError("db unavailable")
-        ),
-    )
-    javascript = _competency().model_copy(update={
-        "roadmapSkillKey": "javascript",
-        "standardCompetencyId": 96,
-        "standardCompetencyName": "JavaScript",
-    })
+    profile = (await build_competency_search_profiles([
+        _competency(skill_id=skill_id, name=name)
+    ]))["document-search"]
 
-    contexts = await build_competency_ranking_contexts([
-        _competency(), javascript
-    ])
+    assert context_term in profile.context
+    assert distinctive_term in profile.distinctive_terms
 
-    assert "연관 역량" in contexts["incident-prevention"]
-    assert "JavaScript" in contexts["incident-prevention"]
+
+@pytest.mark.asyncio
+async def test_missing_search_profile_fails_fast() -> None:
+    with pytest.raises(ValueError, match="missing JSON search profile"):
+        await build_competency_search_profiles([
+            _competency(skill_id=999999, name="없는 역량")
+        ])

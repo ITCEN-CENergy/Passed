@@ -27,6 +27,7 @@ def test_removes_unknown_resource_recommendations_and_preserves_known_ones() -> 
         milestoneType=MilestoneType.PRACTICE,
         difficulty=Difficulty.BEGINNER,
         estimatedMinutes=60,
+        required=True,
         resourceRecommendations=[
             GeneratedResourceRecommendation(
                 resourceId="known-resource", recommendationReason="Useful practice"

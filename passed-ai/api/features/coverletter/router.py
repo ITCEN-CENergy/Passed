@@ -2,10 +2,15 @@ from fastapi import APIRouter
 from .schema import (
     CoverLetterEditRequest,
     CoverLetterEditResponse,
+    CoverLetterSuggestionResponse,
     CoverLetterReviewRequest,
     CoverLetterReviewResponse,
 )
-from .service import process_cover_letter_chain, process_cover_letter_review_chain
+from .service import (
+    process_cover_letter_chain,
+    process_cover_letter_review_chain,
+    process_cover_letter_suggestion_chain,
+)
 
 router = APIRouter(
     prefix="/coverletter",
@@ -20,15 +25,27 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
     result = process_cover_letter_chain(
         question=request.question,
         content=request.content,
-        job_description=request.job_description or ""
+        job_description=request.job_description or "",
+        user_skills=[skill.model_dump() for skill in request.user_skills],
     )
     
     return CoverLetterEditResponse(
         qa_alignment_score=result["qa_alignment_score"],
-        qa_alignment_feedback=result["qa_alignment_feedback"],
-        jd_fit_feedback=result["jd_fit_feedback"],
-        final_edited_content=result["final_edited_content"]
+        shortcomings=result["shortcomings"],
+        recommended_revision_direction=result["recommended_revision_direction"],
     )
+
+
+@router.post("/suggest", response_model=CoverLetterSuggestionResponse)
+async def suggest_cover_letter(request: CoverLetterEditRequest):
+    """사용자가 요청한 경우에만 피드백을 반영한 추천 수정안을 생성합니다."""
+    result = process_cover_letter_suggestion_chain(
+        question=request.question,
+        content=request.content,
+        job_description=request.job_description or "",
+        user_skills=[skill.model_dump() for skill in request.user_skills],
+    )
+    return CoverLetterSuggestionResponse(suggested_answer=result)
 
 
 @router.post("/review", response_model=CoverLetterReviewResponse)
@@ -37,5 +54,6 @@ async def review_cover_letter(request: CoverLetterReviewRequest):
     result = process_cover_letter_review_chain(
         items=[item.model_dump() for item in request.items],
         job_description=request.job_description or "",
+        user_skills=[skill.model_dump() for skill in request.user_skills],
     )
     return CoverLetterReviewResponse.model_validate(result)

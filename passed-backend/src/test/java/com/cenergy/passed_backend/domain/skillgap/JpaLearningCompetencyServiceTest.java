@@ -108,6 +108,26 @@ class JpaLearningCompetencyServiceTest {
     }
 
     @Test
+    void excludesBehavioralTraitsFromLearningCompetencies() {
+        JobRecommendation recommendation = mock(JobRecommendation.class);
+        JobRecommendationSkillDetail behavioralDetail = mock(JobRecommendationSkillDetail.class);
+        Skill behavioralSkill = mock(Skill.class);
+        when(recommendation.getId()).thenReturn(50L);
+        when(behavioralSkill.getCategory()).thenReturn(SkillCategory.BEHAVIORAL_TRAIT);
+        when(behavioralDetail.getSkill()).thenReturn(behavioralSkill);
+        when(recommendationRepository
+                .findFirstByJobPostingIdAndRecommendationRunUserIdOrderByRecommendationRunStartedAtDescIdDesc(
+                        100L, 10L)).thenReturn(Optional.of(recommendation));
+        when(skillDetailRepository.findAllByJobRecommendationIdOrderByIdAsc(50L))
+                .thenReturn(List.of(behavioralDetail));
+
+        LearningCompetencyResponse response = service.getLearningCompetencies(100L, 10L);
+
+        assertThat(response.competencies()).isEmpty();
+        verify(evidenceRepository, never()).findAllByUserIdAndSkillIds(10L, List.of());
+    }
+
+    @Test
     void throwsNotFoundWhenUserHasNoRecommendationForPosting() {
         when(recommendationRepository
                 .findFirstByJobPostingIdAndRecommendationRunUserIdOrderByRecommendationRunStartedAtDescIdDesc(

@@ -68,7 +68,8 @@ public class RoadmapReplanService {
         Roadmap roadmap = activeRoadmap(roadmapId, userId);
         List<RoadmapMilestone> allLinks = links(roadmapId);
         RoadmapScheduleAssessment schedule = RoadmapScheduleAssessment.assess(
-                roadmap.getBaselineEndDate(), etaCalculator.calculate(allLinks));
+                roadmap.getBaselineEndDate(),
+                etaCalculator.calculate(allLinks, roadmap.getDailyStudyMinutes()));
         if (schedule.status() != RoadmapScheduleStatus.DELAYED) {
             throw invalid("Only delayed roadmaps can be replanned");
         }
@@ -78,7 +79,7 @@ public class RoadmapReplanService {
         List<GroupDraft> groups = group(candidates);
         int candidateMinutes = totalMinutes(candidates);
         int requestedReduction = Math.toIntExact(Math.min((long) candidateMinutes,
-                schedule.delayDays() * etaCalculator.dailyStudyMinutes()));
+                schedule.delayDays() * roadmap.getDailyStudyMinutes()));
         int capacity = groups.stream().mapToInt(value -> Math.max(0, value.originalMinutes() - 30)).sum();
         int maximumReduction = Math.min(capacity, requestedReduction + REDUCTION_TOLERANCE_MINUTES);
         int targetReduction = Math.min(requestedReduction, maximumReduction);
@@ -99,8 +100,9 @@ public class RoadmapReplanService {
                 .mapToInt(RoadmapCompressionPlan.Group::assignedEstimatedMinutes).sum();
         return new RoadmapReplanPreviewResponse(
                 roadmapId, replan.getToken(), plan.summary(), previousRemaining, replannedRemaining,
-                etaCalculator.calculateRemainingMinutes(previousRemaining),
-                etaCalculator.calculateRemainingMinutes(replannedRemaining), previewSkills(plan));
+                etaCalculator.calculateRemainingMinutes(previousRemaining, roadmap.getDailyStudyMinutes()),
+                etaCalculator.calculateRemainingMinutes(replannedRemaining, roadmap.getDailyStudyMinutes()),
+                previewSkills(plan));
     }
 
     @Transactional
@@ -297,7 +299,7 @@ public class RoadmapReplanService {
     }
 
     private List<RoadmapMilestone> candidates(List<RoadmapMilestone> links) {
-        return links.stream().filter(RoadmapMilestone::isRequired)
+        return links.stream()
                 .filter(link -> link.getMilestone().getStatus() == MilestoneStatus.NOT_STARTED).toList();
     }
 
@@ -337,7 +339,7 @@ public class RoadmapReplanService {
     }
 
     private int remainingMinutes(Collection<RoadmapMilestone> values) {
-        return values.stream().filter(RoadmapMilestone::isRequired)
+        return values.stream()
                 .filter(link -> link.getMilestone().getStatus() != MilestoneStatus.COMPLETED)
                 .mapToInt(link -> link.getMilestone().getEstimatedMinutes()).sum();
     }

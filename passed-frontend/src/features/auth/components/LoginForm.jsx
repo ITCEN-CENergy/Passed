@@ -50,7 +50,12 @@ const LoginForm = () => {
     try {
       await login({ email: form.email.trim(), password: form.password })
       await refreshUser()
-      navigate('/')
+      const returnTo = location.state?.returnTo
+      if (location.state?.onboardingAfterLogin === true) {
+        navigate('/onboarding/preferences', { replace: true })
+      } else {
+        navigate(typeof returnTo === 'string' && returnTo.startsWith('/') ? returnTo : '/', { replace: true })
+      }
     } catch (error) {
       setMessageType('error')
       setFormMessage(error.message)

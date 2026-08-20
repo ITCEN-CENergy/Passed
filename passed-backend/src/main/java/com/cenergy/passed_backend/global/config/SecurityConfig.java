@@ -58,7 +58,17 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/info"
                         ).permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/v1/auth/me").authenticated()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/jobPostings",
+                                "/api/v1/jobPostings/**",
+                                "/api/v1/users/preferences/industries",
+                                "/api/v1/users/preferences/industries/**"
+                        ).hasAnyRole("GENERAL_USER", "RECRUITER")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/jobPostings"
+                        ).hasRole("RECRUITER")
+                        .anyRequest().hasRole("GENERAL_USER"))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

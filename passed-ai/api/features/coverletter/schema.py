@@ -2,16 +2,28 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+
+class CoverLetterUserSkill(BaseModel):
+    skill_id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=100)
+    category: str
+    level: int = Field(ge=1, le=3)
+
+
 class CoverLetterEditRequest(BaseModel):
     question: str
     content: str
     job_description: Optional[str] = None
+    user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
 
 class CoverLetterEditResponse(BaseModel):
     qa_alignment_score: int
-    qa_alignment_feedback: str
-    jd_fit_feedback: str
-    final_edited_content: str
+    shortcomings: str
+    recommended_revision_direction: str
+
+
+class CoverLetterSuggestionResponse(BaseModel):
+    suggested_answer: str = Field(min_length=1)
 
 
 class CoverLetterReviewItemRequest(BaseModel):
@@ -25,15 +37,15 @@ class CoverLetterReviewItemRequest(BaseModel):
 class CoverLetterReviewRequest(BaseModel):
     items: list[CoverLetterReviewItemRequest] = Field(min_length=1)
     job_description: Optional[str] = None
+    user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
 
 
 class CoverLetterReviewItemResponse(BaseModel):
     item_id: int
     display_order: int
     qa_alignment_score: int = Field(ge=0, le=100)
-    qa_alignment_feedback: str
-    jd_fit_feedback: str
-    final_edited_content: str
+    shortcomings: str
+    recommended_revision_direction: str
 
 
 class CoverLetterOverallFeedbackResponse(BaseModel):

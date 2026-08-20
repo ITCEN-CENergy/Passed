@@ -1,6 +1,6 @@
 package com.cenergy.passed_backend.domain.coverletter.ai;
 
-import com.cenergy.passed_backend.domain.coverletter.ai.client.CoverLetterAiException;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiResponse;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,8 @@ class CoverLetterAiResponseValidatorTest {
         var result = validator.validate(response(84));
 
         assertThat(result.qaAlignmentScore()).isEqualTo(84);
-        assertThat(result.finalEditedContent()).isEqualTo("수정 답변");
+        assertThat(result.shortcomings()).isEqualTo("미흡한 부분");
+        assertThat(result.recommendedRevisionDirection()).isEqualTo("추천 수정 방향");
     }
 
     @Test
@@ -30,8 +31,7 @@ class CoverLetterAiResponseValidatorTest {
         CoverLetterAiResponse response = new CoverLetterAiResponse(
                 80,
                 " ",
-                "직무 피드백",
-                "수정 답변"
+                "추천 수정 방향"
         );
 
         assertThatThrownBy(() -> validator.validate(response))
@@ -41,9 +41,8 @@ class CoverLetterAiResponseValidatorTest {
     private CoverLetterAiResponse response(int score) {
         return new CoverLetterAiResponse(
                 score,
-                "문항 피드백",
-                "직무 피드백",
-                "수정 답변"
+                "미흡한 부분",
+                "추천 수정 방향"
         );
     }
 }

@@ -21,7 +21,8 @@ class MyPageControllerTest {
                 "kimminju@example.com",
                 "/uploads/resume-photos/profile.png",
                 OffsetDateTime.parse("2026-08-10T15:20:00+09:00"),
-                OffsetDateTime.parse("2026-08-12T18:10:00+09:00")
+                OffsetDateTime.parse("2026-08-12T18:10:00+09:00"),
+                true
         );
         when(service.findMine()).thenReturn(response);
 

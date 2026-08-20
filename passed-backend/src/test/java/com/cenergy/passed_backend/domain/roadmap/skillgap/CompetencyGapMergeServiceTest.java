@@ -98,28 +98,70 @@ class CompetencyGapMergeServiceTest {
     }
 
     @Test
-    void selectsMostFrequentRequirementTypeInsteadOfStrongestType() {
+    void usesCommonWhenEveryPostingRequiresOrPrefersCompetency() {
         MergedCompetencyGap result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
                 input(103L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED))))
                 .getFirst();
 
-        assertThat(result.requirementType()).isEqualTo(RequirementType.PREFERRED);
-        assertThat(result.priorityScore()).isEqualTo(223);
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+        assertThat(result.priorityScore()).isEqualTo(323);
     }
 
     @Test
-    void keepsCompetenciesWithNoGapAndReturnsImmutableList() {
+    void usesCommonWhenEverySelectedPostingRequiresCompetency() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.REQUIRED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+    }
+
+    @Test
+    void usesCommonWhenEverySelectedPostingPrefersCompetency() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.PREFERRED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.REQUIRED);
+        assertThat(result.priorityScore()).isEqualTo(322);
+    }
+
+    @Test
+    void usesRelatedWhenCompetencyAppearsOnlyAsRelated() {
+        MergedCompetencyGap result = service.merge(List.of(
+                input(101L, null, gap(1L, "Docker", 1, 3, RequirementType.RELATED)),
+                input(102L, null, gap(1L, "Docker", 1, 3, RequirementType.RELATED))))
+                .getFirst();
+
+        assertThat(result.requirementType()).isEqualTo(RequirementType.RELATED);
+    }
+
+    @Test
+    void keepsEqualLevelForReinforcementAndExcludesOverqualifiedCompetencies() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Docker", 3, 3, RequirementType.REQUIRED)),
                 input(102L, null, gap(2L, "AWS", 4, 2, RequirementType.PREFERRED))));
 
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(1);
         assertThat(result).extracting("gapLevel").containsOnly(0);
-        assertThat(result).extracting("standardCompetencyName").containsExactly("Docker", "AWS");
+        assertThat(result).extracting("standardCompetencyName").containsExactly("Docker");
         assertThatThrownBy(() -> result.add(null)).isInstanceOf(UnsupportedOperationException.class);
         assertThat(service.merge(List.of())).isEmpty();
+    }
+
+    @Test
+    void prioritizesLearningGapsBeforeEqualLevelReinforcement() {
+        List<MergedCompetencyGap> result = service.merge(List.of(
+                input(101L, null, gap(1L, "Reinforcement", 3, 3, RequirementType.REQUIRED)),
+                input(102L, null, gap(2L, "Learning gap", 1, 2, RequirementType.PREFERRED))));
+
+        assertThat(result).extracting("standardCompetencyName")
+                .containsExactly("Learning gap", "Reinforcement");
+        assertThat(result).extracting("priority").containsExactly(1, 2);
     }
 
     @Test
@@ -135,20 +177,20 @@ class CompetencyGapMergeServiceTest {
         List<MergedCompetencyGap> second = service.merge(List.of(id2, id10, required));
 
         assertThat(first).isEqualTo(second);
-        assertThat(first).extracting("standardCompetencyId").containsExactly(30L, 2L, 10L);
+        assertThat(first).extracting("standardCompetencyId").containsExactly(2L, 10L, 30L);
         assertThat(first).extracting("priority").containsExactly(1, 2, 3);
-        assertThat(first).extracting("priorityScore").containsExactly(311, 221, 221);
+        assertThat(first).extracting("priorityScore").containsExactly(221, 221, 211);
         assertThat(first).extracting("roadmapSkillKey")
-                .containsExactly("competency-30", "competency-2", "competency-10");
+                .containsExactly("competency-2", "competency-10", "competency-30");
     }
 
     @Test
-    void usesTargetLevelAsSecondSortKey() {
+    void usesCompetencyIdAsFinalTieBreaker() {
         List<MergedCompetencyGap> result = service.merge(List.of(
                 input(101L, null, gap(1L, "Low target", 0, 2, RequirementType.PREFERRED)),
                 input(102L, null, gap(2L, "High target", 2, 4, RequirementType.PREFERRED))));
 
-        assertThat(result).extracting("standardCompetencyId").containsExactly(2L, 1L);
+        assertThat(result).extracting("standardCompetencyId").containsExactly(1L, 2L);
     }
 
     @Test

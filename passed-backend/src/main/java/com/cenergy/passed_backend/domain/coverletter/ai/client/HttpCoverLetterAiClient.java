@@ -4,6 +4,8 @@ import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiRequest
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterAiResponse;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiRequest;
 import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterReviewAiResponse;
+import com.cenergy.passed_backend.domain.coverletter.ai.dto.CoverLetterSuggestionResponse;
+import com.cenergy.passed_backend.domain.coverletter.ai.exception.CoverLetterAiException;
 import com.cenergy.passed_backend.domain.coverletter.ai.model.ValidatedCoverLetterAiResult;
 import com.cenergy.passed_backend.domain.coverletter.ai.validation.CoverLetterAiResponseValidator;
 import com.cenergy.passed_backend.global.error.ErrorCode;
@@ -26,6 +28,7 @@ import java.net.http.HttpTimeoutException;
 public final class HttpCoverLetterAiClient implements CoverLetterAiClient {
     private static final String EDIT_PATH = "/coverletter/edit";
     private static final String REVIEW_PATH = "/coverletter/review";
+    private static final String SUGGEST_PATH = "/coverletter/suggest";
 
     private final RestClient restClient;
     private final CoverLetterAiResponseValidator validator;
@@ -33,6 +36,40 @@ public final class HttpCoverLetterAiClient implements CoverLetterAiClient {
     public HttpCoverLetterAiClient(RestClient restClient, CoverLetterAiResponseValidator validator) {
         this.restClient = restClient;
         this.validator = validator;
+    }
+
+    @Override
+    public String suggest(CoverLetterAiRequest request) {
+        try {
+            CoverLetterSuggestionResponse response = restClient.post()
+                    .uri(SUGGEST_PATH)
+                    .body(request)
+                    .retrieve()
+                    .body(CoverLetterSuggestionResponse.class);
+            if (response == null || response.suggestedAnswer() == null
+                    || response.suggestedAnswer().isBlank()) {
+                throw new CoverLetterAiException(
+                        ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE,
+                        "cover letter suggestion response is incomplete"
+                );
+            }
+            return response.suggestedAnswer().trim();
+        } catch (CoverLetterAiException exception) {
+            throw exception;
+        } catch (ResourceAccessException exception) {
+            throw resourceAccessException(exception);
+        } catch (RestClientResponseException exception) {
+            ErrorCode code = exception.getStatusCode().is5xxServerError()
+                    ? ErrorCode.COVER_LETTER_AI_UNAVAILABLE
+                    : ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE;
+            throw new CoverLetterAiException(code, "cover letter AI suggestion failed", exception);
+        } catch (HttpMessageConversionException | RestClientException exception) {
+            throw new CoverLetterAiException(
+                    ErrorCode.COVER_LETTER_AI_INVALID_RESPONSE,
+                    "cover letter AI suggestion response could not be decoded",
+                    exception
+            );
+        }
     }
 
     @Override

@@ -1,0 +1,44 @@
+.page {
+  display: grid;
+  min-height: calc(100vh - 170px);
+  place-items: center;
+  padding: 40px 20px;
+}
+
+.analysisLoading {
+  min-height: 420px;
+}
+
+.errorState {
+  display: grid;
+  width: min(100%, 620px);
+  justify-items: center;
+  text-align: center;
+}
+
+.errorState h1 {
+  color: var(--color-dark);
+  font-size: 30px;
+}
+
+.errorState p {
+  margin-top: 12px;
+  color: #b42328;
+  font-size: 16px;
+}
+
+.errorState button {
+  min-height: 48px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  color: #fff;
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .errorState h1 { font-size: 26px; }
+}

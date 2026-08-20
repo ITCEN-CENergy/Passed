@@ -5,7 +5,8 @@ import java.util.List;
 
 public record CoverLetterReviewAiRequest(
         List<Item> items,
-        @JsonProperty("job_description") String jobDescription
+        @JsonProperty("job_description") String jobDescription,
+        @JsonProperty("user_skills") List<CoverLetterUserSkill> userSkills
 ) {
     public record Item(
             @JsonProperty("item_id") Long itemId,

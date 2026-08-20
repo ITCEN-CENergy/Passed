@@ -94,7 +94,10 @@ const SignupForm = () => {
       })
       navigate('/login', {
         replace: true,
-        state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' },
+        state: {
+          onboardingAfterLogin: true,
+          message: '회원가입이 완료되었습니다. 로그인 후 희망 산업과 직무를 선택해주세요.',
+        },
       })
     } catch (error) {
       setFormMessage(error.message)

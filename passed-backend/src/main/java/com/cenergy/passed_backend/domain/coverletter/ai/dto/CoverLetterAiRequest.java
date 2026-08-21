@@ -8,6 +8,8 @@ public record CoverLetterAiRequest(
         String question,
         String content,
         @JsonProperty("job_description") String jobDescription,
-        @JsonProperty("user_skills") List<CoverLetterUserSkill> userSkills
+        @JsonProperty("company_talent_profile") String companyTalentProfile,
+        @JsonProperty("user_skills") List<CoverLetterUserSkill> userSkills,
+        @JsonProperty("character_limit") Integer characterLimit
 ) {
 }

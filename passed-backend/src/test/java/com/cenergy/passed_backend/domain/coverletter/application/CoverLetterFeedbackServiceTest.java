@@ -46,7 +46,7 @@ class CoverLetterFeedbackServiceTest {
     @Test
     void generatesAndPersistsItemFeedback() {
         CoverLetterFeedbackInput input = new CoverLetterFeedbackInput(
-                12L, "question", "answer", 700, "job description"
+                12L, "question", "answer", 700, "job description", "도전과 협업"
         );
         ValidatedCoverLetterAiResult aiResult = new ValidatedCoverLetterAiResult(
                 84, "item feedback", "job feedback"
@@ -63,7 +63,9 @@ class CoverLetterFeedbackServiceTest {
                 "question",
                 "answer",
                 "job description",
-                List.of(new CoverLetterUserSkill(9L, "Spring Boot", SkillCategory.TECHNICAL_SKILL, (short) 2))
+                "도전과 협업",
+                List.of(new CoverLetterUserSkill(9L, "Spring Boot", SkillCategory.TECHNICAL_SKILL, (short) 2)),
+                700
         ))).thenReturn(aiResult);
         when(persistenceService.save(257L, input, CoverLetterScore.SUFFICIENT, aiResult)).thenReturn(saved);
 
@@ -75,7 +77,7 @@ class CoverLetterFeedbackServiceTest {
     @Test
     void generatesSuggestedAnswerOnlyAfterFeedbackExists() {
         CoverLetterFeedbackInput input = new CoverLetterFeedbackInput(
-                12L, "question", "answer", 700, "job description"
+                12L, "question", "answer", 700, "job description", "도전과 협업"
         );
         CoverLetterFeedbackResult existing = new CoverLetterFeedbackResult(
                 33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
@@ -88,12 +90,35 @@ class CoverLetterFeedbackServiceTest {
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
         when(queryService.loadInput(257L, 12L)).thenReturn(input);
         when(queryService.findFeedback(257L, 12L)).thenReturn(existing);
-        when(aiClient.suggest(new CoverLetterAiRequest("question", "answer", "job description", List.of())))
+        when(aiClient.suggest(new CoverLetterAiRequest(
+                "question", "answer", "job description", "도전과 협업", List.of(), 700
+        )))
                 .thenReturn("suggested answer");
         when(persistenceService.saveSuggestedAnswer(257L, input, "suggested answer"))
                 .thenReturn(saved);
 
         assertThat(service.generateSuggestedAnswer(12L)).isEqualTo(saved);
+    }
+
+    @Test
+    void truncatesSuggestedAnswerToCharacterLimitBeforeSaving() {
+        CoverLetterFeedbackInput input = new CoverLetterFeedbackInput(
+                12L, "question", "answer", 5, "job description", null
+        );
+        CoverLetterFeedbackResult existing = new CoverLetterFeedbackResult(
+                33L, 12L, CoverLetterScore.SUFFICIENT, null, "improvement",
+                null, 5, 0, true, null, null
+        );
+        when(currentUserIdProvider.getCurrentUserId()).thenReturn(257L);
+        when(queryService.loadInput(257L, 12L)).thenReturn(input);
+        when(queryService.findFeedback(257L, 12L)).thenReturn(existing);
+        when(aiClient.suggest(new CoverLetterAiRequest(
+                "question", "answer", "job description", null, List.of(), 5
+        ))).thenReturn("가나다라마바사");
+
+        service.generateSuggestedAnswer(12L);
+
+        verify(persistenceService).saveSuggestedAnswer(257L, input, "가나다라마");
     }
 
     /** Invalid item IDs are rejected before repository or external-AI work begins. */

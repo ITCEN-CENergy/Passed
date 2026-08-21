@@ -45,6 +45,10 @@ public class CoverLetterFeedbackPersistenceService {
                 || !Objects.equals(
                         jobPostingDescriptionBuilder.build(item.getCoverLetterCompany()),
                         input.jobDescription()
+                )
+                || !Objects.equals(
+                        CompanyTalentProfileResolver.resolve(item.getCoverLetterCompany()),
+                        input.companyTalentProfile()
                 )) {
             throw new CoverLetterException(
                     ErrorCode.COVER_LETTER_ITEM_CHANGED,
@@ -88,6 +92,10 @@ public class CoverLetterFeedbackPersistenceService {
                 || !Objects.equals(
                         jobPostingDescriptionBuilder.build(item.getCoverLetterCompany()),
                         input.jobDescription()
+                )
+                || !Objects.equals(
+                        CompanyTalentProfileResolver.resolve(item.getCoverLetterCompany()),
+                        input.companyTalentProfile()
                 )) {
             throw new CoverLetterException(
                     ErrorCode.COVER_LETTER_ITEM_CHANGED,

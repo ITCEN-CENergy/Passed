@@ -189,7 +189,7 @@ def process_cover_letter_suggestion_chain(
     content: str,
     job_description: str = "",
     user_skills: list[dict] | None = None,
-    character_limit: int | None = 1200,
+    character_limit: int | None = 1000,
 ) -> str:
     """분석과 분리된 사용자 요청 시점에만 추천 수정안을 생성합니다."""
     chains = _create_cover_letter_chains()

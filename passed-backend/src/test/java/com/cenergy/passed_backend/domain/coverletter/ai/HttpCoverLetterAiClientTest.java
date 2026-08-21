@@ -44,6 +44,7 @@ class HttpCoverLetterAiClientTest {
                           "question": "질문",
                           "content": "답변",
                           "job_description": "공고",
+                          "character_limit": 700,
                           "user_skills": [
                             {
                               "skill_id": 9,
@@ -76,6 +77,7 @@ class HttpCoverLetterAiClientTest {
                           "question": "질문",
                           "content": "답변",
                           "job_description": "공고",
+                          "character_limit": 700,
                           "user_skills": [
                             {
                               "skill_id": 9,
@@ -157,7 +159,8 @@ class HttpCoverLetterAiClientTest {
                 "공고",
                 java.util.List.of(new CoverLetterUserSkill(
                         9L, "Spring Boot", SkillCategory.TECHNICAL_SKILL, (short) 2
-                ))
+                )),
+                700
         );
     }
 

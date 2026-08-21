@@ -45,7 +45,8 @@ public class CoverLetterFeedbackService {
                 input.question(),
                 input.answer(),
                 input.jobDescription(),
-                loadUserSkills(userId)
+                loadUserSkills(userId),
+                input.characterLimit()
         ));
         CoverLetterScore score = scorePolicy.from(aiResult.qaAlignmentScore());
         return persistenceService.save(userId, input, score, aiResult);
@@ -66,9 +67,14 @@ public class CoverLetterFeedbackService {
                 input.question(),
                 input.answer(),
                 input.jobDescription(),
-                loadUserSkills(userId)
+                loadUserSkills(userId),
+                input.characterLimit()
         ));
-        return persistenceService.saveSuggestedAnswer(userId, input, suggestedAnswer);
+        return persistenceService.saveSuggestedAnswer(
+                userId,
+                input,
+                applyCharacterLimit(suggestedAnswer, input.characterLimit())
+        );
     }
 
     private Long currentUserId() {
@@ -95,5 +101,13 @@ public class CoverLetterFeedbackService {
         return userSkillRepository.findAllByUserIdOrderBySkill_IdAsc(userId).stream()
                 .map(CoverLetterUserSkill::from)
                 .toList();
+    }
+
+    private String applyCharacterLimit(String suggestedAnswer, Integer characterLimit) {
+        String normalized = suggestedAnswer.trim();
+        if (characterLimit == null || normalized.length() <= characterLimit) {
+            return normalized;
+        }
+        return normalized.substring(0, characterLimit).stripTrailing();
     }
 }

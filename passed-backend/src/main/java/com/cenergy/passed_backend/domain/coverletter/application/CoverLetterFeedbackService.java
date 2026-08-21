@@ -45,6 +45,7 @@ public class CoverLetterFeedbackService {
                 input.question(),
                 input.answer(),
                 input.jobDescription(),
+                input.companyTalentProfile(),
                 loadUserSkills(userId),
                 input.characterLimit()
         ));
@@ -67,6 +68,7 @@ public class CoverLetterFeedbackService {
                 input.question(),
                 input.answer(),
                 input.jobDescription(),
+                input.companyTalentProfile(),
                 loadUserSkills(userId),
                 input.characterLimit()
         ));

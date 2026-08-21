@@ -5,6 +5,7 @@ public record CoverLetterFeedbackInput(
         String question,
         String answer,
         Integer characterLimit,
-        String jobDescription
+        String jobDescription,
+        String companyTalentProfile
 ) {
 }

@@ -70,6 +70,7 @@ public class CoverLetterOverallFeedbackService {
         CoverLetterReviewAiRequest request = new CoverLetterReviewAiRequest(
                 items,
                 descriptionBuilder.build(coverLetter),
+                CompanyTalentProfileResolver.resolve(coverLetter),
                 userSkillRepository.findAllByUserIdOrderBySkill_IdAsc(userId).stream()
                         .map(CoverLetterUserSkill::from)
                         .toList()

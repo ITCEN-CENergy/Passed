@@ -45,17 +45,35 @@ class SkillCandidate(BaseModel):
         return value.strip()
 
     @model_validator(mode="after")
-    def certification_is_binary_owned_value(self) -> "SkillCandidate":
-        if self.category is SkillCategory.CERTIFICATION and self.level != 1:
-            raise ValueError("CERTIFICATION 후보의 level은 반드시 1이어야 합니다.")
+    def fixed_level_categories_use_storage_value_one(self) -> "SkillCandidate":
+        # Q. 성향과 자격증에도 왜 level 필드가 남아 있나요?
+        # A. 현재 DB와 API가 1~3 정수를 필수로 요구합니다. BEHAVIORAL_TRAIT의 1은
+        #    숙련도가 아니라 '직접 행동 근거가 있음', CERTIFICATION의 1은 '보유'라는
+        #    호환용 값이며 추천/UI에서는 크기를 비교하지 않습니다.
+        if self.category in {
+            SkillCategory.BEHAVIORAL_TRAIT,
+            SkillCategory.CERTIFICATION,
+        }:
+            self.level = 1
         return self
 
 
-class SkillExtractionResponse(BaseModel):
-    """OpenAI Structured Outputs가 강제할 청크 한 건의 응답 스키마."""
+class ResumeSkillExtractionResponse(BaseModel):
+    """이력서 청크의 보수적인 Structured Outputs 계약."""
 
     model_config = ConfigDict(extra="forbid")
     skills: list[SkillCandidate] = Field(default_factory=list, max_length=12)
+
+
+class CoverLetterSkillExtractionResponse(BaseModel):
+    """서술형 자기소개서 청크의 확장된 Structured Outputs 계약."""
+
+    model_config = ConfigDict(extra="forbid")
+    skills: list[SkillCandidate] = Field(default_factory=list, max_length=20)
+
+
+# 기존 평가·테스트 코드가 이력서 기본 계약을 계속 import할 수 있게 유지합니다.
+SkillExtractionResponse = ResumeSkillExtractionResponse
 
 
 class ExtractedChunkSkills(BaseModel):

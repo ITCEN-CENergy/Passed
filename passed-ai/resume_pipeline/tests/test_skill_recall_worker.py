@@ -13,6 +13,8 @@ from resume_pipeline.skill_recall_worker import (
     StrictPass2Response,
     StrictPass2Selection,
     _merge_retrieval_hits,
+    _passes_retrieval_similarity_floor,
+    _select_category_balanced_hits,
     _contains_direct_mention,
     _is_behavioral_evidence_only_generic,
     _is_strict_intent_evidence,
@@ -176,6 +178,59 @@ def test_hybrid_hits_use_stronger_source_with_same_final_budget():
     assert [hit.skill_id for hit in merged] == [1, 2]
     assert merged[0].retrieval_source == "sentence"
     assert merged[0].matched_sentence == "Docker로 서비스를 배포했습니다."
+
+
+def test_final_top_k_preserves_each_retrieval_category():
+    technical = [
+        _hit(index, f"tech-{index}", SkillCategory.TECHNICAL_SKILL).model_copy(
+            update={"similarity": 0.95 - index / 100}
+        )
+        for index in range(1, 8)
+    ]
+    experience = [
+        _hit(100 + index, f"exp-{index}", SkillCategory.EXPERIENCE).model_copy(
+            update={"similarity": 0.75 - index / 100}
+        )
+        for index in range(1, 4)
+    ]
+    behavioral = [
+        _hit(
+            200 + index,
+            f"behavior-{index}",
+            SkillCategory.BEHAVIORAL_TRAIT,
+        ).model_copy(update={"similarity": 0.45 - index / 100})
+        for index in range(1, 3)
+    ]
+
+    selected = _select_category_balanced_hits(
+        [*technical, *experience, *behavioral],
+        limit=6,
+    )
+
+    assert len(selected) == 6
+    assert {hit.category for hit in selected} == {
+        SkillCategory.TECHNICAL_SKILL,
+        SkillCategory.EXPERIENCE,
+        SkillCategory.BEHAVIORAL_TRAIT,
+    }
+
+
+def test_behavioral_retrieval_floor_rejects_remote_trait_only():
+    remote_behavior = _hit(
+        1,
+        "behavior",
+        SkillCategory.BEHAVIORAL_TRAIT,
+    ).model_copy(update={"similarity": 0.249})
+    direct_behavior = remote_behavior.model_copy(update={"similarity": 0.41})
+    low_technical = _hit(
+        2,
+        "technical",
+        SkillCategory.TECHNICAL_SKILL,
+    ).model_copy(update={"similarity": 0.20})
+
+    assert not _passes_retrieval_similarity_floor(remote_behavior)
+    assert _passes_retrieval_similarity_floor(direct_behavior)
+    assert _passes_retrieval_similarity_floor(low_technical)
 
 
 def test_strict_direct_mention_accepts_canonical_or_alias_only():

@@ -11,12 +11,23 @@ from .embedding_worker import EMBEDDING_MODEL
 from .skill_extraction_prompt import SYSTEM_PROMPT
 from .skill_extraction_worker import (
     SKILL_EXTRACTION_MODEL,
-    _EXPLICIT_COMPLETED_SKILL_RULES,
 )
 from .user_skill_mapping_worker import (
     MIN_EMBEDDING_MARGIN,
     MIN_EMBEDDING_SIMILARITY,
 )
+from .skill_recall_worker import (
+    MIN_BEHAVIORAL_RETRIEVAL_SIMILARITY,
+    _BEHAVIORAL_DIRECTNESS_SYSTEM_PROMPT,
+    _STRICT_EXPERIENCE_PASS2_SYSTEM_PROMPT,
+    _STRICT_PASS2_SYSTEM_PROMPT,
+    _STRICT_TECHNICAL_PASS2_SYSTEM_PROMPT,
+)
+
+
+RUNTIME_RETRIEVAL_MODE = "hybrid"
+RUNTIME_RETRIEVAL_TOP_K = 40
+RUNTIME_SENTENCE_TOP_K = 5
 
 
 @dataclass(frozen=True)
@@ -93,17 +104,27 @@ def build_analysis_fingerprint(conn: Any, user_id: int) -> AnalysisFingerprint:
             for row in cur.fetchall()
         ]
 
-    rule_rows = [
-        (name, category.value, pattern.pattern, pattern.flags)
-        for name, category, pattern in _EXPLICIT_COMPLETED_SKILL_RULES
-    ]
     document_hash = _sha256(chunk_rows)
     pipeline_hash = _sha256(
         {
             "extraction_model": SKILL_EXTRACTION_MODEL,
             "embedding_model": EMBEDDING_MODEL,
             "system_prompt": SYSTEM_PROMPT,
-            "explicit_rules": rule_rows,
+            "deterministic_recovery_enabled": False,
+            "resume_candidate_limit": 12,
+            "cover_letter_candidate_limit": 20,
+            "retrieval_mode": RUNTIME_RETRIEVAL_MODE,
+            "retrieval_top_k": RUNTIME_RETRIEVAL_TOP_K,
+            "retrieval_budget_policy": "CATEGORY_BALANCED_ROUND_ROBIN_V1",
+            "behavioral_retrieval_similarity_floor": (
+                MIN_BEHAVIORAL_RETRIEVAL_SIMILARITY
+            ),
+            "sentence_top_k": RUNTIME_SENTENCE_TOP_K,
+            "strict_pass2_prompt": _STRICT_PASS2_SYSTEM_PROMPT,
+            "strict_technical_prompt": _STRICT_TECHNICAL_PASS2_SYSTEM_PROMPT,
+            "strict_experience_prompt": _STRICT_EXPERIENCE_PASS2_SYSTEM_PROMPT,
+            "behavioral_directness_prompt": _BEHAVIORAL_DIRECTNESS_SYSTEM_PROMPT,
+            "behavioral_level_policy": "OWNERSHIP_STORAGE_VALUE_1",
             "min_embedding_similarity": MIN_EMBEDDING_SIMILARITY,
             "min_embedding_margin": MIN_EMBEDDING_MARGIN,
             "skills": skill_rows,

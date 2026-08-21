@@ -41,6 +41,7 @@ def test_edit_request_defaults_character_limit_to_1200_and_allows_no_limit():
     )
 
     assert request.character_limit == 1200
+    assert request.company_talent_profile is None
     assert unlimited_request.character_limit is None
 
 
@@ -55,6 +56,7 @@ def test_feedback_analysis_returns_requested_structure_without_suggestion(monkey
         "question": "지원 동기는?",
         "content": "원본 답변",
         "job_description": "채용 공고",
+        "company_talent_profile": "제공된 회사 인재상 정보가 없습니다.",
         "user_skills_json": "[]",
     }]
     assert final_chain.calls == []
@@ -149,6 +151,23 @@ def test_user_skills_are_sent_to_feedback_and_suggestion_prompts(monkeypatch):
     assert final_chain.calls[0]["user_skills_json"] == expected
 
 
+def test_company_talent_profile_is_sent_to_feedback_and_suggestion_prompts(monkeypatch):
+    feedback_chain = RecordingChain(item_feedback())
+    final_chain = RecordingChain("추천 수정안")
+    monkeypatch.setattr(service, "_create_cover_letter_chains", lambda: (feedback_chain, final_chain))
+
+    service.process_cover_letter_suggestion_chain(
+        "질문",
+        "답변",
+        "공고",
+        character_limit=700,
+        company_talent_profile="도전과 협업",
+    )
+
+    assert feedback_chain.calls[0]["company_talent_profile"] == "도전과 협업"
+    assert final_chain.calls[0]["company_talent_profile"] == "도전과 협업"
+
+
 def test_suggestion_prompt_renders_user_skills():
     skills_json = json.dumps([{
         "skill_id": 9,
@@ -163,12 +182,15 @@ def test_suggestion_prompt_renders_user_skills():
         shortcomings="직무 연관성이 부족합니다.",
         recommended_revision_direction="보유 스킬과 경험을 연결하세요.",
         user_skills_json=skills_json,
+        company_talent_profile="도전과 협업",
         character_limit=1200,
     )
 
     assert "Spring Boot" in messages[-1].content
     assert "원문의 경험과 직접 관련된 사용자 보유 스킬" in messages[0].content
     assert "원문에 사용 근거가 없는 스킬" in messages[0].content
+    assert "회사 인재상만으로 원문에 없는 성향, 경험 또는 성과" in messages[0].content
+    assert "도전과 협업" in messages[-1].content
     assert "1200" in messages[-1].content
 
 
@@ -190,13 +212,14 @@ def test_review_returns_ordered_item_feedback_with_requested_structure(monkeypat
     result = service.process_cover_letter_review_chain([
         {"item_id": 2, "display_order": 2, "question": "두 번째", "content": "답변 2", "character_limit": 800},
         {"item_id": 1, "display_order": 1, "question": "첫 번째", "content": "답변 1", "character_limit": 500},
-    ], "비공개 분석용 채용 공고", skills)
+    ], "비공개 분석용 채용 공고", skills, "도전과 협업")
 
     assert [item["item_id"] for item in result["items"]] == [1, 2]
     assert result["items"][0]["shortcomings"] == "근거가 부족합니다."
     aggregate_items = json.loads(overall_chain.calls[0]["items_json"])
     assert [item["item_id"] for item in aggregate_items] == [1, 2]
     assert json.loads(overall_chain.calls[0]["user_skills_json"]) == skills
+    assert overall_chain.calls[0]["company_talent_profile"] == "도전과 협업"
 
 
 def test_review_normalizes_overall_list_fields_to_strings(monkeypatch):

@@ -14,6 +14,7 @@ class CoverLetterEditRequest(BaseModel):
     question: str
     content: str
     job_description: Optional[str] = None
+    company_talent_profile: Optional[str] = None
     user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
     character_limit: Optional[int] = Field(default=1200, gt=0)
 
@@ -38,6 +39,7 @@ class CoverLetterReviewItemRequest(BaseModel):
 class CoverLetterReviewRequest(BaseModel):
     items: list[CoverLetterReviewItemRequest] = Field(min_length=1)
     job_description: Optional[str] = None
+    company_talent_profile: Optional[str] = None
     user_skills: list[CoverLetterUserSkill] = Field(default_factory=list)
 
 

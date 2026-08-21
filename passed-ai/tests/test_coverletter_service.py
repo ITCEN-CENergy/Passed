@@ -125,6 +125,27 @@ def test_user_skills_are_sent_to_feedback_and_suggestion_prompts(monkeypatch):
     assert final_chain.calls[0]["user_skills_json"] == expected
 
 
+def test_suggestion_prompt_renders_user_skills():
+    skills_json = json.dumps([{
+        "skill_id": 9,
+        "name": "Spring Boot",
+        "category": "TECHNICAL_SKILL",
+        "level": 2,
+    }], ensure_ascii=False)
+
+    messages = service.final_edit_prompt.format_messages(
+        question="지원 동기는?",
+        content="Spring Boot로 API를 개발했습니다.",
+        shortcomings="직무 연관성이 부족합니다.",
+        recommended_revision_direction="보유 스킬과 경험을 연결하세요.",
+        user_skills_json=skills_json,
+    )
+
+    assert "Spring Boot" in messages[-1].content
+    assert "원문의 경험과 직접 관련된 사용자 보유 스킬" in messages[0].content
+    assert "원문에 사용 근거가 없는 스킬" in messages[0].content
+
+
 def test_review_returns_ordered_item_feedback_with_requested_structure(monkeypatch):
     monkeypatch.setattr(
         service,

@@ -154,7 +154,7 @@ const RecommendationContent = ({ embedded = false }) => {
   const loadingDescriptions = [
     '희망 산업과 직무에 맞는 채용공고를 필터링하고 있어요',
     '내 역량 스킬에 맞는 채용 공고를 매칭 중이에요',
-    '상위 12개의 채용공고로 선별하고 있어요',
+    '상위 20개의 채용공고로 선별하고 있어요',
   ]
 
   const onlyKoreanIndustries = (items) => items.filter(
@@ -334,7 +334,7 @@ const RecommendationContent = ({ embedded = false }) => {
           <>
             <div className={styles.resultsHeader}>
               <div>
-                <h2>역량 매칭 채용공고 BEST 12</h2>
+                <h2>역량 매칭 채용공고 BEST 20</h2>
                 <p>공고를 선택해 적합도 리포트를 확인하고, 나에게 맞는 취업 코칭을 받아보세요.</p>
               </div>
 

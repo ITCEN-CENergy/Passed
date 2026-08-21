@@ -44,6 +44,7 @@ async def suggest_cover_letter(request: CoverLetterEditRequest):
         content=request.content,
         job_description=request.job_description or "",
         user_skills=[skill.model_dump() for skill in request.user_skills],
+        character_limit=request.character_limit,
     )
     return CoverLetterSuggestionResponse(suggested_answer=result)
 

@@ -73,6 +73,7 @@ item_feedback_prompt = ChatPromptTemplate.from_messages([
 final_edit_prompt = ChatPromptTemplate.from_messages([
     ("system", """당신은 전문 취업 컨설턴트이자 교정 편집자입니다.
 주어진 분석을 바탕으로 자기소개서를 최종 첨삭하세요.
+단, 제시된 제한 글자수를 절대로 넘어가서는 안됩니다.
 원문의 경험과 직접 관련된 사용자 보유 스킬이 있으면 해당 경험과 자연스럽게 연결하여 지원자의 역량이 드러나도록 작성하세요.
 단, 원문에 사용 근거가 없는 스킬을 실제로 활용한 것처럼 추가하지 마세요.
 원문의 사실과 경험을 임의로 추가하지 말고, 맞춤법·띄어쓰기·문법·어색한 표현을 바로잡으면서 가독성과 설득력을 높이세요.
@@ -83,6 +84,7 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
 미흡한 부분: {shortcomings}
 추천 수정 방향: {recommended_revision_direction}
 사용자 보유 스킬: {user_skills_json}
+글자수 제한: {limit}
 
 위 내용을 종합하여 가장 완벽하고 설득력 있는 자기소개서 최종본을 작성해 주세요.
 """)
@@ -187,6 +189,7 @@ def process_cover_letter_suggestion_chain(
     content: str,
     job_description: str = "",
     user_skills: list[dict] | None = None,
+    character_limit: int | None = 1200,
 ) -> str:
     """분석과 분리된 사용자 요청 시점에만 추천 수정안을 생성합니다."""
     chains = _create_cover_letter_chains()
@@ -194,13 +197,17 @@ def process_cover_letter_suggestion_chain(
     analysis = _process_cover_letter_with_chains(
         question, content, job_description, normalized_skills, chains
     )
-    return chains[1].invoke({
+    suggestion = chains[1].invoke({
         "question": question,
         "content": content,
         "shortcomings": analysis["shortcomings"],
         "recommended_revision_direction": analysis["recommended_revision_direction"],
         "user_skills_json": json.dumps(normalized_skills, ensure_ascii=False),
+        "character_limit": character_limit if character_limit is not None else "제한 없음",
     }).strip()
+    if character_limit is not None and len(suggestion) > character_limit:
+        return suggestion[:character_limit].rstrip()
+    return suggestion
 
 # 전체 자기소개서를 읽고 리뷰하는 기능
 def process_cover_letter_review_chain(

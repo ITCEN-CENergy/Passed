@@ -16,18 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RecommendationTopKSelectorTest {
     @Test
-    void keepsOnlyBestTwelveAndUsesPostingIdAsFinalTieBreaker() {
-        List<GradedRecommendation> candidates = LongStream.rangeClosed(1, 13)
+    void keepsOnlyBestTwentyAndUsesPostingIdAsFinalTieBreaker() {
+        List<GradedRecommendation> candidates = LongStream.rangeClosed(1, 21)
                 .mapToObj(this::recommendation)
                 .toList();
 
         List<RankedRecommendation> result = new RecommendationTopKSelector().select(candidates);
 
-        assertEquals(12, result.size());
-        assertEquals(LongStream.rangeClosed(1, 12).boxed().toList(), result.stream()
+        assertEquals(20, result.size());
+        assertEquals(LongStream.rangeClosed(1, 20).boxed().toList(), result.stream()
                 .map(RankedRecommendation::jobPostingId)
                 .toList());
-        assertEquals(IntStream.rangeClosed(1, 12).boxed().toList(), result.stream()
+        assertEquals(IntStream.rangeClosed(1, 20).boxed().toList(), result.stream()
                 .map(RankedRecommendation::rankOrder)
                 .toList());
     }

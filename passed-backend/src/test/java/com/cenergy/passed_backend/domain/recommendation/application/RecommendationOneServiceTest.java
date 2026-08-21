@@ -33,6 +33,7 @@ class RecommendationOneServiceTest {
     private RecommendationRunStartService runStartService;
     private RecommendationCandidateLoader candidateLoader;
     private RequiredSkillEvaluator requiredSkillEvaluator;
+    private RecommendationSkillVerificationService skillVerificationService;
     private RecommendationDetailedEvaluationService detailedEvaluationService;
     private RecommendationGradeResolver gradeResolver;
     private RecommendationExplanationService explanationService;
@@ -46,6 +47,7 @@ class RecommendationOneServiceTest {
         runStartService = mock(RecommendationRunStartService.class);
         candidateLoader = mock(RecommendationCandidateLoader.class);
         requiredSkillEvaluator = mock(RequiredSkillEvaluator.class);
+        skillVerificationService = mock(RecommendationSkillVerificationService.class);
         detailedEvaluationService = mock(RecommendationDetailedEvaluationService.class);
         gradeResolver = mock(RecommendationGradeResolver.class);
         explanationService = mock(RecommendationExplanationService.class);
@@ -56,6 +58,7 @@ class RecommendationOneServiceTest {
                 runStartService,
                 candidateLoader,
                 requiredSkillEvaluator,
+                skillVerificationService,
                 detailedEvaluationService,
                 gradeResolver,
                 explanationService,
@@ -76,6 +79,8 @@ class RecommendationOneServiceTest {
         when(currentUserIdProvider.getCurrentUserId()).thenReturn(2L);
         when(runStartService.startForSinglePosting(2L, 100L)).thenReturn(context);
         when(candidateLoader.loadByJobPostingId(100L)).thenReturn(bundle);
+        when(skillVerificationService.enrich(2L, List.of(bundle), context.run().userSkills()))
+                .thenReturn(context.run().userSkills());
         when(requiredSkillEvaluator.evaluate(bundle, context.run().userSkills()))
                 .thenReturn(evaluation);
         when(detailedEvaluationService.evaluate(
@@ -96,6 +101,7 @@ class RecommendationOneServiceTest {
         InOrder order = inOrder(
                 runStartService,
                 candidateLoader,
+                skillVerificationService,
                 requiredSkillEvaluator,
                 detailedEvaluationService,
                 gradeResolver,
@@ -104,6 +110,8 @@ class RecommendationOneServiceTest {
         );
         order.verify(runStartService).startForSinglePosting(2L, 100L);
         order.verify(candidateLoader).loadByJobPostingId(100L);
+        order.verify(skillVerificationService)
+                .enrich(2L, List.of(bundle), context.run().userSkills());
         order.verify(requiredSkillEvaluator).evaluate(bundle, context.run().userSkills());
         order.verify(detailedEvaluationService).evaluate(
                 100L,

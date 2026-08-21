@@ -84,7 +84,7 @@ final_edit_prompt = ChatPromptTemplate.from_messages([
 미흡한 부분: {shortcomings}
 추천 수정 방향: {recommended_revision_direction}
 사용자 보유 스킬: {user_skills_json}
-글자수 제한: {limit}
+글자수 제한: {character_limit}
 
 위 내용을 종합하여 가장 완벽하고 설득력 있는 자기소개서 최종본을 작성해 주세요.
 """)

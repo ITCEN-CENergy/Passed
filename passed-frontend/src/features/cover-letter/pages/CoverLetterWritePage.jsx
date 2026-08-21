@@ -33,7 +33,7 @@ function newItem(displayOrder) {
     id: null,
     questionText: '',
     answer: '',
-    characterLimit: 1000,
+    characterLimit: 1200,
     displayOrder,
   }
 }

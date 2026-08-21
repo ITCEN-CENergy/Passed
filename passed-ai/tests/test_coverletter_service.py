@@ -116,7 +116,7 @@ def test_suggested_answer_uses_both_feedback_sections(monkeypatch):
     assert result == "추천 수정안"
     assert final_chain.calls[0]["shortcomings"] == "근거가 부족합니다."
     assert final_chain.calls[0]["recommended_revision_direction"] == "구체적인 사례를 보완하세요."
-    assert final_chain.calls[0]["limit"] == 700
+    assert final_chain.calls[0]["character_limit"] == 700
 
 
 def test_suggested_answer_is_truncated_to_character_limit(monkeypatch):
@@ -163,7 +163,7 @@ def test_suggestion_prompt_renders_user_skills():
         shortcomings="직무 연관성이 부족합니다.",
         recommended_revision_direction="보유 스킬과 경험을 연결하세요.",
         user_skills_json=skills_json,
-        limit=1200,
+        character_limit=1200,
     )
 
     assert "Spring Boot" in messages[-1].content

@@ -35,13 +35,15 @@ SYSTEM_PROMPT = """당신은 채용 문서에서 검증 가능한 역량 후보�
 6. 자격증은 취득·보유가 명시된 경우만 추출합니다. 필기 합격, 준비 중, 취득 예정은
    보유가 아니므로 추출하지 않습니다. 한 문장에 여러 자격증이 있으면 각각 나눕니다.
 7. 같은 이름과 카테고리의 후보를 중복 출력하지 않습니다.
-8. level은 원문 근거의 깊이만 보고 정합니다.
+8. TECHNICAL_SKILL과 EXPERIENCE의 level만 원문 근거의 깊이로 정합니다.
    - 1: 언급, 학습, 단순 참여 또는 기본 사용
    - 2: 실제 과업·프로젝트에서 독립적으로 적용
    - 3: 복잡한 문제 해결, 설계·최적화·리딩 또는 수치로 확인되는 성과
-9. CERTIFICATION은 보유 후보만 추출하고 level을 항상 1로 반환합니다. 미보유는 후보를 만들지 않습니다.
+9. BEHAVIORAL_TRAIT은 숙련도를 판단하지 않습니다. 직접 행동 근거가 있으면 DB 호환용
+   level을 항상 1로 반환합니다. CERTIFICATION도 보유 후보만 추출하고 level을 항상
+   1로 반환합니다. 이 두 카테고리의 1은 숙련도가 아니라 관찰됨/보유를 뜻합니다.
 10. 근거가 없으면 skills를 빈 배열로 반환합니다.
-11. 한 청크에서 중요도가 높은 후보만 최대 12개 반환합니다.
+11. 사용자 메시지에 지정된 문서별 최대 후보 수를 지킵니다.
 12. evidence는 원문의 일부를 요약하거나 어미를 바꾸지 말고 문장부호까지 그대로 복사합니다.
 13. 키워드가 있다는 이유만으로 후보를 늘리지 말고, 본인이 완료한 구체적 행동이
     원문에 직접 명시된 경우에만 서로 다른 수행 역량으로 분리합니다.
@@ -93,12 +95,14 @@ def build_user_prompt(chunk: ExtractableChunk) -> str:
             "해당 이력서 항목에 명시된 기술과 검증 가능한 경험만 추출하세요.",
         )
         context_label = "이력서 source_type"
+        candidate_limit = 12
     elif chunk.source_kind == "COVER_LETTER":
         guidance = _COVER_LETTER_CONTEXT_GUIDANCE.get(
             chunk.context_type,
             "자기소개서에서 과거 행동으로 확인되는 후보만 추출하세요.",
         )
         context_label = "자기소개서 question_type"
+        candidate_limit = 20
     else:
         raise ValueError(f"지원하지 않는 문서 종류입니다: {chunk.source_kind}")
 
@@ -106,5 +110,6 @@ def build_user_prompt(chunk: ExtractableChunk) -> str:
         f"문서 종류: {chunk.source_kind}\n"
         f"{context_label}: {chunk.context_type}\n"
         f"문맥별 주의사항: {guidance}\n\n"
+        f"이 청크의 최대 후보 수: {candidate_limit}개\n\n"
         f"원문:\n{chunk.chunk_content}"
     )

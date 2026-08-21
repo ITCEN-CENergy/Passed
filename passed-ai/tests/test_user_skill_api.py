@@ -107,7 +107,14 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
     report = SimpleNamespace(
         processed_chunk_count=6,
         skills=[object(), object(), object(), object()],
-        unmapped=[object()],
+        unmapped=[SimpleNamespace(
+            source_kind="resume",
+            chunk_id=31,
+            extracted_name="미매핑 기술",
+            category=SimpleNamespace(value="TECHNICAL_SKILL"),
+            failure_reason=SimpleNamespace(value="NO_MATCH"),
+            evidence="근거 문장",
+        )],
     )
     monkeypatch.setattr(service, "embed_pending_chunks", embed)
     monkeypatch.setattr(
@@ -119,6 +126,35 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
         service,
         "build_user_skill_mapping_report",
         lambda conn, value: calls.append("map") or report,
+    )
+    monkeypatch.setattr(
+        service,
+        "build_pass1_strict_validation_retrieval",
+        lambda conn, extraction, mapping: calls.append("build-pass1-validation")
+        or object(),
+    )
+
+    def verify(retrieval, **kwargs):
+        stage = "verify-pass2" if "pass1_mapping" in kwargs else "verify-pass1"
+        calls.append(stage)
+        return SimpleNamespace(verified_count=0)
+
+    monkeypatch.setattr(service, "verify_retrieval_with_pass2", verify)
+    monkeypatch.setattr(
+        service,
+        "filter_pass1_mapping_with_strict_validation",
+        lambda mapping, validation: calls.append("filter-pass1") or report,
+    )
+    monkeypatch.setattr(
+        service,
+        "retrieve_missing_master_candidates",
+        lambda conn, extraction, mapping, **kwargs: calls.append("retrieve-pass2")
+        or object(),
+    )
+    monkeypatch.setattr(
+        service,
+        "merge_verified_pass2_skills",
+        lambda extraction, mapping, verified: calls.append("merge-pass2") or report,
     )
     monkeypatch.setattr(
         service,
@@ -143,11 +179,18 @@ def test_pipeline_runs_chunking_embedding_mapping_and_persistence(monkeypatch):
         "embed:cover_letter_chunks",
         "extract",
         "map",
+        "build-pass1-validation",
+        "verify-pass1",
+        "filter-pass1",
+        "retrieve-pass2",
+        "verify-pass2",
+        "merge-pass2",
         "persist",
         "save-state",
     ]
     assert response.user_id == 257
     assert response.skill_count == 4
+    assert response.unmapped_count == 1
     assert response.persisted is True
 
 

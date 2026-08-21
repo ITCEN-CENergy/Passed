@@ -11,6 +11,11 @@ from resume_pipeline.skill_extraction_models import (
 )
 from resume_pipeline.skill_mapping_models import MappingMethod
 from resume_pipeline.skill_mapping_worker import SkillAlias, SkillMaster
+from resume_pipeline.skill_recall_worker import (
+    ChunkPass2Result,
+    Pass2PreviewReport,
+    VerifiedMissingSkill,
+)
 from resume_pipeline.user_skill_mapping_models import (
     AggregatedUserSkill,
     MappedEvidence,
@@ -47,7 +52,7 @@ def _evidence(
     )
 
 
-def test_behavioral_level_counts_independent_evidence_after_overlap_dedup():
+def test_behavioral_level_is_ownership_value_one_after_overlap_dedup():
     mapped = [
         _evidence(chunk_id=1),
         _evidence(source="COVER_LETTER", chunk_id=2),  # 같은 문장 overlap
@@ -56,7 +61,7 @@ def test_behavioral_level_counts_independent_evidence_after_overlap_dedup():
 
     skill = worker.aggregate_mapped_evidences(mapped)[0]
 
-    assert skill.level == 2
+    assert skill.level == 1
     assert len(skill.evidences) == 2
     assert skill.level_confidence == 0.9
 
@@ -87,6 +92,54 @@ def test_technical_level_uses_max_instead_of_evidence_count():
 
     assert skill.level == 3
     assert skill.mapping_confidence == 1.0
+
+
+def test_strict_pass2_recovery_merges_by_master_and_fixes_behavioral_level():
+    extraction = SkillExtractionReport(
+        user_id=19,
+        model="fake",
+        chunks=[
+            ExtractedChunkSkills(
+                source_kind="RESUME",
+                chunk_id=1,
+                context_type="EXPERIENCE",
+                content_hash="hash-RESUME-1",
+                skills=[],
+            )
+        ],
+    )
+    pass1 = _report()
+    pass2 = Pass2PreviewReport(
+        model="fake",
+        verifier_mode="strict",
+        chunks=[
+            ChunkPass2Result(
+                source_kind="RESUME",
+                chunk_id=1,
+                content_hash="hash-RESUME-1",
+                proposed_count=1,
+                verified=[
+                    VerifiedMissingSkill(
+                        skill_id=3,
+                        name="협업",
+                        category=SkillCategory.BEHAVIORAL_TRAIT,
+                        evidence="역할을 나누어 작업했습니다.",
+                        level=3,
+                        retrieval_similarity=0.82,
+                    )
+                ],
+            )
+        ],
+    )
+
+    merged = worker.merge_verified_pass2_skills(extraction, pass1, pass2)
+
+    assert [skill.skill_name for skill in merged.skills] == ["협업", "Java"]
+    behavioral = next(
+        skill for skill in merged.skills if skill.category is SkillCategory.BEHAVIORAL_TRAIT
+    )
+    assert behavioral.level == 1
+    assert behavioral.evidences[0].mapping_method is MappingMethod.EMBEDDING
 
 
 def test_actual_extraction_maps_exact_and_alias_without_embedding(monkeypatch):

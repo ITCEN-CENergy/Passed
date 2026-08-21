@@ -27,6 +27,7 @@ async def edit_cover_letter(request: CoverLetterEditRequest):
         content=request.content,
         job_description=request.job_description or "",
         user_skills=[skill.model_dump() for skill in request.user_skills],
+        company_talent_profile=request.company_talent_profile or "",
     )
     
     return CoverLetterEditResponse(
@@ -44,6 +45,8 @@ async def suggest_cover_letter(request: CoverLetterEditRequest):
         content=request.content,
         job_description=request.job_description or "",
         user_skills=[skill.model_dump() for skill in request.user_skills],
+        character_limit=request.character_limit,
+        company_talent_profile=request.company_talent_profile or "",
     )
     return CoverLetterSuggestionResponse(suggested_answer=result)
 
@@ -55,5 +58,6 @@ async def review_cover_letter(request: CoverLetterReviewRequest):
         items=[item.model_dump() for item in request.items],
         job_description=request.job_description or "",
         user_skills=[skill.model_dump() for skill in request.user_skills],
+        company_talent_profile=request.company_talent_profile or "",
     )
     return CoverLetterReviewResponse.model_validate(result)

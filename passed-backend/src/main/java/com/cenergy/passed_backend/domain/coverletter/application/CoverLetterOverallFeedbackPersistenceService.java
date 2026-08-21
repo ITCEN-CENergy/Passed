@@ -132,6 +132,10 @@ public class CoverLetterOverallFeedbackPersistenceService {
             CoverLetterReviewAiRequest input
     ) {
         if (!Objects.equals(descriptionBuilder.build(coverLetter), input.jobDescription())
+                || !Objects.equals(
+                        CompanyTalentProfileResolver.resolve(coverLetter),
+                        input.companyTalentProfile()
+                )
                 || currentItems.size() != input.items().size()) changed();
         for (int index = 0; index < currentItems.size(); index++) {
             CoverLetterCompanyItem current = currentItems.get(index);

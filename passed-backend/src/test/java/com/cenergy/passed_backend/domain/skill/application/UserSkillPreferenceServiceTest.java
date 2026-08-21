@@ -45,7 +45,7 @@ class UserSkillPreferenceServiceTest {
         var response = service.update(request(
                 item(1L, 1, true),
                 item(2L, 2, true),
-                item(3L, 3, true),
+                item(3L, 1, true),
                 item(4L, 1, false)
         ));
 
@@ -129,6 +129,26 @@ class UserSkillPreferenceServiceTest {
     }
 
     @Test
+    void rejectsBehavioralTraitLevelTwoBeforeChangingAnyEntity() {
+        List<UserSkill> skills = fourSkills();
+        when(userSkillRepository.findAllForUpdateByUserId(257L)).thenReturn(skills);
+
+        assertThatThrownBy(() -> service.update(request(
+                item(1L, 1, true),
+                item(2L, 2, true),
+                item(3L, 2, true),
+                item(4L, 1, false)
+        )))
+                .isInstanceOf(UserSkillException.class)
+                .hasMessageContaining("behavioral trait levels must be 1");
+
+        skills.forEach(skill -> verify(skill, never()).applyPreference(
+                org.mockito.ArgumentMatchers.anyShort(),
+                org.mockito.ArgumentMatchers.anyBoolean()
+        ));
+    }
+
+    @Test
     void rejectsPreferenceConfirmationWhenOnlyThreeSkillsExist() {
         List<UserSkill> skills = fourSkills().subList(0, 3);
         when(userSkillRepository.findAllForUpdateByUserId(257L)).thenReturn(skills);
@@ -146,7 +166,7 @@ class UserSkillPreferenceServiceTest {
         return List.of(
                 userSkill(1L, 101L, SkillCategory.TECHNICAL_SKILL, (short) 1),
                 userSkill(2L, 102L, SkillCategory.EXPERIENCE, (short) 2),
-                userSkill(3L, 103L, SkillCategory.BEHAVIORAL_TRAIT, (short) 3),
+                userSkill(3L, 103L, SkillCategory.BEHAVIORAL_TRAIT, (short) 1),
                 userSkill(4L, 104L, SkillCategory.CERTIFICATION, (short) 1)
         );
     }

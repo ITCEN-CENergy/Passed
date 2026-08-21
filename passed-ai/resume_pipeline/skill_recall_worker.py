@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import logging
 from pathlib import Path
 import re
 from typing import Any, Literal
@@ -27,9 +28,17 @@ from .skill_extraction_worker import (
 from .user_skill_mapping_models import UserSkillMappingReport
 
 
+logger = logging.getLogger(__name__)
+
 PASS2_CATEGORIES = frozenset(
-    {SkillCategory.TECHNICAL_SKILL, SkillCategory.BEHAVIORAL_TRAIT}
+    {
+        SkillCategory.TECHNICAL_SKILL,
+        SkillCategory.EXPERIENCE,
+        SkillCategory.BEHAVIORAL_TRAIT,
+    }
 )
+PASS1_STRICT_CATEGORIES = frozenset(SkillCategory)
+MIN_BEHAVIORAL_RETRIEVAL_SIMILARITY = 0.40
 
 
 class MasterRetrievalHit(BaseModel):
@@ -163,6 +172,7 @@ class ChunkPass2Result(BaseModel):
     rejected_behavioral_generic_ids: list[int] = Field(default_factory=list)
     rejected_behavioral_directness_ids: list[int] = Field(default_factory=list)
     rejected_observable_action_ids: list[int] = Field(default_factory=list)
+    rejected_incomplete_action_ids: list[int] = Field(default_factory=list)
 
 
 class Pass2PreviewReport(BaseModel):
@@ -234,6 +244,125 @@ def _mapped_ids_by_chunk(
         for evidence in skill.evidences:
             result[(evidence.source_kind, evidence.chunk_id)].add(skill.skill_id)
     return result
+
+
+def build_pass1_strict_validation_retrieval(
+    conn: Any,
+    extraction: SkillExtractionReport,
+    pass1_mapping: UserSkillMappingReport,
+) -> RetrievalReport:
+    """매핑된 Pass 1 기술·성향 후보를 기존 Strict verifier 입력으로 변환한다."""
+    aliases_by_skill = _load_active_aliases_by_skill(conn)
+    skill_ids = sorted(
+        {
+            skill.skill_id
+            for skill in pass1_mapping.skills
+            if skill.category in PASS1_STRICT_CATEGORIES
+        }
+    )
+    descriptions: dict[int, str] = {}
+    if skill_ids:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, COALESCE(description, '') AS description FROM skills "
+                "WHERE id = ANY(%s)",
+                (skill_ids,),
+            )
+            descriptions = {
+                int(row["id"] if isinstance(row, dict) else row[0]): str(
+                    row["description"] if isinstance(row, dict) else row[1]
+                )
+                for row in cur.fetchall()
+            }
+
+    by_chunk: dict[tuple[str, int], list[MasterRetrievalHit]] = defaultdict(list)
+    seen: set[tuple[str, int, int]] = set()
+    for skill in pass1_mapping.skills:
+        if skill.category not in PASS1_STRICT_CATEGORIES:
+            continue
+        for evidence in skill.evidences:
+            key = (evidence.source_kind, evidence.chunk_id, skill.skill_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            by_chunk[(evidence.source_kind, evidence.chunk_id)].append(
+                MasterRetrievalHit(
+                    skill_id=skill.skill_id,
+                    name=skill.skill_name,
+                    category=skill.category,
+                    description=descriptions.get(skill.skill_id, ""),
+                    similarity=evidence.mapping_similarity
+                    if evidence.mapping_similarity is not None
+                    else evidence.mapping_confidence,
+                    retrieval_source="pass1",
+                    aliases=aliases_by_skill.get(skill.skill_id, []),
+                )
+            )
+
+    chunks: list[ChunkRetrieval] = []
+    for extracted_chunk in extraction.chunks:
+        hits = by_chunk.get(
+            (extracted_chunk.source_kind, extracted_chunk.chunk_id), []
+        )
+        if not hits:
+            continue
+        row = _load_chunk(
+            conn,
+            extracted_chunk.source_kind,
+            extracted_chunk.chunk_id,
+            extraction.user_id,
+        )
+        if str(row["content_hash"]) != extracted_chunk.content_hash:
+            raise ValueError("추출 후 청크가 변경되어 Pass 1 검증을 중단합니다.")
+        chunks.append(
+            ChunkRetrieval(
+                source_kind=extracted_chunk.source_kind,
+                chunk_id=extracted_chunk.chunk_id,
+                context_type=extracted_chunk.context_type,
+                content_hash=extracted_chunk.content_hash,
+                chunk_content=str(row["chunk_content"]),
+                candidates=sorted(hits, key=lambda item: item.skill_id),
+            )
+        )
+    return RetrievalReport(
+        user_id=extraction.user_id,
+        retrieval_mode="pass1",
+        top_k_per_category=0,
+        categories=sorted(PASS1_STRICT_CATEGORIES, key=lambda item: item.value),
+        chunks=chunks,
+    )
+
+
+def filter_pass1_mapping_with_strict_validation(
+    mapping: UserSkillMappingReport,
+    validation: Pass2PreviewReport,
+) -> UserSkillMappingReport:
+    """Strict 검증을 통과한 기술·성향 근거만 Pass 1 저장 후보로 남긴다."""
+    from .user_skill_mapping_worker import aggregate_mapped_evidences
+
+    approved = {
+        (verified.skill_id, chunk.source_kind, chunk.chunk_id)
+        for chunk in validation.chunks
+        for verified in chunk.verified
+    }
+    kept = []
+    rejected = 0
+    for skill in mapping.skills:
+        for evidence in skill.evidences:
+            if skill.category not in PASS1_STRICT_CATEGORIES or (
+                skill.skill_id,
+                evidence.source_kind,
+                evidence.chunk_id,
+            ) in approved:
+                kept.append(evidence)
+            else:
+                rejected += 1
+    logger.info(
+        "Pass 1 Strict 검증 완료 approved_evidences=%s rejected_evidences=%s",
+        len(kept),
+        rejected,
+    )
+    return mapping.model_copy(update={"skills": aggregate_mapped_evidences(kept)})
 
 
 def _load_chunk(conn: Any, source_kind: str, chunk_id: int, user_id: int) -> dict:
@@ -402,6 +531,51 @@ def _merge_retrieval_hits(
     )[:limit]
 
 
+def _select_category_balanced_hits(
+    hits: list[MasterRetrievalHit],
+    *,
+    limit: int,
+) -> list[MasterRetrievalHit]:
+    """Keep the final retrieval budget balanced across represented categories.
+
+    Q. Why not simply take the globally highest similarities?
+    A. Similarity score ranges differ by category. Abstract behavioral traits
+       usually score lower than concrete technology names, so a global Top-K can
+       remove the entire behavioral category before Pass 2 can verify it.
+
+    Q. Does this force weak candidates to be saved?
+    A. No. This only reserves a fair candidate budget. Strict Pass 2 still rejects
+       candidates that are not directly demonstrated by the source evidence.
+    """
+    deduplicated = _merge_retrieval_hits(hits, limit=len(hits))
+    by_category: dict[SkillCategory, list[MasterRetrievalHit]] = defaultdict(list)
+    for hit in deduplicated:
+        by_category[hit.category].append(hit)
+
+    categories = sorted(by_category, key=lambda item: item.value)
+    selected: list[MasterRetrievalHit] = []
+    index = 0
+    while len(selected) < limit:
+        added = False
+        for category in categories:
+            category_hits = by_category[category]
+            if index < len(category_hits):
+                selected.append(category_hits[index])
+                added = True
+                if len(selected) == limit:
+                    break
+        if not added:
+            break
+        index += 1
+    return selected
+
+
+def _passes_retrieval_similarity_floor(hit: MasterRetrievalHit) -> bool:
+    if hit.category is SkillCategory.BEHAVIORAL_TRAIT:
+        return hit.similarity >= MIN_BEHAVIORAL_RETRIEVAL_SIMILARITY
+    return True
+
+
 def _embed_sentence_texts(
     texts: list[str],
     *,
@@ -462,6 +636,7 @@ def retrieve_missing_master_candidates(
     embedding_client: Any | None = None,
     embedding_cache: dict[str, list[float]] | None = None,
     exclude_pass1_chunk_skills: bool = True,
+    final_top_k: int | None = None,
 ) -> RetrievalReport:
     if top_k_per_category < 1:
         raise ValueError("top_k_per_category는 1 이상이어야 합니다.")
@@ -471,6 +646,8 @@ def retrieve_missing_master_candidates(
         )
     if sentence_top_k < 1:
         raise ValueError("sentence_top_k는 1 이상이어야 합니다.")
+    if final_top_k is not None and final_top_k < 1:
+        raise ValueError("final_top_k는 1 이상이어야 합니다.")
     mapped_by_chunk = _mapped_ids_by_chunk(pass1_mapping)
     aliases_by_skill = _load_active_aliases_by_skill(conn)
     cache = embedding_cache if embedding_cache is not None else {}
@@ -578,6 +755,20 @@ def retrieve_missing_master_candidates(
                         limit=top_k_per_category,
                     )
                 )
+        # Q. Why is there a category-level floor before the balanced Top-K?
+        # A. Balancing intentionally prevents behavioral candidates from being
+        #    crowded out by technology-name similarities. Without a minimum
+        #    retrieval relevance, however, it also promotes very remote traits
+        #    into Pass 2 (for example, a generic metric improvement becoming a
+        #    learning trait). This is a retrieval-quality guard, not a skill-name
+        #    rule; Strict Pass 2 remains the final semantic verifier.
+        hits = [
+            hit
+            for hit in hits
+            if _passes_retrieval_similarity_floor(hit)
+        ]
+        if final_top_k is not None:
+            hits = _select_category_balanced_hits(hits, limit=final_top_k)
         chunks.append(
             ChunkRetrieval(
                 source_kind=extracted_chunk.source_kind,
@@ -652,6 +843,14 @@ _STRICT_TECHNICAL_PASS2_SYSTEM_PROMPT = """당신은 사용자 보유 기술 스
 프레임워크를 추론하지 마세요. 관련 있어 보인다는 이유만으로 선택하지 마세요.
 evidence는 반드시 원문의 연속된 문구를 그대로 복사하세요. 목록에 없는 skill_id를
 만들지 말고, 직접 명시된 후보가 없으면 빈 배열을 반환하세요.
+"""
+
+_STRICT_EXPERIENCE_PASS2_SYSTEM_PROMPT = """당신은 사용자가 실제로 완료한 직무·프로젝트·
+역할 경험의 엄격한 검증기입니다. 제공된 EXPERIENCE 후보 중 원문에 사용자가 직접 수행한
+업무, 프로젝트, 역할 또는 완료 성과가 구체적으로 나타난 후보만 반환하세요. 단순 관심,
+교육 과정명, 회사 요구사항, 미래 포부, 기술 키워드만 있는 문장은 경험 보유 근거가 아닙니다.
+목록에 없는 skill_id를 만들지 말고 evidence는 원문의 연속된 완료 행동을 그대로 복사하세요.
+직접 수행한 경험이 없으면 빈 배열을 반환하세요.
 """
 
 _BEHAVIORAL_DIRECTNESS_SYSTEM_PROMPT = """당신은 행동 특성의 직접 행동 근거를
@@ -957,6 +1156,49 @@ def verify_retrieval_with_pass2(
                     for item in technical_parsed.verified
                 )
 
+            experience_chunk = chunk.model_copy(
+                update={
+                    "candidates": [
+                        hit
+                        for hit in chunk.candidates
+                        if hit.category is SkillCategory.EXPERIENCE
+                    ]
+                }
+            )
+            if experience_chunk.candidates:
+                experience_response = api_client.responses.parse(
+                    model=SKILL_EXTRACTION_MODEL,
+                    input=[
+                        {
+                            "role": "system",
+                            "content": _STRICT_EXPERIENCE_PASS2_SYSTEM_PROMPT,
+                        },
+                        {
+                            "role": "user",
+                            "content": _pass2_prompt(
+                                experience_chunk,
+                                strict=True,
+                            ),
+                        },
+                    ],
+                    text_format=Pass2Response,
+                )
+                experience_parsed = experience_response.output_parsed
+                if not isinstance(experience_parsed, Pass2Response):
+                    experience_parsed = Pass2Response.model_validate(
+                        experience_parsed
+                    )
+                strict_selections.extend(
+                    StrictPass2Selection(
+                        skill_id=item.skill_id,
+                        evidence=item.evidence,
+                        observable_action=None,
+                        verification_basis="OBSERVABLE_COMPLETED_ACTION",
+                        level=item.level,
+                    )
+                    for item in experience_parsed.verified
+                )
+
             behavioral_chunk = chunk.model_copy(
                 update={
                     "candidates": [
@@ -1062,6 +1304,7 @@ def verify_retrieval_with_pass2(
         context_ids: list[int] = []
         behavioral_generic_ids: list[int] = []
         observable_action_ids: list[int] = []
+        incomplete_action_ids: list[int] = []
         seen_ids: set[int] = set()
         for selected in parsed.verified:
             if selected.skill_id in seen_ids:
@@ -1100,6 +1343,17 @@ def verify_retrieval_with_pass2(
                 ):
                     observable_action_ids.append(selected.skill_id)
                     continue
+            if (
+                strict
+                and hit.category is SkillCategory.EXPERIENCE
+                and (
+                    selected.verification_basis
+                    != "OBSERVABLE_COMPLETED_ACTION"
+                    or not _COMPLETED_ACTION_PATTERN.search(evidence)
+                )
+            ):
+                incomplete_action_ids.append(selected.skill_id)
+                continue
             if (
                 strict
                 and chunk.context_type == "CERTIFICATION"
@@ -1176,6 +1430,7 @@ def verify_retrieval_with_pass2(
                     behavioral_directness_ids
                 ),
                 rejected_observable_action_ids=observable_action_ids,
+                rejected_incomplete_action_ids=incomplete_action_ids,
             )
         )
     return Pass2PreviewReport(

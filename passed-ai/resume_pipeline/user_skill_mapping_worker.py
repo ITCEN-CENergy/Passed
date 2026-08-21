@@ -236,8 +236,10 @@ def _level_and_confidence(
     if category is SkillCategory.CERTIFICATION:
         return 1, 1.0
     if category is SkillCategory.BEHAVIORAL_TRAIT:
-        level = min(3, count)
-        return level, min(1.0, round(0.60 + 0.15 * count, 3))
+        # Q. 근거가 여러 개면 성향 level도 올라가야 하지 않나요?
+        # A. 성향은 숙련도가 아니라 관찰된 행동 특성의 보유 여부만 사용합니다. 1은
+        #    DB 호환값이고, confidence만 여러 직접 근거의 일관성을 표현합니다.
+        return 1, min(1.0, round(0.60 + 0.15 * count, 3))
 
     level = max(evidence.extracted_level for evidence in evidences)
     source_bonus = 0.10 if len({item.source_kind for item in evidences}) > 1 else 0.0
@@ -297,6 +299,84 @@ def build_user_skill_mapping_report(
         skills=aggregate_mapped_evidences(mapped),
         unmapped=unmapped,
         extraction_failures=extraction.failures,
+    )
+
+
+def merge_verified_pass2_skills(
+    extraction: SkillExtractionReport,
+    pass1_mapping: UserSkillMappingReport,
+    pass2: Any,
+) -> UserSkillMappingReport:
+    """Strict Pass 2가 승인한 마스터 후보를 Pass 1 근거와 skill_id로 병합한다."""
+    context_by_chunk = {
+        (chunk.source_kind, chunk.chunk_id): chunk.context_type
+        for chunk in extraction.chunks
+    }
+    mapped = [
+        evidence
+        for skill in pass1_mapping.skills
+        for evidence in skill.evidences
+    ]
+    recovered_keys: set[tuple[str, int, str, str]] = set()
+    for chunk in pass2.chunks:
+        for verified in chunk.verified:
+            level = (
+                1
+                if verified.category
+                in {
+                    SkillCategory.BEHAVIORAL_TRAIT,
+                    SkillCategory.CERTIFICATION,
+                }
+                else verified.level
+            )
+            similarity = max(0.0, min(1.0, verified.retrieval_similarity))
+            mapped.append(
+                MappedEvidence(
+                    skill_id=verified.skill_id,
+                    skill_name=verified.name,
+                    category=verified.category,
+                    source_kind=chunk.source_kind,
+                    chunk_id=chunk.chunk_id,
+                    context_type=context_by_chunk[
+                        (chunk.source_kind, chunk.chunk_id)
+                    ],
+                    content_hash=chunk.content_hash,
+                    extracted_name=verified.name,
+                    evidence=verified.evidence,
+                    extracted_level=level,
+                    mapping_method=MappingMethod.EMBEDDING,
+                    mapping_similarity=similarity,
+                    mapping_confidence=similarity,
+                )
+            )
+            recovered_keys.add(
+                (
+                    chunk.source_kind,
+                    chunk.chunk_id,
+                    verified.category.value,
+                    _normalize_evidence(verified.evidence),
+                )
+            )
+
+    # Q. Pass 2로 복구된 문장을 unmapped에도 남기면 안 되나요?
+    # A. 같은 카테고리·같은 근거가 마스터로 복구됐으면 실패 통계가 이중 집계됩니다.
+    #    다른 후보나 다른 문장의 진짜 미매핑은 그대로 보존합니다.
+    remaining_unmapped = [
+        item
+        for item in pass1_mapping.unmapped
+        if (
+            item.source_kind,
+            item.chunk_id,
+            item.category.value,
+            _normalize_evidence(item.evidence),
+        )
+        not in recovered_keys
+    ]
+    return pass1_mapping.model_copy(
+        update={
+            "skills": aggregate_mapped_evidences(mapped),
+            "unmapped": remaining_unmapped,
+        }
     )
 
 

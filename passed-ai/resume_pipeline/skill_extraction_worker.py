@@ -21,6 +21,8 @@ from .skill_extraction_models import (
     ExtractableChunk,
     ExtractedChunkSkills,
     FailedChunkExtraction,
+    CoverLetterSkillExtractionResponse,
+    ResumeSkillExtractionResponse,
     SkillCandidate,
     SkillCategory,
     SkillExtractionReport,
@@ -261,6 +263,14 @@ def create_skill_extraction_client() -> Any:
     )
 
 
+def _response_model_for(chunk: ExtractableChunk) -> type[SkillExtractionResponse]:
+    if chunk.source_kind == "RESUME":
+        return ResumeSkillExtractionResponse
+    if chunk.source_kind == "COVER_LETTER":
+        return CoverLetterSkillExtractionResponse
+    raise ValueError(f"지원하지 않는 문서 종류입니다: {chunk.source_kind}")
+
+
 def _request_structured_extraction(client: Any, chunk: ExtractableChunk) -> Any:
     import openai
 
@@ -271,7 +281,7 @@ def _request_structured_extraction(client: Any, chunk: ExtractableChunk) -> Any:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": build_user_prompt(chunk)},
             ],
-            text_format=SkillExtractionResponse,
+            text_format=_response_model_for(chunk),
         )
     except (
         openai.RateLimitError,
@@ -284,9 +294,10 @@ def _request_structured_extraction(client: Any, chunk: ExtractableChunk) -> Any:
 
 def _validated_candidates(
     chunk: ExtractableChunk,
-    response: SkillExtractionResponse,
+    response: SkillExtractionResponse | CoverLetterSkillExtractionResponse,
     *,
     disabled_recovery_rules: frozenset[str] = frozenset(),
+    enable_recovery_rules: bool = False,
 ) -> list[SkillCandidate]:
     """원문 evidence가 있는 후보만 남기고 미래 포부와 중복을 제거한다."""
     result: list[SkillCandidate] = []
@@ -339,18 +350,22 @@ def _validated_candidates(
         seen.add(key)
         result.append(candidate)
 
-    for candidate in _explicit_completed_candidates(
-        chunk,
-        disabled_recovery_rules=disabled_recovery_rules,
-    ):
-        key = (
-            " ".join(candidate.extracted_name.casefold().split()),
-            candidate.category.value,
-        )
-        if key in seen:
-            continue
-        seen.add(key)
-        result.append(candidate)
+    # Q. 기존 deterministic recovery를 왜 삭제하지 않고 호출만 끄나요?
+    # A. 저장 경로에서는 사용하지 않되, 기존 baseline을 재현할 수 있도록 코드는 잠시
+    #    보존합니다. 새 Pass 1 + Retrieval Pass 2 회귀가 끝나면 규칙 자체를 제거합니다.
+    if enable_recovery_rules:
+        for candidate in _explicit_completed_candidates(
+            chunk,
+            disabled_recovery_rules=disabled_recovery_rules,
+        ):
+            key = (
+                " ".join(candidate.extracted_name.casefold().split()),
+                candidate.category.value,
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append(candidate)
     return result
 
 
@@ -359,6 +374,7 @@ def extract_chunk_candidates(
     *,
     client: Any | None = None,
     disabled_recovery_rules: frozenset[str] = frozenset(),
+    enable_recovery_rules: bool = False,
 ) -> list[SkillCandidate]:
     """청크 한 건을 최대 3회 재시도해 검증된 후보 목록으로 반환한다."""
     api_client = client or create_skill_extraction_client()
@@ -375,12 +391,16 @@ def extract_chunk_candidates(
         raise InvalidSkillExtractionResponse(
             f"구조화된 output_parsed가 없습니다: chunk_id={chunk.chunk_id}"
         )
-    if not isinstance(parsed, SkillExtractionResponse):
-        parsed = SkillExtractionResponse.model_validate(parsed)
+    response_model = _response_model_for(chunk)
+    if not isinstance(parsed, response_model):
+        parsed = response_model.model_validate(
+            parsed.model_dump() if hasattr(parsed, "model_dump") else parsed
+        )
     return _validated_candidates(
         chunk,
         parsed,
         disabled_recovery_rules=disabled_recovery_rules,
+        enable_recovery_rules=enable_recovery_rules,
     )
 
 

@@ -124,8 +124,10 @@ public class UserSkillPreferenceService {
             if (level < 1 || level > 3) {
                 throw invalid("Skill level must be between 1 and 3");
             }
-            if (userSkill.getSkill().getCategory() == SkillCategory.CERTIFICATION && level != 1) {
-                throw invalid("Certification level must be 1");
+            if ((userSkill.getSkill().getCategory() == SkillCategory.CERTIFICATION
+                    || userSkill.getSkill().getCategory() == SkillCategory.BEHAVIORAL_TRAIT)
+                    && level != 1) {
+                throw invalid("Certification and behavioral trait levels must be 1");
             }
         }
     }

@@ -2,7 +2,12 @@
 
 > "취업 준비부터 역량 성장까지 함께하는 AI 커리어 코칭 플랫폼"
 
-<img width="100%" alt="프로젝트 대표 이미지" src="[이미지 URL]" />
+<table>
+  <tr>
+    <td width="50%"><img width="100%" alt="Passed 프로젝트 대표 이미지 1" src="./passed-frontend/public/result_img/randing1.png" /></td>
+    <td width="50%"><img width="100%" alt="Passed 프로젝트 대표 이미지 2" src="./passed-frontend/public/result_img/randing2.png" /></td>
+  </tr>
+</table>
 
 ## 목차
 
@@ -691,32 +696,66 @@ src/main/resources/db/migration/
 
 ## 10. 시연 화면
 
-### [기능 1]
+### 사용자 관련
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>회원가입</strong><br><img width="100%" alt="회원가입 화면" src="./passed-frontend/public/result_img/signup.png" /></td>
+    <td width="50%" align="center"><strong>로그인</strong><br><img width="100%" alt="로그인 화면" src="./passed-frontend/public/result_img/login.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>관심 직무 선택</strong><br><img width="100%" alt="관심 직무 선택 화면" src="./passed-frontend/public/result_img/job_select.png" /></td>
+    <td width="50%" align="center"><strong>이력서 작성</strong><br><img width="100%" alt="이력서 작성 화면" src="./passed-frontend/public/result_img/resume_write.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>기본 자기소개서 작성</strong><br><img width="100%" alt="기본 자기소개서 작성 화면" src="./passed-frontend/public/result_img/base_cover_letter_write.png" /></td>
+    <td width="50%" align="center"><strong>보유 역량 등록</strong><br><img width="100%" alt="사용자 보유 역량 등록 화면" src="./passed-frontend/public/result_img/user_skill_create.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 1 시연]" src="[GIF URL]" />
+### 공고 추천
 
-<br>
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>맞춤 공고 추천</strong><br><img width="100%" alt="맞춤 채용공고 추천 화면" src="./passed-frontend/public/result_img/main_recommendation.png" /></td>
+    <td width="50%" align="center"><strong>역량 진단 리포트</strong><br><img width="100%" alt="역량 진단 결과 리포트 화면" src="./passed-frontend/public/result_img/result_report.png" /></td>
+  </tr>
+</table>
 
-### [기능 2]
+### 공고 검색 및 조회
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>채용공고 검색</strong><br><img width="100%" alt="채용공고 검색 화면" src="./passed-frontend/public/result_img/job_posting_search.png" /></td>
+    <td width="50%" align="center"><strong>채용공고 상세 조회 1</strong><br><img width="100%" alt="채용공고 상세 조회 화면 1" src="./passed-frontend/public/result_img/job_posting_detail.png" /></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><strong>채용공고 상세 조회 2</strong><br><img width="100%" alt="채용공고 상세 조회 화면 2" src="./passed-frontend/public/result_img/job_posting_detail2.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 2 시연]" src="[GIF URL]" />
+### 학습 로드맵
 
-<br>
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>로드맵 공고 바구니</strong><br><img width="100%" alt="학습 로드맵 채용공고 바구니 화면" src="./passed-frontend/public/result_img/roadmap_job_posting_basket.png" /></td>
+    <td width="50%" align="center"><strong>학습 로드맵</strong><br><img width="100%" alt="학습 로드맵 메인 화면" src="./passed-frontend/public/result_img/roadmap_main.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>마일스톤 학습</strong><br><img width="100%" alt="학습 로드맵 마일스톤 화면" src="./passed-frontend/public/result_img/roadmap_milestone.png" /></td>
+    <td width="50%" align="center"><strong>로드맵 재계획</strong><br><img width="100%" alt="학습 로드맵 재계획 화면" src="./passed-frontend/public/result_img/roadmap_replan.png" /></td>
+  </tr>
+</table>
 
-### [기능 3]
+### 자기소개서 첨삭
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>AI 자기소개서 작성</strong><br><img width="100%" alt="AI 자기소개서 작성 화면" src="./passed-frontend/public/result_img/ai_cover_letter_write.png" /></td>
+    <td width="50%" align="center"><strong>AI 자기소개서 피드백</strong><br><img width="100%" alt="AI 자기소개서 피드백 화면" src="./passed-frontend/public/result_img/ai_cover_letter_feedback.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 3 시연]" src="[GIF URL]" />
+### 공고 등록
 
-<br>
-
-### [기능 4]
-
-> [기능에 대한 간단한 설명]
-
-<img width="100%" alt="[기능 4 시연]" src="[GIF URL]" />
+<img width="100%" alt="채용공고 등록 화면" src="./passed-frontend/public/result_img/job_posting_write.png" />

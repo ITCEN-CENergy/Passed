@@ -709,41 +709,50 @@ src/main/resources/db/migration/
 
 ## 10. 시연 화면
 
-### 사용자 관련
+### 인증 관련
 
 <table>
   <tr>
     <td width="50%" align="center"><strong>회원가입</strong><br><img width="100%" alt="회원가입 화면" src="./passed-frontend/public/result_img/signup.png" /></td>
     <td width="50%" align="center"><strong>로그인</strong><br><img width="100%" alt="로그인 화면" src="./passed-frontend/public/result_img/login.png" /></td>
   </tr>
+</table>
+
+### 사용자 정보 입력 및 스킬 추출
+
+<table>
   <tr>
     <td width="50%" align="center"><strong>관심 직무 선택</strong><br><img width="100%" alt="관심 직무 선택 화면" src="./passed-frontend/public/result_img/job_select.png" /></td>
     <td width="50%" align="center"><strong>이력서 작성</strong><br><img width="100%" alt="이력서 작성 화면" src="./passed-frontend/public/result_img/resume_write.png" /></td>
   </tr>
   <tr>
     <td width="50%" align="center"><strong>기본 자기소개서 작성</strong><br><img width="100%" alt="기본 자기소개서 작성 화면" src="./passed-frontend/public/result_img/base_cover_letter_write.png" /></td>
-    <td width="50%" align="center"><strong>보유 역량 등록</strong><br><img width="100%" alt="사용자 보유 역량 등록 화면" src="./passed-frontend/public/result_img/user_skill_create.png" /></td>
+    <td width="50%" align="center"><strong>사용자 스킬 추출</strong><br><img width="100%" alt="사용자 스킬 추출 화면" src="./passed-frontend/public/result_img/user_skill_create.png" /></td>
   </tr>
 </table>
 
-### 공고 추천
+### 채용공고 추천
 
 <table>
   <tr>
     <td width="50%" align="center"><strong>맞춤 공고 추천</strong><br><img width="100%" alt="맞춤 채용공고 추천 화면" src="./passed-frontend/public/result_img/main_recommendation.png" /></td>
-    <td width="50%" align="center"><strong>역량 진단 리포트</strong><br><img width="100%" alt="역량 진단 결과 리포트 화면" src="./passed-frontend/public/result_img/result_report.png" /></td>
+    <td width="50%" align="center"><strong>적합도 분석</strong><br><img width="100%" alt="채용공고 적합도 분석 화면" src="./passed-frontend/public/result_img/result_report.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>적합도 분석 1</strong><br><img width="100%" alt="채용공고 적합도 분석 화면 1" src="./passed-frontend/public/result_img/result_report2.png" /></td>
+    <td width="50%" align="center"><strong>적합도 분석 2</strong><br><img width="100%" alt="채용공고 적합도 분석 화면 2" src="./passed-frontend/public/result_img/result_report3.png" /></td>
   </tr>
 </table>
 
-### 공고 검색 및 조회
+### 채용공고 검색 및 조회
 
 <table>
   <tr>
-    <td width="50%" align="center"><strong>채용공고 검색</strong><br><img width="100%" alt="채용공고 검색 화면" src="./passed-frontend/public/result_img/job_posting_search.png" /></td>
-    <td width="50%" align="center"><strong>채용공고 상세 조회 1</strong><br><img width="100%" alt="채용공고 상세 조회 화면 1" src="./passed-frontend/public/result_img/job_posting_detail.png" /></td>
+    <td colspan="2" align="center"><strong>채용공고 검색</strong><br><img width="100%" alt="채용공고 검색 화면" src="./passed-frontend/public/result_img/job_posting_search.png" /></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><strong>채용공고 상세 조회 2</strong><br><img width="100%" alt="채용공고 상세 조회 화면 2" src="./passed-frontend/public/result_img/job_posting_detail2.png" /></td>
+    <td width="50%" align="center"><strong>채용공고 상세 조회 1</strong><br><img width="100%" alt="채용공고 상세 조회 화면 1" src="./passed-frontend/public/result_img/job_posting_detail.png" /></td>
+    <td width="50%" align="center"><strong>채용공고 상세 조회 2</strong><br><img width="100%" alt="채용공고 상세 조회 화면 2" src="./passed-frontend/public/result_img/job_posting_detail2.png" /></td>
   </tr>
 </table>
 
@@ -769,6 +778,6 @@ src/main/resources/db/migration/
   </tr>
 </table>
 
-### 공고 등록
+### 채용공고 등록
 
 <img width="100%" alt="채용공고 등록 화면" src="./passed-frontend/public/result_img/job_posting_write.png" />

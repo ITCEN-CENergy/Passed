@@ -1,7 +1,9 @@
 package com.cenergy.passed_backend.domain.recommendation.ai.config;
 
 import com.cenergy.passed_backend.domain.recommendation.ai.client.HttpRecommendationExplanationClient;
+import com.cenergy.passed_backend.domain.recommendation.ai.client.HttpRecommendationSkillVerificationClient;
 import com.cenergy.passed_backend.domain.recommendation.application.RecommendationExplanationClient;
+import com.cenergy.passed_backend.domain.recommendation.application.RecommendationSkillVerificationClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,17 @@ public class RecommendationAiConfiguration {
     RecommendationExplanationClient recommendationExplanationClient(
             RecommendationAiProperties properties
     ) {
+        return new HttpRecommendationExplanationClient(restClient(properties));
+    }
+
+    @Bean
+    RecommendationSkillVerificationClient recommendationSkillVerificationClient(
+            RecommendationAiProperties properties
+    ) {
+        return new HttpRecommendationSkillVerificationClient(restClient(properties));
+    }
+
+    private RestClient restClient(RecommendationAiProperties properties) {
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofMillis(properties.connectTimeoutMillis()))
@@ -26,10 +39,9 @@ public class RecommendationAiConfiguration {
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
         requestFactory.setReadTimeout(Duration.ofMillis(properties.readTimeoutMillis()));
 
-        RestClient restClient = RestClient.builder()
+        return RestClient.builder()
                 .baseUrl(properties.baseUrl().toString())
                 .requestFactory(requestFactory)
                 .build();
-        return new HttpRecommendationExplanationClient(restClient);
     }
 }

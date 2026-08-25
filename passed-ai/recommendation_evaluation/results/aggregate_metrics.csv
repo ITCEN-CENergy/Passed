@@ -1,0 +1,9 @@
+﻿variant,metric,metric_name,value,profile_count,candidate_pair_count
+개선 전,precision_at_10,추천 정확도 (Precision@10),0.4,10,300
+개선 전,ndcg_at_10,순위 품질 (NDCG@10),0.4194,10,300
+개선 전,over_recommendation_rate_at_10,과대 추천률@10,0.6,10,300
+개선 전,recall_at_10,적합 공고 회수율 (Recall@10),0.25,10,300
+개선 후,precision_at_10,추천 정확도 (Precision@10),0.88,10,300
+개선 후,ndcg_at_10,순위 품질 (NDCG@10),0.8854,10,300
+개선 후,over_recommendation_rate_at_10,과대 추천률@10,0.02,10,300
+개선 후,recall_at_10,적합 공고 회수율 (Recall@10),0.55,10,300

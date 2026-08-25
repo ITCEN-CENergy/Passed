@@ -13,6 +13,7 @@ public class RecommendationOneService {
     private final RecommendationRunStartService runStartService;
     private final RecommendationCandidateLoader candidateLoader;
     private final RequiredSkillEvaluator requiredSkillEvaluator;
+    private final RecommendationSkillVerificationService skillVerificationService;
     private final RecommendationDetailedEvaluationService detailedEvaluationService;
     private final RecommendationGradeResolver gradeResolver;
     private final RecommendationExplanationService explanationService;
@@ -24,6 +25,7 @@ public class RecommendationOneService {
             RecommendationRunStartService runStartService,
             RecommendationCandidateLoader candidateLoader,
             RequiredSkillEvaluator requiredSkillEvaluator,
+            RecommendationSkillVerificationService skillVerificationService,
             RecommendationDetailedEvaluationService detailedEvaluationService,
             RecommendationGradeResolver gradeResolver,
             RecommendationExplanationService explanationService,
@@ -34,6 +36,7 @@ public class RecommendationOneService {
         this.runStartService = runStartService;
         this.candidateLoader = candidateLoader;
         this.requiredSkillEvaluator = requiredSkillEvaluator;
+        this.skillVerificationService = skillVerificationService;
         this.detailedEvaluationService = detailedEvaluationService;
         this.gradeResolver = gradeResolver;
         this.explanationService = explanationService;
@@ -50,14 +53,19 @@ public class RecommendationOneService {
         try {
             // 공고의 REQUIRED·PREFERRED·RELATED 스킬과 사용자 스킬의 상세 점수 계산
             PostingSkillBundle postingSkillBundle = candidateLoader.loadByJobPostingId(request.jobPostingId());
+            var effectiveUserSkills = skillVerificationService.enrich(
+                    userId,
+                    java.util.List.of(postingSkillBundle),
+                    context.run().userSkills()
+            );
             RequiredSkillEvaluation evaluation =
-                    requiredSkillEvaluator.evaluate(postingSkillBundle, context.run().userSkills());
+                    requiredSkillEvaluator.evaluate(postingSkillBundle, effectiveUserSkills);
             // 사용자 스킬별 점수 결과 계산
             RecommendationScoreResult score = detailedEvaluationService.evaluate(
                     context.jobPostingId(),
                     postingSkillBundle,
                     evaluation,
-                    context.run().userSkills(),
+                    effectiveUserSkills,
                     context.run().policy()
             );
             // 정책 등급 규칙을 적용하여 공고별 추천 등급 결정

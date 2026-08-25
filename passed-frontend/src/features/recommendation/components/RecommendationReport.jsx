@@ -84,7 +84,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter, ro
     <div className={styles.groupSection}>
       <div className={styles.sectionHeading}>
         <h3>항목별 스킬 매칭률</h3>
-        <p>상세보기를 열어 스킬별 충족 여부를 확인하세요.</p>
+        <p>사용자의 스킬 레벨과 채용공고의 요구 수준을 비교한 분석 결과입니다.</p>
       </div>
       <div className={styles.groupGrid}>
         {report.skillGroups?.map((group) => {
@@ -92,7 +92,7 @@ const RecommendationReport = ({ report, onCreateRoadmap, onReviewCoverLetter, ro
           return (
             <article className={styles.groupCard} key={group.skillType}>
               <div className={styles.chart} style={{ '--rate': `${rate * 3.6}deg` }}>
-                <div><strong>{rate}%</strong><span>{group.ownedCount}/{group.totalCount}개</span></div>
+                <div><strong>{rate}%</strong></div>
               </div>
               <h4>{TYPE_LABELS[group.skillType] ?? group.skillType}</h4>
               <details>

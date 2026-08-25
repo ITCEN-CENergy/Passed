@@ -49,13 +49,14 @@ public class RecommendationPreparationService {
         PreferenceRecommendationRunContext context = runStartService.startForPreference(userId, request);
         try {
             RecommendationCandidateSelectionResult selection = candidateSelectionService.select(
+                    userId,
                     context.jobRoleIds(),
                     context.run().userSkills(),
                     context.run().policy()
             );
             List<RecommendationScoreResult> scores = detailedEvaluationService.evaluateAll(
                     selection,
-                    context.run().userSkills(),
+                    selection.effectiveUserSkills(),
                     context.run().policy()
             );
             List<GradedRecommendation> graded = gradeResolver.resolveAll(

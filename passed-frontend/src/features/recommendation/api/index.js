@@ -30,6 +30,7 @@ function query(params) {
  * @typedef {{skillId:number, skillName:string, owned:boolean, isImportant:boolean, matchRate:number}} SkillMatch
  * @typedef {{skillType:SkillType, levelMatchRate:number, ownedCount:number, totalCount:number, skills:SkillMatch[]}} SkillGroup
  * @typedef {{skillId:number, skillName:string, isImportant:boolean}} HighlightedSkill
+ * @typedef {{runId:number, recommendationType:'MULTIPLE_POSTINGS'|'SINGLE_POSTING', jobRecommendationId:number, rankOrder:number, jobPosting:Object, report:{grade:RecommendationGrade, totalScore:number, reason:string, skillGroups:SkillGroup[], topStrengthSkills:HighlightedSkill[], topGapSkills:HighlightedSkill[]}}} RecommendationDetail
  */
 
 /**
@@ -97,7 +98,7 @@ export const updateUserJobPreference = (payload, { signal } = {}) =>
  * @param {number} recommendationRunId
  * @param {number} jobRecommendationId
  * @param {{signal?:AbortSignal}} options
- * @returns {Promise<{runId:number, jobRecommendationId:number, rankOrder:number, jobPosting:Object, report:{grade:RecommendationGrade, totalScore:number, reason:string, skillGroups:SkillGroup[], topStrengthSkills:HighlightedSkill[], topGapSkills:HighlightedSkill[]}}>}
+ * @returns {Promise<RecommendationDetail>}
  */
 export const getRecommendationDetail = (
   recommendationRunId,

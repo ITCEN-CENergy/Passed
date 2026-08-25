@@ -16,7 +16,7 @@ import java.util.PriorityQueue;
 public class RecommendationTopKSelector {
 
     // 최종 추천 공고 최대 개수
-    public static final int DEFAULT_LIMIT = 12;
+    public static final int DEFAULT_LIMIT = 20;
 
     // 추천 공고 정렬 기준
     // 1. 등급 우선순위 높은 순
@@ -47,7 +47,7 @@ public class RecommendationTopKSelector {
             )
             .thenComparing(value -> value.score().jobPostingId());
 
-    // 기본적으로 상위 12개 추천 공고 선택
+    // 기본적으로 상위 20개 추천 공고 선택
     public List<RankedRecommendation> select(
             Collection<GradedRecommendation> candidates
     ) {

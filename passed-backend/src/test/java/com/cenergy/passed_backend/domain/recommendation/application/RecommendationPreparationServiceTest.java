@@ -89,14 +89,15 @@ class RecommendationPreparationServiceTest {
         );
         RecommendationCandidateSelectionResult selection = new RecommendationCandidateSelectionResult(
                 Map.of(100L, PostingSkillBundle.empty()),
-                Map.of()
+                Map.of(),
+                context.run().userSkills()
         );
         List<RecommendationScoreResult> scores = List.of();
         List<GradedRecommendation> graded = List.of();
         List<RankedRecommendation> ranked = List.of();
         Map<Long, RecommendationExplanation> explanations = Map.of();
         when(runStartService.startForPreference(2L, request)).thenReturn(context);
-        when(candidateSelectionService.select(context.jobRoleIds(), context.run().userSkills(), policy))
+        when(candidateSelectionService.select(2L, context.jobRoleIds(), context.run().userSkills(), policy))
                 .thenReturn(selection);
         when(detailedEvaluationService.evaluateAll(selection, context.run().userSkills(), policy))
                 .thenReturn(scores);
@@ -119,7 +120,7 @@ class RecommendationPreparationServiceTest {
                 persistenceService
         );
         order.verify(runStartService).startForPreference(2L, request);
-        order.verify(candidateSelectionService).select(context.jobRoleIds(), context.run().userSkills(), policy);
+        order.verify(candidateSelectionService).select(2L, context.jobRoleIds(), context.run().userSkills(), policy);
         order.verify(detailedEvaluationService).evaluateAll(selection, context.run().userSkills(), policy);
         order.verify(gradeResolver).resolveAll(scores, context.run().gradeRules());
         order.verify(topKSelector).select(graded);
@@ -146,7 +147,7 @@ class RecommendationPreparationServiceTest {
         );
         RuntimeException failure = new RuntimeException("calculation failed");
         when(runStartService.startForPreference(2L, request)).thenReturn(context);
-        when(candidateSelectionService.select(any(), any(), same(policy))).thenThrow(failure);
+        when(candidateSelectionService.select(eq(2L), any(), any(), same(policy))).thenThrow(failure);
 
         RuntimeException actual = assertThrows(
                 RuntimeException.class,

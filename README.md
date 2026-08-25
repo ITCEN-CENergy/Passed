@@ -296,7 +296,7 @@ docker compose down -v
 
 ## 7. 프로젝트 아키텍처
 
-<img width="100%" alt="프로젝트 아키텍처" src="[프로젝트 아키텍처 이미지 URL]" />
+<img width="100%" alt="Passed 프로젝트 아키텍처" src="./passed-frontend/public/result_img/system_architecture.png" />
 
 ---
 

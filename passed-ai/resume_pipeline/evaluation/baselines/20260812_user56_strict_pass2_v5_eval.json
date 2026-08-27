@@ -1,0 +1,52 @@
+{
+  "evaluated_count": 110,
+  "review_excluded_count": 1,
+  "metric": {
+    "true_positive": 34,
+    "false_positive": 0,
+    "false_negative": 47,
+    "true_negative": 29,
+    "precision": 1.0,
+    "recall": 0.41975308641975306,
+    "f1": 0.5913043478260869,
+    "reject_accuracy": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "by_category": {
+    "TECHNICAL_SKILL": {
+      "true_positive": 32,
+      "false_positive": 0,
+      "false_negative": 37,
+      "true_negative": 23,
+      "precision": 1.0,
+      "recall": 0.463768115942029,
+      "f1": 0.6336633663366337,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    },
+    "BEHAVIORAL_TRAIT": {
+      "true_positive": 2,
+      "false_positive": 0,
+      "false_negative": 10,
+      "true_negative": 6,
+      "precision": 1.0,
+      "recall": 0.16666666666666666,
+      "f1": 0.2857142857142857,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "unknown_prediction_count": 2,
+  "unknown_predictions": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "skill_id": 96
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "skill_id": 1345
+    }
+  ]
+}

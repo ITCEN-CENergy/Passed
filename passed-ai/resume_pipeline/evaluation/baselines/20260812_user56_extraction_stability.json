@@ -1,0 +1,155 @@
+{
+  "run_count": 3,
+  "example_count": 24,
+  "pair_count": 3,
+  "macro_mean_jaccard": 0.6287750262627714,
+  "macro_min_jaccard": 0.0,
+  "corpus_mean_jaccard": 0.5636565285432401,
+  "corpus_min_jaccard": 0.5260869565217391,
+  "examples": [
+    {
+      "example_id": "COVER_LETTER:18:fb69058afb379c236d442981e78e29ff7ea5f7ab4756e767277d1d90f8c091cf",
+      "pair_count": 3,
+      "mean_jaccard": 0.7731481481481483,
+      "min_jaccard": 0.6666666666666666
+    },
+    {
+      "example_id": "COVER_LETTER:19:77426fd9f0ec07b2553183e771a70d0c5bc3370557593ad1f9fcbc0e116e8d47",
+      "pair_count": 3,
+      "mean_jaccard": 0.6424501424501424,
+      "min_jaccard": 0.5
+    },
+    {
+      "example_id": "COVER_LETTER:20:5d67465a26e4b5f3a2957507f174b8d79fd2981f56c61db4d35b7bde4e38a9d7",
+      "pair_count": 3,
+      "mean_jaccard": 0.5111111111111111,
+      "min_jaccard": 0.3333333333333333
+    },
+    {
+      "example_id": "COVER_LETTER:21:8516c6eb274e43bfb452a7a90573ae999355501f6482f681a7aca0293fdf85ce",
+      "pair_count": 3,
+      "mean_jaccard": 0.3333333333333333,
+      "min_jaccard": 0.2
+    },
+    {
+      "example_id": "COVER_LETTER:22:1f69953bc95a5edbd66ec80b0c3d1b3616bec89f2124269216a12ead571dd69a",
+      "pair_count": 3,
+      "mean_jaccard": 1.0,
+      "min_jaccard": 1.0
+    },
+    {
+      "example_id": "COVER_LETTER:23:e0e717b472e95d282ec109f17548c7e907069b17d8e555bdd49884bfef82b75b",
+      "pair_count": 3,
+      "mean_jaccard": 0.7142191142191142,
+      "min_jaccard": 0.6153846153846154
+    },
+    {
+      "example_id": "COVER_LETTER:24:1f0f972b64af06e428c0a0cd7dc52fb0a24dfb9048968d8db9011a1c035b5fe2",
+      "pair_count": 3,
+      "mean_jaccard": 0.49401709401709404,
+      "min_jaccard": 0.4
+    },
+    {
+      "example_id": "COVER_LETTER:25:07ceba8067147a54d80d784f242d0f25a6e43b376cdc31627323224b18e3aa12",
+      "pair_count": 3,
+      "mean_jaccard": 0.8095238095238096,
+      "min_jaccard": 0.7142857142857143
+    },
+    {
+      "example_id": "COVER_LETTER:26:0f1004aacc413dec8357097d0ea0650a3038a211bb05385bd96cae2323f733aa",
+      "pair_count": 3,
+      "mean_jaccard": 0.6666666666666666,
+      "min_jaccard": 0.5
+    },
+    {
+      "example_id": "COVER_LETTER:27:9e64248dbf7b23c4a00c81492dde877acfa1f9f042c28c7395d65b2fefd090e9",
+      "pair_count": 3,
+      "mean_jaccard": 0.5733821733821735,
+      "min_jaccard": 0.5333333333333333
+    },
+    {
+      "example_id": "RESUME:14:9b67774e03570ac7c57bb0c3fe9f6f358cb886eb576b7fa2554213be1a43d864",
+      "pair_count": 3,
+      "mean_jaccard": 1.0,
+      "min_jaccard": 1.0
+    },
+    {
+      "example_id": "RESUME:15:b745819fd078ae289d122f64a3c16b056723bc0f20ca00937a4a1d55014d091c",
+      "pair_count": 3,
+      "mean_jaccard": 0.41498778998779,
+      "min_jaccard": 0.34615384615384615
+    },
+    {
+      "example_id": "RESUME:16:423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+      "pair_count": 3,
+      "mean_jaccard": 0.5925925925925926,
+      "min_jaccard": 0.5
+    },
+    {
+      "example_id": "RESUME:17:12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+      "pair_count": 3,
+      "mean_jaccard": 0.367003367003367,
+      "min_jaccard": 0.2727272727272727
+    },
+    {
+      "example_id": "RESUME:18:2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+      "pair_count": 3,
+      "mean_jaccard": 0.844017094017094,
+      "min_jaccard": 0.7692307692307693
+    },
+    {
+      "example_id": "RESUME:19:9ff68219aa8123e8fff695e1fe0e6e4a84f4773901e71d8511c99e86b87fc80f",
+      "pair_count": 3,
+      "mean_jaccard": 1.0,
+      "min_jaccard": 1.0
+    },
+    {
+      "example_id": "RESUME:20:b7c1a764eecdbeba94d732939dd1f69598aa507d611459969081870adf5f3326",
+      "pair_count": 3,
+      "mean_jaccard": 0.3333333333333333,
+      "min_jaccard": 0.0
+    },
+    {
+      "example_id": "RESUME:21:4ef48099e6fa02bca976ad2ad8e3f5b38322a37d2fdd2bc3b5dfe36759d85845",
+      "pair_count": 3,
+      "mean_jaccard": 1.0,
+      "min_jaccard": 1.0
+    },
+    {
+      "example_id": "RESUME:22:1b9a9a8ad1853da98afdeb3514b5c0564970d8f49e34ea622508ac411f7d2bf3",
+      "pair_count": 3,
+      "mean_jaccard": 0.3678571428571429,
+      "min_jaccard": 0.3
+    },
+    {
+      "example_id": "RESUME:23:769505c990260dbdd59e9eb1d5babdc0fee71e52c1d94db046fa546ae927ecab",
+      "pair_count": 3,
+      "mean_jaccard": 0.4444444444444444,
+      "min_jaccard": 0.3333333333333333
+    },
+    {
+      "example_id": "RESUME:24:422739e7533e6544dda90bffc5a02d82ea0fcd4b693f60eb563a8abe6941087c",
+      "pair_count": 3,
+      "mean_jaccard": 0.5287892934951758,
+      "min_jaccard": 0.3888888888888889
+    },
+    {
+      "example_id": "RESUME:25:03ece0f04e2b0bacfd96304c7d668b2fd9674088f4c023de8154e8514fd89435",
+      "pair_count": 3,
+      "mean_jaccard": 0.33797313797313794,
+      "min_jaccard": 0.26666666666666666
+    },
+    {
+      "example_id": "RESUME:26:49a009f8a102fef202fffe9b56a72a378eaa8f38ec196ed71b8e63592345f31e",
+      "pair_count": 3,
+      "mean_jaccard": 0.46296296296296297,
+      "min_jaccard": 0.3333333333333333
+    },
+    {
+      "example_id": "RESUME:27:889a693dcecd763fecf8dcb94f0c73b2c42c3190916a32b76326759b459d5595",
+      "pair_count": 3,
+      "mean_jaccard": 0.8787878787878789,
+      "min_jaccard": 0.8181818181818182
+    }
+  ]
+}

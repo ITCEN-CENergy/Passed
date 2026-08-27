@@ -1,0 +1,6 @@
+[
+  {"source_kind":"RESUME","chunk_id":17,"skill_id":108,"expected":"ACCEPT","reason":"원문에 LLM API가 직접 명시되고 응답 데이터 분석 수행이 확인됨"},
+  {"source_kind":"RESUME","chunk_id":24,"skill_id":16,"expected":"ACCEPT","reason":"원문에 AWS가 직접 명시되고 클라우드 환경 배포가 확인됨"},
+  {"source_kind":"RESUME","chunk_id":26,"skill_id":1330,"expected":"ACCEPT","reason":"체크리스트와 테스트 케이스로 예외 상황을 꼼꼼하게 확인한 행동이 직접 명시됨"},
+  {"source_kind":"RESUME","chunk_id":27,"skill_id":339,"expected":"ACCEPT","reason":"보안 기준 적용과 정보보호 점검 결과 문서화가 직접 명시됨"}
+]

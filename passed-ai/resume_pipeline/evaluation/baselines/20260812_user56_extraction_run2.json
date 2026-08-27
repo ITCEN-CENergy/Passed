@@ -1,0 +1,1297 @@
+{
+  "user_id": 56,
+  "model": "gpt-4o-mini",
+  "chunks": [
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 14,
+      "context_type": "EDUCATION",
+      "content_hash": "9b67774e03570ac7c57bb0c3fe9f6f358cb886eb576b7fa2554213be1a43d864",
+      "skills": [
+        {
+          "extracted_name": "컴퓨터공학",
+          "category": "EXPERIENCE",
+          "level": 1,
+          "evidence": "전공: 컴퓨터공학"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "context_type": "EXPERIENCE",
+      "content_hash": "b745819fd078ae289d122f64a3c16b056723bc0f20ca00937a4a1d55014d091c",
+      "skills": [
+        {
+          "extracted_name": "백엔드 API 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "상용 콘텐츠 생성 AI 서비스의 백엔드 API를 개발하고 운영했습니다."
+        },
+        {
+          "extracted_name": "OpenAI LLM API 연동",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "OpenAI LLM API를 연동하여 상용 서비스 기능으로 구현했습니다."
+        },
+        {
+          "extracted_name": "RAG 파이프라인 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "사내 문서를 기반으로 RAG 파이프라인과 문서 검색 기능을 개발하고,"
+        },
+        {
+          "extracted_name": "문서 검색 기능 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "사내 문서를 기반으로 RAG 파이프라인과 문서 검색 기능을 개발하고,"
+        },
+        {
+          "extracted_name": "AWS 배포",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS 클라우드 환경에 기능을 배포하고 서비스 상태와 LLM API 오류를 모니터링했습니다."
+        },
+        {
+          "extracted_name": "응답 지연 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스 로그와 요청 데이터를 분석해 응답 지연과 호출 실패의 원인을 추적하고,"
+        },
+        {
+          "extracted_name": "성능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트 길이와 반복 임베딩을 줄여 성능·비용·안정성을 개선했습니다."
+        },
+        {
+          "extracted_name": "기능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석해 검색 기준과 콘텐츠 생성 기능을 개선했습니다."
+        },
+        {
+          "extracted_name": "업무 문서 작성",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "요구사항, API 명세, 기술적 결정, 장애 원인과 재발 방지 대책을 업무 문서로 작성하고 팀원들과 공유했습니다."
+        },
+        {
+          "extracted_name": "정보보호 관리",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 API 키와 민감정보를 환경변수로 관리했습니다."
+        },
+        {
+          "extracted_name": "개인정보 처리 필터 적용",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보가 외부 LLM에 전달되지 않도록 개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "콘텐츠 생성",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "담당 업무: TypeScript와 JavaScript를 사용하여 상용 콘텐츠 생성 AI 서비스의 백엔드 API를 개발하고 운영했습니다."
+        },
+        {
+          "extracted_name": "콘텐츠 생성 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "담당 업무: TypeScript와 JavaScript를 사용하여 상용 콘텐츠 생성 AI 서비스의 백엔드 API를 개발하고 운영했습니다."
+        },
+        {
+          "extracted_name": "LLM",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "경력 설명: LLM을 활용한 생성형 AI 기능을 설계하고 OpenAI LLM API를 연동하여 상용 서비스 기능으로 구현했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS 클라우드 환경에 기능을 배포하고 서비스 상태와 LLM API 오류를 모니터링했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석해 검색 기준과 콘텐츠 생성 기능을 개선했습니다."
+        },
+        {
+          "extracted_name": "장애 재발 방지",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "요구사항, API 명세, 기술적 결정, 장애 원인과 재발 방지 대책을 업무 문서로 작성하고 팀원들과 공유했습니다."
+        },
+        {
+          "extracted_name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 API 키와 민감정보를 환경변수로 관리했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 API 키와 민감정보를 환경변수로 관리했습니다."
+        },
+        {
+          "extracted_name": "정보보호 의식",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 API 키와 민감정보를 환경변수로 관리했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "context_type": "ACTIVITY",
+      "content_hash": "423c2d130906ee3f3c63f8812567771bf24f48ea5072f227ed1b9cdb98a00480",
+      "skills": [
+        {
+          "extracted_name": "콘텐츠 생성 플랫폼 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다."
+        },
+        {
+          "extracted_name": "JavaScript",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "TypeScript",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "머신러닝",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "클라우드 컴퓨팅",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다."
+        },
+        {
+          "extracted_name": "OpenAI LLM API 연동",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "사용자가 주제를 입력하면 관련 내부 문서를 검색하고 참고 자료를 기반으로 콘텐츠를 생성하도록 OpenAI LLM API와 API 서버를 연동했습니다."
+        },
+        {
+          "extracted_name": "RAG 파이프라인 설계",
+          "category": "TECHNICAL_SKILL",
+          "level": 3,
+          "evidence": "RAG 파이프라인을 설계하여 문서를 청킹하고 임베딩한 뒤 Vector DB에서 관련 데이터를 검색하도록 구현했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 설계",
+          "category": "TECHNICAL_SKILL",
+          "level": 3,
+          "evidence": "검색 결과와 사용자 질문을 조합한 프롬프트를 설계하고 프롬프트별 결과를 비교했습니다."
+        },
+        {
+          "extracted_name": "가드레일 적용",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "검색 결과가 부족한 경우 답변 생성을 제한하는 가드레일과 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "골든셋 평가",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다."
+        },
+        {
+          "extracted_name": "문서화",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "역할 분담, 기술 선택 이유, API 명세와 프롬프트 변경 이력을 문서화하여 팀원들과 공유했습니다."
+        },
+        {
+          "extracted_name": "콘텐츠 생성",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "활동 내용: 생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다."
+        },
+        {
+          "extracted_name": "콘텐츠 생성 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "활동 내용: 생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다."
+        },
+        {
+          "extracted_name": "우선순위 설정",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "context_type": "ACTIVITY",
+      "content_hash": "12068cfaf6e1fa4f82fd13e88f2cdb1ae7936493f200bdba2880af91433449de",
+      "skills": [
+        {
+          "extracted_name": "장애 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다."
+        },
+        {
+          "extracted_name": "성능 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AI 서비스 장애 분석 및 성능 개선 프로젝트에서 콘텐츠 생성 응답 시간이 증가하고 일부 요청이 실패하는 문제를 해결했습니다."
+        },
+        {
+          "extracted_name": "서비스 로그 분석",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "서비스 로그와 LLM API 응답 데이터를 분석하여 동일 문서의 반복 임베딩과 불필요하게 긴 프롬프트가 원인임을 확인했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 개선",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "프롬프트의 불필요한 내용을 제거하여 토큰 사용량과 API 비용을 줄이고 응답 속도를 개선했습니다."
+        },
+        {
+          "extracted_name": "문서화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "장애 원인, 임시 해결 방법, 근본 개선 방법과 재발 방지 내용을 문서화했습니다."
+        },
+        {
+          "extracted_name": "기술 부채 정의",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "중복된 LLM API 호출과 프롬프트 로직을 기술 부채로 정의하고 공통 모듈로 단계적으로 분리했습니다."
+        },
+        {
+          "extracted_name": "장애 재발 방지",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "장애 원인, 임시 해결 방법, 근본 개선 방법과 재발 방지 내용을 문서화했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 18,
+      "context_type": "TRAINING",
+      "content_hash": "2a9a26be6ab5df80efa4da6af288872225003eb989504077e93cf049b09f4b4f",
+      "skills": [
+        {
+          "extracted_name": "LLM API",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API 기반 AI 서비스를 개발하고 임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "Vector DB",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "임베딩과 Vector DB를 이용한 RAG 파이프라인을 구현했습니다."
+        },
+        {
+          "extracted_name": "프롬프트 엔지니어링",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "머신러닝",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "생성형 AI 서비스 설계 및 평가 방법",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다."
+        },
+        {
+          "extracted_name": "Microsoft Azure",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS와 Microsoft Azure Cloud 환경에서 서비스를 배포하고 모니터링했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "입력 검증",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "보안 필터",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        },
+        {
+          "extracted_name": "비용 최적화 방법",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 19,
+      "context_type": "CERTIFICATION",
+      "content_hash": "9ff68219aa8123e8fff695e1fe0e6e4a84f4773901e71d8511c99e86b87fc80f",
+      "skills": [
+        {
+          "extracted_name": "AWS Certified AI Practitioner",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "AWS Certified AI Practitioner"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 20,
+      "context_type": "CERTIFICATION",
+      "content_hash": "b7c1a764eecdbeba94d732939dd1f69598aa507d611459969081870adf5f3326",
+      "skills": [
+        {
+          "extracted_name": "Azure AI Engineer Associate",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "Microsoft Certified: Azure AI Engineer Associate"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 21,
+      "context_type": "CERTIFICATION",
+      "content_hash": "4ef48099e6fa02bca976ad2ad8e3f5b38322a37d2fdd2bc3b5dfe36759d85845",
+      "skills": [
+        {
+          "extracted_name": "빅데이터분석기사",
+          "category": "CERTIFICATION",
+          "level": 1,
+          "evidence": "자격증: 빅데이터분석기사"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 22,
+      "context_type": "AWARD",
+      "content_hash": "1b9a9a8ad1853da98afdeb3514b5c0564970d8f49e34ea622508ac411f7d2bf3",
+      "skills": [
+        {
+          "extracted_name": "LLM API",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고"
+        },
+        {
+          "extracted_name": "RAG",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고"
+        },
+        {
+          "extracted_name": "Vector DB",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고"
+        },
+        {
+          "extracted_name": "콘텐츠 생성 서비스 구현",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "콘텐츠 생성 서비스를 구현하고"
+        },
+        {
+          "extracted_name": "품질 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아"
+        },
+        {
+          "extracted_name": "콘텐츠 생성",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "수상 내용: LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다."
+        },
+        {
+          "extracted_name": "콘텐츠 생성 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "수상 내용: LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 23,
+      "context_type": "LANGUAGE",
+      "content_hash": "769505c990260dbdd59e9eb1d5babdc0fee71e52c1d94db046fa546ae927ecab",
+      "skills": [
+        {
+          "extracted_name": "영어",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "언어: 영어"
+        },
+        {
+          "extracted_name": "BUSINESS",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "수준: BUSINESS"
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 24,
+      "context_type": "ACTIVITY",
+      "content_hash": "422739e7533e6544dda90bffc5a02d82ea0fcd4b693f60eb563a8abe6941087c",
+      "skills": [
+        {
+          "extracted_name": "Python",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python과 FastAPI를 사용하여 AI 챗봇 백엔드 API를 개발했습니다."
+        },
+        {
+          "extracted_name": "FastAPI",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python과 FastAPI를 사용하여 AI 챗봇 백엔드 API를 개발했습니다."
+        },
+        {
+          "extracted_name": "LangChain",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LangChain으로 RAG 파이프라인을 구현하고 문서를 임베딩하여 Vector DB에 저장했습니다."
+        },
+        {
+          "extracted_name": "Vector DB",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "문서를 임베딩하여 Vector DB에 저장했습니다."
+        },
+        {
+          "extracted_name": "OpenAI LLM API",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "OpenAI LLM API를 연동해 근거 기반 답변을 생성했습니다."
+        },
+        {
+          "extracted_name": "Docker",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 FastAPI 서비스를 컨테이너화하고 AWS 클라우드 환경에 기능을 배포했습니다."
+        },
+        {
+          "extracted_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS 클라우드 환경에 기능을 배포했습니다."
+        },
+        {
+          "extracted_name": "상용 서비스 개발 및 운영 경험",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "배포 후 로그와 응답 시간을 모니터링하며 상용 서비스 개발과 운영 절차를 경험했습니다."
+        },
+        {
+          "extracted_name": "AI 챗봇",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "활동 내용: RAG AI 챗봇 프로젝트에서 Python과 FastAPI를 사용하여 AI 챗봇 백엔드 API를 개발했습니다."
+        },
+        {
+          "extracted_name": "AI 챗봇 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "활동 내용: RAG AI 챗봇 프로젝트에서 Python과 FastAPI를 사용하여 AI 챗봇 백엔드 API를 개발했습니다."
+        },
+        {
+          "extracted_name": "LLM",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "문서 검색 결과를 LLM에 전달하고 OpenAI LLM API를 연동해 근거 기반 답변을 생성했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 FastAPI 서비스를 컨테이너화하고 AWS 클라우드 환경에 기능을 배포했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 25,
+      "context_type": "ACTIVITY",
+      "content_hash": "03ece0f04e2b0bacfd96304c7d668b2fd9674088f4c023de8154e8514fd89435",
+      "skills": [
+        {
+          "extracted_name": "채용 공고 추천 서비스",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스 프로젝트에서 사용자의 보유 스킬과 채용 공고의 요구 스킬을 비교하여 개인화된 채용 공고를 제공하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "제품 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석하여 추천 기준과 기능을 개선하고 사용자 피드백 기반 제품 개선을 수행했습니다."
+        },
+        {
+          "extracted_name": "품질 지표 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 결과의 Precision, Recall, F1을 측정하고 품질 지표를 개선했습니다."
+        },
+        {
+          "extracted_name": "테스트 자동화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "기능 변경 사항에 테스트 자동화를 적용하고 팀원들과 코드 리뷰를 진행했습니다."
+        },
+        {
+          "extracted_name": "코드 리뷰",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "팀원들과 코드 리뷰를 진행했습니다."
+        },
+        {
+          "extracted_name": "업무 문서 정리",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "리뷰 결과와 API 명세를 업무 문서로 정리하여 공유하고 협업 효율을 개선했습니다."
+        },
+        {
+          "extracted_name": "추천 서비스",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "활동 내용: 추천 서비스 프로젝트에서 사용자의 보유 스킬과 채용 공고의 요구 스킬을 비교하여 개인화된 채용 공고를 제공하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "추천 서비스 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "활동 내용: 추천 서비스 프로젝트에서 사용자의 보유 스킬과 채용 공고의 요구 스킬을 비교하여 개인화된 채용 공고를 제공하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석하여 추천 기준과 기능을 개선하고 사용자 피드백 기반 제품 개선을 수행했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 26,
+      "context_type": "ACTIVITY",
+      "content_hash": "49a009f8a102fef202fffe9b56a72a378eaa8f38ec196ed71b8e63592345f31e",
+      "skills": [
+        {
+          "extracted_name": "Python",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python 기반 업무 자동화 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "API 제공",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "자동화 기능을 API로 제공하고"
+        },
+        {
+          "extracted_name": "테스트 자동화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "테스트 자동화를 적용하여 입력값과 예외 상황, 기능 변경에 따른 오류를 검증했습니다."
+        },
+        {
+          "extracted_name": "코드 리뷰",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "팀원들과 코드 리뷰를 진행하고"
+        },
+        {
+          "extracted_name": "FastAPI 학습",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "처음 사용한 FastAPI와 LangChain의 공식 문서를 빠르게 학습한 뒤"
+        },
+        {
+          "extracted_name": "LangChain 학습",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "처음 사용한 FastAPI와 LangChain의 공식 문서를 빠르게 학습한 뒤"
+        },
+        {
+          "extracted_name": "업무 문서 작성",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "개선 결과와 운영 방법을 업무 문서로 작성했습니다."
+        },
+        {
+          "extracted_name": "체크리스트 작성",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "배포 전 체크리스트와 테스트 케이스를 작성하여 API 요청과 예외 상황을 꼼꼼하게 확인했습니다."
+        },
+        {
+          "extracted_name": "업무 자동화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "활동 내용: 업무 자동화 프로젝트에서 반복적으로 수행되던 문서 처리 업무를 자동화하기 위해 Python 기반 업무 자동화 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "업무 자동화 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "활동 내용: 업무 자동화 프로젝트에서 반복적으로 수행되던 문서 처리 업무를 자동화하기 위해 Python 기반 업무 자동화 기능을 개발했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 27,
+      "context_type": "ACTIVITY",
+      "content_hash": "889a693dcecd763fecf8dcb94f0c73b2c42c3190916a32b76326759b459d5595",
+      "skills": [
+        {
+          "extracted_name": "멀티모달 앱 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "멀티모달 앱 프로젝트에서 텍스트와 이미지를 함께 입력받아 분석하는 멀티모달 앱을 개발했습니다."
+        },
+        {
+          "extracted_name": "백엔드 API 구현",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python과 FastAPI로 백엔드 API를 구현하고 LLM API와 멀티모달 모델을 연동했습니다."
+        },
+        {
+          "extracted_name": "서비스 패키징",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 기능을 배포하여 운영했습니다."
+        },
+        {
+          "extracted_name": "응답 지연 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스 운영 중 발견한 응답 지연과 실패 요청을 분석하고 캐시와 프롬프트를 개선하여 성능·비용·안정성을 개선했습니다."
+        },
+        {
+          "extracted_name": "정보보호 점검 문서화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 적용하고 정보보호 점검 결과를 문서화했습니다."
+        },
+        {
+          "extracted_name": "멀티모달 앱",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "활동 내용: 멀티모달 앱 프로젝트에서 텍스트와 이미지를 함께 입력받아 분석하는 멀티모달 앱을 개발했습니다."
+        },
+        {
+          "extracted_name": "멀티모달 앱 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "활동 내용: 멀티모달 앱 프로젝트에서 텍스트와 이미지를 함께 입력받아 분석하는 멀티모달 앱을 개발했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 기능을 배포하여 운영했습니다."
+        },
+        {
+          "extracted_name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 적용하고 정보보호 점검 결과를 문서화했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 적용하고 정보보호 점검 결과를 문서화했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 18,
+      "context_type": "MOTIVATION",
+      "content_hash": "fb69058afb379c236d442981e78e29ff7ea5f7ab4756e767277d1d90f8c091cf",
+      "skills": [
+        {
+          "extracted_name": "백엔드 API 개발",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "RAG AI 챗봇 프로젝트에서 Python과 FastAPI로 백엔드 API를 개발"
+        },
+        {
+          "extracted_name": "RAG 파이프라인 구현",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LangChain을 사용하여 RAG 파이프라인과 문서 검색 기능을 구현"
+        },
+        {
+          "extracted_name": "Vector DB 저장",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "문서를 Vector DB에 저장하고 검색 결과를 LLM에 전달"
+        },
+        {
+          "extracted_name": "답변 생성 기능 구현",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "OpenAI LLM API로 답변 생성 기능을 구현"
+        },
+        {
+          "extracted_name": "AI 챗봇",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "RAG AI 챗봇 프로젝트에서 Python과 FastAPI로 백엔드 API를 개발하고 LangChain을 사용하여 RAG 파이프라인과 문서 검색 기능을 구현했습니다."
+        },
+        {
+          "extracted_name": "AI 챗봇 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "RAG AI 챗봇 프로젝트에서 Python과 FastAPI로 백엔드 API를 개발하고 LangChain을 사용하여 RAG 파이프라인과 문서 검색 기능을 구현했습니다."
+        },
+        {
+          "extracted_name": "LLM",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "문서를 Vector DB에 저장하고 검색 결과를 LLM에 전달했으며 OpenAI LLM API로 답변 생성 기능을 구현했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 19,
+      "context_type": "MOTIVATION",
+      "content_hash": "77426fd9f0ec07b2553183e771a70d0c5bc3370557593ad1f9fcbc0e116e8d47",
+      "skills": [
+        {
+          "extracted_name": "OpenAI LLM API",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "OpenAI LLM API로 답변 생성 기능을 구현했습니다."
+        },
+        {
+          "extracted_name": "Docker",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 컨테이너화하고 AWS 클라우드 환경에 기능을 배포했습니다."
+        },
+        {
+          "extracted_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS 클라우드 환경에 기능을 배포했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "보안 기준 준수",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "정보보호 의식",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 1,
+          "evidence": "정보보호 의식을 바탕으로 민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "민감정보 관리",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "개인정보 탐지",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "보안 필터 적용",
+          "category": "TECHNICAL_SKILL",
+          "level": 1,
+          "evidence": "개인정보 탐지와 보안 필터를 적용했습니다."
+        },
+        {
+          "extracted_name": "LLM",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "결과를 LLM에 전달했으며 OpenAI LLM API로 답변 생성 기능을 구현했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 컨테이너화하고 AWS 클라우드 환경에 기능을 배포했습니다."
+        },
+        {
+          "extracted_name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 보호와 보안 기준을 준수하고 정보보호 의식을 바탕으로 민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 20,
+      "context_type": "PERSONALITY",
+      "content_hash": "5d67465a26e4b5f3a2957507f174b8d79fd2981f56c61db4d35b7bde4e38a9d7",
+      "skills": [
+        {
+          "extracted_name": "원인 분석",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 3,
+          "evidence": "문제가 발생하면 로그와 데이터를 확인하고 재현 조건을 정리하여 원인을 단계적으로 좁힙니다."
+        },
+        {
+          "extracted_name": "검증",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 3,
+          "evidence": "배포 전 체크리스트와 테스트 케이스로 API 요청과 예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다."
+        },
+        {
+          "extracted_name": "문서화",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 3,
+          "evidence": "장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다."
+        },
+        {
+          "extracted_name": "장애 재발 방지",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "배포 전 체크리스트와 테스트 케이스로 API 요청과 예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 21,
+      "context_type": "PERSONALITY",
+      "content_hash": "8516c6eb274e43bfb452a7a90573ae999355501f6482f681a7aca0293fdf85ce",
+      "skills": [
+        {
+          "extracted_name": "예외 검증",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다."
+        },
+        {
+          "extracted_name": "피드백 반영",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "팀원의 피드백과 코드 리뷰 결과를 반영하여 기능을 수정했으며, 의견과 결정 배경을 공유해 협업 효율을 개선했습니다."
+        },
+        {
+          "extracted_name": "장애 재발 방지",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 22,
+      "context_type": "PERSONALITY",
+      "content_hash": "1f69953bc95a5edbd66ec80b0c3d1b3616bec89f2124269216a12ead571dd69a",
+      "skills": [
+        {
+          "extracted_name": "협업 효율 개선",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "의견과 결정 배경을 공유해 협업 효율을 개선했습니다."
+        },
+        {
+          "extracted_name": "문제 해결",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "한 문제를 오래 고민하는 단점을 보완하기 위해 필수 개선 사항과 추후 개선 사항을 나누고 우선순위를 정합니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "BEHAVIORAL_TRAIT",
+          "level": 2,
+          "evidence": "실제 사용자에게 미치는 영향을 먼저 확인하고 사용자 피드백을 제품 개선에 반영하고 있습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "실제 사용자에게 미치는 영향을 먼저 확인하고 사용자 피드백을 제품 개선에 반영하고 있습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "context_type": "EXPERIENCE",
+      "content_hash": "e0e717b472e95d282ec109f17548c7e907069b17d8e555bdd49884bfef82b75b",
+      "skills": [
+        {
+          "extracted_name": "AI 챗봇 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "Python",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python, FastAPI, LangChain을 사용하여 AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "FastAPI",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python, FastAPI, LangChain을 사용하여 AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "LangChain",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Python, FastAPI, LangChain을 사용하여 AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "Docker",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "AWS",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "로그 모니터링",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "응답 시간 모니터링",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "AI 챗봇",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "RAG AI 챗봇 프로젝트에서 Python, FastAPI, LangChain을 사용하여 AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "AI 챗봇 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "RAG AI 챗봇 프로젝트에서 Python, FastAPI, LangChain을 사용하여 AI 챗봇과 문서 검색 기능을 개발했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "context_type": "EXPERIENCE",
+      "content_hash": "1f0f972b64af06e428c0a0cd7dc52fb0a24dfb9048968d8db9011a1c035b5fe2",
+      "skills": [
+        {
+          "extracted_name": "서비스 패키징",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "AWS 클라우드 배포",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "추천 서비스 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스 프로젝트에서는 사용자의 스킬과 채용 공고를 비교하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석하여 추천 기준과 제품 기능을 개선하고 Precision, Recall, F1 결과를 바탕으로 품질 지표를 개선했습니다."
+        },
+        {
+          "extracted_name": "품질 지표 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 기준과 제품 기능을 개선하고 Precision, Recall, F1 결과를 바탕으로 품질 지표를 개선했습니다."
+        },
+        {
+          "extracted_name": "테스트 자동화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "기능 변경에는 테스트 자동화를 적용하고 팀원들과 코드 리뷰를 진행했습니다."
+        },
+        {
+          "extracted_name": "코드 리뷰 진행",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "기능 변경에는 테스트 자동화를 적용하고 팀원들과 코드 리뷰를 진행했습니다."
+        },
+        {
+          "extracted_name": "클라우드",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다."
+        },
+        {
+          "extracted_name": "추천 서비스",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "추천 서비스 프로젝트에서는 사용자의 스킬과 채용 공고를 비교하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "추천 서비스 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스 프로젝트에서는 사용자의 스킬과 채용 공고를 비교하는 추천 서비스를 개발했습니다."
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백을 분석하여 추천 기준과 제품 기능을 개선하고 Precision, Recall, F1 결과를 바탕으로 품질 지표를 개선했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "context_type": "EXPERIENCE",
+      "content_hash": "07ceba8067147a54d80d784f242d0f25a6e43b376cdc31627323224b18e3aa12",
+      "skills": [
+        {
+          "extracted_name": "테스트 자동화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "기능 변경에는 테스트 자동화를 적용하고 팀원들과 코드 리뷰를 진행했습니다."
+        },
+        {
+          "extracted_name": "문서 처리 자동화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "업무 자동화 프로젝트에서는 Python으로 문서 처리 업무를 자동화하고 FastAPI 기반 API로 제공했습니다."
+        },
+        {
+          "extracted_name": "기능 개발",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "멀티모달 앱 프로젝트에서는 텍스트와 이미지를 함께 분석하는 기능을 개발하고 LLM API와 멀티모달 모델을 연동했습니다."
+        },
+        {
+          "extracted_name": "멀티모달 앱",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "멀티모달 앱 프로젝트에서는 텍스트와 이미지를 함께 분석하는 기능을 개발하고 LLM API와 멀티모달 모델을 연동했습니다."
+        },
+        {
+          "extracted_name": "멀티모달 앱 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "멀티모달 앱 프로젝트에서는 텍스트와 이미지를 함께 분석하는 기능을 개발하고 LLM API와 멀티모달 모델을 연동했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "context_type": "EXPERIENCE",
+      "content_hash": "0f1004aacc413dec8357097d0ea0650a3038a211bb05385bd96cae2323f733aa",
+      "skills": [
+        {
+          "extracted_name": "멀티모달 모델 연동",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "LLM API와 멀티모달 모델을 연동했습니다."
+        },
+        {
+          "extracted_name": "장애 원인 분석",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스 운영 중 발생한 장애 원인을 분석하고 재발 방지 대책을 업무 문서로 작성했습니다."
+        },
+        {
+          "extracted_name": "성능 개선",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "반복 임베딩과 긴 프롬프트를 개선하여 성능·비용·안정성을 개선했으며 개인정보 보호와 보안 기준을 준수했습니다."
+        },
+        {
+          "extracted_name": "장애 재발 방지",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "서비스 운영 중 발생한 장애 원인을 분석하고 재발 방지 대책을 업무 문서로 작성했습니다."
+        },
+        {
+          "extracted_name": "보안",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "반복 임베딩과 긴 프롬프트를 개선하여 성능·비용·안정성을 개선했으며 개인정보 보호와 보안 기준을 준수했습니다."
+        },
+        {
+          "extracted_name": "개인정보 보호",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "반복 임베딩과 긴 프롬프트를 개선하여 성능·비용·안정성을 개선했으며 개인정보 보호와 보안 기준을 준수했습니다."
+        }
+      ]
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 27,
+      "context_type": "MOTIVATION",
+      "content_hash": "9e64248dbf7b23c4a00c81492dde877acfa1f9f042c28c7395d65b2fefd090e9",
+      "skills": [
+        {
+          "extracted_name": "민감정보 관리",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "민감정보를 환경변수로 관리했으며"
+        },
+        {
+          "extracted_name": "개인정보 탐지",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 탐지와 보안 필터를 적용했습니다"
+        },
+        {
+          "extracted_name": "보안 필터",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "개인정보 탐지와 보안 필터를 적용했습니다"
+        },
+        {
+          "extracted_name": "추천 서비스",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며"
+        },
+        {
+          "extracted_name": "업무 자동화",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며"
+        },
+        {
+          "extracted_name": "멀티모달 앱",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며"
+        },
+        {
+          "extracted_name": "제품 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "사용자 피드백 기반 제품 개선"
+        },
+        {
+          "extracted_name": "테스트 자동화",
+          "category": "TECHNICAL_SKILL",
+          "level": 2,
+          "evidence": "테스트 자동화"
+        },
+        {
+          "extracted_name": "코드 리뷰",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "코드 리뷰"
+        },
+        {
+          "extracted_name": "품질 지표 개선",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "품질 지표 개선"
+        },
+        {
+          "extracted_name": "사용자 피드백 반영",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며 사용자 피드백 기반 제품 개선, 테스트 자동화, 코드 리뷰, 품질 지표 개선을 경험했습니다."
+        },
+        {
+          "extracted_name": "멀티모달 앱 프로젝트",
+          "category": "EXPERIENCE",
+          "level": 2,
+          "evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며 사용자 피드백 기반 제품 개선, 테스트 자동화, 코드 리뷰, 품질 지표 개선을 경험했습니다."
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

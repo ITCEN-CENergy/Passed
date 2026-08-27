@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-08-12T05:38:01.527310+00:00",
+  "model": "gpt-5.6-sol",
+  "golden_file": "resume_pipeline\\evaluation\\golden_skill_extraction.json",
+  "golden_sha256": "caad66b6ab3ba4888d7c5aaec0d3abf7421c6a2665f81750b7873f0c770f5fa9",
+  "prompt_sha256": "b34680e31633adcd38179edd0e891e161c25c74656a591dbc5c8f2334d17abcf",
+  "recovery_rules_sha256": "3bac14a7dd7b0250d922e924982ce11ce015f870e9aac1ab7949e7e4a4e2e31e",
+  "pipeline_sha256": "9e131c865a6f07e6e4e077cc2eddd9d381d953430107dce337f037233e034bf7",
+  "disabled_recovery_rules": [],
+  "metrics": {
+    "micro": {
+      "true_positive": 32,
+      "false_positive": 40,
+      "false_negative": 37,
+      "precision": 0.4444444444444444,
+      "recall": 0.463768115942029,
+      "f1": 0.45390070921985815
+    },
+    "by_category": {
+      "TECHNICAL_SKILL": {
+        "true_positive": 10,
+        "false_positive": 7,
+        "false_negative": 9,
+        "precision": 0.5882352941176471,
+        "recall": 0.5263157894736842,
+        "f1": 0.5555555555555555
+      },
+      "EXPERIENCE": {
+        "true_positive": 12,
+        "false_positive": 23,
+        "false_negative": 19,
+        "precision": 0.34285714285714286,
+        "recall": 0.3870967741935484,
+        "f1": 0.3636363636363636
+      },
+      "BEHAVIORAL_TRAIT": {
+        "true_positive": 6,
+        "false_positive": 10,
+        "false_negative": 9,
+        "precision": 0.375,
+        "recall": 0.4,
+        "f1": 0.38709677419354843
+      },
+      "CERTIFICATION": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "level": {
+      "evaluated_count": 32,
+      "exact_matches": 29,
+      "accuracy": 0.90625,
+      "mean_absolute_error": 0.09375
+    },
+    "negative_examples": {
+      "negative_example_count": 6,
+      "false_positive_example_count": 0,
+      "false_positive_candidate_count": 0,
+      "over_extraction_rate": 0.0
+    },
+    "missing_prediction_ids": [],
+    "unknown_prediction_ids": []
+  }
+}

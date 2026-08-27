@@ -1,0 +1,648 @@
+{
+  "generated_at": "2026-08-12T02:52:46.498374Z",
+  "input_report_count": 1,
+  "total_occurrences": 70,
+  "unique_candidates": 64,
+  "candidates": [
+    {
+      "normalized_name": "협업 효율 개선",
+      "sample_extracted_name": "협업 효율 개선",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 2,
+      "sample_evidence": "의견과 결정 배경을 공유해 협업 효율을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "성능 개선",
+      "sample_extracted_name": "성능 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 2,
+      "sample_evidence": "프롬프트 길이와 반복 임베딩을 줄여 성능·비용·안정성을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "추천 서비스 개발",
+      "sample_extracted_name": "추천 서비스 개발",
+      "category": "EXPERIENCE",
+      "occurrence_count": 2,
+      "sample_evidence": "추천 서비스 프로젝트에서 사용자의 보유 스킬과 채용 공고의 요구 스킬을 비교하여 개인화된 채용 공고를 제공하는 추천 서비스를 개발했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "코드 리뷰 진행",
+      "sample_extracted_name": "코드 리뷰 진행",
+      "category": "EXPERIENCE",
+      "occurrence_count": 2,
+      "sample_evidence": "팀원들과 코드 리뷰를 진행했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "테스트 자동화 적용",
+      "sample_extracted_name": "테스트 자동화 적용",
+      "category": "EXPERIENCE",
+      "occurrence_count": 2,
+      "sample_evidence": "기능 변경 사항에 테스트 자동화를 적용하고 팀원들과 코드 리뷰를 진행했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "백엔드 api 개발",
+      "sample_extracted_name": "백엔드 API 개발",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 2,
+      "sample_evidence": "상용 콘텐츠 생성 AI 서비스의 백엔드 API를 개발하고 운영했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 2
+      }
+    },
+    {
+      "normalized_name": "검증",
+      "sample_extracted_name": "검증",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 1,
+      "sample_evidence": "배포 전 체크리스트와 테스트 케이스로 API 요청과 예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "문서화",
+      "sample_extracted_name": "문서화",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 1,
+      "sample_evidence": "장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "사용자 피드백 반영",
+      "sample_extracted_name": "사용자 피드백 반영",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 1,
+      "sample_evidence": "실제 사용자에게 미치는 영향을 먼저 확인하고 사용자 피드백을 제품 개선에 반영하고 있습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "예외 상황 검증",
+      "sample_extracted_name": "예외 상황 검증",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 1,
+      "sample_evidence": "예외 상황을 꼼꼼하게 검증하고, 장애 원인과 재발 방지 대책을 업무 문서로 남겼습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "피드백 반영",
+      "sample_extracted_name": "피드백 반영",
+      "category": "BEHAVIORAL_TRAIT",
+      "occurrence_count": 1,
+      "sample_evidence": "팀원의 피드백과 코드 리뷰 결과를 반영하여 기능을 수정했으며, 의견과 결정 배경을 공유해 협업 효율을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "aws 배포",
+      "sample_extracted_name": "AWS 배포",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "검색 기능 개선",
+      "sample_extracted_name": "검색 기능 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "사용자 피드백을 분석해 검색 기준과 콘텐츠 생성 기능을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "골든셋 평가",
+      "sample_extracted_name": "골든셋 평가",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "골든셋으로 생성 결과와 검색 결과를 평가하고 사용자 피드백을 기능 우선순위에 반영했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "기능 개발",
+      "sample_extracted_name": "기능 개발",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "멀티모달 앱 프로젝트에서는 텍스트와 이미지를 함께 분석하는 기능을 개발하고 LLM API와 멀티모달 모델을 연동했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "기능 개선",
+      "sample_extracted_name": "기능 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "사용자 피드백을 분석하여 추천 기준과 제품 기능을 개선하고 Precision, Recall, F1 결과를 바탕으로 품질 지표를 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "멀티모달 앱 개발",
+      "sample_extracted_name": "멀티모달 앱 개발",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "멀티모달 앱 프로젝트에서 텍스트와 이미지를 함께 입력받아 분석하는 멀티모달 앱을 개발했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "모니터링",
+      "sample_extracted_name": "모니터링",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "문서 작성 및 공유",
+      "sample_extracted_name": "문서 작성 및 공유",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "요구사항, API 명세, 기술적 결정, 장애 원인과 재발 방지 대책을 업무 문서로 작성하고 팀원들과 공유했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "문서 처리 자동화",
+      "sample_extracted_name": "문서 처리 자동화",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "업무 자동화 프로젝트에서는 Python으로 문서 처리 업무를 자동화하고 FastAPI 기반 API로 제공했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "문서화",
+      "sample_extracted_name": "문서화",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "장애 원인, 임시 해결 방법, 근본 개선 방법과 재발 방지 내용을 문서화했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "서비스 로그 분석",
+      "sample_extracted_name": "서비스 로그 분석",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "서비스 로그와 LLM API 응답 데이터를 분석하여 동일 문서의 반복 임베딩과 불필요하게 긴 프롬프트가 원인임을 확인했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "서비스 배포",
+      "sample_extracted_name": "서비스 배포",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "서비스 패키징",
+      "sample_extracted_name": "서비스 패키징",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "서비스를 패키징하고 AWS 클라우드 환경에 배포한 뒤 로그와 응답 시간을 모니터링했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "업무 문서 정리",
+      "sample_extracted_name": "업무 문서 정리",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "리뷰 결과와 API 명세를 업무 문서로 정리하여 공유하고 협업 효율을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "업무 자동화",
+      "sample_extracted_name": "업무 자동화",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "응답 시간 모니터링",
+      "sample_extracted_name": "응답 시간 모니터링",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "배포 후 로그와 응답 시간을 모니터링하며 상용 서비스 개발과 운영 절차를 경험했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "응답 지연 분석",
+      "sample_extracted_name": "응답 지연 분석",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "서비스 운영 중 발견한 응답 지연과 실패 요청을 분석하고 캐시와 프롬프트를 개선하여 성능·비용·안정성을 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "이미지 분석 기능",
+      "sample_extracted_name": "이미지 분석 기능",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "이미지를 함께 분석하는 기능을 개발하고 LLM API와 멀티모달 모델을 연동했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "임베딩 개선",
+      "sample_extracted_name": "임베딩 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "콘텐츠 해시로 변경되지 않은 문서는 임베딩을 다시 생성하지 않도록 개선하고 RAG 검색 범위를 조정했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "정보보호 점검 문서화",
+      "sample_extracted_name": "정보보호 점검 문서화",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보 보호와 보안 기준을 적용하고 정보보호 점검 결과를 문서화했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "제품 개선",
+      "sample_extracted_name": "제품 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "사용자 피드백 기반 제품 개선, 테스트 자동화, 코드 리뷰, 품질 지표 개선을 경험했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "추천 서비스",
+      "sample_extracted_name": "추천 서비스",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "추천 서비스, 업무 자동화, 멀티모달 앱 프로젝트를 수행하며",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "컴퓨터공학",
+      "sample_extracted_name": "컴퓨터공학",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "전공: 컴퓨터공학",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "콘텐츠 생성 서비스 구현",
+      "sample_extracted_name": "콘텐츠 생성 서비스 구현",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "콘텐츠 생성 플랫폼 개발",
+      "sample_extracted_name": "콘텐츠 생성 플랫폼 개발",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "생성형 AI 기반 콘텐츠 생성 플랫폼을 개발했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "팀원 문서화",
+      "sample_extracted_name": "팀원 문서화",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "API 명세와 프롬프트 변경 이력을 문서화하여 팀원들과 공유했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "품질 지표 측정",
+      "sample_extracted_name": "품질 지표 측정",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "추천 결과의 Precision, Recall, F1을 측정하고 품질 지표를 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "프롬프트 개선",
+      "sample_extracted_name": "프롬프트 개선",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "프롬프트의 불필요한 내용을 제거하여 토큰 사용량과 API 비용을 줄이고 응답 속도를 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "피드백 분석",
+      "sample_extracted_name": "피드백 분석",
+      "category": "EXPERIENCE",
+      "occurrence_count": 1,
+      "sample_evidence": "사용자 피드백을 분석하여 추천 기준과 제품 기능을 개선하고 Precision, Recall, F1 결과를 바탕으로 품질 지표를 개선했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "api 제공",
+      "sample_extracted_name": "API 제공",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "자동화 기능을 API로 제공하고 테스트 자동화를 적용하여 입력값과 예외 상황, 기능 변경에 따른 오류를 검증했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "aws 클라우드 배포",
+      "sample_extracted_name": "AWS 클라우드 배포",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "AWS 클라우드 환경에 기능을 배포하고 서비스 상태와 LLM API 오류를 모니터링했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "llm api 활용",
+      "sample_extracted_name": "LLM API 활용",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "rag 파이프라인 개발",
+      "sample_extracted_name": "RAG 파이프라인 개발",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "RAG 파이프라인과 문서 검색 기능을 개발하고, 문서를 청킹한 뒤 임베딩하여 Vector DB에 저장했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "rag 파이프라인 구현",
+      "sample_extracted_name": "RAG 파이프라인 구현",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "LangChain을 사용하여 RAG 파이프라인과 문서 검색 기능을 구현",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "rag 활용",
+      "sample_extracted_name": "RAG 활용",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "vector db 활용",
+      "sample_extracted_name": "Vector DB 활용",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "LLM API, RAG, Vector DB를 활용하여 콘텐츠 생성 서비스를 구현하고, 골든셋 기반 평가와 프롬프트 개선으로 생성 결과의 품질을 높인 점을 인정받아 우수 프로젝트로 선정되었습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "vector db에 저장",
+      "sample_extracted_name": "Vector DB에 저장",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "문서를 Vector DB에 저장하고 검색 결과를 LLM에 전달",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "가드레일 및 보안 필터 적용",
+      "sample_extracted_name": "가드레일 및 보안 필터 적용",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "검색 결과가 부족한 경우 답변 생성을 제한하는 가드레일과 보안 필터를 적용했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "개인정보 탐지",
+      "sample_extracted_name": "개인정보 탐지",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보 탐지와 보안 필터를 적용했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "개인정보 탐지 적용",
+      "sample_extracted_name": "개인정보 탐지 적용",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보가 외부 LLM에 전달되지 않도록 개인정보 탐지와 보안 필터를 적용했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "기능 학습",
+      "sample_extracted_name": "기능 학습",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "처음 사용한 FastAPI와 LangChain의 공식 문서를 빠르게 학습한 뒤 기능에 적용하고 팀원들에게 사용 방법을 공유했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "답변 생성 기능 구현",
+      "sample_extracted_name": "답변 생성 기능 구현",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "OpenAI LLM API로 답변 생성 기능을 구현",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "데이터베이스",
+      "sample_extracted_name": "데이터베이스",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "학습한 JavaScript, TypeScript, 데이터베이스, 머신러닝, 클라우드 컴퓨팅을 적용했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "문서 검색 기능 구현",
+      "sample_extracted_name": "문서 검색 기능 구현",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "LangChain을 사용하여 RAG 파이프라인과 문서 검색 기능을 구현",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "민감정보 관리",
+      "sample_extracted_name": "민감정보 관리",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "바탕으로 민감정보를 환경변수로 관리했으며, 개인정보 탐지와 보안 필터를 적용했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "백엔드 api 구현",
+      "sample_extracted_name": "백엔드 API 구현",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "Python과 FastAPI로 백엔드 API를 구현하고 LLM API와 멀티모달 모델을 연동했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "보안 필터",
+      "sample_extracted_name": "보안 필터",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "비용 최적화 방법",
+      "sample_extracted_name": "비용 최적화 방법",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "생성형 ai 서비스 설계 및 평가 방법",
+      "sample_extracted_name": "생성형 AI 서비스 설계 및 평가 방법",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "프롬프트 엔지니어링, 머신러닝, 생성형 AI 서비스 설계 및 평가 방법을 학습했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "서비스 패키징",
+      "sample_extracted_name": "서비스 패키징",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "Docker로 서비스를 패키징하고 AWS 클라우드 환경에 기능을 배포하여 운영했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "영어",
+      "sample_extracted_name": "영어",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "언어: 영어",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "입력 검증",
+      "sample_extracted_name": "입력 검증",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "개인정보 보호, 입력 검증, 보안 필터와 비용 최적화 방법을 학습했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    },
+    {
+      "normalized_name": "테스트 케이스 작성",
+      "sample_extracted_name": "테스트 케이스 작성",
+      "category": "TECHNICAL_SKILL",
+      "occurrence_count": 1,
+      "sample_evidence": "배포 전 체크리스트와 테스트 케이스를 작성하여 API 요청과 예외 상황을 꼼꼼하게 확인했습니다.",
+      "failure_reasons": {
+        "LOW_SIMILARITY": 1
+      }
+    }
+  ]
+}

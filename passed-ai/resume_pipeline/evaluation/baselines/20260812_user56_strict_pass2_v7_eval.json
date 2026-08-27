@@ -1,0 +1,112 @@
+{
+  "evaluated_count": 110,
+  "review_excluded_count": 1,
+  "metric": {
+    "true_positive": 50,
+    "false_positive": 0,
+    "false_negative": 31,
+    "true_negative": 29,
+    "precision": 1.0,
+    "recall": 0.6172839506172839,
+    "f1": 0.7633587786259541,
+    "reject_accuracy": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "by_category": {
+    "TECHNICAL_SKILL": {
+      "true_positive": 47,
+      "false_positive": 0,
+      "false_negative": 22,
+      "true_negative": 23,
+      "precision": 1.0,
+      "recall": 0.6811594202898551,
+      "f1": 0.810344827586207,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    },
+    "BEHAVIORAL_TRAIT": {
+      "true_positive": 3,
+      "false_positive": 0,
+      "false_negative": 9,
+      "true_negative": 6,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "unknown_prediction_count": 14,
+  "unknown_predictions": [
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 18,
+      "skill_id": 107
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "skill_id": 158
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 23,
+      "skill_id": 1344
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 24,
+      "skill_id": 1345
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 25,
+      "skill_id": 1334
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "skill_id": 1332
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 107
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 336
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "skill_id": 158
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "skill_id": 1345
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 22,
+      "skill_id": 158
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 24,
+      "skill_id": 1341
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 25,
+      "skill_id": 13
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 26,
+      "skill_id": 13
+    }
+  ]
+}

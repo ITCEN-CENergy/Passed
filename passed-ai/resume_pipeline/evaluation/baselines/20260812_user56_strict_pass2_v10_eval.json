@@ -1,0 +1,97 @@
+{
+  "evaluated_count": 110,
+  "review_excluded_count": 1,
+  "metric": {
+    "true_positive": 49,
+    "false_positive": 0,
+    "false_negative": 32,
+    "true_negative": 29,
+    "precision": 1.0,
+    "recall": 0.6049382716049383,
+    "f1": 0.7538461538461538,
+    "reject_accuracy": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "by_category": {
+    "TECHNICAL_SKILL": {
+      "true_positive": 48,
+      "false_positive": 0,
+      "false_negative": 21,
+      "true_negative": 23,
+      "precision": 1.0,
+      "recall": 0.6956521739130435,
+      "f1": 0.8205128205128205,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    },
+    "BEHAVIORAL_TRAIT": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "false_negative": 11,
+      "true_negative": 6,
+      "precision": 1.0,
+      "recall": 0.08333333333333333,
+      "f1": 0.15384615384615385,
+      "reject_accuracy": 1.0,
+      "false_positive_rate": 0.0
+    }
+  },
+  "unknown_prediction_count": 11,
+  "unknown_predictions": [
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 18,
+      "skill_id": 107
+    },
+    {
+      "source_kind": "COVER_LETTER",
+      "chunk_id": 26,
+      "skill_id": 1332
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 107
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 336
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 339
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 15,
+      "skill_id": 370
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 16,
+      "skill_id": 96
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "skill_id": 158
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 17,
+      "skill_id": 490
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 26,
+      "skill_id": 13
+    },
+    {
+      "source_kind": "RESUME",
+      "chunk_id": 27,
+      "skill_id": 1332
+    }
+  ]
+}

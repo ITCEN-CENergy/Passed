@@ -140,6 +140,7 @@ public class RecommendationQueryService {
         );
         return new RecommendationDetailResponse(
                 runId,
+                recommendation.getRecommendationRun().getRecommendationType(),
                 recommendation.getId(),
                 recommendation.getRankOrder(),
                 postingDetail(recommendation.getJobPosting()),

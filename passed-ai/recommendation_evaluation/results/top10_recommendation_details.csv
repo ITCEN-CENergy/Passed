@@ -1,0 +1,201 @@
+﻿profile_id,target_job_role,candidate_id,candidate_title,scenario,relevance,variant,rank,total_score,required_coverage,grade,is_accurate_recommendation,is_over_recommendation
+P-01,백엔드 개발자,01-04,백엔드 개발자 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-23,백엔드 개발자 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-24,백엔드 개발자 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-25,백엔드 개발자 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-26,백엔드 개발자 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-27,백엔드 개발자 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-28,백엔드 개발자 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-01,백엔드 개발자,01-02,백엔드 개발자 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-06,백엔드 개발자 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-08,백엔드 개발자 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-04,백엔드 개발자 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-17,백엔드 개발자 채용 17,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-01,백엔드 개발자,01-02,백엔드 개발자 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-06,백엔드 개발자 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-08,백엔드 개발자 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-14,백엔드 개발자 채용 14,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-01,백엔드 개발자 채용 01,STRONG_EXACT,2,개선 후,7,90.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-07,백엔드 개발자 채용 07,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-03,백엔드 개발자 채용 03,STRONG_EXACT,2,개선 후,9,85.0,1.0,매우 적합,True,False
+P-01,백엔드 개발자,01-05,백엔드 개발자 채용 05,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-04,프론트엔드 개발자 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-23,프론트엔드 개발자 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-24,프론트엔드 개발자 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-25,프론트엔드 개발자 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-26,프론트엔드 개발자 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-27,프론트엔드 개발자 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-28,프론트엔드 개발자 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-02,프론트엔드 개발자,02-02,프론트엔드 개발자 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-06,프론트엔드 개발자 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-08,프론트엔드 개발자 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-04,프론트엔드 개발자 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-18,프론트엔드 개발자 채용 18,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-02,프론트엔드 개발자,02-02,프론트엔드 개발자 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-06,프론트엔드 개발자 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-08,프론트엔드 개발자 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-10,프론트엔드 개발자 채용 10,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-14,프론트엔드 개발자 채용 14,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-16,프론트엔드 개발자 채용 16,HIDDEN_DIRECT,2,개선 후,8,95.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-01,프론트엔드 개발자 채용 01,STRONG_EXACT,2,개선 후,9,90.0,1.0,매우 적합,True,False
+P-02,프론트엔드 개발자,02-07,프론트엔드 개발자 채용 07,STRONG_EXACT,2,개선 후,10,90.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-04,데이터 분석가 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-23,데이터 분석가 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-24,데이터 분석가 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-25,데이터 분석가 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-26,데이터 분석가 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-27,데이터 분석가 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-28,데이터 분석가 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-02,데이터 분석가 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-06,데이터 분석가 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-08,데이터 분석가 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-04,데이터 분석가 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-19,데이터 분석가 채용 19,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-03,데이터 분석가,03-25,데이터 분석가 채용 25,SEMANTIC_TRAP,0,개선 후,3,100.0,1.0,매우 적합,False,True
+P-03,데이터 분석가,03-02,데이터 분석가 채용 02,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-06,데이터 분석가 채용 06,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-08,데이터 분석가 채용 08,STRONG_EXACT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-10,데이터 분석가 채용 10,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-16,데이터 분석가 채용 16,HIDDEN_DIRECT,2,개선 후,8,95.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-01,데이터 분석가 채용 01,STRONG_EXACT,2,개선 후,9,90.0,1.0,매우 적합,True,False
+P-03,데이터 분석가,03-07,데이터 분석가 채용 07,STRONG_EXACT,2,개선 후,10,90.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-04,머신러닝 엔지니어 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-23,머신러닝 엔지니어 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-24,머신러닝 엔지니어 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-25,머신러닝 엔지니어 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-26,머신러닝 엔지니어 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-27,머신러닝 엔지니어 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-28,머신러닝 엔지니어 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-04,머신러닝 엔지니어,04-02,머신러닝 엔지니어 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-06,머신러닝 엔지니어 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-08,머신러닝 엔지니어 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-04,머신러닝 엔지니어 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-20,머신러닝 엔지니어 채용 20,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-04,머신러닝 엔지니어,04-02,머신러닝 엔지니어 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-06,머신러닝 엔지니어 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-08,머신러닝 엔지니어 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-14,머신러닝 엔지니어 채용 14,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-01,머신러닝 엔지니어 채용 01,STRONG_EXACT,2,개선 후,7,90.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-07,머신러닝 엔지니어 채용 07,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-03,머신러닝 엔지니어 채용 03,STRONG_EXACT,2,개선 후,9,85.0,1.0,매우 적합,True,False
+P-04,머신러닝 엔지니어,04-05,머신러닝 엔지니어 채용 05,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-04,DevOps 엔지니어 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-23,DevOps 엔지니어 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-24,DevOps 엔지니어 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-25,DevOps 엔지니어 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-26,DevOps 엔지니어 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-27,DevOps 엔지니어 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-28,DevOps 엔지니어 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-05,DevOps 엔지니어,05-02,DevOps 엔지니어 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-06,DevOps 엔지니어 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-08,DevOps 엔지니어 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-04,DevOps 엔지니어 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-21,DevOps 엔지니어 채용 21,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-05,DevOps 엔지니어,05-02,DevOps 엔지니어 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-06,DevOps 엔지니어 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-08,DevOps 엔지니어 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-10,DevOps 엔지니어 채용 10,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-14,DevOps 엔지니어 채용 14,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-16,DevOps 엔지니어 채용 16,HIDDEN_DIRECT,2,개선 후,8,95.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-01,DevOps 엔지니어 채용 01,STRONG_EXACT,2,개선 후,9,90.0,1.0,매우 적합,True,False
+P-05,DevOps 엔지니어,05-07,DevOps 엔지니어 채용 07,STRONG_EXACT,2,개선 후,10,90.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-04,정보보안 엔지니어 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-23,정보보안 엔지니어 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-24,정보보안 엔지니어 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-25,정보보안 엔지니어 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-26,정보보안 엔지니어 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-27,정보보안 엔지니어 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-28,정보보안 엔지니어 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-06,정보보안 엔지니어,06-02,정보보안 엔지니어 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-06,정보보안 엔지니어 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-08,정보보안 엔지니어 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-04,정보보안 엔지니어 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-22,정보보안 엔지니어 채용 22,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-06,정보보안 엔지니어,06-02,정보보안 엔지니어 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-06,정보보안 엔지니어 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-08,정보보안 엔지니어 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-10,정보보안 엔지니어 채용 10,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-16,정보보안 엔지니어 채용 16,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-01,정보보안 엔지니어 채용 01,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-07,정보보안 엔지니어 채용 07,STRONG_EXACT,2,개선 후,9,90.0,1.0,매우 적합,True,False
+P-06,정보보안 엔지니어,06-03,정보보안 엔지니어 채용 03,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-04,프로덕트 매니저 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-23,프로덕트 매니저 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-24,프로덕트 매니저 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-25,프로덕트 매니저 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-26,프로덕트 매니저 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-27,프로덕트 매니저 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-28,프로덕트 매니저 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-07,프로덕트 매니저,07-02,프로덕트 매니저 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-06,프로덕트 매니저 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-08,프로덕트 매니저 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-04,프로덕트 매니저 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-17,프로덕트 매니저 채용 17,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-07,프로덕트 매니저,07-02,프로덕트 매니저 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-06,프로덕트 매니저 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-08,프로덕트 매니저 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-14,프로덕트 매니저 채용 14,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-01,프로덕트 매니저 채용 01,STRONG_EXACT,2,개선 후,7,90.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-07,프로덕트 매니저 채용 07,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-03,프로덕트 매니저 채용 03,STRONG_EXACT,2,개선 후,9,85.0,1.0,매우 적합,True,False
+P-07,프로덕트 매니저,07-05,프로덕트 매니저 채용 05,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-04,UI/UX 디자이너 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-23,UI/UX 디자이너 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-24,UI/UX 디자이너 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-25,UI/UX 디자이너 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-26,UI/UX 디자이너 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-27,UI/UX 디자이너 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-28,UI/UX 디자이너 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-02,UI/UX 디자이너 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-06,UI/UX 디자이너 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-08,UI/UX 디자이너 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-04,UI/UX 디자이너 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-18,UI/UX 디자이너 채용 18,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-08,UI/UX 디자이너,08-24,UI/UX 디자이너 채용 24,SEMANTIC_TRAP,0,개선 후,3,100.0,1.0,매우 적합,False,True
+P-08,UI/UX 디자이너,08-02,UI/UX 디자이너 채용 02,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-06,UI/UX 디자이너 채용 06,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-08,UI/UX 디자이너 채용 08,STRONG_EXACT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-10,UI/UX 디자이너 채용 10,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-14,UI/UX 디자이너 채용 14,HIDDEN_DIRECT,2,개선 후,8,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-16,UI/UX 디자이너 채용 16,HIDDEN_DIRECT,2,개선 후,9,95.0,1.0,매우 적합,True,False
+P-08,UI/UX 디자이너,08-01,UI/UX 디자이너 채용 01,STRONG_EXACT,2,개선 후,10,90.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-04,QA 자동화 엔지니어 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-23,QA 자동화 엔지니어 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-24,QA 자동화 엔지니어 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-25,QA 자동화 엔지니어 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-26,QA 자동화 엔지니어 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-27,QA 자동화 엔지니어 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-28,QA 자동화 엔지니어 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-09,QA 자동화 엔지니어,09-02,QA 자동화 엔지니어 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-06,QA 자동화 엔지니어 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-08,QA 자동화 엔지니어 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-04,QA 자동화 엔지니어 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-19,QA 자동화 엔지니어 채용 19,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-09,QA 자동화 엔지니어,09-02,QA 자동화 엔지니어 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-06,QA 자동화 엔지니어 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-08,QA 자동화 엔지니어 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-10,QA 자동화 엔지니어 채용 10,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-16,QA 자동화 엔지니어 채용 16,HIDDEN_DIRECT,2,개선 후,7,95.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-01,QA 자동화 엔지니어 채용 01,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-07,QA 자동화 엔지니어 채용 07,STRONG_EXACT,2,개선 후,9,90.0,1.0,매우 적합,True,False
+P-09,QA 자동화 엔지니어,09-03,QA 자동화 엔지니어 채용 03,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-04,클라우드 엔지니어 채용 04,STRONG_EXACT,2,개선 전,1,100.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-23,클라우드 엔지니어 채용 23,SEMANTIC_TRAP,0,개선 전,2,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-24,클라우드 엔지니어 채용 24,SEMANTIC_TRAP,0,개선 전,3,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-25,클라우드 엔지니어 채용 25,SEMANTIC_TRAP,0,개선 전,4,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-26,클라우드 엔지니어 채용 26,SEMANTIC_TRAP,0,개선 전,5,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-27,클라우드 엔지니어 채용 27,SEMANTIC_TRAP,0,개선 전,6,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-28,클라우드 엔지니어 채용 28,SEMANTIC_TRAP,0,개선 전,7,100.0,1.0,매우 적합,False,True
+P-10,클라우드 엔지니어,10-02,클라우드 엔지니어 채용 02,STRONG_EXACT,2,개선 전,8,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-06,클라우드 엔지니어 채용 06,STRONG_EXACT,2,개선 전,9,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-08,클라우드 엔지니어 채용 08,STRONG_EXACT,2,개선 전,10,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-04,클라우드 엔지니어 채용 04,STRONG_EXACT,2,개선 후,1,100.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-20,클라우드 엔지니어 채용 20,BORDERLINE,1,개선 후,2,100.0,1.0,매우 적합,False,False
+P-10,클라우드 엔지니어,10-02,클라우드 엔지니어 채용 02,STRONG_EXACT,2,개선 후,3,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-06,클라우드 엔지니어 채용 06,STRONG_EXACT,2,개선 후,4,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-08,클라우드 엔지니어 채용 08,STRONG_EXACT,2,개선 후,5,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-14,클라우드 엔지니어 채용 14,HIDDEN_DIRECT,2,개선 후,6,95.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-01,클라우드 엔지니어 채용 01,STRONG_EXACT,2,개선 후,7,90.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-07,클라우드 엔지니어 채용 07,STRONG_EXACT,2,개선 후,8,90.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-03,클라우드 엔지니어 채용 03,STRONG_EXACT,2,개선 후,9,85.0,1.0,매우 적합,True,False
+P-10,클라우드 엔지니어,10-05,클라우드 엔지니어 채용 05,STRONG_EXACT,2,개선 후,10,85.0,1.0,매우 적합,True,False

@@ -14,8 +14,13 @@ from api.features.recommendation.exceptions import (
 from api.features.recommendation.schema import (
     RecommendationExplanationRequest,
     RecommendationExplanationResponse,
+    SkillVerificationRequest,
+    SkillVerificationResponse,
 )
 from api.features.recommendation.service import generate_recommendation_explanations
+from api.features.recommendation.skill_verification import (
+    verify_recommendation_skills,
+)
 
 
 router = APIRouter(prefix="/api/v1/recommendations", tags=["recommendations"])
@@ -47,4 +52,36 @@ async def generate_explanations(
         raise HTTPException(
             status_code=502,
             detail="recommendation explanation model returned invalid output",
+        ) from exception
+
+
+@router.post(
+    "/skill-verifications",
+    response_model=SkillVerificationResponse,
+)
+async def verify_skills(
+    request: SkillVerificationRequest,
+) -> SkillVerificationResponse:
+    try:
+        return await verify_recommendation_skills(request)
+    except APITimeoutError as exception:
+        raise HTTPException(
+            status_code=504,
+            detail="recommendation skill verifier timed out",
+        ) from exception
+    except (APIConnectionError, InternalServerError, RateLimitError) as exception:
+        raise HTTPException(
+            status_code=503,
+            detail="recommendation skill verifier is unavailable",
+        ) from exception
+    except RecommendationConfigurationError as exception:
+        raise HTTPException(status_code=503, detail=str(exception)) from exception
+    except (
+        BadRequestError,
+        RecommendationExplanationGenerationError,
+        ValueError,
+    ) as exception:
+        raise HTTPException(
+            status_code=502,
+            detail="recommendation skill verifier returned invalid output",
         ) from exception

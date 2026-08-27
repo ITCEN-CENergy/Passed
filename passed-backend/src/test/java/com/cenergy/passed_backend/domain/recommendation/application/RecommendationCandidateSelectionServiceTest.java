@@ -22,6 +22,7 @@ class RecommendationCandidateSelectionServiceTest {
     private RecommendationCandidateLoader candidateLoader;
     private RequiredSkillEvaluator requiredSkillEvaluator;
     private RequiredSkillFilter requiredSkillFilter;
+    private RecommendationSkillVerificationService skillVerificationService;
     private RecommendationCandidateSelectionService service;
 
     @BeforeEach
@@ -29,10 +30,12 @@ class RecommendationCandidateSelectionServiceTest {
         candidateLoader = mock(RecommendationCandidateLoader.class);
         requiredSkillEvaluator = mock(RequiredSkillEvaluator.class);
         requiredSkillFilter = mock(RequiredSkillFilter.class);
+        skillVerificationService = mock(RecommendationSkillVerificationService.class);
         service = new RecommendationCandidateSelectionService(
                 candidateLoader,
                 requiredSkillEvaluator,
-                requiredSkillFilter
+                requiredSkillFilter,
+                skillVerificationService
         );
     }
 
@@ -49,6 +52,8 @@ class RecommendationCandidateSelectionServiceTest {
                 100L, mock(RequiredSkillEvaluation.class)
         );
         when(candidateLoader.loadByJobRoleIds(jobRoleIds)).thenReturn(candidates);
+        when(skillVerificationService.enrich(2L, candidates.values(), userSkills))
+                .thenReturn(userSkills);
         Map<Long, RequiredSkillEvaluation> evaluations = Map.of(
                 100L, mock(RequiredSkillEvaluation.class),
                 200L, mock(RequiredSkillEvaluation.class)
@@ -57,6 +62,7 @@ class RecommendationCandidateSelectionServiceTest {
         when(requiredSkillFilter.filter(evaluations, policy)).thenReturn(qualified);
 
         RecommendationCandidateSelectionResult result = service.select(
+                2L,
                 jobRoleIds,
                 userSkills,
                 policy
@@ -66,10 +72,13 @@ class RecommendationCandidateSelectionServiceTest {
         assertEquals(1, result.requiredQualifiedPostingCount());
         InOrder executionOrder = inOrder(
                 candidateLoader,
+                skillVerificationService,
                 requiredSkillEvaluator,
                 requiredSkillFilter
         );
         executionOrder.verify(candidateLoader).loadByJobRoleIds(jobRoleIds);
+        executionOrder.verify(skillVerificationService)
+                .enrich(2L, candidates.values(), userSkills);
         executionOrder.verify(requiredSkillEvaluator)
                 .evaluateAll(same(candidates), same(userSkills));
         executionOrder.verify(requiredSkillFilter)

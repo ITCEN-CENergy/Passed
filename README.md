@@ -2,7 +2,12 @@
 
 > "취업 준비부터 역량 성장까지 함께하는 AI 커리어 코칭 플랫폼"
 
-<img width="100%" alt="프로젝트 대표 이미지" src="[이미지 URL]" />
+<table>
+  <tr>
+    <td width="50%"><img width="100%" alt="Passed 프로젝트 대표 이미지 1" src="./passed-frontend/public/result_img/randing1.png" /></td>
+    <td width="50%"><img width="100%" alt="Passed 프로젝트 대표 이미지 2" src="./passed-frontend/public/result_img/randing2.png" /></td>
+  </tr>
+</table>
 
 ## 목차
 
@@ -68,10 +73,11 @@
 
 | 이름  | 역할 | 담당 업무 |
 |-----| -- | --- |
-| 강민주 | 팀장 | • **[담당 업무]**<br>• **[담당 업무]** |
+| 강민주 | 팀장 | • **채용공고 추천 도메인 설계 및 백엔드 API 구현**<br>• **사용자·채용공고 스킬 매칭과 추천 점수·등급 산정 로직 구현**<br>• **LLM 기반 미충족 스킬 검증 및 채용공고 추천 설명 생성 구현**<br>• **단일·다건 채용공고 추천 실행과 결과 저장·조회 기능 구현**<br>• **채용공고 조회·추천 결과·적합도 분석 프론트엔드 UI 구현**|
 | 신재욱 | 팀원 | • **학습 로드맵 도메인 설계 및 백엔드 API 구현**<br>• **LLM 기반 맞춤형 로드맵 생성·재계획 및 학습 자료 추천 구현**<br>• **로드맵 생성 성능 최적화와 동시성·멱등성 안정화**<br>• **학습 로드맵 프론트엔드 UI 및 Zustand 상태 관리 구현** |
 | 이민호 | 팀원 | • **프로젝트 운영 인프라 설계 및 구축**<br>• **사용자 인증 및 인가 구현**<br>• **LLM 기반 자기소개서 첨삭 설계 및 구현** |
-| 조윤지 | 팀원 | • **이력서·공통 자기소개서 도메인 및 CRUD API·프론트엔드 구현**<br>• **이력서·자기소개서 청킹 및 pgvector 임베딩 파이프라인 구현**<br>• **LLM 기반 스킬 후보 추출·표준 스킬 매핑·근거 저장 파이프라인 설계 및 구현**<br>• **골든셋 기반 단계별 성능 평가와 Hybrid Retrieval·Strict Pass 검증 고도화** |
+| 조윤지 | 팀원 | • **이력서·공통 자기소개서 도메인**<br>• **이력서·자기소개서 청킹 및 pgvector 임베딩 파이프라인 구현**<br>• **LLM 기반 스킬 후보 추출·표준 스킬 매핑·근거 저장 파이프라인 설계 및 구현**<br>• **골든셋 기반 단계별 성능 평가와 Hybrid Retrieval·Strict Pass 검증 고도화** |
+ |
 
 ---
 
@@ -103,20 +109,24 @@
 - **구현 내용**: 이력서의 경력·교육·활동 등 항목과 자기소개서 문항을 의미 단위로 청킹하고 pgvector 임베딩을 생성했습니다. Pass 1에서 LLM이 원문으로부터 스킬명·카테고리·레벨·근거를 구조화하여 추출한 뒤 `EXACT → NORMALIZED → ALIAS → EMBEDDING` 순서로 표준 스킬 사전에 매핑합니다. 매핑 결과는 Strict Pass 1로 재검증하고, 청크·문장 임베딩을 결합한 Hybrid Retrieval로 누락 가능성이 있는 마스터 후보를 검색한 뒤 Strict Pass 2를 통과한 스킬만 복구합니다. 최종 결과는 `skill_id` 기준으로 병합하여 사용자 스킬과 복수의 원문 근거를 트랜잭션으로 저장하며, 문서·파이프라인 해시를 이용해 변경이 없는 분석의 중복 실행을 방지했습니다.
 - **사용 기술**: Python, FastAPI, OpenAI API, Pydantic, PostgreSQL, pgvector, Psycopg, Java 21, Spring Boot, Spring Data JPA, React
 - **사용자에게 제공하는 가치**: 사용자는 이력서에 직접 적은 기술뿐 아니라 프로젝트와 업무 경험에 드러난 역량까지 확인할 수 있습니다. 각 스킬의 출처와 근거 문장을 함께 제공하여 AI 분석 결과를 검토할 수 있고, 표준화된 스킬 데이터를 기반으로 자신에게 적합한 채용공고와 부족 역량을 더 정확하게 추천받을 수 있습니다.
+- **기능 설명**: 사용자가 작성한 이력서와 공통 자기소개서를 분석하여 기술, 경험, 행동 특성, 자격증을 표준 스킬로 구조화하고, 각 스킬을 판단한 원문 근거와 숙련도를 함께 제공합니다. 분석 결과에서 중요 스킬을 직접 선택·수정할 수 있으며 이후 채용공고 추천과 역량 진단의 사용자 스킬 데이터로 활용됩니다.
+- **구현 내용**: 이력서의 경력·교육·활동 등 항목과 자기소개서 문항을 의미 단위로 청킹하고 pgvector 임베딩을 생성했습니다. 검증1에서 LLM이 원문으로부터 스킬명·카테고리·레벨·근거를 구조화하여 추출한 뒤 `EXACT → NORMALIZED → ALIAS → EMBEDDING` 순서로 표준 스킬 사전에 매핑합니다. 매핑 결과는 Strict Pass 1로 재검증하고, 청크·문장 임베딩을 결합한 Hybrid Retrieval로 누락 가능성이 있는 마스터 후보를 검색한 뒤 검증2를 통과한 스킬만 복구합니다. 최종 결과는 `skill_id` 기준으로 병합하여 사용자 스킬과 복수의 원문 근거를 트랜잭션으로 저장하며, 문서·파이프라인 해시를 이용해 변경이 없는 분석의 중복 실행을 방지했습니다.
+- **사용 기술**: Python, FastAPI, OpenAI API, Pydantic, PostgreSQL, pgvector, Psycopg, Java 21, Spring Boot, Spring Data JPA, React
+- **사용자에게 제공하는 가치**: 사용자는 이력서에 직접 적은 기술뿐 아니라 프로젝트와 업무 경험에 드러난 역량까지 확인할 수 있습니다. 각 스킬의 출처와 근거 문장을 함께 제공하여 AI 분석 결과를 검토할 수 있고, 표준화된 스킬 데이터를 기반으로 자신에게 적합한 채용공고와 부족 역량을 더 정확하게 추천받을 수 있습니다.
 
 <br>
 
 </details>
 
 <details>
-<summary><strong>[주요 기능 2(강민주)]</strong></summary>
+<summary><strong>AI 기반 맞춤형 채용공고 추천 및 적합도 분석</strong></summary>
 
 <br>
 
-- [기능 설명]
-- [구현 내용]
-- [사용 기술]
-- [사용자에게 제공하는 가치]
+- **기능 설명**: 사용자의 이력서와 자기소개서에서 추출한 보유 역량을 채용공고의 자격요건·우대사항·관련 스킬과 비교하여 적합한 채용공고를 추천합니다. 각 채용공고의 필수 스킬 보유율과 숙련도, 중요 스킬 일치 여부를 분석하여 추천 점수와 등급을 산정하고, 사용자의 강점과 보완할 역량 및 추천 이유를 함께 제공합니다.
+- **구현 내용**: 사용자가 선택한 산업과 직무를 기준으로 추천 후보 채용공고를 조회하고, 사용자 스킬과 채용공고 스킬을 ID 기준으로 우선 매칭했습니다. 필수·우대·관련 스킬의 중요도와 사용자 숙련도를 반영하여 점수를 계산하고, 필수 스킬 보유율과 숙련도 기준을 통과한 채용공고 중 상위 12개를 선별했습니다. ID 매칭에서 누락된 미충족 스킬은 이력서·자기소개서 원문을 대상으로 임베딩 검색과 LLM 교차 검증을 수행했으며, 구체적인 수행 행동이 확인된 경우에만 해당 추천 실행의 임시 충족 스킬로 반영했습니다. 강점·보완점·추천 점수·등급은 애플리케이션의 비즈니스 로직으로 산정하고, 검증된 결과를 기반으로 한 추천 이유와 성장 방향만 LLM이 생성하도록 역할을 분리했습니다.
+- **사용 기술**: Java 21, Spring Boot, Spring Data JPA, QueryDSL, PostgreSQL, pgvector, Python, FastAPI, Pydantic, OpenAI API, React, React Query
+- **사용자에게 제공하는 가치**: 사용자는 자신의 산업과 직무에 적합한 채용공고를 우선순위에 따라 확인하고, 채용공고별 적합도와 지원 가능성을 구체적으로 파악할 수 있습니다. 단순한 점수뿐만 아니라 충족한 역량, 부족한 역량, 추천 이유와 성장 방향을 함께 제공하여 지원할 채용공고를 합리적으로 선택하고 부족한 취업 역량을 보완할 수 있습니다.
 
 <br>
 
@@ -290,7 +300,7 @@ docker compose down -v
 
 ## 7. 프로젝트 아키텍처
 
-<img width="100%" alt="프로젝트 아키텍처" src="[프로젝트 아키텍처 이미지 URL]" />
+<img width="100%" alt="Passed 프로젝트 아키텍처" src="./passed-frontend/public/result_img/system_architecture.png" />
 
 ---
 
@@ -556,31 +566,37 @@ src/main/resources/db/migration/
 ## 9. 트러블 슈팅
 
 <details>
-<summary><strong>[강민주] - [트러블 슈팅 제목]</strong></summary>
+<summary><strong>강민주 - ID 기반 스킬 매칭의 한계를 보완한 원문 근거 AI 검증</strong></summary>
 
 <br>
 
 ### 문제
 
-- [발생한 문제]
-- [문제가 서비스 또는 개발 과정에 미친 영향]
+- 사용자 스킬과 채용공고 스킬을 ID로만 비교하면서, 이력서와 자기소개서에 실제 수행 경험이 있어도 다른 스킬 ID로 추출된 경우 미충족으로 판정되는 문제가 발생했습니다.
+- 실제 지원 가능한 채용공고가 추천 대상에서 제외되거나 적합도 점수가 낮아져 추천의 정확성과 사용자 신뢰도가 저하될 수 있었습니다.
 
 ### 원인
 
-- [문제의 직접적인 원인]
-- [구조적 또는 기술적인 원인]
+- 사용자 스킬 추출 과정에서는 이력서 전체를 대표하는 역량을 생성하지만, 채용공고에서는 업무별 요구사항을 더 세분화된 스킬로 표현하고 있었습니다.
+- 동일하거나 유사한 수행 경험도 서로 다른 스킬 ID로 정규화될 수 있어 정확한 ID 일치만으로는 사용자의 실제 경험을 모두 반영하기 어려웠습니다.
+- 반대로 임베딩 유사도만으로 충족 여부를 판단하면 자격증이나 교육 이력, 단순 키워드가 실무 경험으로 잘못 인정되는 오탐 가능성이 있었습니다.
 
 ### 해결 방안
 
-- **[해결 과정 1]**: [적용한 해결 방법]
-- **[해결 과정 2]**: [적용한 해결 방법]
-- **[검증]**: [테스트 및 검증 방법]
+- 1차 ID 매칭 유지: 기존 사용자 추출 스킬과 채용공고 요구 스킬을 ID 기준으로 우선 비교하여 명확하게 일치하는 역량을 판정했습니다.
+- 미충족 스킬 원문 검색: ID 매칭에서 미충족으로 판정된 채용공고 스킬만 대상으로 이력서·자기소개서 원문 청크를 임베딩 검색했습니다.
+- LLM 행동 근거 검증: 검색된 원문이 목표 스킬과 관련된 구체적인 수행·완료 행동을 입증하는지 GPT-4 계열 모델로 검증했습니다.
+- 목표 스킬 레벨 재산정: 유사한 기존 사용자 스킬의 레벨을 복사하지 않고, 확인된 원문 행동을 기준으로 목표 스킬의 숙련도를 새롭게 산정했습니다.
+- 추천 실행 범위 내 임시 반영: 검증된 스킬은 사용자 스킬 데이터에 영구 저장하지 않고, 해당 추천 실행에서만 DIRECT_DOCUMENT_EVIDENCE 유형의 임시 충족 스킬로 반영했습니다.
+- 안전장치 적용: 벡터 유사도는 후보 검색에만 사용하고 원문 행동 근거, 스킬 카테고리 호환성, 직접 인용 검증을 모두 통과한 경우에만 충족 처리했습니다.
+- 검증: 개인정보 보호 교육 수강과 같은 단순 학습 이력은 미충족으로 유지하고, “개인정보를 탐지하고 차단하는 보안 필터를 적용”한 수행 경험은 정보보호 의식의 직접 근거로 인정했습니다. 또한 자격증만으로 기술·실무 경험을 충족하거나 챗봇 경험을 음성 AI 경험으로 판단하는 등의 오탐 사례를 테스트했습니다.
 
 ### 결과
 
-- [변경 전 결과]
-- [변경 후 결과]
-- [성능 개선 수치 또는 사용자 경험 개선 내용]
+- 변경 전에는 스킬 ID가 일치하지 않으면 실제 수행 경험이 원문에 존재하더라도 미충족으로 판정되었습니다.
+- 변경 후에는 구체적인 수행 행동이 확인된 유사 경험을 추천에 반영하면서도, 단순 키워드·교육·자격증에 의한 잘못된 매칭을 차단할 수 있게 되었습니다.
+- 검증 데이터 기준 상위 20개 추천 정확도는 40.0%에서 88.0%로 향상되었고, 과대 추천률은 60.0%에서 2.0%로 감소했습니다.
+- 사용자 스킬 추출 기능을 변경하지 않고, 추천 서비스가 요구하는 정보 범위에 맞춰 원문 교차 검증 계층을 추가하여 각 기능의 책임을 유지했습니다.
 
 <br>
 
@@ -669,7 +685,7 @@ src/main/resources/db/migration/
 
 ### 원인
 
-- Pass 1은 LLM이 생성한 후보에 의존하므로 처음 추출하지 못한 스킬을 이후 매핑 단계에서 복구할 수 없었습니다.
+- 검증 1은 LLM이 생성한 후보에 의존하므로 처음 추출하지 못한 스킬을 이후 매핑 단계에서 복구할 수 없었습니다.
 - 임베딩 유사도는 문장과 스킬이 의미상 가깝다는 검색 신호일 뿐, 사용자가 해당 역량을 실제로 보유한다는 근거는 아니었습니다.
 - 다양한 추출 표현을 이름 임베딩만으로 연결하면 구체적인 기술명과 추상적인 경험·행동 특성의 점수 분포 차이로 잘못된 마스터가 선택될 수 있었습니다.
 
@@ -678,7 +694,7 @@ src/main/resources/db/migration/
 - **단계별 골든셋 구축**: 추출 34개 문서·정답 후보 69개, 매핑 53건(`MAP` 47건·`NO_MATCH` 6건), 원문 근거 검증 111건을 분리해 추출·매핑·검증 오류를 독립적으로 측정했습니다.
 - **보수적인 마스터 매핑**: 이름-only 방식 대신 `EXACT → NORMALIZED → ALIAS → EMBEDDING` 순서를 적용하고, 카테고리 일치·최소 유사도·상위 후보 간 margin을 통과한 경우에만 자동 매핑했습니다.
 - **Hybrid Retrieval 도입**: 저장된 청크 임베딩과 문장 단위 임베딩을 각각 마스터 스킬과 비교하고, 같은 `skill_id`는 가장 높은 유사도만 유지했습니다. 카테고리 균형과 유사도 기준을 적용한 청크별 Top-40 후보만 후속 검증에 전달했습니다.
-- **Strict Pass 1·2 검증**: Pass 1 결과의 오탐을 먼저 제거하고, Hybrid Retrieval 후보 중 기술명·활성 별칭의 직접 명시 또는 관찰 가능한 완료 행동이 원문에서 확인된 스킬만 Pass 2로 복구했습니다. 미래 계획, 근거 없는 자기평가, 자격증 문맥을 기술 사용 경험으로 해석한 결과는 제외했습니다.
+- **Strict 검증 1·2**: 검증 1 결과의 오탐을 먼저 제거하고, Hybrid Retrieval 후보 중 기술명·활성 별칭의 직접 명시 또는 관찰 가능한 완료 행동이 원문에서 확인된 스킬만 검증 2로 복구했습니다. 미래 계획, 근거 없는 자기평가, 자격증 문맥을 기술 사용 경험으로 해석한 결과는 제외했습니다.
 - **근거 중심 저장**: 최종 승인 결과를 `skill_id`로 병합하되 서로 다른 청크의 근거는 모두 보존하고, 저장 직전 청크 소유권과 `content_hash`를 검증해 분석 도중 변경된 문서가 반영되지 않도록 했습니다.
 
 ### 결과
@@ -697,32 +713,75 @@ src/main/resources/db/migration/
 
 ## 10. 시연 화면
 
-### [기능 1]
+### 인증 관련
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>회원가입</strong><br><img width="100%" alt="회원가입 화면" src="./passed-frontend/public/result_img/signup.png" /></td>
+    <td width="50%" align="center"><strong>로그인</strong><br><img width="100%" alt="로그인 화면" src="./passed-frontend/public/result_img/login.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 1 시연]" src="[GIF URL]" />
+### 사용자 정보 입력 및 스킬 추출
 
-<br>
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>관심 직무 선택</strong><br><img width="100%" alt="관심 직무 선택 화면" src="./passed-frontend/public/result_img/job_select.png" /></td>
+    <td width="50%" align="center"><strong>이력서 작성</strong><br><img width="100%" alt="이력서 작성 화면" src="./passed-frontend/public/result_img/resume_write.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>기본 자기소개서 작성</strong><br><img width="100%" alt="기본 자기소개서 작성 화면" src="./passed-frontend/public/result_img/base_cover_letter_write.png" /></td>
+    <td width="50%" align="center"><strong>사용자 스킬 추출</strong><br><img width="100%" alt="사용자 스킬 추출 화면" src="./passed-frontend/public/result_img/user_skill_create.png" /></td>
+  </tr>
+</table>
 
-### [기능 2]
+### 채용공고 추천
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>맞춤 공고 추천</strong><br><img width="100%" alt="맞춤 채용공고 추천 화면" src="./passed-frontend/public/result_img/main_recommendation.png" /></td>
+    <td width="50%" align="center"><strong>적합도 분석</strong><br><img width="100%" alt="채용공고 적합도 분석 화면" src="./passed-frontend/public/result_img/result_report.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>적합도 분석 1</strong><br><img width="100%" alt="채용공고 적합도 분석 화면 1" src="./passed-frontend/public/result_img/result_report2.png" /></td>
+    <td width="50%" align="center"><strong>적합도 분석 2</strong><br><img width="100%" alt="채용공고 적합도 분석 화면 2" src="./passed-frontend/public/result_img/result_report3.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 2 시연]" src="[GIF URL]" />
+### 채용공고 검색 및 조회
 
-<br>
+<table>
+  <tr>
+    <td colspan="2" align="center"><strong>채용공고 검색</strong><br><img width="100%" alt="채용공고 검색 화면" src="./passed-frontend/public/result_img/job_posting_search.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>채용공고 상세 조회 1</strong><br><img width="100%" alt="채용공고 상세 조회 화면 1" src="./passed-frontend/public/result_img/job_posting_detail.png" /></td>
+    <td width="50%" align="center"><strong>채용공고 상세 조회 2</strong><br><img width="100%" alt="채용공고 상세 조회 화면 2" src="./passed-frontend/public/result_img/job_posting_detail2.png" /></td>
+  </tr>
+</table>
 
-### [기능 3]
+### 학습 로드맵
 
-> [기능에 대한 간단한 설명]
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>로드맵 공고 바구니</strong><br><img width="100%" alt="학습 로드맵 채용공고 바구니 화면" src="./passed-frontend/public/result_img/roadmap_job_posting_basket.png" /></td>
+    <td width="50%" align="center"><strong>학습 로드맵</strong><br><img width="100%" alt="학습 로드맵 메인 화면" src="./passed-frontend/public/result_img/roadmap_main.png" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>마일스톤 학습</strong><br><img width="100%" alt="학습 로드맵 마일스톤 화면" src="./passed-frontend/public/result_img/roadmap_milestone.png" /></td>
+    <td width="50%" align="center"><strong>로드맵 재계획</strong><br><img width="100%" alt="학습 로드맵 재계획 화면" src="./passed-frontend/public/result_img/roadmap_replan.png" /></td>
+  </tr>
+</table>
 
-<img width="100%" alt="[기능 3 시연]" src="[GIF URL]" />
+### 자기소개서 첨삭
 
-<br>
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>AI 자기소개서 작성</strong><br><img width="100%" alt="AI 자기소개서 작성 화면" src="./passed-frontend/public/result_img/ai_cover_letter_write.png" /></td>
+    <td width="50%" align="center"><strong>AI 자기소개서 피드백</strong><br><img width="100%" alt="AI 자기소개서 피드백 화면" src="./passed-frontend/public/result_img/ai_cover_letter_feedback.png" /></td>
+  </tr>
+</table>
 
-### [기능 4]
+### 채용공고 등록
 
-> [기능에 대한 간단한 설명]
-
-<img width="100%" alt="[기능 4 시연]" src="[GIF URL]" />
+<img width="100%" alt="채용공고 등록 화면" src="./passed-frontend/public/result_img/job_posting_write.png" />

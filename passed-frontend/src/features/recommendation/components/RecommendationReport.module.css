@@ -43,7 +43,6 @@
 .chart { display: grid; width: 118px; height: 118px; place-items: center; margin: 0 auto 16px; background: conic-gradient(#146bff var(--rate), #e9eef6 0); border-radius: 50%; }
 .chart > div { display: flex; width: 84px; height: 84px; align-items: center; justify-content: center; flex-direction: column; background: #fff; border-radius: 50%; }
 .chart strong { color: #07183d; font-size: 24px; }
-.chart span { margin-top: 2px; color: #8b96a8; font-size: 11px; }
 .groupCard h4 { margin: 0 0 17px; color: #07183d; font-size: 17px; }
 .groupCard details { text-align: left; }
 .groupCard summary { display: flex; min-height: 46px; align-items: center; justify-content: center; gap: 10px; color: #146bff; background: #eef5ff; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; list-style: none; }

@@ -254,7 +254,7 @@ const RecommendationHistoryPage = () => {
       <div className={styles.tabs} role="tablist" aria-label="추천 내역 유형">
         <button type="button" role="tab" aria-selected={activeTab === 'multiple'} className={activeTab === 'multiple' ? styles.activeTab : ''} onClick={() => changeTab('multiple')}>
           여러 공고 추천
-          <span>희망 산업·직무 기반 BEST 12</span>
+          <span>희망 산업·직무 기반 BEST 20</span>
         </button>
         <button type="button" role="tab" aria-selected={activeTab === 'single'} className={activeTab === 'single' ? styles.activeTab : ''} onClick={() => changeTab('single')}>
           단일 공고 매칭

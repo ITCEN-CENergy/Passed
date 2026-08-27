@@ -12,6 +12,7 @@ import com.cenergy.passed_backend.domain.recommendation.entity.JobRecommendation
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationGrade;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRun;
 import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunStatus;
+import com.cenergy.passed_backend.domain.recommendation.entity.RecommendationRunType;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.JobRecommendationSkillDetailRepository;
 import com.cenergy.passed_backend.domain.recommendation.repository.RecommendationRunRepository;
@@ -44,6 +45,7 @@ class RecommendationQueryServiceTest {
         RecommendationRun run = mock(RecommendationRun.class);
         when(run.getId()).thenReturn(10L);
         when(run.getStatus()).thenReturn(RecommendationRunStatus.COMPLETED);
+        when(run.getRecommendationType()).thenReturn(RecommendationRunType.MULTIPLE_POSTINGS);
         when(run.getUserSkillSnapshot()).thenReturn(Map.of("skills", List.of()));
         when(run.getPreferenceSnapshot()).thenReturn(Map.of(
                 "industryId", 8L,
@@ -75,6 +77,7 @@ class RecommendationQueryServiceTest {
         assertEquals(8L, latestResult.run().preference().industryId());
         assertEquals(1, latestResult.recommendations().size());
         assertEquals(10L, latestDetail.runId());
+        assertEquals(RecommendationRunType.MULTIPLE_POSTINGS, latestDetail.recommendationType());
         assertEquals(100L, latestDetail.jobRecommendationId());
     }
 
@@ -120,7 +123,10 @@ class RecommendationQueryServiceTest {
 
     private JobRecommendation recommendation(JobPosting posting) {
         JobRecommendation value = mock(JobRecommendation.class);
+        RecommendationRun run = mock(RecommendationRun.class);
+        when(run.getRecommendationType()).thenReturn(RecommendationRunType.MULTIPLE_POSTINGS);
         when(value.getId()).thenReturn(100L);
+        when(value.getRecommendationRun()).thenReturn(run);
         when(value.getRankOrder()).thenReturn(1);
         when(value.getRecommendationGrade()).thenReturn(RecommendationGrade.RECOMMENDED);
         when(value.getTotalScore()).thenReturn(new BigDecimal("79.0100"));

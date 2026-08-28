@@ -1,0 +1,41 @@
+{
+  "evaluated_count": 77,
+  "review_excluded_count": 1,
+  "metric": {
+    "true_positive": 53,
+    "false_positive": 24,
+    "false_negative": 0,
+    "true_negative": 0,
+    "precision": 0.6883116883116883,
+    "recall": 1.0,
+    "f1": 0.8153846153846155,
+    "reject_accuracy": 0.0,
+    "false_positive_rate": 1.0
+  },
+  "by_category": {
+    "TECHNICAL_SKILL": {
+      "true_positive": 46,
+      "false_positive": 23,
+      "false_negative": 0,
+      "true_negative": 0,
+      "precision": 0.6666666666666666,
+      "recall": 1.0,
+      "f1": 0.8,
+      "reject_accuracy": 0.0,
+      "false_positive_rate": 1.0
+    },
+    "BEHAVIORAL_TRAIT": {
+      "true_positive": 7,
+      "false_positive": 1,
+      "false_negative": 0,
+      "true_negative": 0,
+      "precision": 0.875,
+      "recall": 1.0,
+      "f1": 0.9333333333333333,
+      "reject_accuracy": 0.0,
+      "false_positive_rate": 1.0
+    }
+  },
+  "unknown_prediction_count": 0,
+  "unknown_predictions": []
+}

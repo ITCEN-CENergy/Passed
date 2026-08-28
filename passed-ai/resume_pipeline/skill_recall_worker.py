@@ -112,6 +112,7 @@ class StrictPass2Selection(BaseModel):
             "기술/자격 직접 명시 검증에서는 null 허용"
         ),
     )
+    
     verification_basis: Literal[
         "DIRECT_NAME_OR_ALIAS",
         "OBSERVABLE_COMPLETED_ACTION",
@@ -536,17 +537,6 @@ def _select_category_balanced_hits(
     *,
     limit: int,
 ) -> list[MasterRetrievalHit]:
-    """Keep the final retrieval budget balanced across represented categories.
-
-    Q. Why not simply take the globally highest similarities?
-    A. Similarity score ranges differ by category. Abstract behavioral traits
-       usually score lower than concrete technology names, so a global Top-K can
-       remove the entire behavioral category before Pass 2 can verify it.
-
-    Q. Does this force weak candidates to be saved?
-    A. No. This only reserves a fair candidate budget. Strict Pass 2 still rejects
-       candidates that are not directly demonstrated by the source evidence.
-    """
     deduplicated = _merge_retrieval_hits(hits, limit=len(hits))
     by_category: dict[SkillCategory, list[MasterRetrievalHit]] = defaultdict(list)
     for hit in deduplicated:
@@ -755,13 +745,14 @@ def retrieve_missing_master_candidates(
                         limit=top_k_per_category,
                     )
                 )
-        # Q. Why is there a category-level floor before the balanced Top-K?
-        # A. Balancing intentionally prevents behavioral candidates from being
-        #    crowded out by technology-name similarities. Without a minimum
-        #    retrieval relevance, however, it also promotes very remote traits
-        #    into Pass 2 (for example, a generic metric improvement becoming a
-        #    learning trait). This is a retrieval-quality guard, not a skill-name
-        #    rule; Strict Pass 2 remains the final semantic verifier.
+        # Q. 균형 잡힌 Top-K 이전에 카테고리 단위 최소 기준(floor)이 존재하는 이유는 무엇인가?
+        # A. 균형화(balancing)는 행동 관련 후보들이 기술명 유사도에 의해
+        #    밀려나는 것을 의도적으로 방지하기 위한 것입니다. 하지만 최소
+        #    검색 관련도 기준이 없으면, 매우 동떨어진 특성까지 Pass 2로
+        #    승격시킬 수 있습니다(예를 들어, 일반적인 지표 개선 사항이
+        #    학습 특성으로 잘못 분류되는 경우). 이는 스킬명 규칙이 아니라
+        #    검색 품질을 보장하기 위한 장치이며, 최종적인 의미론적 검증은
+        #    여전히 Strict Pass 2가 담당합니다.
         hits = [
             hit
             for hit in hits
@@ -930,7 +921,7 @@ def _contains_direct_mention(evidence: str, hit: MasterRetrievalHit) -> bool:
         while start >= 0:
             end = start + len(normalized_term)
             # 영문 제품명의 부분 문자열 충돌(Node vs Node.js 등)만 막습니다. 한국어
-            # 조사("Docker로", "협업을")는 붙어 쓰므로 Unicode isalnum 경계를
+            # 조사("Docker로", "협업을")는 붙어 쓰므로 Unicode isalnum 경계를 동일하게 
             # 적용하면 정상 직접 명시를 놓치게 됩니다.
             left_ok = (
                 start == 0

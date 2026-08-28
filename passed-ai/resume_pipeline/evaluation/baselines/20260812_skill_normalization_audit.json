@@ -1,0 +1,25 @@
+{
+  "master_count": 1655,
+  "alias_count": 61,
+  "stored_alias_mismatch_current": 0,
+  "stored_alias_mismatch_conservative": 55,
+  "current": {
+    "name": "CURRENT_REMOVE_SEPARATORS",
+    "exact_resolved": 14,
+    "normalized_master_resolved": 0,
+    "alias_resolved": 32,
+    "ambiguous": 0,
+    "unresolved": 7,
+    "collision_keys": 0
+  },
+  "conservative": {
+    "name": "CONSERVATIVE_WHITESPACE",
+    "exact_resolved": 14,
+    "normalized_master_resolved": 0,
+    "alias_resolved": 32,
+    "ambiguous": 0,
+    "unresolved": 7,
+    "collision_keys": 0
+  },
+  "conservative_collision_samples": {}
+}

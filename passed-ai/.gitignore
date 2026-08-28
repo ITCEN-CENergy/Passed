@@ -58,9 +58,3 @@ logs/
 # OS metadata
 .DS_Store
 Thumbs.db
-
-#evaluation
-resume_pipeline/evaluation/
-
-#resume_pipeline
-resume_pipeline/README.md
